@@ -692,6 +692,7 @@ for(dat in names(dataset)) {
   #-----------------------------------
   pca_file <- file.path(path_phenotypes, paste0(dat_name, "_PCs.csv"))
   var_file <- file.path(path_phenotypes, paste0(dat_name, "_var.csv"))
+  print(pca_file, var_file)
   
   pca <- read.csv(pca_file, sep=",")
   var <- read.csv(var_file, sep=",")
