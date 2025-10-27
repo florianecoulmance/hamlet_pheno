@@ -1,0 +1,145 @@
+#!/usr/bin/python 
+# by: Floriane Coulmance: 22.10.2025 
+
+import os
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))  # hamlet_pheno/
+
+IMAGES_DIR = os.path.join(BASE_DIR, "images")
+PCA_DIR = os.path.join(BASE_DIR, "1_phenotyping/pca")
+HEAT_DIR = os.path.join(BASE_DIR, "1_phenotyping/heatmaps")
+FIGURES_DIR = os.path.join(BASE_DIR, "figures")
+
+SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
+PYTHON_SCRIPT = os.path.join(SCRIPTS_DIR, "python", "phenotyping.py")
+R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig1-2_S3-S9.R")
+
+# Parameter sets for phenotyping.py
+phenotyping_params = [
+    # Per location, all species
+    {"spe_name": "all", "geo_name": "boc", "dataset": "lab_boc229_left_noflash"},
+    {"spe_name": "all", "geo_name": "uvi", "dataset": "lab_uvi136_left_noflash"},
+    {"spe_name": "all", "geo_name": "tob", "dataset": "lab_tob69_left_noflash"},
+    {"spe_name": "all", "geo_name": "ver", "dataset": "lab_ver60_left_noflash"},
+    {"spe_name": "all", "geo_name": "bel", "dataset": "lab_bel46_left_noflash"},
+    {"spe_name": "all", "geo_name": "flo", "dataset": "lab_flo29_left_noflash"},
+    # Overall location (all species combined)
+    {"spe_name": "all", "geo_name": "all", "dataset": "lab_571_left_noflash"},
+    # Specific species (geo_name = all)
+    {"spe_name": "pue", "geo_name": "all", "dataset": "lab_pue187_left_noflash"},
+    {"spe_name": "nig", "geo_name": "all", "dataset": "lab_nig111_left_noflash"},
+    {"spe_name": "uni", "geo_name": "all", "dataset": "lab_uni74_left_noflash"},
+    {"spe_name": "chl", "geo_name": "all", "dataset": "lab_chl34_left_noflash"},
+    {"spe_name": "abe", "geo_name": "all", "dataset": "lab_abe30_left_noflash"},
+    {"spe_name": "ind", "geo_name": "all", "dataset": "lab_ind28_left_noflash"},
+]
+
+
+rule all:
+    input:
+        # Phenotyping outputs
+        expand(f"{PCA_DIR}/done_{{spe_name}}_{{geo_name}}_{{dataset}}.txt",
+               zip, **{k: [p[k] for p in phenotyping_params] for k in ["spe_name", "geo_name", "dataset"]}),
+        
+        # Figure outputs
+        expand(
+            os.path.join(FIGURES_DIR, f"{fig_name}"),
+            fig_name=[
+                "Fig1_pLocPCA.png",
+                "Fig2_pAllPCA.png",
+                "FigS3_pAllVAR.png",
+                "FigS4_pLocSUP.png",
+                "FigS5_pLocPERM.png",
+                "FigS6_pLocHCLUST.png",
+                "FigS7_pLocHEAT.png",
+                "FigS8_pAll.png",
+                "FigS9_pSpe.png"
+            ]
+        )
+
+  
+rule phenotyping:
+    output:
+        os.path.join(PCA_DIR, "done_{spe_name}_{geo_name}_{dataset}.txt")
+    params:
+        mask = f"{BASE_DIR}/metadata/full_mask.tif",
+        python_script = PYTHON_SCRIPT,
+        images_dir = IMAGES_DIR,
+        pca_dir = PCA_DIR,
+        heat_dir = HEAT_DIR
+    threads: 1
+    resources:
+        mem_mb=4000
+    shell:
+        """
+        mkdir -p {params.pca_dir} {params.heat_dir}
+
+        python3 {params.python_script} \
+            --path_images {params.images_dir} \
+            --mask {params.mask} \
+            --color_space LAB \
+            --path_results {params.pca_dir} \
+            --path_figures {params.heat_dir} \
+            --mask_name fullm \
+            --spec_name {wildcards.spe_name} \
+            --geo_name {wildcards.geo_name} \
+            --dataset {wildcards.dataset}
+
+        touch {output}
+        """
+
+# The datasets whose PCA + heatmap results are needed for the final figures
+datasets_for_figs = [
+    "lab_boc229_left_noflash",
+    "lab_uvi136_left_noflash",
+    "lab_tob69_left_noflash",
+    "lab_ver60_left_noflash",
+    "lab_bel46_left_noflash",
+    "lab_flo29_left_noflash",
+    "lab_571_left_noflash",  # overall
+    "lab_pue187_left_noflash",
+    "lab_nig111_left_noflash",
+    "lab_uni74_left_noflash",
+    "lab_chl34_left_noflash",
+    "lab_abe30_left_noflash",
+    "lab_ind28_left_noflash"                   
+]
+
+rule plot_figures:
+    input:
+        sum(
+            [[
+                os.path.join(PCA_DIR, f"{loc}_PCs.csv"),
+                os.path.join(PCA_DIR, f"{loc}_var.csv")
+             ] for loc in datasets_for_figs],
+            []
+            )
+    output:
+        os.path.join(FIGURES_DIR, "Fig1_pLocPCA.png"),
+        os.path.join(FIGURES_DIR, "Fig2_pAllPCA.png"),
+        os.path.join(FIGURES_DIR, "FigS3_pAllVAR.png"),
+        os.path.join(FIGURES_DIR, "FigS4_pLocSUP.png"),
+        os.path.join(FIGURES_DIR, "FigS5_pLocPERM.png"),
+        os.path.join(FIGURES_DIR, "FigS6_pLocHCLUST.png"),
+        os.path.join(FIGURES_DIR, "FigS7_pLocHEAT.png"),
+        os.path.join(FIGURES_DIR, "FigS8_pAll.png"),
+        os.path.join(FIGURES_DIR, "FigS9_pSpe.png")
+    params:
+        base_path = BASE_DIR,
+        path_phenotypes = PCA_DIR,
+        heatmap_path = HEAT_DIR,
+        figure_path = FIGURES_DIR,
+        logos_path = os.path.join(BASE_DIR, "metadata/logos_hamlet"),
+        spec_colors = os.path.join(BASE_DIR, "metadata/species_colors.tsv"),
+        geo_colors = os.path.join(BASE_DIR, "metadata/locations_colors.tsv")
+    threads: 1
+    shell:
+        """
+        Rscript {R_SCRIPT} \
+            --base_path {params.base_path} \
+            --path_phenotypes {params.path_phenotypes} \
+            --heatmap_path {params.heatmap_path} \
+            --figure_path {params.figure_path} \
+            --logos_path {params.logos_path} \
+            --spec_colors {params.spec_colors} \
+            --geo_colors {params.geo_colors}
+        """
