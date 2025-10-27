@@ -85,15 +85,15 @@ rule phenotyping:
         mkdir -p {params.pca_dir} {params.heat_dir}
 
         python3 {params.python_script} \
-            --path_images {params.images_dir} \
-            --mask {params.mask} \
-            --color_space LAB \
-            --path_results {params.pca_dir} \
-            --path_figures {params.heat_dir} \
-            --mask_name fullm \
-            --spec_name {params.spe_name} \
-            --geo_name {params.geo_name} \
-            --dataset {wildcards.dataset}
+            {params.images_dir} \
+            {params.mask} \
+            LAB \
+            {params.pca_dir} \
+            {params.heat_dir} \
+            fullm \
+            {params.spe_name} \
+            {params.geo_name} \
+            {wildcards.dataset}
         """
 
 
