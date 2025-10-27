@@ -43,18 +43,9 @@ dataset_to_meta = {p["dataset"]: {"spe_name": p["spe_name"], "geo_name": p["geo_
 rule all:
     input:
         # Phenotyping outputs
-        expand(
-            f"{PCA_DIR}/{p['dataset']}_PCs.csv",
-            p=phenotyping_params
-        ),
-        expand(
-            f"{PCA_DIR}/{p['dataset']}_var.csv",
-            p=phenotyping_params
-        ),
-        expand(
-            f"{PCA_DIR}/done_{p['spe_name']}_{p['geo_name']}_{p['dataset']}.txt",
-            p=phenotyping_params
-        ),
+        [f"{PCA_DIR}/{p['dataset']}_PCs.csv" for p in phenotyping_params],
+        [f"{PCA_DIR}/{p['dataset']}_var.csv" for p in phenotyping_params],
+        [f"{PCA_DIR}/done_{p['spe_name']}_{p['geo_name']}_{p['dataset']}.txt" for p in phenotyping_params],
         # Figure outputs
         expand(
             f"{FIGURES_DIR}/{{fig_name}}",
