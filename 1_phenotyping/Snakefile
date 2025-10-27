@@ -128,6 +128,9 @@ rule plot_figures:
         time="2:00:00"
     shell:
         """
+        module load hpc-env/13.1
+        module load R/4.3.1-foss-2023a
+
         Rscript {R_SCRIPT} \
             --base_path {params.base_path} \
             --path_phenotypes {params.path_phenotypes} \
