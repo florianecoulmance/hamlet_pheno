@@ -42,7 +42,7 @@ rule all:
         
         # Figure outputs
         expand(
-            os.path.join(FIGURES_DIR, f"{fig_name}"),
+            os.path.join(FIGURES_DIR, "{fig_name}"),
             fig_name=[
                 "Fig1_pLocPCA.png",
                 "Fig2_pAllPCA.png",
