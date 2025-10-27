@@ -68,7 +68,7 @@ rule phenotyping:
         heat_dir = HEAT_DIR
     threads: 1
     resources:
-        mem_mb=4000
+        mem_mb=4000,
         time="2:00:00"
     shell:
         """
@@ -134,7 +134,7 @@ rule plot_figures:
         geo_colors = os.path.join(BASE_DIR, "metadata/locations_colors.tsv")
     threads: 1
     resources:
-        mem_mb=2000
+        mem_mb=2000,
         time="2:00:00"
     shell:
         """
