@@ -37,9 +37,10 @@ phenotyping_params = [
 rule all:
     input:
         # Phenotyping outputs
-        expand(f"{PCA_DIR}/done_{{spe_name}}_{{geo_name}}_{{dataset}}.txt",
+        expand(f"{PCA_DIR}/{{dataset}}_PCs.csv",
                zip, **{k: [p[k] for p in phenotyping_params] for k in ["spe_name", "geo_name", "dataset"]}),
-        
+        expand(f"{PCA_DIR}/{{dataset}}_var.csv",
+               zip, **{k: [p[k] for p in phenotyping_params] for k in ["spe_name", "geo_name", "dataset"]}),
         # Figure outputs
         expand(
             f"{FIGURES_DIR}/{{fig_name}}",
@@ -89,33 +90,12 @@ rule phenotyping:
         touch {output}
         """
 
-# The datasets whose PCA + heatmap results are needed for the final figures
-datasets_for_figs = [
-    "lab_boc229_left_noflash",
-    "lab_uvi136_left_noflash",
-    "lab_tob69_left_noflash",
-    "lab_ver60_left_noflash",
-    "lab_bel46_left_noflash",
-    "lab_flo29_left_noflash",
-    "lab_571_left_noflash",  # overall
-    "lab_pue187_left_noflash",
-    "lab_nig111_left_noflash",
-    "lab_uni74_left_noflash",
-    "lab_chl34_left_noflash",
-    "lab_abe30_left_noflash",
-    "lab_ind28_left_noflash"                   
-]
 
 rule plot_figures:
     input:
-        expand(
-            f"{PCA_DIR}/{{dat}}_PCs.csv",
-            dat=datasets_for_figs
-        ),
-        expand(
-            f"{PCA_DIR}/{{dat}}_var.csv",
-            dat=datasets_for_figs
-        )
+        # take the PCA and var CSVs for each dataset
+        pca = f"{PCA_DIR}/{{dataset}}_PCs.csv",
+        var = f"{PCA_DIR}/{{dataset}}_var.csv"
     output:
         f"{FIGURES_DIR}/Fig1_pLocPCA.png",
         f"{FIGURES_DIR}/Fig2_pAllPCA.png",
