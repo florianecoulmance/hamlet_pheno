@@ -1,15 +1,4 @@
 Processing dataset: lab_nig111_left_noflash, species: nig, location: all
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.24546270082602267..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.09633590810061399..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0724756212645486..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.08440576468258132..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.10826605151864677..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
 Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
 Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
 Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
@@ -145,78 +134,16 @@ lab_nig111_left_noflash
 108 PL22_0269nigboc-l6.png
 109 PL22_0094nigboc-l2.png
 110 PL22_0329niguvi-l3.png
+Global max pixel value across PC1–PC4: 0.0057
 0
-0.00011795665026215874 0.0033960293925107033
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x155511eb8d70>
+<matplotlib.colorizer._ScalarMappable object at 0x155511ea8ec0>
 (1000, 1639, 3)
 1
-9.266862714329451e-06 0.005314006489406661
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x15551233bb10>
+<matplotlib.colorizer._ScalarMappable object at 0x155512337c50>
 (1000, 1639, 3)
 2
-1.6417815603066694e-05 0.005669752656277339
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554d1eb1f30>
+<matplotlib.colorizer._ScalarMappable object at 0x1554d1eadf30>
 (1000, 1639, 3)
 3
-0.00013275922951458402 0.005519567921565112
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x155511f07130>
-(1000, 1639, 3)
-4
-2.530453161298143e-05 0.00516052657789083
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x15550ed0a850>
-(1000, 1639, 3)
-5
-7.395842587308761e-06 0.013133365662548977
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554d1e4f890>
-(1000, 1639, 3)
-6
-2.9858701419868782e-05 0.016714506368496054
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554d1ca6190>
-(1000, 1639, 3)
-7
-0.0001055570263789026 0.011540262043433615
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554d1e361a0>
-(1000, 1639, 3)
-8
-5.0446336012135966e-05 0.007263919974280296
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554d17e7d10>
-(1000, 1639, 3)
-9
-0.00012547872944252092 0.00829140338896868
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554d19b45d0>
-(1000, 1639, 3)
-10
-1.4852214466745291e-05 0.01027835191027446
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554d19085f0>
-(1000, 1639, 3)
-11
-7.113147531326167e-06 0.01416326681514393
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554d1921ed0>
-(1000, 1639, 3)
-12
-1.5330894168271595e-05 0.010791312632019495
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554d16277e0>
-(1000, 1639, 3)
-13
-6.861766850903282e-05 0.014111771041263592
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x15550f663a10>
-(1000, 1639, 3)
-14
-2.7259963572517933e-06 0.01233195142543768
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554d225faf0>
+<matplotlib.colorizer._ScalarMappable object at 0x155511eff240>
 (1000, 1639, 3)

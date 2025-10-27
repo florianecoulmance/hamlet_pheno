@@ -1,15 +1,4 @@
 Processing dataset: lab_tob69_left_noflash, species: all, location: tob
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.22160241398995728..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.18581198373585922..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.23353255740798995..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.13212633835471205..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.13212633835471205..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.19177705544487555..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.15598662519077744..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.012824904174385254..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0008947607563524196..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
 Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
 Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
 Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
@@ -103,78 +92,16 @@ lab_tob69_left_noflash
 66 PL22_0180chltob-l7.png
 67 PL22_0146puetob-l1.png
 68 PL22_0163gumtob-l7.png
+Global max pixel value across PC1–PC4: 0.0049
 0
-1.5991035462382418e-06 0.003683961630397332
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x155511d94d70>
+<matplotlib.colorizer._ScalarMappable object at 0x155511eacec0>
 (1000, 1639, 3)
 1
-5.203590479136469e-06 0.00417021302402658
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x155512313b10>
+<matplotlib.colorizer._ScalarMappable object at 0x15551233bc50>
 (1000, 1639, 3)
 2
-3.2981799319877324e-05 0.003554916438284543
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x15550ed01f30>
+<matplotlib.colorizer._ScalarMappable object at 0x1554e6c99f30>
 (1000, 1639, 3)
 3
-8.026349110363357e-06 0.004873018482878843
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x155511de3130>
-(1000, 1639, 3)
-4
-9.255851750969628e-06 0.004862548941987476
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x15550ecb6850>
-(1000, 1639, 3)
-5
-1.8930501677155825e-05 0.004128691967014036
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554e6ce7890>
-(1000, 1639, 3)
-6
-9.942636844538044e-06 0.00453241702854077
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554e69ba190>
-(1000, 1639, 3)
-7
-2.0973919798566665e-05 0.006824632613926433
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554e6cfa1a0>
-(1000, 1639, 3)
-8
-6.231181583286644e-06 0.006426307405564872
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x15550f6c7dd0>
-(1000, 1639, 3)
-9
-6.546122687714854e-06 0.00661214525210817
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x15550f4ec890>
-(1000, 1639, 3)
-10
-9.189728662982848e-06 0.00809238233828363
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554e662c690>
-(1000, 1639, 3)
-11
-1.0119976845563051e-05 0.006749860172639125
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554e65e1bd0>
-(1000, 1639, 3)
-12
-8.510672284953687e-06 0.008229604506723276
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554e71a2190>
-(1000, 1639, 3)
-13
-8.674035008732245e-06 0.007216294443040883
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554e70375b0>
-(1000, 1639, 3)
-14
-7.180941096210112e-06 0.009266159424522444
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554e73b3000>
+<matplotlib.colorizer._ScalarMappable object at 0x155511f07240>
 (1000, 1639, 3)

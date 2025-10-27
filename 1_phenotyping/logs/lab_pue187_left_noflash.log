@@ -1,15 +1,4 @@
 Processing dataset: lab_pue187_left_noflash, species: pue, location: all
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.28125313108012073..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.1500215534817611..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.1977421271538919..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.1679167686088101..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.10826605151864677..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.1500215534817611..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.10826605151864677..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.018789975883401533..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
 Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
 Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
 Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
@@ -221,78 +210,16 @@ lab_pue187_left_noflash
 184 PL22_0336pueuvi-l2.png
 185 PL22_0104pueboc-l7.png
 186 PL22_0324pueuvi-l2.png
+Global max pixel value across PC1–PC4: 0.0046
 0
-0.00015585564188150074 0.002926723025664196
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x155511eb4d70>
+<matplotlib.colorizer._ScalarMappable object at 0x155511eacec0>
 (1000, 1639, 3)
 1
-5.33986137666705e-06 0.004633476655502749
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x155512337b10>
+<matplotlib.colorizer._ScalarMappable object at 0x15551233fc50>
 (1000, 1639, 3)
 2
-5.394426134432366e-06 0.00399438613612265
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554ac1c9f30>
+<matplotlib.colorizer._ScalarMappable object at 0x1554ac1d1f30>
 (1000, 1639, 3)
 3
-3.965809209508016e-06 0.004377925123657762
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x155511f07130>
-(1000, 1639, 3)
-4
-3.2358179239231654e-06 0.00516523971263428
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x15550ed06850>
-(1000, 1639, 3)
-5
-1.0985332799005526e-05 0.007688115669605789
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554ac21b890>
-(1000, 1639, 3)
-6
-9.57088726596394e-06 0.004670186400537232
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554ac066190>
-(1000, 1639, 3)
-7
-5.491019044849608e-06 0.006875025497829019
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554ac2021a0>
-(1000, 1639, 3)
-8
-1.4130138768038154e-05 0.005203521405365538
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554abbabe90>
-(1000, 1639, 3)
-9
-7.660870946335264e-06 0.006343907076392787
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554ac43c890>
-(1000, 1639, 3)
-10
-1.4917284291084024e-05 0.007035519620297444
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554abcc45f0>
-(1000, 1639, 3)
-11
-1.3708363853588618e-05 0.00745512062508533
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554ac488fd0>
-(1000, 1639, 3)
-12
-1.314675970098624e-05 0.00900080261838438
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554ab9a96a0>
-(1000, 1639, 3)
-13
-1.1849634554177088e-05 0.0073109469728724775
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x15550eee1da0>
-(1000, 1639, 3)
-14
-3.868189858297444e-06 0.007626603355113683
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554ac3e4d00>
+<matplotlib.colorizer._ScalarMappable object at 0x155511ef3240>
 (1000, 1639, 3)

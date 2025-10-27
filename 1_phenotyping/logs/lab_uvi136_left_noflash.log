@@ -1,15 +1,4 @@
 Processing dataset: lab_uvi136_left_noflash, species: all, location: uvi
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.23353255740798995..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.1679167686088101..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.16195169689979383..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.18581198373585922..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.09037083639159765..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.1738818403178265..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.04861533442848326..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.04861533442848326..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.08440576468258132..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.13809141006372844..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.012824904174385254..255.0].
 Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
 Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
 Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
@@ -170,78 +159,16 @@ lab_uvi136_left_noflash
 133 PL22_0329niguvi-l3.png
 134 PL22_0400gutuvi-l2.png
 135 PL22_0324pueuvi-l2.png
+Global max pixel value across PC1–PC4: 0.0045
 0
-2.156030508771876e-05 0.003548275778005647
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x155511eb8d70>
+<matplotlib.colorizer._ScalarMappable object at 0x155511eacec0>
 (1000, 1639, 3)
 1
-1.3451006706476947e-05 0.004445864440465863
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x15551233bb10>
+<matplotlib.colorizer._ScalarMappable object at 0x15551233bc50>
 (1000, 1639, 3)
 2
-7.189740446585406e-06 0.004466261640950459
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554c572df30>
+<matplotlib.colorizer._ScalarMappable object at 0x1554c5731f30>
 (1000, 1639, 3)
 3
-3.422270829996736e-05 0.004196366325351814
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x155511f0b130>
-(1000, 1639, 3)
-4
-4.702030846189377e-06 0.005468713375277229
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x15550ed0a850>
-(1000, 1639, 3)
-5
-7.652257711081954e-06 0.004351908090813531
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554c57b7890>
-(1000, 1639, 3)
-6
-1.7315270739042133e-06 0.0059549843594762075
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554c555a190>
-(1000, 1639, 3)
-7
-4.0426863071541895e-06 0.005950179724015881
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554c57e21a0>
-(1000, 1639, 3)
-8
-3.322298109340305e-06 0.005502242946239305
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x15550f60be90>
-(1000, 1639, 3)
-9
-8.951973944414497e-06 0.004809950821794279
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554c5900680>
-(1000, 1639, 3)
-10
-2.9437423396348514e-06 0.006454976689367951
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554c5ac45f0>
-(1000, 1639, 3)
-11
-6.12306212608429e-06 0.008462780635616764
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554c5065b50>
-(1000, 1639, 3)
-12
-1.2530816389016785e-05 0.007338412729656173
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x15550ee8bb60>
-(1000, 1639, 3)
-13
-5.121377438323752e-06 0.008006583041701335
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554c5d2fb60>
-(1000, 1639, 3)
-14
-8.60716995731903e-06 0.008117633311681065
-['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
-<matplotlib.colorizer._ScalarMappable object at 0x1554c545f230>
+<matplotlib.colorizer._ScalarMappable object at 0x155511f03240>
 (1000, 1639, 3)
