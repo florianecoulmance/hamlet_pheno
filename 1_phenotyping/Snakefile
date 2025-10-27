@@ -65,8 +65,8 @@ rule all:
   
 rule phenotyping:
     output:
-        pca = lambda wildcards: f"{PCA_DIR}/{wildcards.dataset}_PCs.csv",
-        var = lambda wildcards: f"{PCA_DIR}/{wildcards.dataset}_var.csv",
+        pca = f"{PCA_DIR}/{{dataset}}_PCs.csv",
+        var = f"{PCA_DIR}/{{dataset}}_var.csv",
         # done = lambda wildcards: f"{PCA_DIR}/done_{dataset_to_meta[wildcards.dataset]['spe_name']}_{dataset_to_meta[wildcards.dataset]['geo_name']}_{wildcards.dataset}.txt"
     params:
         mask = f"{BASE_DIR}/metadata/full_mask.tif",
