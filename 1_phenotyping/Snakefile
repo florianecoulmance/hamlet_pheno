@@ -59,7 +59,8 @@ rule all:
   
 rule phenotyping:
     output:
-        f"{PCA_DIR}/done_{{spe_name}}_{{geo_name}}_{{dataset}}.txt"
+        pca = f"{PCA_DIR}/{{dataset}}_PCs.csv",
+        var = f"{PCA_DIR}/{{dataset}}_var.csv",
     params:
         mask = f"{BASE_DIR}/metadata/full_mask.tif",
         python_script = PYTHON_SCRIPT,
