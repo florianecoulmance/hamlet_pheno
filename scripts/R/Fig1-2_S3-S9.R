@@ -43,6 +43,7 @@ library(ggtext)
 library(ggpubr)
 library(patchwork)
 library(cowplot)
+library(pairwiseAdonis)
 
 
 
