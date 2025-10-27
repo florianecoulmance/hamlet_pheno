@@ -44,7 +44,7 @@ library(ggpubr)
 library(patchwork)
 library(cowplot)
 library(pairwiseAdonis)
-library(tidyr)
+library(tidyverse)
 
 
 # ############################
