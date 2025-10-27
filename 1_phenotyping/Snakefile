@@ -45,7 +45,7 @@ rule all:
         # Phenotyping outputs
         [f"{PCA_DIR}/{p['dataset']}_PCs.csv" for p in phenotyping_params],
         [f"{PCA_DIR}/{p['dataset']}_var.csv" for p in phenotyping_params],
-        [f"{PCA_DIR}/done_{p['spe_name']}_{p['geo_name']}_{p['dataset']}.txt" for p in phenotyping_params],
+        # [f"{PCA_DIR}/done_{p['spe_name']}_{p['geo_name']}_{p['dataset']}.txt" for p in phenotyping_params],
         # Figure outputs
         expand(
             f"{FIGURES_DIR}/{{fig_name}}",
@@ -67,7 +67,7 @@ rule phenotyping:
     output:
         pca = lambda wildcards: f"{PCA_DIR}/{wildcards.dataset}_PCs.csv",
         var = lambda wildcards: f"{PCA_DIR}/{wildcards.dataset}_var.csv",
-        done = lambda wildcards: f"{PCA_DIR}/done_{dataset_to_meta[wildcards.dataset]['spe_name']}_{dataset_to_meta[wildcards.dataset]['geo_name']}_{wildcards.dataset}.txt"
+        # done = lambda wildcards: f"{PCA_DIR}/done_{dataset_to_meta[wildcards.dataset]['spe_name']}_{dataset_to_meta[wildcards.dataset]['geo_name']}_{wildcards.dataset}.txt"
     params:
         mask = f"{BASE_DIR}/metadata/full_mask.tif",
         python_script = PYTHON_SCRIPT,
@@ -92,8 +92,6 @@ rule phenotyping:
             --spec_name {dataset_to_meta[wildcards.dataset]['spe_name']} \
             --geo_name {dataset_to_meta[wildcards.dataset]['geo_name']} \
             --dataset {wildcards.dataset}
-
-        touch {output.done}
         """
 
 
