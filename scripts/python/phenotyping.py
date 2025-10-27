@@ -210,7 +210,7 @@ def save_modifiedImage(pix_arr, bo_mask, lof, effect, res_path, data_name):
     pixel_table["images"] = lof
     # print(pixel_table.shape)
     # print(pixel_table)
-    pixel_table.to_csv(res_path+data_name+'_modifiedImage.csv')
+    pixel_table.to_csv(os.path.join(res_path, data_name+'_modifiedImage.csv'))
 
 
 
@@ -243,7 +243,7 @@ def save_pcpict(pixels, flist, res_path, data_name):
     principalDF["images"] = flist # <-- add the sample columns corresponding to the images
     # print(principalDF.shape)
     # print(principalDF)
-    principalDF.to_csv(res_path+data_name+'_PCs.csv') # <-- save the dataframe to result folder with specific name
+    principalDF.to_csv(os.path.join(res_path, data_name+'_PCs.csv')) # <-- save the dataframe to result folder with specific name
 
 
 
@@ -258,10 +258,10 @@ def variances(pca, res_path, data_name):
     var_cum = pca.explained_variance_ratio_.cumsum() # <-- gets the cumulative variance explained 
 
     varDF = pd.DataFrame(var_explained) # <-- makes a dataframe of explained variance per PCs
-    varDF.to_csv(res_path+data_name+'_var.csv') # <-- saves the dataframe of explained variance by PCs to result directory
+    varDF.to_csv(os.path.join(res_path, data_name+'_var.csv')) # <-- saves the dataframe of explained variance by PCs to result directory
 
     varcumDF = pd.DataFrame(var_cum) # <-- makes a dataframe of cumulative explained variance
-    varcumDF.to_csv(res_path+data_name+'_varcum.csv') # <-- save the cumulative explained variance table to result diretory
+    varcumDF.to_csv(os.path.join(res_path, data_name+'_varcum.csv')) # <-- save the cumulative explained variance table to result diretory
 
 
 
@@ -352,7 +352,7 @@ def plot_heatmap(b_m, rgb_m, pca, component, effect, res_path, data_name):
     fig.subplots_adjust(hspace = 0.01, wspace = 0.01)  # <-- Add space so the colorbar doesn't overlap the plot
     
     plt.margins(0,0)
-    plt.savefig(res_path+data_name+"_PC"+str(component)+"_originalrescaled.png",bbox_inches='tight') # <-- save in appropriate figure folder with region id as file title
+    plt.savefig(os.path.join(res_path, f"{data_name}_PC{component}_originalrescaled.png"), bbox_inches='tight') # <-- save in appropriate figure folder with region id as file title
 
 
 
@@ -366,7 +366,7 @@ def plot_abseigen(feature, res_path, data_name):
     n_row = 15 # <-- number of rows for the table
     row_name = ['PC{}'.format(i+1) for i in range(n_row)] # <-- set row names based on number
     eigvectDF = pd.DataFrame(data=feature, index=row_name) # <-- make dataframe with absolute eigenvalues
-    eigvectDF.to_csv(res_path+data_name+'_evect_abs.csv') # <-- save the dataframe in result folder
+    eigvectDF.to_csv(os.path.join(res_path, data_name+'_evect_abs.csv')) # <-- save the dataframe in result folder
 
 
 
