@@ -35,19 +35,25 @@ phenotyping_params = [
     {"spe_name": "ind", "geo_name": "all", "dataset": "lab_ind28_left_noflash"},
 ]
 
+# First, make a dictionary for quick lookup
+dataset_to_meta = {p["dataset"]: {"spe_name": p["spe_name"], "geo_name": p["geo_name"]} 
+                   for p in phenotyping_params}
+
 
 rule all:
     input:
         # Phenotyping outputs
-        expand(f"{PCA_DIR}/{{dataset}}_PCs.csv",
-               zip, **{k: [p[k] for p in phenotyping_params] for k in ["spe_name", "geo_name", "dataset"]}),
-        expand(f"{PCA_DIR}/{{dataset}}_var.csv",
-               zip, **{k: [p[k] for p in phenotyping_params] for k in ["spe_name", "geo_name", "dataset"]}),
-                # Phenotyping outputs (done flags)
         expand(
-            f"{PCA_DIR}/done_{{spe_name}}_{{geo_name}}_{{dataset}}.txt",
-            zip,
-            **{k: [p[k] for p in phenotyping_params] for k in ["spe_name", "geo_name", "dataset"]}
+            f"{PCA_DIR}/{p['dataset']}_PCs.csv",
+            p=phenotyping_params
+        ),
+        expand(
+            f"{PCA_DIR}/{p['dataset']}_var.csv",
+            p=phenotyping_params
+        ),
+        expand(
+            f"{PCA_DIR}/done_{p['spe_name']}_{p['geo_name']}_{p['dataset']}.txt",
+            p=phenotyping_params
         ),
         # Figure outputs
         expand(
@@ -68,9 +74,9 @@ rule all:
   
 rule phenotyping:
     output:
-        pca = f"{PCA_DIR}/{{dataset}}_PCs.csv",
-        var = f"{PCA_DIR}/{{dataset}}_var.csv",
-        done = f"{PCA_DIR}/done_{{spe_name}}_{{geo_name}}_{{dataset}}.txt"
+        pca = lambda wildcards: f"{PCA_DIR}/{wildcards.dataset}_PCs.csv",
+        var = lambda wildcards: f"{PCA_DIR}/{wildcards.dataset}_var.csv",
+        done = lambda wildcards: f"{PCA_DIR}/done_{dataset_to_meta[wildcards.dataset]['spe_name']}_{dataset_to_meta[wildcards.dataset]['geo_name']}_{wildcards.dataset}.txt"
     params:
         mask = f"{BASE_DIR}/metadata/full_mask.tif",
         python_script = PYTHON_SCRIPT,
@@ -92,8 +98,8 @@ rule phenotyping:
             --path_results {params.pca_dir} \
             --path_figures {params.heat_dir} \
             --mask_name fullm \
-            --spec_name {wildcards.spe_name} \
-            --geo_name {wildcards.geo_name} \
+            --spec_name {dataset_to_meta[wildcards.dataset]['spe_name']} \
+            --geo_name {dataset_to_meta[wildcards.dataset]['geo_name']} \
             --dataset {wildcards.dataset}
 
         touch {output.done}
@@ -102,8 +108,8 @@ rule phenotyping:
 
 rule plot_figures:
     input:
-        pca=lambda wildcards: list(glob.glob(f"{PCA_DIR}/*_PCs.csv")),
-        var=lambda wildcards: list(glob.glob(f"{PCA_DIR}/*_var.csv"))
+        pca=lambda wildcards: [f"{PCA_DIR}/{p['dataset']}_PCs.csv" for p in phenotyping_params],
+        var=lambda wildcards: [f"{PCA_DIR}/{p['dataset']}_var.csv" for p in phenotyping_params]
     output:
         f"{FIGURES_DIR}/Fig1_pLocPCA.png",
         f"{FIGURES_DIR}/Fig2_pAllPCA.png",
