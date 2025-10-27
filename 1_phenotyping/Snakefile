@@ -2,6 +2,8 @@
 # by: Floriane Coulmance: 22.10.2025 
 
 import os
+import glob
+
 BASE_DIR = "/fs/dss/work/doau0129/hamlet_pheno"  # hamlet_pheno/
 
 IMAGES_DIR = os.path.join(BASE_DIR, "images")
