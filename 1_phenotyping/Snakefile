@@ -43,6 +43,12 @@ rule all:
                zip, **{k: [p[k] for p in phenotyping_params] for k in ["spe_name", "geo_name", "dataset"]}),
         expand(f"{PCA_DIR}/{{dataset}}_var.csv",
                zip, **{k: [p[k] for p in phenotyping_params] for k in ["spe_name", "geo_name", "dataset"]}),
+                # Phenotyping outputs (done flags)
+        expand(
+            f"{PCA_DIR}/done_{{spe_name}}_{{geo_name}}_{{dataset}}.txt",
+            zip,
+            **{k: [p[k] for p in phenotyping_params] for k in ["spe_name", "geo_name", "dataset"]}
+        ),
         # Figure outputs
         expand(
             f"{FIGURES_DIR}/{{fig_name}}",
@@ -64,6 +70,7 @@ rule phenotyping:
     output:
         pca = f"{PCA_DIR}/{{dataset}}_PCs.csv",
         var = f"{PCA_DIR}/{{dataset}}_var.csv",
+        done = f"{PCA_DIR}/done_{{spe_name}}_{{geo_name}}_{{dataset}}.txt"
     params:
         mask = f"{BASE_DIR}/metadata/full_mask.tif",
         python_script = PYTHON_SCRIPT,
@@ -89,7 +96,7 @@ rule phenotyping:
             --geo_name {wildcards.geo_name} \
             --dataset {wildcards.dataset}
 
-        touch {output}
+        touch {output.done}
         """
 
 
