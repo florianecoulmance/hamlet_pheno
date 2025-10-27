@@ -131,7 +131,7 @@ def modify_image(im_path, bo_mask, bl_mask, effect, path_fig, spe, loc):
         print(i, f)
         # print(im_path,f)
         # print(path_images+f)
-        image = cv2.imread(im_path+f)
+        image = cv2.imread(os.path.join(im_path, f))
         # print(image.shape)
         # print(image)
         image_blurred = image.copy()
