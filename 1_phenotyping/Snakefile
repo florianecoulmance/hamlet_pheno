@@ -2,7 +2,7 @@
 # by: Floriane Coulmance: 22.10.2025 
 
 import os
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))  # hamlet_pheno/
+BASE_DIR = "/fs/dss/work/doau0129/hamlet_pheno"  # hamlet_pheno/
 
 IMAGES_DIR = os.path.join(BASE_DIR, "images")
 PCA_DIR = os.path.join(BASE_DIR, "1_phenotyping/pca")
@@ -42,7 +42,7 @@ rule all:
         
         # Figure outputs
         expand(
-            os.path.join(FIGURES_DIR, "{fig_name}"),
+            f"{FIGURES_DIR}/{{fig_name}}",
             fig_name=[
                 "Fig1_pLocPCA.png",
                 "Fig2_pAllPCA.png",
@@ -107,31 +107,32 @@ datasets_for_figs = [
 
 rule plot_figures:
     input:
-        sum(
-            [[
-                os.path.join(PCA_DIR, f"{loc}_PCs.csv"),
-                os.path.join(PCA_DIR, f"{loc}_var.csv")
-             ] for loc in datasets_for_figs],
-            []
-            )
+        expand(
+            f"{PCA_DIR}/{{dat}}_PCs.csv",
+            dat=datasets_for_figs
+        ),
+        expand(
+            f"{PCA_DIR}/{{dat}}_var.csv",
+            dat=datasets_for_figs
+        )
     output:
-        os.path.join(FIGURES_DIR, "Fig1_pLocPCA.png"),
-        os.path.join(FIGURES_DIR, "Fig2_pAllPCA.png"),
-        os.path.join(FIGURES_DIR, "FigS3_pAllVAR.png"),
-        os.path.join(FIGURES_DIR, "FigS4_pLocSUP.png"),
-        os.path.join(FIGURES_DIR, "FigS5_pLocPERM.png"),
-        os.path.join(FIGURES_DIR, "FigS6_pLocHCLUST.png"),
-        os.path.join(FIGURES_DIR, "FigS7_pLocHEAT.png"),
-        os.path.join(FIGURES_DIR, "FigS8_pAll.png"),
-        os.path.join(FIGURES_DIR, "FigS9_pSpe.png")
+        f"{FIGURES_DIR}/Fig1_pLocPCA.png",
+        f"{FIGURES_DIR}/Fig2_pAllPCA.png",
+        f"{FIGURES_DIR}/FigS3_pAllVAR.png",
+        f"{FIGURES_DIR}/FigS4_pLocSUP.png",
+        f"{FIGURES_DIR}/FigS5_pLocPERM.png",
+        f"{FIGURES_DIR}/FigS6_pLocHCLUST.png",
+        f"{FIGURES_DIR}/FigS7_pLocHEAT.png",
+        f"{FIGURES_DIR}/FigS8_pAll.png",
+        f"{FIGURES_DIR}/FigS9_pSpe.png"
     params:
         base_path = BASE_DIR,
         path_phenotypes = PCA_DIR,
         heatmap_path = HEAT_DIR,
         figure_path = FIGURES_DIR,
-        logos_path = os.path.join(BASE_DIR, "metadata/logos_hamlet"),
-        spec_colors = os.path.join(BASE_DIR, "metadata/species_colors.tsv"),
-        geo_colors = os.path.join(BASE_DIR, "metadata/locations_colors.tsv")
+        logos_path = f"{BASE_DIR}/metadata/logos_hamlet",
+        spec_colors = f"{BASE_DIR}/metadata/species_colors.tsv",
+        geo_colors = f"{BASE_DIR}/metadata/locations_colors.tsv"
     threads: 1
     resources:
         mem_mb=2000,
