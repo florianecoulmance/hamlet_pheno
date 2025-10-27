@@ -60,8 +60,8 @@ rule all:
   
 rule phenotyping:
     output:
-        pca=lambda wildcards: list(glob.glob(f"{PCA_DIR}/*_PCs.csv")),
-        var=lambda wildcards: list(glob.glob(f"{PCA_DIR}/*_var.csv"))
+        pca = f"{PCA_DIR}/{{dataset}}_PCs.csv",
+        var = f"{PCA_DIR}/{{dataset}}_var.csv",
     params:
         mask = f"{BASE_DIR}/metadata/full_mask.tif",
         python_script = PYTHON_SCRIPT,
@@ -93,9 +93,8 @@ rule phenotyping:
 
 rule plot_figures:
     input:
-        # take the PCA and var CSVs for each dataset
-        pca = f"{PCA_DIR}/{{dataset}}_PCs.csv",
-        var = f"{PCA_DIR}/{{dataset}}_var.csv"
+        pca=lambda wildcards: list(glob.glob(f"{PCA_DIR}/*_PCs.csv")),
+        var=lambda wildcards: list(glob.glob(f"{PCA_DIR}/*_var.csv"))
     output:
         f"{FIGURES_DIR}/Fig1_pLocPCA.png",
         f"{FIGURES_DIR}/Fig2_pAllPCA.png",
