@@ -69,6 +69,7 @@ rule phenotyping:
     threads: 1
     resources:
         mem_mb=4000
+        time="2:00:00"
     shell:
         """
         mkdir -p {params.pca_dir} {params.heat_dir}
@@ -132,6 +133,9 @@ rule plot_figures:
         spec_colors = os.path.join(BASE_DIR, "metadata/species_colors.tsv"),
         geo_colors = os.path.join(BASE_DIR, "metadata/locations_colors.tsv")
     threads: 1
+    resources:
+        mem_mb=2000
+        time="2:00:00"
     shell:
         """
         Rscript {R_SCRIPT} \
