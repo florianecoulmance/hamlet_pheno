@@ -81,7 +81,7 @@ rule phenotyping:
         mem_mb=4000,
         time="2:00:00"
     log:
-        f"{PCA_DIR}/logs/phenotyping_{{dataset}}.log"
+        f"{PCA_DIR}/logs/{{dataset}}.log"
     shell:
         """
         mkdir -p {params.pca_dir} {params.heat_dir}
@@ -96,7 +96,7 @@ rule phenotyping:
             {params.spe_name} \
             {params.geo_name} \
             {wildcards.dataset} \
-        > {log} 2>&1
+        > logs/{wildcards.dataset}.log 2>&1
         """
 
 

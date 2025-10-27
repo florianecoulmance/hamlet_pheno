@@ -51,7 +51,7 @@ def blur_mask(m):
 
     mask = m > 128
 
-    mask2 = np.full((1000, 1639, 3), np.NaN)
+    mask2 = np.full((1000, 1639, 3), np.nan)
     mask2[mask == 0] = (255, 255, 255)
     mask2[mask == 1] = (0, 0, 0) 
     # cv2.imshow('mask2', mask2)
@@ -115,11 +115,11 @@ def modify_image(im_path, bo_mask, bl_mask, effect, path_fig, spe, loc):
     print(bo_mask.sum())
     
     if (effect == "LAB") or (effect == "RGB") or (effect == "HSV"):
-        pixel_array = np.full((len(file_list), bo_mask.sum() * 3), np.NaN)
+        pixel_array = np.full((len(file_list), bo_mask.sum() * 3), np.nan)
     elif (effect == "L") or (effect == "A") or (effect == "B"):
-        pixel_array = np.full((len(file_list), bo_mask.sum()), np.NaN) # 273217 347361
+        pixel_array = np.full((len(file_list), bo_mask.sum()), np.nan) # 273217 347361
     elif (effect == "AB"):
-        pixel_array = np.full((len(file_list), bo_mask.sum() *2), np.NaN) # 546434 694722
+        pixel_array = np.full((len(file_list), bo_mask.sum() *2), np.nan) # 546434 694722
     else:
         print("specify correct effect")
 
