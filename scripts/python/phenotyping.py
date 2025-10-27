@@ -269,7 +269,35 @@ def variances(pca, res_path, data_name):
 
 # ----------------------------------------------------------------------------------------------
 
-def plot_heatmap(b_m, rgb_m, pca, component, effect, res_path, data_name):
+def get_global_max_pixel_value(bool_mask, pca, color_space):
+    """
+    Compute the maximum pixel value (norm of loadings) across PC1–PC4
+    to normalize all heatmaps with the same scale.
+    """
+    feat_imp = pca.components_
+    max_val = 0
+
+    for pc_index in range(4):  # PC1–PC4
+        if color_space in ["LAB", "RGB", "HSV"]:
+            im_PC = feat_imp[pc_index].reshape((bool_mask.sum(), 3), order='C')
+        elif color_space == "AB":
+            im_PC = feat_imp[pc_index].reshape((bool_mask.sum(), 2), order='C')
+        elif color_space in ["L", "A", "B"]:
+            im_PC = feat_imp[pc_index].reshape((bool_mask.sum(), 1), order='C')
+        else:
+            raise ValueError(f"Color space {color_space} not implemented.")
+
+        im_PCscores = np.linalg.norm(im_PC, axis=1)
+        max_val = max(max_val, np.max(im_PCscores))
+
+    print(f"Global max pixel value across PC1–PC4: {max_val:.4f}")
+    return max_val
+
+
+
+# ----------------------------------------------------------------------------------------------
+
+def plot_heatmap(b_m, rgb_m, pca, component, effect, res_path, data_name, global_max):
     '''
     Create the fish heatmap corresponding to the importance of each pixels in the PCs variations
     '''
@@ -296,36 +324,20 @@ def plot_heatmap(b_m, rgb_m, pca, component, effect, res_path, data_name):
     im_PCscores = [v for v in np.linalg.norm(im_PC,axis = 1)]
 
 
-    min_val, max_val = min(im_PCscores), max(im_PCscores)
-    print(min_val, max_val)
+    # min_val, max_val = min(im_PCscores), max(im_PCscores)
+    # print(min_val, max_val)
     
-    norm = matplotlib.colors.Normalize(0,0.02)
-    
-    boundaries = [0, 0.0066, 0.0133, 0.02]
-    hex_colors = sns.color_palette("rocket", n_colors=10).as_hex()
-    print(hex_colors)
-    # hex_colors = [hex_colors[i] for i in range(0, len(hex_colors), 4)]
-    # print(hex_colors)
-    # colors=list(zip(boundaries, hex_colors))
-    # print(colors)
+    norm = matplotlib.colors.Normalize(vmin=0, vmax=global_max)
 
     colors = [[norm(0), "grey"], #grey
-          [norm(0.0066), "yellow"], #yellow
-          [norm(0.0133), "orange"], #orange
-          [norm(0.02), "darkred"]] #darkred
-
-    # if abs(max_val)<abs(min_val):
-    #     bounds = [min_val, -max_val, 0, max_val, -min_val]
-    #     norm = cm.colors.Normalize(vmin=min_val, vmax=-min_val)
-    # elif abs(max_val)>abs(min_val):
-    #     bounds = [-max_val, -min_val, 0, min_val, max_val]
-    #     norm = cm.colors.Normalize(vmin=-(max_val), vmax=max_val)
-    
+          [norm(global_max/3), "yellow"], #yellow
+          [norm(2*global_max/3), "orange"], #orange
+          [norm(global_max), "darkred"]] #darkred
 
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", colors)
     mapper = cm.ScalarMappable(cmap=cmap,norm=norm)
     print(mapper)
-    bounds = [0, 0.0066, 0.0133, 0.02] # <-- create min and max for the colorbar scale
+    bounds = [0, global_max/3, 2*global_max/3, global_max] # <-- create min and max for the colorbar scale
 
     color_mask = np.array([(r, g, b) for r, g, b, a in mapper.to_rgba(im_PCscores)])
     
@@ -391,22 +403,30 @@ def main():
     save_pcpict(new_arr, list_f, path_results, dataset)
 
     variances(pca_im, path_results, dataset)
+
+    # === Compute global max pixel score across PC1–PC4 ===
+    global_max = get_global_max_pixel_value(bool_mask, pca_im, color_space)
+
+    # === Plot only PC1–PC4 with the same color scale ===
+    for pc in range(1, 5):
+        plot_heatmap(bool_mask, rgb_mask, pca_im, pc, color_space, path_figures, dataset, global_max=global_max)
+
     
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 1, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 2, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 3, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 4, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 5, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 6, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 7, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 8, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 9, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 10, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 11, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 12, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 13, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 14, color_space, path_figures, dataset)
-    plot_heatmap(bool_mask, rgb_mask, pca_im, 15, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 1, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 2, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 3, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 4, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 5, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 6, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 7, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 8, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 9, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 10, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 11, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 12, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 13, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 14, color_space, path_figures, dataset)
+    # plot_heatmap(bool_mask, rgb_mask, pca_im, 15, color_space, path_figures, dataset)
 
 
 
