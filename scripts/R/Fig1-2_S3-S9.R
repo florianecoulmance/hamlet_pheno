@@ -690,8 +690,8 @@ for(dat in names(dataset)) {
   #-----------------------------------
   # Read PCA + variance + metadata
   #-----------------------------------
-  pca_file <- file.path(path_phenotypes, dat_name+"_PCs.csv")
-  var_file <- file.path(path_phenotypes, dat_name+"_var.csv")
+  pca_file <- file.path(path_phenotypes, paste0(dat_name, "_PCs.csv"))
+  var_file <- file.path(path_phenotypes, paste0(dat_name, "_var.csv"))
   
   pca <- read.csv(pca_file, sep=",")
   var <- read.csv(var_file, sep=",")
