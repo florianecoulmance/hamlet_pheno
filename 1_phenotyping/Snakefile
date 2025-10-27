@@ -59,7 +59,7 @@ rule all:
   
 rule phenotyping:
     output:
-        os.path.join(PCA_DIR, "done_{spe_name}_{geo_name}_{dataset}.txt")
+        lambda wildcards: os.path.join(PCA_DIR, f"done_{wildcards.spe_name}_{wildcards.geo_name}_{wildcards.dataset}.txt")
     params:
         mask = f"{BASE_DIR}/metadata/full_mask.tif",
         python_script = PYTHON_SCRIPT,
