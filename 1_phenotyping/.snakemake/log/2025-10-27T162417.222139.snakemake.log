@@ -1,0 +1,503 @@
+Assuming unrestricted shared filesystem usage.
+host: hpcl001
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 13
+Rules claiming more threads will be scaled down.
+Job stats:
+job             count
+------------  -------
+all                 1
+phenotyping        13
+plot_figures        1
+total              15
+
+Select jobs to execute...
+Failed to solve scheduling problem with ILP solver, falling back to greedy scheduler. You likely have to fix your ILP solver installation. Error message: PULP_CBC_CMD: Not Available (check permissions on cbc)
+Execute 13 jobs...
+[Mon Oct 27 16:24:17 2025]
+localrule phenotyping:
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uni74_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uni74_left_noflash_var.csv
+    jobid: 10
+    reason: Missing output files: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uni74_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uni74_left_noflash_var.csv
+    wildcards: dataset=lab_uni74_left_noflash
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=50000, disk_mib=47684, tmpdir=/tmp, time=2:00:00, threads=1
+[Mon Oct 27 16:24:17 2025]
+localrule phenotyping:
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ind28_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ind28_left_noflash_var.csv
+    jobid: 13
+    reason: Missing output files: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ind28_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ind28_left_noflash_var.csv
+    wildcards: dataset=lab_ind28_left_noflash
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=50000, disk_mib=47684, tmpdir=/tmp, time=2:00:00, threads=1
+[Mon Oct 27 16:24:17 2025]
+localrule phenotyping:
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_boc229_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_boc229_left_noflash_var.csv
+    jobid: 1
+    reason: Missing output files: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_boc229_left_noflash_var.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_boc229_left_noflash_PCs.csv
+    wildcards: dataset=lab_boc229_left_noflash
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=50000, disk_mib=47684, tmpdir=/tmp, time=2:00:00, threads=1
+[Mon Oct 27 16:24:17 2025]
+localrule phenotyping:
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_tob69_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_tob69_left_noflash_var.csv
+    jobid: 3
+    reason: Missing output files: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_tob69_left_noflash_var.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_tob69_left_noflash_PCs.csv
+    wildcards: dataset=lab_tob69_left_noflash
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=50000, disk_mib=47684, tmpdir=/tmp, time=2:00:00, threads=1
+[Mon Oct 27 16:24:17 2025]
+localrule phenotyping:
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_bel46_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_bel46_left_noflash_var.csv
+    jobid: 5
+    reason: Missing output files: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_bel46_left_noflash_var.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_bel46_left_noflash_PCs.csv
+    wildcards: dataset=lab_bel46_left_noflash
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=50000, disk_mib=47684, tmpdir=/tmp, time=2:00:00, threads=1
+[Mon Oct 27 16:24:17 2025]
+localrule phenotyping:
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_571_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_571_left_noflash_var.csv
+    jobid: 7
+    reason: Missing output files: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_571_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_571_left_noflash_var.csv
+    wildcards: dataset=lab_571_left_noflash
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=50000, disk_mib=47684, tmpdir=/tmp, time=2:00:00, threads=1
+[Mon Oct 27 16:24:17 2025]
+localrule phenotyping:
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_nig111_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_nig111_left_noflash_var.csv
+    jobid: 9
+    reason: Missing output files: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_nig111_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_nig111_left_noflash_var.csv
+    wildcards: dataset=lab_nig111_left_noflash
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=50000, disk_mib=47684, tmpdir=/tmp, time=2:00:00, threads=1
+[Mon Oct 27 16:24:17 2025]
+localrule phenotyping:
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_abe30_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_abe30_left_noflash_var.csv
+    jobid: 12
+    reason: Missing output files: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_abe30_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_abe30_left_noflash_var.csv
+    wildcards: dataset=lab_abe30_left_noflash
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=50000, disk_mib=47684, tmpdir=/tmp, time=2:00:00, threads=1
+[Mon Oct 27 16:24:17 2025]
+localrule phenotyping:
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uvi136_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uvi136_left_noflash_var.csv
+    jobid: 2
+    reason: Missing output files: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uvi136_left_noflash_var.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uvi136_left_noflash_PCs.csv
+    wildcards: dataset=lab_uvi136_left_noflash
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=50000, disk_mib=47684, tmpdir=/tmp, time=2:00:00, threads=1
+[Mon Oct 27 16:24:17 2025]
+localrule phenotyping:
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_chl34_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_chl34_left_noflash_var.csv
+    jobid: 11
+    reason: Missing output files: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_chl34_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_chl34_left_noflash_var.csv
+    wildcards: dataset=lab_chl34_left_noflash
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=50000, disk_mib=47684, tmpdir=/tmp, time=2:00:00, threads=1
+[Mon Oct 27 16:24:17 2025]
+localrule phenotyping:
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ver60_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ver60_left_noflash_var.csv
+    jobid: 4
+    reason: Missing output files: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ver60_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ver60_left_noflash_var.csv
+    wildcards: dataset=lab_ver60_left_noflash
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=50000, disk_mib=47684, tmpdir=/tmp, time=2:00:00, threads=1
+[Mon Oct 27 16:24:17 2025]
+localrule phenotyping:
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_flo29_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_flo29_left_noflash_var.csv
+    jobid: 6
+    reason: Missing output files: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_flo29_left_noflash_var.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_flo29_left_noflash_PCs.csv
+    wildcards: dataset=lab_flo29_left_noflash
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=50000, disk_mib=47684, tmpdir=/tmp, time=2:00:00, threads=1
+[Mon Oct 27 16:24:17 2025]
+localrule phenotyping:
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_pue187_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_pue187_left_noflash_var.csv
+    jobid: 8
+    reason: Missing output files: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_pue187_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_pue187_left_noflash_var.csv
+    wildcards: dataset=lab_pue187_left_noflash
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=50000, disk_mib=47684, tmpdir=/tmp, time=2:00:00, threads=1
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 84:
+Command 'set -euo pipefail;  
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name uni             --geo_name all             --dataset lab_uni74_left_noflash' returned non-zero exit status 1.
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 10
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uni74_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uni74_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name uni             --geo_name all             --dataset lab_uni74_left_noflash
+        
+        (command exited with non-zero exit code)
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 84:
+Command 'set -euo pipefail;  
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name ind             --geo_name all             --dataset lab_ind28_left_noflash' returned non-zero exit status 1.
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 84:
+Command 'set -euo pipefail;  
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name boc             --dataset lab_boc229_left_noflash' returned non-zero exit status 1.
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 84:
+Command 'set -euo pipefail;  
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name bel             --dataset lab_bel46_left_noflash' returned non-zero exit status 1.
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 13
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ind28_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ind28_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name ind             --geo_name all             --dataset lab_ind28_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 1
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_boc229_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_boc229_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name boc             --dataset lab_boc229_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 5
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_bel46_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_bel46_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name bel             --dataset lab_bel46_left_noflash
+        
+        (command exited with non-zero exit code)
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 84:
+Command 'set -euo pipefail;  
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name tob             --dataset lab_tob69_left_noflash' returned non-zero exit status 1.
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 3
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_tob69_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_tob69_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name tob             --dataset lab_tob69_left_noflash
+        
+        (command exited with non-zero exit code)
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 84:
+Command 'set -euo pipefail;  
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name all             --dataset lab_571_left_noflash' returned non-zero exit status 1.
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 7
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_571_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_571_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name all             --dataset lab_571_left_noflash
+        
+        (command exited with non-zero exit code)
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 84:
+Command 'set -euo pipefail;  
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name abe             --geo_name all             --dataset lab_abe30_left_noflash' returned non-zero exit status 1.
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 12
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_abe30_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_abe30_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name abe             --geo_name all             --dataset lab_abe30_left_noflash
+        
+        (command exited with non-zero exit code)
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 84:
+Command 'set -euo pipefail;  
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name nig             --geo_name all             --dataset lab_nig111_left_noflash' returned non-zero exit status 1.
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 9
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_nig111_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_nig111_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name nig             --geo_name all             --dataset lab_nig111_left_noflash
+        
+        (command exited with non-zero exit code)
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 84:
+Command 'set -euo pipefail;  
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name uvi             --dataset lab_uvi136_left_noflash' returned non-zero exit status 1.
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 2
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uvi136_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uvi136_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name uvi             --dataset lab_uvi136_left_noflash
+        
+        (command exited with non-zero exit code)
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 84:
+Command 'set -euo pipefail;  
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name chl             --geo_name all             --dataset lab_chl34_left_noflash' returned non-zero exit status 1.
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 84:
+Command 'set -euo pipefail;  
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name ver             --dataset lab_ver60_left_noflash' returned non-zero exit status 1.
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 11
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_chl34_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_chl34_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name chl             --geo_name all             --dataset lab_chl34_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 4
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ver60_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ver60_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name ver             --dataset lab_ver60_left_noflash
+        
+        (command exited with non-zero exit code)
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 84:
+Command 'set -euo pipefail;  
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name flo             --dataset lab_flo29_left_noflash' returned non-zero exit status 1.
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 84:
+Command 'set -euo pipefail;  
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name pue             --geo_name all             --dataset lab_pue187_left_noflash' returned non-zero exit status 1.
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 6
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_flo29_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_flo29_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name flo             --dataset lab_flo29_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 8
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_pue187_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_pue187_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name pue             --geo_name all             --dataset lab_pue187_left_noflash
+        
+        (command exited with non-zero exit code)
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look below for error messages
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 10
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uni74_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uni74_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name uni             --geo_name all             --dataset lab_uni74_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 13
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ind28_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ind28_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name ind             --geo_name all             --dataset lab_ind28_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 1
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_boc229_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_boc229_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name boc             --dataset lab_boc229_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 3
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_tob69_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_tob69_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name tob             --dataset lab_tob69_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 5
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_bel46_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_bel46_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name bel             --dataset lab_bel46_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 7
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_571_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_571_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name all             --dataset lab_571_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 9
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_nig111_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_nig111_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name nig             --geo_name all             --dataset lab_nig111_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 12
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_abe30_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_abe30_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name abe             --geo_name all             --dataset lab_abe30_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 2
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uvi136_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_uvi136_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name uvi             --dataset lab_uvi136_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 11
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_chl34_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_chl34_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name chl             --geo_name all             --dataset lab_chl34_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 4
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ver60_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_ver60_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name ver             --dataset lab_ver60_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 6
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_flo29_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_flo29_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name all             --geo_name flo             --dataset lab_flo29_left_noflash
+        
+        (command exited with non-zero exit code)
+[Mon Oct 27 16:24:17 2025]
+Error in rule phenotyping:
+    message: None
+    jobid: 8
+    output: /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_pue187_left_noflash_PCs.csv, /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca/lab_pue187_left_noflash_var.csv
+    shell:
+        
+        mkdir -p /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+
+        python3 /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py             --path_images /fs/dss/work/doau0129/hamlet_pheno/images             --mask /fs/dss/work/doau0129/hamlet_pheno/metadata/full_mask.tif             --color_space LAB             --path_results /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca             --path_figures /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps             --mask_name fullm             --spec_name pue             --geo_name all             --dataset lab_pue187_left_noflash
+        
+        (command exited with non-zero exit code)
+Complete log(s): /fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/.snakemake/log/2025-10-27T162417.222139.snakemake.log
+WorkflowError:
+At least one job did not complete successfully.

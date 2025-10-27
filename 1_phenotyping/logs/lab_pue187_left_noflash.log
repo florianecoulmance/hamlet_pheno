@@ -1,0 +1,298 @@
+Processing dataset: lab_pue187_left_noflash, species: pue, location: all
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.28125313108012073..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.1500215534817611..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.1977421271538919..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.1679167686088101..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.10826605151864677..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.1500215534817611..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.10826605151864677..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.018789975883401533..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+The script is called /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py
+The script is called with 9 arguments
+/fs/dss/work/doau0129/hamlet_pheno/images
+[[0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ ...
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]]
+LAB
+/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca
+/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+fullm
+pue
+all
+lab_pue187_left_noflash
+['PL22_0154puetob-l7.png', 'PL22_0287pueboc-l3.png', 'PL22_0134puetob-l8.png', 'PL22_0152puetob-l7.png', 'PL22_0014pueboc-l11.png', 'PL22_0004pueboc-l16.png', 'PL17_103puebel-l1-s4-f4-c2-d1.png', 'PL22_0009pueboc-l8.png', 'PL22_0084pueboc-l1.png', 'PL22_0002pueboc-l2.png', 'PL22_0150puetob-l7.png', 'PL22_0098pueboc-l5.png', 'PL22_0018pueboc-l9.png', 'PL22_0148puetob-l6.png', 'PL22_0164puetob-l8.png', 'PL22_0101pueboc-l4.png', 'PL22_0257pueboc-l3.png', 'PL22_0130puetob-l10.png', 'PL22_0215pueboc-l5.png', 'PL22_0226pueboc-l6.png', 'PL22_0145puetob-l5.png', 'PL22_0117puetob-l3.png', 'PL22_0120puetob-l4.png', 'PL22_0124puetob-l1.png', 'PL22_0131puetob-l1.png', 'PL22_0212pueboc-l5.png', 'PL22_0359pueuvi-l1.png', 'PL22_0076pueboc-l9.png', 'PL22_0019pueboc-l3.png', 'PL22_0360pueuvi-l2.png', 'PL22_0251pueboc-l6.png', 'PL22_0214pueboc-l9.png', 'PL22_0063pueboc-l8.png', 'PL22_0371pueuvi-l2.png', 'PL22_0364pueuvi-l5.png', 'PL22_0116pueboc-l8.png', 'PL22_0072pueboc-l6.png', 'PL22_0244pueboc-l5.png', 'PL22_0248pueboc-l3.png', 'PL22_0261pueboc-l6.png', 'PL22_0256pueboc-l6.png', 'PL22_0234pueboc-l6.png', 'PL22_0430pueuvi-l4.png', 'PL22_0278pueboc-l4.png', 'PL22_0066pueboc-l5.png', 'PL22_0050pueboc-l3.png', 'PL22_0013pueboc-l8.png', 'PL17_130puebel-l3-s4-f4-c2-d1.png', 'PL22_0196pueboc-l1.png', 'PL22_0351pueuvi-l5.png', 'PL22_0079pueboc-l3.png', 'PL22_0202pueboc-l1.png', 'PL22_0343pueuvi-l5.png', 'PL22_0127puetob-l6.png', 'PL22_0235pueboc-l6.png', 'PL22_0138puetob-l4.png', 'PL22_0047pueboc-l4.png', 'PL17_110puebel-l1-s4-f4-c2-d1.png', 'PL22_0266pueboc-l5.png', 'PL22_0233pueboc-l2.png', 'PL22_0231pueboc-l4.png', 'PL22_0350pueuvi-l5.png', 'PL22_0108pueboc-l2.png', 'PL22_0062pueboc-l1.png', 'PL22_0270pueboc-l4.png', 'PL22_0236pueboc-l5.png', 'PL22_0224pueboc-l2.png', 'PL17_160pueflo-l1-s4-f4-c2-d1.png', 'PL22_0255pueboc-l2.png', 'PL22_0057pueboc-l11.png', 'PL17_094puebel-l1-s4-f4-c2-d1.png', 'PL17_109puebel-l1-s4-f4-c2-d1.png', 'PL22_0069pueboc-l4.png', 'PL22_0039pueboc-l6.png', 'PL22_0259pueboc-l6.png', 'PL22_0213pueboc-l5.png', 'PL22_0011pueboc-l2.png', 'PL22_0184puetob-l5.png', 'PL22_0348pueuvi-l4.png', 'PL22_0425pueuvi-l5.png', 'PL22_0240pueboc-l6.png', 'PL22_0325pueuvi-l2.png', 'PL22_0144puetob-l6.png', 'PL22_0182puetob-l4.png', 'PL22_0064pueboc-l5.png', 'PL17_159pueflo-l3-s4-f4-c2-d1.png', 'PL22_0333pueuvi-l4.png', 'PL17_65puepor-l1-s3-f3-c2-d1.png', 'PL22_0275pueboc-l5.png', 'PL22_0200pueboc-l3.png', 'PL17_157pueflo-l3-s4-f4-c2-d1.png', 'PL17_107puebel-l1-s4-f4-c2-d1.png', 'PL22_0102pueboc-l3.png', 'PL22_0077pueboc-l4.png', 'PL22_0230pueboc-l1.png', 'PL22_0246pueboc-l6.png', 'PL22_0239pueboc-l5.png', 'PL22_0140puetob-l4.png', 'PL22_0112pueboc-l2.png', 'PL22_0092pueboc-l6.png', 'PL22_0103pueboc-l10.png', 'PL22_0129puetob-l3.png', 'PL22_0426pueuvi-l2.png', 'PL22_0035pueboc-l1.png', 'PL22_0038pueboc-l7.png', 'PL22_0237pueboc-l7.png', 'PL22_0012pueboc-l2.png', 'PL17_139pueflo-l1-s4-f4-c2-d1.png', 'PL22_0068pueboc-l1.png', 'PL22_0080pueboc-l2.png', 'PL22_0203pueboc-l2.png', 'PL22_0338pueuvi-l3.png', 'PL22_0322pueuvi-l4.png', 'PL22_0118puetob-l4.png', 'PL17_105puebel-l1-s4-f4-c2-d1.png', 'PL22_0083pueboc-l1.png', 'PL22_0132puetob-l4.png', 'PL22_0087pueboc-l4.png', 'PL22_0107pueboc-l5.png', 'PL17_133puebel-l3-s4-f4-c2-d1.png', 'PL22_0274pueboc-l3.png', 'PL22_0003pueboc-l15.png', 'PL22_0277pueboc-l4.png', 'PL22_0344pueuvi-l1.png', 'PL22_0010pueboc-l11.png', 'PL22_0037pueboc-l7.png', 'PL22_0204pueboc-l7.png', 'PL22_0232pueboc-l7.png', 'PL22_0008pueboc-l11.png', 'PL22_0143puetob-l5.png', 'PL22_0191pueboc-l6.png', 'PL22_0238pueboc-l3.png', 'PL22_0137puetob-l3.png', 'PL22_0099pueboc-l5.png', 'PL22_0181puetob-l2.png', 'PL22_0276pueboc-l7.png', 'PL22_0021pueboc-l3.png', 'PL22_0123puetob-l1.png', 'PL22_0281pueboc-l6.png', 'PL22_0306pueuvi-l9.png', 'PL22_0122puetob-l8.png', 'PL22_0056pueboc-l2.png', 'PL22_0206pueboc-l6.png', 'PL22_0243pueboc-l3.png', 'PL22_0378pueuvi-l2.png', 'PL22_0097pueboc-l4.png', 'PL22_0015pueboc-l5.png', 'PL22_0111pueboc-l8.png', 'PL22_0326pueuvi-l5.png', 'PL22_0241pueboc-l10.png', 'PL17_152pueflo-l5-s4-f4-c2-d1.png', 'PL22_0051pueboc-l1.png', 'PL22_0135puetob-l4.png', 'PL22_0065pueboc-l6.png', 'PL17_131puebel-l2-s4-f4-c2-d1.png', 'PL17_090puebel-l1-s4-f4-c2-d1.png', 'PL17_155pueflo-l1-s4-f4-c2-d1.png', 'PL22_0017pueboc-l11.png', 'PL22_0020pueboc-l1.png', 'PL22_0353pueuvi-l3.png', 'PL22_0119puetob-l4.png', 'PL22_0379pueuvi-l7.png', 'PL22_0428pueuvi-l2.png', 'PL22_0429pueuvi-l4.png', 'PL22_0332pueuvi-l5.png', 'PL22_0298pueboc-l6.png', 'PL17_117puebel-l1-s4-f4-c2-d1.png', 'PL22_0357pueuvi-l5.png', 'PL22_0185puetob-l5.png', 'PL22_0227pueboc-l8.png', 'PL17_092puebel-l1-s4-f4-c2-d1.png', 'PL22_0055pueboc-l3.png', 'PL22_0245pueboc-l4.png', 'PL22_0022pueboc-l9.png', 'PL22_0310pueuvi-l4.png', 'PL22_0431pueuvi-l2.png', 'PL22_0316pueuvi-l9.png', 'PL22_0114pueboc-l9.png', 'PL22_0223pueboc-l6.png', 'PL22_0280pueboc-l5.png', 'PL17_129puebel-l2-s4-f4-c2-d1.png', 'PL22_0006pueboc-l9.png', 'PL22_0345pueuvi-l1.png', 'PL22_0146puetob-l1.png', 'PL22_0336pueuvi-l2.png', 'PL22_0104pueboc-l7.png', 'PL22_0324pueuvi-l2.png']
+187
+347361
+0 PL22_0154puetob-l7.png
+1 PL22_0287pueboc-l3.png
+2 PL22_0134puetob-l8.png
+3 PL22_0152puetob-l7.png
+4 PL22_0014pueboc-l11.png
+5 PL22_0004pueboc-l16.png
+6 PL17_103puebel-l1-s4-f4-c2-d1.png
+7 PL22_0009pueboc-l8.png
+8 PL22_0084pueboc-l1.png
+9 PL22_0002pueboc-l2.png
+10 PL22_0150puetob-l7.png
+11 PL22_0098pueboc-l5.png
+12 PL22_0018pueboc-l9.png
+13 PL22_0148puetob-l6.png
+14 PL22_0164puetob-l8.png
+15 PL22_0101pueboc-l4.png
+16 PL22_0257pueboc-l3.png
+17 PL22_0130puetob-l10.png
+18 PL22_0215pueboc-l5.png
+19 PL22_0226pueboc-l6.png
+20 PL22_0145puetob-l5.png
+21 PL22_0117puetob-l3.png
+22 PL22_0120puetob-l4.png
+23 PL22_0124puetob-l1.png
+24 PL22_0131puetob-l1.png
+25 PL22_0212pueboc-l5.png
+26 PL22_0359pueuvi-l1.png
+27 PL22_0076pueboc-l9.png
+28 PL22_0019pueboc-l3.png
+29 PL22_0360pueuvi-l2.png
+30 PL22_0251pueboc-l6.png
+31 PL22_0214pueboc-l9.png
+32 PL22_0063pueboc-l8.png
+33 PL22_0371pueuvi-l2.png
+34 PL22_0364pueuvi-l5.png
+35 PL22_0116pueboc-l8.png
+36 PL22_0072pueboc-l6.png
+37 PL22_0244pueboc-l5.png
+38 PL22_0248pueboc-l3.png
+39 PL22_0261pueboc-l6.png
+40 PL22_0256pueboc-l6.png
+41 PL22_0234pueboc-l6.png
+42 PL22_0430pueuvi-l4.png
+43 PL22_0278pueboc-l4.png
+44 PL22_0066pueboc-l5.png
+45 PL22_0050pueboc-l3.png
+46 PL22_0013pueboc-l8.png
+47 PL17_130puebel-l3-s4-f4-c2-d1.png
+48 PL22_0196pueboc-l1.png
+49 PL22_0351pueuvi-l5.png
+50 PL22_0079pueboc-l3.png
+51 PL22_0202pueboc-l1.png
+52 PL22_0343pueuvi-l5.png
+53 PL22_0127puetob-l6.png
+54 PL22_0235pueboc-l6.png
+55 PL22_0138puetob-l4.png
+56 PL22_0047pueboc-l4.png
+57 PL17_110puebel-l1-s4-f4-c2-d1.png
+58 PL22_0266pueboc-l5.png
+59 PL22_0233pueboc-l2.png
+60 PL22_0231pueboc-l4.png
+61 PL22_0350pueuvi-l5.png
+62 PL22_0108pueboc-l2.png
+63 PL22_0062pueboc-l1.png
+64 PL22_0270pueboc-l4.png
+65 PL22_0236pueboc-l5.png
+66 PL22_0224pueboc-l2.png
+67 PL17_160pueflo-l1-s4-f4-c2-d1.png
+68 PL22_0255pueboc-l2.png
+69 PL22_0057pueboc-l11.png
+70 PL17_094puebel-l1-s4-f4-c2-d1.png
+71 PL17_109puebel-l1-s4-f4-c2-d1.png
+72 PL22_0069pueboc-l4.png
+73 PL22_0039pueboc-l6.png
+74 PL22_0259pueboc-l6.png
+75 PL22_0213pueboc-l5.png
+76 PL22_0011pueboc-l2.png
+77 PL22_0184puetob-l5.png
+78 PL22_0348pueuvi-l4.png
+79 PL22_0425pueuvi-l5.png
+80 PL22_0240pueboc-l6.png
+81 PL22_0325pueuvi-l2.png
+82 PL22_0144puetob-l6.png
+83 PL22_0182puetob-l4.png
+84 PL22_0064pueboc-l5.png
+85 PL17_159pueflo-l3-s4-f4-c2-d1.png
+86 PL22_0333pueuvi-l4.png
+87 PL17_65puepor-l1-s3-f3-c2-d1.png
+88 PL22_0275pueboc-l5.png
+89 PL22_0200pueboc-l3.png
+90 PL17_157pueflo-l3-s4-f4-c2-d1.png
+91 PL17_107puebel-l1-s4-f4-c2-d1.png
+92 PL22_0102pueboc-l3.png
+93 PL22_0077pueboc-l4.png
+94 PL22_0230pueboc-l1.png
+95 PL22_0246pueboc-l6.png
+96 PL22_0239pueboc-l5.png
+97 PL22_0140puetob-l4.png
+98 PL22_0112pueboc-l2.png
+99 PL22_0092pueboc-l6.png
+100 PL22_0103pueboc-l10.png
+101 PL22_0129puetob-l3.png
+102 PL22_0426pueuvi-l2.png
+103 PL22_0035pueboc-l1.png
+104 PL22_0038pueboc-l7.png
+105 PL22_0237pueboc-l7.png
+106 PL22_0012pueboc-l2.png
+107 PL17_139pueflo-l1-s4-f4-c2-d1.png
+108 PL22_0068pueboc-l1.png
+109 PL22_0080pueboc-l2.png
+110 PL22_0203pueboc-l2.png
+111 PL22_0338pueuvi-l3.png
+112 PL22_0322pueuvi-l4.png
+113 PL22_0118puetob-l4.png
+114 PL17_105puebel-l1-s4-f4-c2-d1.png
+115 PL22_0083pueboc-l1.png
+116 PL22_0132puetob-l4.png
+117 PL22_0087pueboc-l4.png
+118 PL22_0107pueboc-l5.png
+119 PL17_133puebel-l3-s4-f4-c2-d1.png
+120 PL22_0274pueboc-l3.png
+121 PL22_0003pueboc-l15.png
+122 PL22_0277pueboc-l4.png
+123 PL22_0344pueuvi-l1.png
+124 PL22_0010pueboc-l11.png
+125 PL22_0037pueboc-l7.png
+126 PL22_0204pueboc-l7.png
+127 PL22_0232pueboc-l7.png
+128 PL22_0008pueboc-l11.png
+129 PL22_0143puetob-l5.png
+130 PL22_0191pueboc-l6.png
+131 PL22_0238pueboc-l3.png
+132 PL22_0137puetob-l3.png
+133 PL22_0099pueboc-l5.png
+134 PL22_0181puetob-l2.png
+135 PL22_0276pueboc-l7.png
+136 PL22_0021pueboc-l3.png
+137 PL22_0123puetob-l1.png
+138 PL22_0281pueboc-l6.png
+139 PL22_0306pueuvi-l9.png
+140 PL22_0122puetob-l8.png
+141 PL22_0056pueboc-l2.png
+142 PL22_0206pueboc-l6.png
+143 PL22_0243pueboc-l3.png
+144 PL22_0378pueuvi-l2.png
+145 PL22_0097pueboc-l4.png
+146 PL22_0015pueboc-l5.png
+147 PL22_0111pueboc-l8.png
+148 PL22_0326pueuvi-l5.png
+149 PL22_0241pueboc-l10.png
+150 PL17_152pueflo-l5-s4-f4-c2-d1.png
+151 PL22_0051pueboc-l1.png
+152 PL22_0135puetob-l4.png
+153 PL22_0065pueboc-l6.png
+154 PL17_131puebel-l2-s4-f4-c2-d1.png
+155 PL17_090puebel-l1-s4-f4-c2-d1.png
+156 PL17_155pueflo-l1-s4-f4-c2-d1.png
+157 PL22_0017pueboc-l11.png
+158 PL22_0020pueboc-l1.png
+159 PL22_0353pueuvi-l3.png
+160 PL22_0119puetob-l4.png
+161 PL22_0379pueuvi-l7.png
+162 PL22_0428pueuvi-l2.png
+163 PL22_0429pueuvi-l4.png
+164 PL22_0332pueuvi-l5.png
+165 PL22_0298pueboc-l6.png
+166 PL17_117puebel-l1-s4-f4-c2-d1.png
+167 PL22_0357pueuvi-l5.png
+168 PL22_0185puetob-l5.png
+169 PL22_0227pueboc-l8.png
+170 PL17_092puebel-l1-s4-f4-c2-d1.png
+171 PL22_0055pueboc-l3.png
+172 PL22_0245pueboc-l4.png
+173 PL22_0022pueboc-l9.png
+174 PL22_0310pueuvi-l4.png
+175 PL22_0431pueuvi-l2.png
+176 PL22_0316pueuvi-l9.png
+177 PL22_0114pueboc-l9.png
+178 PL22_0223pueboc-l6.png
+179 PL22_0280pueboc-l5.png
+180 PL17_129puebel-l2-s4-f4-c2-d1.png
+181 PL22_0006pueboc-l9.png
+182 PL22_0345pueuvi-l1.png
+183 PL22_0146puetob-l1.png
+184 PL22_0336pueuvi-l2.png
+185 PL22_0104pueboc-l7.png
+186 PL22_0324pueuvi-l2.png
+0
+0.00015585564188150074 0.002926723025664196
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x155511eb4d70>
+(1000, 1639, 3)
+1
+5.33986137666705e-06 0.004633476655502749
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x155512337b10>
+(1000, 1639, 3)
+2
+5.394426134432366e-06 0.00399438613612265
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554ac1c9f30>
+(1000, 1639, 3)
+3
+3.965809209508016e-06 0.004377925123657762
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x155511f07130>
+(1000, 1639, 3)
+4
+3.2358179239231654e-06 0.00516523971263428
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x15550ed06850>
+(1000, 1639, 3)
+5
+1.0985332799005526e-05 0.007688115669605789
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554ac21b890>
+(1000, 1639, 3)
+6
+9.57088726596394e-06 0.004670186400537232
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554ac066190>
+(1000, 1639, 3)
+7
+5.491019044849608e-06 0.006875025497829019
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554ac2021a0>
+(1000, 1639, 3)
+8
+1.4130138768038154e-05 0.005203521405365538
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554abbabe90>
+(1000, 1639, 3)
+9
+7.660870946335264e-06 0.006343907076392787
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554ac43c890>
+(1000, 1639, 3)
+10
+1.4917284291084024e-05 0.007035519620297444
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554abcc45f0>
+(1000, 1639, 3)
+11
+1.3708363853588618e-05 0.00745512062508533
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554ac488fd0>
+(1000, 1639, 3)
+12
+1.314675970098624e-05 0.00900080261838438
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554ab9a96a0>
+(1000, 1639, 3)
+13
+1.1849634554177088e-05 0.0073109469728724775
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x15550eee1da0>
+(1000, 1639, 3)
+14
+3.868189858297444e-06 0.007626603355113683
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554ac3e4d00>
+(1000, 1639, 3)

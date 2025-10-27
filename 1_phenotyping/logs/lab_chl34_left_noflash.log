@@ -1,0 +1,145 @@
+Processing dataset: lab_chl34_left_noflash, species: chl, location: all
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.06651054955553226..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
+The script is called /fs/dss/work/doau0129/hamlet_pheno/scripts/python/phenotyping.py
+The script is called with 9 arguments
+/fs/dss/work/doau0129/hamlet_pheno/images
+[[0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ ...
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]]
+LAB
+/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/pca
+/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/heatmaps
+fullm
+chl
+all
+lab_chl34_left_noflash
+['PL22_0178chltob-l2.png', 'PL22_0416chluvi-l2.png', 'PL22_0392chluvi-l7.png', 'PL22_0405chluvi-l2.png', 'PL22_0391chluvi-l3.png', 'PL22_0166chltob-l12.png', 'PL22_0396chluvi-l2.png', 'PL22_0397chluvi-l8.png', 'PL22_0394chluvi-l1.png', 'PL22_0407chluvi-l5.png', 'PL22_0177chltob-l3.png', 'PL22_0160chltob-l9.png', 'PL22_0398chluvi-l1.png', 'PL22_0393chluvi-l5.png', 'PL22_0174chltob-l9.png', 'PL22_0410chluvi-l4.png', 'PL22_0167chltob-l1.png', 'PL22_0162chltob-l8.png', 'PL22_0168chltob-l4.png', 'PL22_0417chluvi-l5.png', 'PL22_0403chluvi-l5.png', 'PL22_0406chluvi-l2.png', 'PL17_84chlpor-l8-s3-f4-c2-d1.png', 'PL22_0399chluvi-l6.png', 'PL22_0151chltob-l6.png', 'PL22_0414chluvi-l1.png', 'PL22_0415chluvi-l3.png', 'PL22_0175chltob-l3.png', 'PL22_0404chluvi-l5.png', 'PL22_0409chluvi-l10.png', 'PL22_0411chluvi-l6.png', 'PL22_0136chltob-l9.png', 'PL22_0179chltob-l9.png', 'PL22_0180chltob-l7.png']
+34
+347361
+0 PL22_0178chltob-l2.png
+1 PL22_0416chluvi-l2.png
+2 PL22_0392chluvi-l7.png
+3 PL22_0405chluvi-l2.png
+4 PL22_0391chluvi-l3.png
+5 PL22_0166chltob-l12.png
+6 PL22_0396chluvi-l2.png
+7 PL22_0397chluvi-l8.png
+8 PL22_0394chluvi-l1.png
+9 PL22_0407chluvi-l5.png
+10 PL22_0177chltob-l3.png
+11 PL22_0160chltob-l9.png
+12 PL22_0398chluvi-l1.png
+13 PL22_0393chluvi-l5.png
+14 PL22_0174chltob-l9.png
+15 PL22_0410chluvi-l4.png
+16 PL22_0167chltob-l1.png
+17 PL22_0162chltob-l8.png
+18 PL22_0168chltob-l4.png
+19 PL22_0417chluvi-l5.png
+20 PL22_0403chluvi-l5.png
+21 PL22_0406chluvi-l2.png
+22 PL17_84chlpor-l8-s3-f4-c2-d1.png
+23 PL22_0399chluvi-l6.png
+24 PL22_0151chltob-l6.png
+25 PL22_0414chluvi-l1.png
+26 PL22_0415chluvi-l3.png
+27 PL22_0175chltob-l3.png
+28 PL22_0404chluvi-l5.png
+29 PL22_0409chluvi-l10.png
+30 PL22_0411chluvi-l6.png
+31 PL22_0136chltob-l9.png
+32 PL22_0179chltob-l9.png
+33 PL22_0180chltob-l7.png
+0
+2.4405515446186616e-05 0.007068772475053792
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x155511eb4d70>
+(1000, 1639, 3)
+1
+1.791540275325587e-05 0.005723088250593928
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x155512337c50>
+(1000, 1639, 3)
+2
+3.5326571778015524e-06 0.009663680009269513
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554f822df30>
+(1000, 1639, 3)
+3
+2.9770304431135802e-05 0.008770642499427933
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x155511f03130>
+(1000, 1639, 3)
+4
+4.044634125718184e-06 0.010159822309613414
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x15550ed02850>
+(1000, 1639, 3)
+5
+1.2203896684904762e-05 0.009306065870313527
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554f8287890>
+(1000, 1639, 3)
+6
+3.1267812787670907e-06 0.013038844313535863
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554f80ce190>
+(1000, 1639, 3)
+7
+1.7411492986774729e-06 0.015325198491360182
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554f82721a0>
+(1000, 1639, 3)
+8
+1.7410867617246013e-05 0.012981645326208711
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x15550f6dfe90>
+(1000, 1639, 3)
+9
+8.597937302459052e-06 0.013173346325614788
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554f8184890>
+(1000, 1639, 3)
+10
+9.275197964581692e-06 0.010838147470387971
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554f7c34690>
+(1000, 1639, 3)
+11
+4.958449850854675e-06 0.020954420766715866
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554f7ce1c50>
+(1000, 1639, 3)
+12
+1.8527027297185756e-05 0.010777684705926454
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554f79ff7e0>
+(1000, 1639, 3)
+13
+9.86795640531913e-06 0.015460870152646246
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x1554f86df150>
+(1000, 1639, 3)
+14
+1.4824858029371585e-05 0.017512598993557338
+['#221331', '#451c47', '#691f55', '#921c5b', '#b91657', '#d92847', '#ed503e', '#f47d57', '#f6a47c', '#f7c9aa']
+<matplotlib.colorizer._ScalarMappable object at 0x15550f3888a0>
+(1000, 1639, 3)

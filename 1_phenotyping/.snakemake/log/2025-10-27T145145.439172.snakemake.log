@@ -1,0 +1,4 @@
+SyntaxError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 71:
+invalid syntax. Perhaps you forgot a comma?:
+        touch {output}
+

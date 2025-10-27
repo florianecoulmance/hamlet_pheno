@@ -1,0 +1,3 @@
+NameError in file "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 45:
+name 'fig_name' is not defined
+  File "/fs/dss/work/doau0129/hamlet_pheno/1_phenotyping/Snakefile", line 45, in <module>
