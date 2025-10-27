@@ -455,4 +455,11 @@ if __name__ == "__main__":
     print(dataset)
     # dataset = "ab_flo29_left_noflash"
 
-    main()
+    print(f"Processing dataset: {dataset}, species: {spec_name}, location: {geo_name}", file=sys.stderr, flush=True)
+
+    try:
+        main()
+    except Exception as e:
+        print(f"ERROR: {e}", file=sys.stderr, flush=True)
+        traceback.print_exc(file=sys.stderr)  # prints full traceback
+        raise  # This ensures Snakemake sees the failure
