@@ -47,6 +47,9 @@ library(pairwiseAdonis)
 library(tidyverse)
 library(reshape2)
 library(ggnewscale)
+library(tibble)
+library(png)
+library(grid)
 
 # ############################
 # FUNCTIONS
