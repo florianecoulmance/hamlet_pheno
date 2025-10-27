@@ -73,7 +73,9 @@ rule phenotyping:
         python_script = PYTHON_SCRIPT,
         images_dir = IMAGES_DIR,
         pca_dir = PCA_DIR,
-        heat_dir = HEAT_DIR
+        heat_dir = HEAT_DIR,
+        spe_name = lambda wildcards: dataset_to_meta[wildcards.dataset]['spe_name'],
+        geo_name = lambda wildcards: dataset_to_meta[wildcards.dataset]['geo_name']
     threads: 1
     resources:
         mem_mb=4000,
@@ -89,8 +91,8 @@ rule phenotyping:
             --path_results {params.pca_dir} \
             --path_figures {params.heat_dir} \
             --mask_name fullm \
-            --spec_name {dataset_to_meta[wildcards.dataset]['spe_name']} \
-            --geo_name {dataset_to_meta[wildcards.dataset]['geo_name']} \
+            --spec_name {params.spe_name} \
+            --geo_name {params.geo_name} \
             --dataset {wildcards.dataset}
         """
 
