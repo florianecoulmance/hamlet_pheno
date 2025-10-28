@@ -546,7 +546,7 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
   # Helper: Load and crop PC image
   # -----------------------------
   load_pc_img <- function(pc) {
-    file <- file.path(im_p, paste0(name, "_PC", pc, "_originalrescaled.png"))
+    file <- file.path(im_p, paste0(name, "_", pc, "_originalrescaled.png"))
     if (!file.exists(file)) stop(paste("Missing image file:", file))  
     img <- readPNG(file)
     grob <- rasterGrob(img[1:500,100:1000,], interpolate = TRUE)
@@ -562,7 +562,7 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
   plots <- lapply(pcs, load_pc_img)
   
   # legend (from bottom of last PC img)
-  file_last <- file.path(im_p, paste0(name, "_PC", tail(pcs,1), "_originalrescaled.png"))
+  file_last <- file.path(im_p, paste0(name, "_", tail(pcs,1), "_originalrescaled.png"))
   if (!file.exists(file_last)) stop(paste("Missing legend source image:", file_last))
   
   img_last <- readPNG(file_last)
