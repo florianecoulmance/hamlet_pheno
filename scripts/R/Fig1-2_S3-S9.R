@@ -246,23 +246,23 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   if (extract_legend) {
   # Ensure a visible color legend is built (dummy invisible points)
-    print(unique(plot_data[[group_col]]))
+    print(unique(centroids[[group_col]]))
     print(color_map)
-    print(head(plot_data[, c(pc_first, pc_second, group_col)]))
-    p_legend <- p +
-      geom_point(data = centroid, aes(x = x, y = y, color = .data[[group_col]]),
-                size = 0, show.legend = TRUE) +
-      guides(color = guide_legend(override.aes = list(size = 6), nrow = legend_rows)) +
-      theme(
-        legend.position = "bottom",
-        legend.title = element_blank(),
-        legend.text = element_markdown(size = 12)
-      )
+    # print(head(centroids[, c(pc_first, pc_second, group_col)]))
+    # p_legend <- p +
+    #   geom_point(data = centroid, aes(x = x, y = y, color = .data[[group_col]]),
+    #             size = 0, show.legend = TRUE) +
+    #   guides(color = guide_legend(override.aes = list(size = 6), nrow = legend_rows)) +
+    #   theme(
+    #     legend.position = "bottom",
+    #     legend.title = element_blank(),
+    #     legend.text = element_markdown(size = 12)
+    #   )
 
-    # Force ggplot to build and extract the legend
-    built <- ggplot_build(p_legend)
-    p_grob <- ggplot_gtable(built)
-    legend <- cowplot::get_legend(p_legend)
+    # # Force ggplot to build and extract the legend
+    # built <- ggplot_build(p_legend)
+    # p_grob <- ggplot_gtable(built)
+    legend <- cowplot::get_legend(p)
 
     # Debug info
     print("Legend grob structure:")
