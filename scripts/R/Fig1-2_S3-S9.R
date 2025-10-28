@@ -169,7 +169,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     summarise(x = mean(.data[[pc_first]], na.rm = TRUE),
               y = mean(.data[[pc_second]], na.rm = TRUE),
               Color = first(Color),
-              link = dplyr::if_else(color_by == "species", first(link), NA_character_),
+              link = if (color_by == "species") first(link) else NA_character_,
               .groups = "drop")
   
   # PCA scatter plot with centroids and ellipses
