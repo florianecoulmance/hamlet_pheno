@@ -88,6 +88,17 @@ add_species_logos <- function(color_file, logos_p) {
 
 
 # ============================================================
+# Function to get legend ffrom a plot
+# ============================================================
+get_legend <- function(my_plot) {
+  tmp <- ggplotGrob(my_plot + theme(legend.position = "bottom")) # make sure it has a legend
+  leg <- gtable::gtable_filter(tmp, "guide-box")
+  if (length(leg) == 0) return(NULL)
+  leg
+}
+
+
+# ============================================================
 # Function: write_metadata_gxp
 # Purpose : Prepare metadata table for downstream analyses
 # Input   :
@@ -182,7 +193,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     scale_color_manual(values = color_map, labels = label_map) +
     theme_minimal() +
     theme(
-      legend.position = ifelse(extract_legend, "right", "none"),
+      legend.position = ifelse(extract_legend, "bottom", "none"),
       legend.title = element_blank(),
       legend.text = element_markdown(size = 15),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
