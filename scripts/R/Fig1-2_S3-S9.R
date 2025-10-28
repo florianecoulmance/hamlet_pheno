@@ -6,32 +6,6 @@
 # Clear the work space
 rm(list = ls())
 
-# Load needed library
-# library(magick)
-# library(vegan)
-# library(factoextra)
-# library(reshape2)
-# library(pairwiseAdonis)
-# library(ggrepel)
-# library(stringr)
-# library(tidyverse)
-# library(ggimage)
-# library(ggtext)
-# library(ggplot2)
-# library(scales)
-# library(ggnewscale)
-# library(ggpubr)
-# library(cluster)    # clustering algorithms
-# library(dendextend)
-# library(hypoimg)
-# library(ggtree)
-# library(ggtreeExtra)
-# library(grid)
-# library(png)
-# library(ape)
-# library(dplyr)
-
-
 
 # new libraries
 library(ggplot2)
@@ -234,7 +208,6 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     stat_ellipse(aes(color = .data[[group_col]]), linetype = 5, lwd = 1) +
     geom_point(data = centroids, aes(x = x, y = y, color = .data[[group_col]]), size = 15, alpha = 0) +
     # geom_image(data = centroids, aes(x = x, y = y, image = link), vjust=1, hjust=0, size = 0.15, asp = 1.1, alpha=1) +
-    add_logos +
     scale_color_manual(values = color_map, labels = label_map) +
     theme_minimal() +
     theme(
@@ -252,7 +225,12 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       y = paste0(pc_second,", variance = ", format(round(var$X0[as.numeric(str_sub(pc_second, 3, -1))] * 100, 1), nsmall = 1), " %")
     ) +
     guides(color = guide_legend(nrow = legend_rows))
+
+  leg <- get_legend(p)
+  print(class(leg))
   
+  p <- p + add_logos
+
 
   # -----------------------------
   # 6. Add title (per location or per species)
@@ -804,21 +782,13 @@ print(keep_names)
 # df_all <- do.call(rbind, lapply(results[!names(results) %in% c("all", "pue", "nig", "uni", "chl", "abe", "ind")], function(x) x$data))
 # var_all <- do.call(rbind, lapply(results[!names(results) %in% c("all", "pue", "nig", "uni", "chl", "abe", "ind")], function(x) x$variance))
 
-# Make a dummy plot to extract legend
-# p_dummy <- pca_plot(df_all, "PC1", "PC2", species_info, geo_table, var_all, color_by = "species", extract_legend = TRUE)
-# print(class(p_dummy))
-# Extract combined legend
-# print(head(results[["all"]][["data"]]))
-# combined_legend <- pca_plot(results[["all"]][["data"]], "PC1", "PC2", species_info, geo_table, results[["all"]][["variance"]], color_by = "species", extract_legend = TRUE)
-# print(combined_legend)
-# leg_combined <- exc_legend(results[["all"]][["data"]], species_info)
-plot <- pca_plot(results[["all"]][["data"]], "PC1", "PC2", species_info, geo_table, results[["all"]][["variance"]], color_by = "species", extract_legend = TRUE)
-print("Plot for all pheno: ")
-print(class(plot))
-leg_combined <- get_legend(plot)
-print("Legend for all : ")
-print(leg_combined)
-print(class(leg_combined))
+# plot <- pca_plot(results[["all"]][["data"]], "PC1", "PC2", species_info, geo_table, results[["all"]][["variance"]], color_by = "species", extract_legend = TRUE)
+# print("Plot for all pheno: ")
+# print(class(plot))
+# leg_combined <- get_legend(plot)
+# print("Legend for all : ")
+# print(leg_combined)
+# print(class(leg_combined))
 
 ########## FIGURE 1 ###################
 # PCA plots for all locations with legend
