@@ -241,6 +241,10 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     }
   }
   
+  # Add title using ggplot2 only
+  if (title_val != "") {
+    p <- p + ggtitle(title_val)
+  }
   # -----------------------------
   # 7. Return plot or legend
   # -----------------------------
