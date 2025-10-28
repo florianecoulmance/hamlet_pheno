@@ -819,7 +819,7 @@ print(class(leg_combined))
 all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
 pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figure1 <- plot_grid(pca_grid, combined_legend, ncol = 1, rel_heights = c(1, 0.15)) # adjust if legend is too big/small
+figure1 <- plot_grid(pca_grid, leg_combined, ncol = 1, rel_heights = c(1, 0.15)) # adjust if legend is too big/small
 
 # Save Figure 1 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
@@ -865,7 +865,7 @@ ggsave(
 all_sup <- lapply(results_no_overall, `[[`, "sup_pca") # extract per location supplementary pcas
 sup_grid <- plot_grid(plotlist = all_sup, ncol = 2) # bundle location pcas in one plot
 # Combine supplementary PCA grid with legend at the bottom
-figureS4 <- plot_grid(sup_grid, combined_legend, ncol = 1, rel_heights = c(1, 0.15)) # adjust if legend is too big/small
+figureS4 <- plot_grid(sup_grid, leg_combined, ncol = 1, rel_heights = c(1, 0.15)) # adjust if legend is too big/small
 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
@@ -897,7 +897,7 @@ ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
 all_hier <- lapply(results_no_overall, `[[`, "hclust") # extract per location pcas
 hier_grid <- plot_grid(plotlist = all_hier, ncol = 2) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figureS6 <- plot_grid(hier_grid, combined_legend, ncol = 1, rel_heights = c(1, 0.15)) # adjust if legend is too big/small
+figureS6 <- plot_grid(hier_grid, leg_combined, ncol = 1, rel_heights = c(1, 0.15)) # adjust if legend is too big/small
 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
