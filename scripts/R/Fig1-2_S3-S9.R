@@ -186,29 +186,29 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
               link = if (color_by == "species") first(link) else NA_character_,
               .groups = "drop")
 
-  # -----------------------------
-  # 4. Build legend-only plot if requested
-  # -----------------------------
-  if (extract_legend) {
-    dummy_plot <- ggplot(plot_data, aes(x = .data[[pc_first]], y = .data[[pc_second]], color = spec)) +
-      geom_point(size = 5, alpha = 0.5) + # dummy points
-      scale_color_manual(values = color_map, labels = label_map) +
-      theme_void() +
-      theme(
-        legend.position = "bottom",
-        legend.title = element_blank(),
-        legend.text = element_markdown(size = 12)
-      ) +
-      guides(color = guide_legend(nrow = legend_rows))
+  # # -----------------------------
+  # # 4. Build legend-only plot if requested
+  # # -----------------------------
+  # if (extract_legend) {
+  #   dummy_plot <- ggplot(plot_data, aes(x = .data[[pc_first]], y = .data[[pc_second]], color = spec)) +
+  #     geom_point(size = 5, alpha = 0.5) + # dummy points
+  #     scale_color_manual(values = color_map, labels = label_map) +
+  #     theme_void() +
+  #     theme(
+  #       legend.position = "bottom",
+  #       legend.title = element_blank(),
+  #       legend.text = element_markdown(size = 12)
+  #     ) +
+  #     guides(color = guide_legend(nrow = legend_rows))
 
     
-    legend <- get_legend(dummy_plot)
-    print("The dummy plot is: ")
-    print(class(dummy_plot))
-    print("The legend is: ")
-    print(class(legend))
-    return(legend)
-  }
+  #   legend <- get_legend(dummy_plot)
+  #   print("The dummy plot is: ")
+  #   print(class(dummy_plot))
+  #   print("The legend is: ")
+  #   print(class(legend))
+  #   return(legend)
+  # }
   
   # -----------------------------
   # 5. Build the actual PCA plot
@@ -221,7 +221,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     scale_color_manual(values = color_map, labels = label_map) +
     theme_minimal() +
     theme(
-      legend.position = "none",
+      legend.position = ifelse(extract_legend, "bottom", "none"),
       legend.text = element_markdown(size = 10),
       panel.background = element_blank(),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
@@ -233,7 +233,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     labs(
       x = paste0(pc_first,", variance =  ", format(round(var$X0[as.numeric(str_sub(pc_first, 3, -1))] * 100, 1), nsmall = 1), " %"),
       y = paste0(pc_second,", variance = ", format(round(var$X0[as.numeric(str_sub(pc_second, 3, -1))] * 100, 1), nsmall = 1), " %")
-    )
+    ) +
+    guides(color = guide_legend(nrow = legend_rows))
   
   # -----------------------------
   # 6. Add species logos if applicable
@@ -745,8 +746,8 @@ for(dat in names(dataset)) {
   #-----------------------------------
   # PCA plot
   #-----------------------------------
-  p_pca <- pca_plot(pc_table, pcs[1], pcs[2], species_info, geo_table, var, color_by = color, extract_legend = FALSE)
-  s_pca <- pca_plot(pc_table, pcs[3], pcs[4], species_info, geo_table, var, color_by = color, extract_legend = FALSE)
+  p_pca <- pca_plot(pc_table, pcs[1], pcs[2], species_info, geo_table, var, color_by = color, extract_legend = (dat == "all"))
+  s_pca <- pca_plot(pc_table, pcs[3], pcs[4], species_info, geo_table, var, color_by = color, extract_legend = (dat == "all"))
 
   #-----------------------------------
   # VAR plot
@@ -803,9 +804,15 @@ print(keep_names)
 # p_dummy <- pca_plot(df_all, "PC1", "PC2", species_info, geo_table, var_all, color_by = "species", extract_legend = TRUE)
 # print(class(p_dummy))
 # Extract combined legend
-print(head(results[["all"]][["data"]]))
-combined_legend <- pca_plot(results[["all"]][["data"]], "PC1", "PC2", species_info, geo_table, results[["all"]][["variance"]], color_by = "species", extract_legend = TRUE)
-print(combined_legend)
+# print(head(results[["all"]][["data"]]))
+# combined_legend <- pca_plot(results[["all"]][["data"]], "PC1", "PC2", species_info, geo_table, results[["all"]][["variance"]], color_by = "species", extract_legend = TRUE)
+# print(combined_legend)
+leg_combined <- get_legend(results[["all"]][["pca"]])
+print("Plot for all pheno: ")
+print(class(results[["all"]][["pca"]]))
+print("Legend for all : ")
+print(leg_combined)
+print(class(leg_combined))
 
 ########## FIGURE 1 ###################
 # PCA plots for all locations with legend
