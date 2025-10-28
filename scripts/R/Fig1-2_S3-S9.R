@@ -167,6 +167,9 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     color_map <- setNames(info_table$Color, info_table$geo)
     label_map <- setNames(info_table$Locations, info_table$geo)
   }
+  print(color_map)
+  print(label_map)
+
   
   # print(head(pca_data))
   # -----------------------------
@@ -212,6 +215,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     theme_minimal() +
     theme(
       legend.position = if (extract_legend) "bottom" else "none",
+      legend.box = "horizontal",
       legend.text = element_markdown(size = 5),
       panel.background = element_blank(),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
@@ -226,10 +230,15 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     ) +
     guides(color = guide_legend(nrow = legend_rows))
 
-  leg <- get_legend(p)
-  print(class(leg))
+  print(class(p))
+  if(extract_legend){
+    leg <- cowplot::get_legend(p)
+    print(class(leg))
+  }
+
   
-  p <- p + add_logos
+  if(!is.null(add_logos)) p <- p + add_logos
+  print(class(p))
 
 
   # -----------------------------
@@ -421,8 +430,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
 #   - Uses the first 15 PCs, scaled
 #   - Distance: Euclidean; Clustering: Ward.D
 # ============================================================
-hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by = "species", extract_legend = FALSE, legend_rows = 2) 
-{
+hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by = "species", extract_legend = FALSE, legend_rows = 2) {
 
   # -----------------------------
   # 1. Load PCA data
