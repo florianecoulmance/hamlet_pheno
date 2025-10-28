@@ -82,12 +82,12 @@ exc_legend <- function(pca_file, species_col, num_row = 2) {
         "<img src='{link}' width='110' /><br>*{Species}*"
       )
     ) %>%
-    { setNames(.$html, .$code) }
+    { setNames(.$html, .$spec) }
 
   # Inspect the result
   print(logos_spec)
 
-  spec_colors <- setNames(species_col$color, species_col$code)
+  spec_colors <- setNames(species_col$Color, species_col$spec)
   print(spec_colors)
 
   # PC1 vs. PC2
