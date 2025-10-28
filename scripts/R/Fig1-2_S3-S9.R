@@ -82,7 +82,7 @@ exc_legend <- function(pca_file, species_col, num_row = 2) {
         "<img src='{link}' width='110' /><br>*H. {Species}*"
       )
     ) %>%
-    { setNames(.$html, .$spec) }
+    setNames(.$html, .$spec)
 
   # Inspect the result
   print(logos_spec)
@@ -184,7 +184,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     info_table <- species_info
     color_map <- setNames(info_table$Color, info_table$spec)
     label_map <- setNames(
-      paste0("<img src='", info_table$link, "' width='100' /><br>*", info_table$Species, "*"),
+      paste0("<img src='", info_table$link, "' width='120' /><br>*", info_table$Species, "*"),
       info_table$spec)
   } else {
     group_col <- "geo"
