@@ -185,18 +185,39 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
               Color = first(Color),
               link = if (color_by == "species") first(link) else NA_character_,
               .groups = "drop")
+
+    # -----------------------------
+  # 4. Build legend-only plot if requested
+  # -----------------------------
+  if (extract_legend) {
+    dummy_plot <- ggplot(plot_data, aes(color = .data[[group_col]])) +
+      geom_point(aes(x = 0, y = 0), size = 5) + # dummy points
+      scale_color_manual(values = color_map, labels = label_map) +
+      theme_minimal() +
+      theme(
+        legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.text = element_markdown(size = 12)
+      ) +
+      guides(color = guide_legend(nrow = legend_rows))
+    
+    legend <- cowplot::get_legend(dummy_plot)
+    print(legend)
+    return(legend)
+  }
   
-  # PCA scatter plot with centroids and ellipses
+  # -----------------------------
+  # 5. Build the actual PCA plot
+  # -----------------------------
   p <- ggplot(plot_data, aes(x = .data[[pc_first]], y = .data[[pc_second]], color = .data[[group_col]])) +
     geom_point(size = 5, alpha = 0.5) +
     stat_ellipse(aes(color = .data[[group_col]]), linetype = 5, lwd = 1) +
     # geom_point(data = centroids, aes(x = x, y = y, color = .data[[group_col]]), size = 15, alpha = 0, show.legend = FALSE) +
     # geom_image(data = centroids, aes(x = x, y = y, image = link), vjust=1, hjust=0, size = 0.15, asp = 1.1, alpha=1) +
-    scale_color_manual(values = color_map, labels = label_map, guide = "legend") +
+    scale_color_manual(values = color_map, labels = label_map) +
     theme_minimal() +
     theme(
-      legend.position = ifelse(extract_legend, "bottom", "none"),
-      legend.title = element_blank(),
+      legend.position = "none",
       legend.text = element_markdown(size = 10),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
       axis.text = element_text(size = 8),
@@ -208,10 +229,9 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       x = paste0(pc_first,", variance =  ", format(round(var$X0[as.numeric(str_sub(pc_first, 3, -1))] * 100, 1), nsmall = 1), " %"),
       y = paste0(pc_second,", variance = ", format(round(var$X0[as.numeric(str_sub(pc_second, 3, -1))] * 100, 1), nsmall = 1), " %")
     ) +
-    guides(color = guide_legend(nrow = legend_rows))
   
   # -----------------------------
-  # 5. Add species logos (if applicable)
+  # 6. Add species logos if applicable
   # -----------------------------
   if (color_by == "species" && "link" %in% names(centroids)) {
     p <- p +
@@ -219,12 +239,13 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
         data = centroids,
         aes(x = x, y = y, image = link),
         inherit.aes = FALSE,
+        show.legend = FALSE,
         vjust = 1, hjust = 0, size = 0.1, asp = 1.1, alpha = 1
       )
   }
 
   # -----------------------------
-  # 6. Add title (per location or per species)
+  # 7. Add title (per location or per species)
   # -----------------------------
   # ---- Get title depending on color_by mode ----
   title_val <- NULL
@@ -243,37 +264,15 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   }
 
   # -----------------------------
-  # 7. Return plot or legend
+  # 7. Return plot
   # -----------------------------
-  if (extract_legend) {
-    dummy_legend_plot <- ggplot(plot_data, aes(x = 0, y = 0, color = .data[[group_col]])) +
-      geom_point(size = 5) +
-      scale_color_manual(values = color_map, labels = label_map) +
-      theme_minimal() +
-      theme(
-        legend.position = "bottom",
-        legend.title = element_blank(),
-        legend.text = element_markdown(size = 12)
-      ) +
-      guides(color = guide_legend(nrow = legend_rows))
-
-    legend <- cowplot::get_legend(dummy_legend_plot)
-
-    # Debug info
-    print("Legend grob structure:")
-    print(legend)
-
-    return(legend)
-  } else {
-    # ---- Annotate with location title ----
-    p_annot <- annotate_figure(
-      p,
-      top = text_grob(title_val, color = "black", face = "bold", size = 15,
+  p_annot <- annotate_figure(
+    p,
+    top = text_grob(title_val, color = "black", face = "bold", size = 15,
                       x = unit(5.5, "pt"), hjust = 0)
-    )
+  )
     
-    return(p_annot)
-  }
+  return(p_annot)
 
 }
 
