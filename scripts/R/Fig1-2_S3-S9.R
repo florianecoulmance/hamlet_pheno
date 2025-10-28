@@ -155,7 +155,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     label_map <- setNames(info_table$Locations, info_table$geo)
   }
   
-  head(pca_data)
+  print(head(pca_data))
   # -----------------------------
   # 2. Merge PCA data with info
   # -----------------------------
