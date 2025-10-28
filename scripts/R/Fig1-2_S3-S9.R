@@ -245,9 +245,28 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # 7. Return plot or legend
   # -----------------------------
   if (extract_legend) {
-    ggplot_build(p)  # ensure legend is built
-    p_legend <- cowplot::get_legend(p)
-    return(p_legend)
+  # Ensure a visible color legend is built (dummy invisible points)
+    p_legend <- p +
+      geom_point(aes(x = 0, y = 0, color = .data[[group_col]]),
+                data = unique(plot_data[, group_col, drop = FALSE]),
+                size = 0, show.legend = TRUE) +
+      guides(color = guide_legend(override.aes = list(size = 6), nrow = legend_rows)) +
+      theme(
+        legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.text = element_markdown(size = 12)
+      )
+
+    # Force ggplot to build and extract the legend
+    built <- ggplot_build(p_legend)
+    p_grob <- ggplot_gtable(built)
+    legend <- cowplot::get_legend(p_legend)
+
+    # Debug info
+    print("Legend grob structure:")
+    print(legend)
+
+    return(legend)
   } else {
     # ---- Annotate with location title ----
     p_annot <- annotate_figure(
