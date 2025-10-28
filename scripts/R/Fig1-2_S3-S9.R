@@ -432,7 +432,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   tree <- ggtree(hc)$data %>%
     mutate(
       spec = if_else(isTip, str_sub(label, -6, -4), "ungrouped"),
-      loc  = if_else(isTip, str_sub(label, -3, -1), "ungrouped")
+      geo  = if_else(isTip, str_sub(label, -3, -1), "ungrouped")
     )
   
   # Adjust positions for aesthetics
