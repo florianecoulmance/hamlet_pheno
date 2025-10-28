@@ -87,7 +87,7 @@ exc_legend <- function(pca_file, species_col, num_row = 2) {
   # Inspect the result
   print(logos_spec)
 
-  spec_colors <- setNames(species_colors$color, species_colors$code)
+  spec_colors <- setNames(species_col$color, species_col$code)
   print(spec_colors)
 
   # PC1 vs. PC2
