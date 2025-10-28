@@ -805,8 +805,8 @@ ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
 ########## FIGURE 2 ###################
 # Combined phenotypic space with legend
 figure2 <- results[["all"]][["pca"]]
-print(dim(results[["all"]][["variance_plot"]]))
-print(head(results[["all"]][["variance_plot"]]))
+print(dim(results[["all"]][["data"]]))
+print(head(results[["all"]][["data"]]))
 ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
