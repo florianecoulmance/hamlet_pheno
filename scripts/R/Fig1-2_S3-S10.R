@@ -808,8 +808,8 @@ figure1 <- ggarrange(pca_grid, labels=c('(a)','(b)','(c)','(d)','(e)','(f)'), co
 # Save Figure 1 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
   plot = figure1,
-  width = 8.27,    # A4 width in inches
-  height = 11.69,  # A4 height in inches
+  width = 18.5,    # A4 width in inches
+  height = 25.5,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -824,8 +824,8 @@ print(head(results[["all"]][["pca"]]))
 ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
-  width = 8.27, 
-  height = 11.69, 
+  width = 18.5, 
+  height = 25, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -854,8 +854,8 @@ figureS4 <- ggarrange(sup_grid, labels=c('(a)','(b)','(c)','(d)','(e)','(f)'), c
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
   plot = figureS4,
-  width = 8.27,    # A4 width in inches
-  height = 11.69,  # A4 height in inches
+  width = 14.2,    # A4 width in inches
+  height = 17,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -869,8 +869,8 @@ figureS5 <- plot_grid(plotlist = all_perm, ncol = 2) # bundle location pcas in o
 # Save Figure S3 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
        plot = figureS5,
-       width = 8.27,    # A4 width in inches
-       height = 11.69,  # A4 height in inches
+       width = 14.2,    # A4 width in inches
+       height = 17,  # A4 height in inches
        units = "in",
        dpi = 150,       # good quality but light (~1 MB)
        type = "cairo-png" # smoother text rendering, smaller file
@@ -886,8 +886,8 @@ figureS6 <- ggarrange(hier_grid, labels=c('(a)','(b)','(c)','(d)','(e)','(f)'), 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
        plot = figureS6,
-       width = 8.27,    # A4 width in inches
-       height = 11.69,  # A4 height in inches
+       width = 14.2,    # A4 width in inches
+       height = 17,  # A4 height in inches
        units = "in",
        dpi = 150,       # good quality but light (~1 MB)
        type = "cairo-png" # smoother text rendering, smaller file
@@ -901,8 +901,8 @@ figureS7 <- plot_grid(plotlist = all_heat, ncol = 2) # bundle location pcas in o
 # Save Figure S5 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS7_pLocHEAT.png"),
        plot = figureS7,
-       width = 8.27,    # A4 width in inches
-       height = 11.69,  # A4 height in inches
+       width = 14.2,    # A4 width in inches
+       height = 17,  # A4 height in inches
        units = "in",
        dpi = 150,       # good quality but light (~1 MB)
        type = "cairo-png" # smoother text rendering, smaller file
@@ -924,8 +924,8 @@ figureS8 <- plot_grid(perm, bottom_row, nrow = 2, ncol = 1, rel_heights = c(1, 0
 ggsave(
   filename = file.path(figure_path, "FigS8_pAll.png"),
   plot = figureS8,
-  width = 8.27,    # A4 width in inches
-  height = 11.69,  # A4 height in inches
+  width = 14.2,    # A4 width in inches
+  height = 17,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -939,8 +939,8 @@ figureS9 <- results[["all"]][["sup_pca"]]
 ggsave(
   filename = file.path(figure_path, "FigS9_pAllSUP.png"),
   plot = figureS9,
-  width = 8.27,    # A4 width in inches
-  height = 11.69,  # A4 height in inches
+  width = 14.2,    # A4 width in inches
+  height = 17,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -990,8 +990,8 @@ figureS10 <- plot_grid(pue, nig, uni, chl, abe, ind, nrow = 6, rel_heights = c(1
 ggsave(
   filename = file.path(figure_path, "FigS10_pSpe.png"),
   plot = figureS9,
-  width = 8.27,    # A4 width in inches
-  height = 11.69,  # A4 height in inches
+  width = 18.5,    # A4 width in inches
+  height = 25.5,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
