@@ -798,8 +798,7 @@ ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
   height = 11.69,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
-  type = "cairo-png", # smoother text rendering, smaller file
-  compression = "lzw" # optional, reduces size a bit more
+  type = "cairo-png" # smoother text rendering, smaller file
 )
 
 
@@ -813,8 +812,7 @@ ggsave(
   height = 5.22, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
-  type = "cairo-png", # better compression and anti-aliasing
-  compression = "lzw"
+  type = "cairo-png" # better compression and anti-aliasing
 )
 
 ########## FIGURE S3 ###################
@@ -827,8 +825,7 @@ ggsave(
   height = 5.22, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
-  type = "cairo-png", # better compression and anti-aliasing
-  compression = "lzw"
+  type = "cairo-png" # better compression and anti-aliasing
 )
 
 ########## FIGURE S4 ###################
@@ -845,8 +842,7 @@ ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
   height = 11.69,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
-  type = "cairo-png", # smoother text rendering, smaller file
-  compression = "lzw" # optional, reduces size a bit more
+  type = "cairo-png" # smoother text rendering, smaller file
 )
 
 ########## FIGURE S5 ###################
@@ -861,8 +857,7 @@ ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
        height = 11.69,  # A4 height in inches
        units = "in",
        dpi = 150,       # good quality but light (~1 MB)
-       type = "cairo-png", # smoother text rendering, smaller file
-       compression = "lzw" # optional, reduces size a bit more
+       type = "cairo-png" # smoother text rendering, smaller file
 )
 
 ########## FIGURE S6 ###################
@@ -879,8 +874,7 @@ ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
        height = 11.69,  # A4 height in inches
        units = "in",
        dpi = 150,       # good quality but light (~1 MB)
-       type = "cairo-png", # smoother text rendering, smaller file
-       compression = "lzw" # optional, reduces size a bit more
+       type = "cairo-png" # smoother text rendering, smaller file
 )
 
 ########## FIGURE S7 ###################
@@ -895,8 +889,7 @@ ggsave(filename = file.path(figure_path, "FigS7_pLocHEAT.png"),
        height = 11.69,  # A4 height in inches
        units = "in",
        dpi = 150,       # good quality but light (~1 MB)
-       type = "cairo-png", # smoother text rendering, smaller file
-       compression = "lzw" # optional, reduces size a bit more
+       type = "cairo-png" # smoother text rendering, smaller file
 )
 
 ########## FIGURE S8 ###################
@@ -920,8 +913,7 @@ ggsave(
   height = 11.69,  # A4 height in inches
   units = "in",
   dpi = 150,
-  type = "cairo-png",
-  compression = "lzw"
+  type = "cairo-png"
 )
 
 ########## FIGURE S9 ###################
@@ -972,6 +964,5 @@ ggsave(
   height = 11.69,  # A4 height in inches
   units = "in",
   dpi = 150,
-  type = "cairo-png",
-  compression = "lzw"
+  type = "cairo-png"
 )
