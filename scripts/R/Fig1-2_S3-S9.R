@@ -209,9 +209,9 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     
     legend <- cowplot::get_legend(dummy_plot)
     print("The dummy plot is: ")
-    print(dummy_plot)
+    print(class(dummy_plot))
     print("The legend is: ")
-    print(legend)
+    print(class(legend))
     return(legend)
   }
   
