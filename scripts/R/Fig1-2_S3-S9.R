@@ -190,27 +190,19 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # 4. Build legend-only plot if requested
   # -----------------------------
   if (extract_legend) {
-    present_groups <- unique(plot_data[[group_col]])
-      # Create a dummy dataset with one row per present species
-    dummy_data <- data.frame(
-      group = present_groups,
-      x = 1:length(present_groups),  # dummy x
-      y = 1                          # dummy y
-    )
-
-    dummy_plot <- ggplot(dummy_data, aes(x = x, y = y, color = group)) +
-      geom_point(size = 5) + # dummy points
-      scale_color_manual(values = color_map[present_groups], labels = label_map[present_groups]) +
+    dummy_plot <- ggplot(plot_data, aes(x = .data[[pc_first]], y = .data[[pc_second]], color = spec)) +
+      geom_point(size = 5, alpha = 0.5) + # dummy points
+      scale_color_manual(values = color_map, labels = label_map) +
       theme_void() +
       theme(
         legend.position = "bottom",
         legend.title = element_blank(),
         legend.text = element_markdown(size = 12)
       ) +
-      guides(color = guide_legend(nrow = legend_rows, override.aes = list(size = 6)))
+      guides(color = guide_legend(nrow = legend_rows))
 
     
-    legend <- cowplot::get_legend(dummy_plot)
+    legend <- get_legend(dummy_plot)
     print("The dummy plot is: ")
     print(class(dummy_plot))
     print("The legend is: ")
