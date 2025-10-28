@@ -185,7 +185,6 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
               Color = first(Color),
               link = if (color_by == "species") first(link) else NA_character_,
               .groups = "drop")
-  print(centroids$link)
   
   # PCA scatter plot with centroids and ellipses
   p <- ggplot(plot_data, aes(x = .data[[pc_first]], y = .data[[pc_second]], color = .data[[group_col]])) +
@@ -198,10 +197,10 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     theme(
       legend.position = ifelse(extract_legend, "bottom", "none"),
       legend.title = element_blank(),
-      legend.text = element_markdown(size = 15),
+      legend.text = element_markdown(size = 10),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
       axis.text = element_text(size = 8),
-      axis.title = element_text(size = 10)
+      axis.title = element_text(size = 15)
     ) +
     scale_x_continuous(position = "bottom",labels = unit_format(unit = "k", scale = 1e-3)) +
     scale_y_continuous(labels = unit_format(unit = "k", scale = 1e-3)) +
@@ -213,7 +212,6 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   # 5. Add species logos (if applicable)
   # -----------------------------
-  print(names(centroids))
   if (color_by == "species" && "link" %in% names(centroids)) {
     p <- p +
       geom_image(
@@ -248,7 +246,11 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   if (extract_legend) {
     p_legend <- p +
-      theme(legend.position = "bottom") +
+      theme(
+        legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.text = element_markdown(size = 15)
+      ) +
       guides(color = guide_legend(nrow = legend_rows))
     legend <- get_legend(p_legend)
     return(legend)
