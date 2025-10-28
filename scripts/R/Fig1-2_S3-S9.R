@@ -222,7 +222,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
         vjust = 1, hjust = 0, size = 0.1, asp = 1.1, alpha = 1
       )
   } else {
-    add_logos <- ""
+    add_logos <- NULL
   }
   print(add_logos)
 
