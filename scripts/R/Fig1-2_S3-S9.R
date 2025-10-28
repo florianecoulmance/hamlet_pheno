@@ -174,7 +174,7 @@ write_metadata_gxp <- function(PCs) {
 #   - If extract_legend = TRUE : a legend grob for combined plotting.
 # ============================================================
 pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var, color_by = "species", extract_legend = FALSE, legend_rows = 2) {
-
+  print(extract_legend)
   # -----------------------------
   # 1. Choose color/grouping mode
   # -----------------------------
@@ -212,6 +212,20 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
               link = if (color_by == "species") first(link) else NA_character_,
               .groups = "drop")
 
+    # -----------------------------
+  # 5. Add species logos if applicable
+  # -----------------------------
+  if (color_by == "species" && "link" %in% names(centroids)) {
+    add_logos <- geom_image(
+        data = centroids,
+        aes(x = x, y = y, image = link),
+        vjust = 1, hjust = 0, size = 0.1, asp = 1.1, alpha = 1
+      )
+  } else {
+    add_logos <- ""
+  }
+  print(add_logos)
+
   # -----------------------------
   # 4. Build the actual PCA plot
   # -----------------------------
@@ -220,10 +234,11 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     stat_ellipse(aes(color = .data[[group_col]]), linetype = 5, lwd = 1) +
     # geom_point(data = centroids, aes(x = x, y = y, color = .data[[group_col]]), size = 15, alpha = 0, show.legend = FALSE) +
     # geom_image(data = centroids, aes(x = x, y = y, image = link), vjust=1, hjust=0, size = 0.15, asp = 1.1, alpha=1) +
+    add_logos +
     scale_color_manual(values = color_map, labels = label_map) +
     theme_minimal() +
     theme(
-      legend.position = "none",
+      legend.position = if (extract_legend) "bottom" else "none",
       legend.text = element_markdown(size = 5),
       panel.background = element_blank(),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
@@ -238,19 +253,6 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     ) +
     guides(color = guide_legend(nrow = legend_rows))
   
-  # -----------------------------
-  # 5. Add species logos if applicable
-  # -----------------------------
-  if (color_by == "species" && "link" %in% names(centroids)) {
-    p <- p +
-      geom_image(
-        data = centroids,
-        aes(x = x, y = y, image = link),
-        inherit.aes = FALSE,
-        show.legend = FALSE,
-        vjust = 1, hjust = 0, size = 0.1, asp = 1.1, alpha = 1
-      )
-  }
 
   # -----------------------------
   # 6. Add title (per location or per species)
@@ -810,9 +812,10 @@ print(keep_names)
 # combined_legend <- pca_plot(results[["all"]][["data"]], "PC1", "PC2", species_info, geo_table, results[["all"]][["variance"]], color_by = "species", extract_legend = TRUE)
 # print(combined_legend)
 # leg_combined <- exc_legend(results[["all"]][["data"]], species_info)
-leg_combined <- get_plot_component(results[["all"]][["pca"]] + theme(legend.position = "bottom") + guides(color = guide_legend(nrow = 2)), "guide-box", return_all = TRUE)
-# print("Plot for all pheno: ")
-# print(class(results[["all"]][["pca"]]))
+plot <- pca_plot(results[["all"]][["data"]], "PC1", "PC2", species_info, geo_table, results[["all"]][["variance"]], color_by = "species", extract_legend = TRUE)
+print("Plot for all pheno: ")
+print(class(plot))
+leg_combined <- get_legend(plot)
 print("Legend for all : ")
 print(leg_combined)
 print(class(leg_combined))
@@ -822,7 +825,7 @@ print(class(leg_combined))
 all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
 pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figure1 <- plot_grid(pca_grid, leg_combined, ncol = 1, rel_heights = c(1, 0.15)) # adjust if legend is too big/small
+figure1 <- plot_grid(pca_grid, leg_combined, ncol = 1, rel_heights = c(1.8, 0.2)) # adjust if legend is too big/small
 
 # Save Figure 1 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
