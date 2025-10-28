@@ -768,6 +768,8 @@ for(dat in names(dataset)) {
 
 # Remove the overall entry before extracting plots
 results_no_overall <- results[!names(results) %in% c("lab_571_left_noflash", "lab_pue187_left_noflash", "lab_nig111_left_noflash", "lab_uni74_left_noflash", "lab_chl34_left_noflash", "lab_abe30_left_noflash", "lab_ind28_left_noflash")]
+keep_names <- names(results_no_overall)
+print(keep_names)
 
 # Combine all data for legend
 df_all <- do.call(rbind, lapply(results[!names(results) %in% c("lab_571_left_noflash", "lab_pue187_left_noflash", "lab_nig111_left_noflash", "lab_uni74_left_noflash", "lab_chl34_left_noflash", "lab_abe30_left_noflash", "lab_ind28_left_noflash")], function(x) x$data))
