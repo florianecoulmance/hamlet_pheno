@@ -79,7 +79,7 @@ exc_legend <- function(pca_file, species_col, num_row = 2) {
   logos_spec <- species_col %>%
     mutate(
       html = glue(
-        "<img src='{link}' width='110' /><br>*{Species}*"
+        "<img src='{link}' width='110' /><br>*H. {Species}*"
       )
     ) %>%
     { setNames(.$html, .$spec) }
@@ -121,17 +121,6 @@ add_species_logos <- function(color_file, logos_p) {
   # Return species color table with links to logo
   return(species_info)
 }
-
-
-# ============================================================
-# Function to get legend ffrom a plot
-# ============================================================
-# get_legend <- function(my_plot) {
-#   tmp <- ggplotGrob(my_plot + theme(legend.position = "bottom")) # make sure it has a legend
-#   leg <- gtable::gtable_filter(tmp, "guide-box")
-#   if (length(leg) == 0) return(NULL)
-#   leg
-# }
 
 
 # ============================================================
