@@ -228,7 +228,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     labs(
       x = paste0(pc_first,", variance =  ", format(round(var$X0[as.numeric(str_sub(pc_first, 3, -1))] * 100, 1), nsmall = 1), " %"),
       y = paste0(pc_second,", variance = ", format(round(var$X0[as.numeric(str_sub(pc_second, 3, -1))] * 100, 1), nsmall = 1), " %")
-    ) +
+    )
   
   # -----------------------------
   # 6. Add species logos if applicable
