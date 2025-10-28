@@ -207,7 +207,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     labs(
       x = paste0(pc_first,", variance =  ", format(round(var$X0[as.numeric(str_sub(pc_first, 3, -1))] * 100, 1), nsmall = 1), " %"),
       y = paste0(pc_second,", variance = ", format(round(var$X0[as.numeric(str_sub(pc_second, 3, -1))] * 100, 1), nsmall = 1), " %")
-    )
+    ) +
+    guides(color = guide_legend(nrow = legend_rows))
   
   # -----------------------------
   # 5. Add species logos (if applicable)
@@ -248,7 +249,6 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # Ensure a visible color legend is built (dummy invisible points)
     print(unique(centroids[[group_col]]))
     print(color_map)
-    # print(head(centroids[, c(pc_first, pc_second, group_col)]))
     # p_legend <- p +
     #   geom_point(data = centroid, aes(x = x, y = y, color = .data[[group_col]]),
     #             size = 0, show.legend = TRUE) +
