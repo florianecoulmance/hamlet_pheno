@@ -197,7 +197,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
         data = centroids,
         aes(x = x, y = y, image = link),
         inherit.aes=FALSE,
-        vjust = 1, hjust = 0, size = 0.15, asp = 1.1, alpha = 1
+        vjust = 1, hjust = 0, size = 0.12, asp = 1.1, alpha = 1
       )
   } else {
     add_logos <- NULL
@@ -217,11 +217,11 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     theme(
       legend.position = "bottom", #if (extract_legend) "bottom" else "none",
       legend.box = "horizontal",
-      legend.text = element_markdown(size = 4),
+      legend.text = element_markdown(size = 10),
       panel.background = element_blank(),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
-      axis.text = element_text(size = 8),
-      axis.title = element_text(size = 15)
+      axis.text = element_text(size = 10),
+      axis.title = element_text(size = 20)
     ) +
     scale_x_continuous(position = "bottom",labels = unit_format(unit = "k", scale = 1e-3)) +
     scale_y_continuous(labels = unit_format(unit = "k", scale = 1e-3)) +
@@ -579,9 +579,9 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
     img <- readPNG(file)
     grob <- rasterGrob(img[1:500,100:1000,], interpolate = TRUE)
     grob <- annotate_figure(grob, top = text_grob(
-      paste0("PC", pc),
-      color = "black", face = "bold", size = 20,
-      x = unit(5.5, "pt"), hjust = -2.5, vjust = 4
+      pc,
+      color = "black", face = "bold", size = 15,
+      x = unit(2, "pt"), hjust = -2.5, vjust = 4
     ))
     return(grob)
   }
@@ -804,7 +804,7 @@ print(keep_names)
 all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
 pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figure1 <- ggarrange(pca_grid, labels=c('(a)','(b)','(c)','(d)','(e)','(f)'), common.legend=T, legend = "bottom", nrow=2) # adjust if legend is too big/small
+figure1 <- ggarrange(pca_grid, labels=c('(a)','(b)','(c)','(d)','(e)','(f)'), common.legend=T, legend = "bottom") # adjust if legend is too big/small
 
 # Save Figure 1 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
@@ -820,13 +820,11 @@ ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
 ########## FIGURE 2 ###################
 # Combined phenotypic space with legend
 figure2 <- results[["all"]][["pca"]]
-print(dim(results[["all"]][["pca"]]))
-print(head(results[["all"]][["pca"]]))
 ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
-  width = 18.5, 
-  height = 25, 
+  width = 15, 
+  height = 17.5, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -850,7 +848,7 @@ ggsave(
 all_sup <- lapply(results_no_overall, `[[`, "sup_pca") # extract per location supplementary pcas
 sup_grid <- plot_grid(plotlist = all_sup, ncol = 2) # bundle location pcas in one plot
 # Combine supplementary PCA grid with legend at the bottom
-figureS4 <- ggarrange(sup_grid, labels=c('(a)','(b)','(c)','(d)','(e)','(f)'), common.legend=T, legend = "bottom", nrow=2) # adjust if legend is too big/small
+figureS4 <- ggarrange(sup_grid, labels=c('(a)','(b)','(c)','(d)','(e)','(f)'), common.legend=T, legend = "bottom") # adjust if legend is too big/small
 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
@@ -882,7 +880,7 @@ ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
 all_hier <- lapply(results_no_overall, `[[`, "hclust") # extract per location pcas
 hier_grid <- plot_grid(plotlist = all_hier, ncol = 2) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figureS6 <- ggarrange(hier_grid, labels=c('(a)','(b)','(c)','(d)','(e)','(f)'), common.legend=T, legend = "bottom", nrow=2) # adjust if legend is too big/small
+figureS6 <- ggarrange(hier_grid, labels=c('(a)','(b)','(c)','(d)','(e)','(f)')) # adjust if legend is too big/small
 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
@@ -940,8 +938,8 @@ figureS9 <- results[["all"]][["sup_pca"]]
 ggsave(
   filename = file.path(figure_path, "FigS9_pAllSUP.png"),
   plot = figureS9,
-  width = 14.2,    # A4 width in inches
-  height = 17,  # A4 height in inches
+  width = 15,    # A4 width in inches
+  height = 17.5,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
