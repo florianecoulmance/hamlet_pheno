@@ -13,7 +13,7 @@ FIGURES_DIR = os.path.join(BASE_DIR, "figures")
 
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 PYTHON_SCRIPT = os.path.join(SCRIPTS_DIR, "python", "phenotyping.py")
-R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig1-2_S3-S9.R")
+R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig1-2_S3-S10.R")
 
 # Parameter sets for phenotyping.py
 phenotyping_params = [
@@ -58,7 +58,8 @@ rule all:
                 "FigS6_pLocHCLUST.png",
                 "FigS7_pLocHEAT.png",
                 "FigS8_pAll.png",
-                "FigS9_pSpe.png"
+                "FigS9_pAllSUP.png",
+                "FigS10_pSpe.png"
             ]
         )
 
@@ -113,7 +114,8 @@ rule plot_figures:
         f"{FIGURES_DIR}/FigS6_pLocHCLUST.png",
         f"{FIGURES_DIR}/FigS7_pLocHEAT.png",
         f"{FIGURES_DIR}/FigS8_pAll.png",
-        f"{FIGURES_DIR}/FigS9_pSpe.png"
+        f"{FIGURES_DIR}/FigS9_pAllSUP.png",
+        f"{FIGURES_DIR}/FigS10_pSpe.png"
     params:
         base_path = BASE_DIR,
         path_phenotypes = PCA_DIR,

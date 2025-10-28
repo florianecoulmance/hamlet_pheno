@@ -803,7 +803,7 @@ print(keep_names)
 all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
 pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figure1 <- ggarrange(pca_grid, labels=c('(a)', '(b)','(c)','(d)','(e)','(f)'), common.legend=T, legend = "bottom", nrow=2,) # adjust if legend is too big/small
+figure1 <- ggarrange(pca_grid, labels=c('(a)','(b)','(c)','(d)','(e)','(f)'), common.legend=T, legend = "bottom", nrow=2) # adjust if legend is too big/small
 
 # Save Figure 1 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
@@ -849,7 +849,7 @@ ggsave(
 all_sup <- lapply(results_no_overall, `[[`, "sup_pca") # extract per location supplementary pcas
 sup_grid <- plot_grid(plotlist = all_sup, ncol = 2) # bundle location pcas in one plot
 # Combine supplementary PCA grid with legend at the bottom
-figureS4 <- plot_grid(sup_grid, leg_combined, ncol = 1, rel_heights = c(1, 0.15)) # adjust if legend is too big/small
+figureS4 <- ggarrange(sup_grid, labels=c('(a)','(b)','(c)','(d)','(e)','(f)'), common.legend=T, legend = "bottom", nrow=2) # adjust if legend is too big/small
 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
@@ -881,7 +881,7 @@ ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
 all_hier <- lapply(results_no_overall, `[[`, "hclust") # extract per location pcas
 hier_grid <- plot_grid(plotlist = all_hier, ncol = 2) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figureS6 <- plot_grid(hier_grid, leg_combined, ncol = 1, rel_heights = c(1, 0.15)) # adjust if legend is too big/small
+figureS6 <- ggarrange(hier_grid, labels=c('(a)','(b)','(c)','(d)','(e)','(f)'), common.legend=T, legend = "bottom", nrow=2) # adjust if legend is too big/small
 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
@@ -910,16 +910,15 @@ ggsave(filename = file.path(figure_path, "FigS7_pLocHEAT.png"),
 
 ########## FIGURE S8 ###################
 # Combined phenotypic space: supplementary PCA + PERMANOVA + hierarchical clustering + heatmaps
-sup <- results[["all"]][["sup_pca"]]
 perm <- results[["all"]][["permanova"]]
 hier <- results[["all"]][["hclust"]]
 heat <- results[["all"]][["heatmap"]]
 
 # # Bottom row: hier + heat
-# bottom_row <- plot_grid(hier, heat, ncol = 2, rel_widths = c(1,1))
+bottom_row <- plot_grid(hier, heat, ncol = 2, rel_widths = c(1,1))
 
 # Combine top (perm) with bottom row
-figureS8 <- plot_grid(sup, perm, hier, heat, nrow = 2, ncol = 2, rel_widths = c(1,1), rel_heights = c(1, 1))
+figureS8 <- plot_grid(perm, bottom_row, nrow = 2, ncol = 1, rel_heights = c(1, 0.6))
 
 # Save as PNG (A4 size)
 ggsave(
@@ -932,7 +931,22 @@ ggsave(
   type = "cairo-png"
 )
 
+
 ########## FIGURE S9 ###################
+# Additional combined phenotypic space PCA
+figureS9 <- results[["all"]][["sup_pca"]]
+# Save as PNG (A4 size)
+ggsave(
+  filename = file.path(figure_path, "FigS9_pAllSUP.png"),
+  plot = figureS9,
+  width = 8.27,    # A4 width in inches
+  height = 11.69,  # A4 height in inches
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
+
+########## FIGURE S10 ###################
 # Per species phenotypic space: PCA + heatmaps + hierarchical clustering + PERMANOVA
 pca_pue <- results[["pue"]][["pca"]]
 heat_pue <- results[["pue"]][["heatmap"]]
@@ -970,11 +984,11 @@ perm_ind <- results[["ind"]][["permanova"]]
 hier_ind <- results[["ind"]][["hclust"]]
 ind <- plot_grid(pca_ind, heat_ind, perm_ind, hier_ind, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
-figureS9 <- plot_grid(pue, nig, uni, chl, abe, ind, nrow = 6, rel_heights = c(1, 1, 1, 1, 1, 1))
+figureS10 <- plot_grid(pue, nig, uni, chl, abe, ind, nrow = 6, rel_heights = c(1, 1, 1, 1, 1, 1))
 
 # Save as PNG (A4 size)
 ggsave(
-  filename = file.path(figure_path, "FigS9_pSpe.png"),
+  filename = file.path(figure_path, "FigS10_pSpe.png"),
   plot = figureS9,
   width = 8.27,    # A4 width in inches
   height = 11.69,  # A4 height in inches
