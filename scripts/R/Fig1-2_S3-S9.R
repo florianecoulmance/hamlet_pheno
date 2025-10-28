@@ -188,7 +188,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   
   # PCA scatter plot with centroids and ellipses
   p <- ggplot(plot_data, aes(x = .data[[pc_first]], y = .data[[pc_second]], color = .data[[group_col]])) +
-    geom_point(size = 5, alpha = 0.5, show.legend = TRUE) +
+    geom_point(size = 5, alpha = 0.5) +
     stat_ellipse(aes(color = .data[[group_col]]), linetype = 5, lwd = 1) +
     # geom_point(data = centroids, aes(x = x, y = y, color = .data[[group_col]]), size = 15, alpha = 0, show.legend = FALSE) +
     # geom_image(data = centroids, aes(x = x, y = y, image = link), vjust=1, hjust=0, size = 0.15, asp = 1.1, alpha=1) +
@@ -218,7 +218,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
         data = centroids,
         aes(x = x, y = y, image = link, color = .data[[group_col]]),
         # inherit.aes = FALSE,
-        vjust = 1, hjust = 0, size = 0.1, asp = 1.1, alpha = 1, show.legend = FALSE
+        vjust = 1, hjust = 0, size = 0.1, asp = 1.1, alpha = 1
       )
   }
 
