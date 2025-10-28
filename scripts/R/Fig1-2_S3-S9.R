@@ -831,7 +831,7 @@ ggsave(
 ########## FIGURE S4 ###################
 # Other PCs combination for phenotypes per location
 all_sup <- lapply(results_no_overall, `[[`, "sup_pca") # extract per location supplementary pcas
-sup_grid <- wrap_plots(all_sup, ncol = 2) # bundle location pcas in one plot
+sup_grid <- plot_grid(plotlist = all_sup, ncol = 2) # bundle location pcas in one plot
 # Combine supplementary PCA grid with legend at the bottom
 figureS4 <- plot_grid(sup_grid, combined_legend, ncol = 1, rel_heights = c(1, 0.15)) # adjust if legend is too big/small
 
@@ -848,7 +848,7 @@ ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
 ########## FIGURE S5 ###################
 # PERMANOVA heatmaps for each location
 all_perm <- lapply(results_no_overall, `[[`, "permanova") # extract per location pcas
-figureS5 <- wrap_plots(all_perm, ncol = 2) # bundle location pcas in one plot
+figureS5 <- plot_grid(plotlist = all_perm, ncol = 2) # bundle location pcas in one plot
 
 # Save Figure S3 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
@@ -863,7 +863,7 @@ ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
 ########## FIGURE S6 ###################
 # Hierarchical clustering plots for all locations with legend
 all_hier <- lapply(results_no_overall, `[[`, "hclust") # extract per location pcas
-hier_grid <- wrap_plots(all_hier, ncol = 2) # bundle location pcas in one plot
+hier_grid <- plot_grid(plotlist = all_hier, ncol = 2) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
 figureS6 <- plot_grid(hier_grid, combined_legend, ncol = 1, rel_heights = c(1, 0.15)) # adjust if legend is too big/small
 
@@ -880,7 +880,7 @@ ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
 ########## FIGURE S7 ###################
 # Heatmap PC images for each location
 all_heat <- lapply(results_no_overall, `[[`, "heatmap") # extract per location pcas
-figureS7 <- wrap_plots(all_heat, ncol = 2) # bundle location pcas in one plot
+figureS7 <- plot_grid(plotlist = all_heat, ncol = 2) # bundle location pcas in one plot
 
 # Save Figure S5 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS7_pLocHEAT.png"),
