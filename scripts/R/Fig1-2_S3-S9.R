@@ -194,18 +194,21 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       # Create a dummy dataset with one row per present species
     dummy_data <- data.frame(
       group = present_groups,
-      x = seq_along(present_groups),  # dummy x
+      x = 1:length(present_groups),  # dummy x
       y = 1                          # dummy y
     )
+
     dummy_plot <- ggplot(dummy_data, aes(x = x, y = y, color = group)) +
       geom_point(size = 5) + # dummy points
       scale_color_manual(values = color_map[present_groups], labels = label_map[present_groups]) +
-      guides(color = guide_legend(nrow = legend_rows)) +
+      theme_void() +
       theme(
         legend.position = "bottom",
         legend.title = element_blank(),
         legend.text = element_markdown(size = 12)
-      ) 
+      ) +
+      guides(color = guide_legend(nrow = legend_rows, override.aes = list(size = 6))) +
+
     
     legend <- cowplot::get_legend(dummy_plot)
     print("The dummy plot is: ")
