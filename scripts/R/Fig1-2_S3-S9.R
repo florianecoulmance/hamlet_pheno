@@ -70,6 +70,16 @@ get_arg <- function(flag, default = NULL) {
 
 
 # ============================================================
+# Function to extract legend from a plot
+# ============================================================
+exc_legend <- function(p) {
+  tmp <- ggplotGrob(p)
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  if (length(leg) > 0) tmp$grobs[[leg]] else NULL
+}
+
+
+# ============================================================
 # Function to add logo links to species color table
 # ============================================================
 add_species_logos <- function(color_file, logos_p) {
@@ -186,32 +196,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
               link = if (color_by == "species") first(link) else NA_character_,
               .groups = "drop")
 
-  # # -----------------------------
-  # # 4. Build legend-only plot if requested
-  # # -----------------------------
-  # if (extract_legend) {
-  #   dummy_plot <- ggplot(plot_data, aes(x = .data[[pc_first]], y = .data[[pc_second]], color = spec)) +
-  #     geom_point(size = 5, alpha = 0.5) + # dummy points
-  #     scale_color_manual(values = color_map, labels = label_map) +
-  #     theme_void() +
-  #     theme(
-  #       legend.position = "bottom",
-  #       legend.title = element_blank(),
-  #       legend.text = element_markdown(size = 12)
-  #     ) +
-  #     guides(color = guide_legend(nrow = legend_rows))
-
-    
-  #   legend <- get_legend(dummy_plot)
-  #   print("The dummy plot is: ")
-  #   print(class(dummy_plot))
-  #   print("The legend is: ")
-  #   print(class(legend))
-  #   return(legend)
-  # }
-  
   # -----------------------------
-  # 5. Build the actual PCA plot
+  # 4. Build the actual PCA plot
   # -----------------------------
   p <- ggplot(plot_data, aes(x = .data[[pc_first]], y = .data[[pc_second]], color = .data[[group_col]])) +
     geom_point(size = 5, alpha = 0.5) +
@@ -222,7 +208,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     theme_minimal() +
     theme(
       legend.position = ifelse(extract_legend, "bottom", "none"),
-      legend.text = element_markdown(size = 10),
+      legend.text = element_markdown(size = 5),
       panel.background = element_blank(),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
       axis.text = element_text(size = 8),
@@ -237,7 +223,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     guides(color = guide_legend(nrow = legend_rows))
   
   # -----------------------------
-  # 6. Add species logos if applicable
+  # 5. Add species logos if applicable
   # -----------------------------
   if (color_by == "species" && "link" %in% names(centroids)) {
     p <- p +
@@ -251,7 +237,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   }
 
   # -----------------------------
-  # 7. Add title (per location or per species)
+  # 6. Add title (per location or per species)
   # -----------------------------
   # ---- Get title depending on color_by mode ----
   title_val <- NULL
@@ -807,7 +793,7 @@ print(keep_names)
 # print(head(results[["all"]][["data"]]))
 # combined_legend <- pca_plot(results[["all"]][["data"]], "PC1", "PC2", species_info, geo_table, results[["all"]][["variance"]], color_by = "species", extract_legend = TRUE)
 # print(combined_legend)
-leg_combined <- get_legend(results[["all"]][["pca"]])
+leg_combined <- exc_legend(results[["all"]][["pca"]])
 print("Plot for all pheno: ")
 print(class(results[["all"]][["pca"]]))
 print("Legend for all : ")
