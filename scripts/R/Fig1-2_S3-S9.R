@@ -773,11 +773,7 @@ print(keep_names)
 
 # Combine all data for legend
 df_all <- do.call(rbind, lapply(results[!names(results) %in% c("all", "pue", "nig", "uni", "chl", "abe", "ind")], function(x) x$data))
-# print(class(df_all))
-# print(head(df_all))
 var_all <- do.call(rbind, lapply(results[!names(results) %in% c("all", "pue", "nig", "uni", "chl", "abe", "ind")], function(x) x$variance))
-# print(class(var_all))
-# print(head(var_all))
 
 # Make a dummy plot to extract legend
 # p_dummy <- pca_plot(df_all, "PC1", "PC2", species_info, geo_table, var_all, color_by = "species", extract_legend = TRUE)
@@ -806,7 +802,7 @@ ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
 
 ########## FIGURE 2 ###################
 # Combined phenotypic space with legend
-figure2 <- results["lab_571_left_noflash"]$pca
+figure2 <- results[["lab_571_left_noflash"]][["pca"]]
 ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
@@ -819,7 +815,7 @@ ggsave(
 
 ########## FIGURE S3 ###################
 # Variance of Principal Components for combined phenotypic space
-figureS3 <- results["lab_571_left_noflash"]$variance_plot
+figureS3 <- results[["lab_571_left_noflash"]][["variance_plot"]]
 ggsave(
   filename = file.path(figure_path, "FigS3_pAllVAR.png"),
   plot = figureS3,
@@ -896,10 +892,10 @@ ggsave(filename = file.path(figure_path, "FigS7_pLocHEAT.png"),
 
 ########## FIGURE S8 ###################
 # Combined phenotypic space: supplementary PCA + PERMANOVA + hierarchical clustering + heatmaps
-sup <- results["lab_571_left_noflash"]$sup_pca
-perm <- results["lab_571_left_noflash"]$permanova
-hier <- results["lab_571_left_noflash"]$hclust
-heat <- results["lab_571_left_noflash"]$heatmap
+sup <- results[["lab_571_left_noflash"]][["sup_pca"]]
+perm <- results[["lab_571_left_noflash"]][["permanova"]]
+hier <- results[["lab_571_left_noflash"]][["hclust"]]
+heat <- results[["lab_571_left_noflash"]][["heatmap"]]
 
 # # Bottom row: hier + heat
 # bottom_row <- plot_grid(hier, heat, ncol = 2, rel_widths = c(1,1))
@@ -920,40 +916,40 @@ ggsave(
 
 ########## FIGURE S9 ###################
 # Per species phenotypic space: PCA + heatmaps + hierarchical clustering + PERMANOVA
-pca_pue <- results["lab_pue187_left_noflash"]$pca
-heat_pue <- results["lab_pue187_left_noflash"]$heatmap
-perm_pue <- results["lab_pue187_left_noflash"]$permanova
-hier_pue <- results["lab_pue187_left_noflash"]$hclust
+pca_pue <- results[["lab_pue187_left_noflash"]][["pca"]]
+heat_pue <- results[["lab_pue187_left_noflash"]][["heatmap"]]
+perm_pue <- results[["lab_pue187_left_noflash"]][["permanova"]]
+hier_pue <- results[["lab_pue187_left_noflash"]][["hclust"]]
 pue <- plot_grid(pca_pue, heat_pue, perm_pue, hier_pue, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
-pca_nig <- results["lab_nig111_left_noflash"]$pca
-heat_nig <- results["lab_nig111_left_noflash"]$heatmap
-perm_nig <- results["lab_nig111_left_noflash"]$permanova
-hier_nig <- results["lab_nig111_left_noflash"]$hclust
+pca_nig <- results[["lab_nig111_left_noflash"]][["pca"]]
+heat_nig <- results[["lab_nig111_left_noflash"]][["heatmap"]]
+perm_nig <- results[["lab_nig111_left_noflash"]][["permanova"]]
+hier_nig <- results[["lab_nig111_left_noflash"]][["hclust"]]
 nig <- plot_grid(pca_nig, heat_nig, perm_nig, hier_nig, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
-pca_uni <- results["lab_uni74_left_noflash"]$pca
-heat_uni <- results["lab_uni74_left_noflash"]$heatmap
-perm_uni <- results["lab_uni74_left_noflash"]$permanova
-hier_uni <- results["lab_uni74_left_noflash"]$hclust
+pca_uni <- results[["lab_uni74_left_noflash"]][["pca"]]
+heat_uni <- results[["lab_uni74_left_noflash"]][["heatmap"]]
+perm_uni <- results[["lab_uni74_left_noflash"]][["permanova"]]
+hier_uni <- results[["lab_uni74_left_noflash"]][["hclust"]]
 uni <- plot_grid(pca_uni, heat_uni, perm_uni, hier_uni, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
-pca_chl <- results["lab_chl34_left_noflash"]$pca
-heat_chl <- results["lab_chl34_left_noflash"]$heatmap
-perm_chl <- results["lab_chl34_left_noflash"]$permanova
-hier_chl <- results["lab_chl34_left_noflash"]$hclust
+pca_chl <- results[["lab_chl34_left_noflash"]][["pca"]]
+heat_chl <- results[["lab_chl34_left_noflash"]][["heatmap"]]
+perm_chl <- results[["lab_chl34_left_noflash"]][["permanova"]]
+hier_chl <- results[["lab_chl34_left_noflash"]][["hclust"]]
 chl <- plot_grid(pca_uni, heat_uni, perm_uni, hier_uni, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
-pca_abe <- results["lab_abe30_left_noflash"]$pca
-heat_abe <- results["lab_abe30_left_noflash"]$heatmap
-perm_abe <- results["lab_abe30_left_noflash"]$permanova
-hier_abe <- results["lab_abe30_left_noflash"]$hclust
+pca_abe <- results[["lab_abe30_left_noflash"]][["pca"]]
+heat_abe <- results[["lab_abe30_left_noflash"]][["heatmap"]]
+perm_abe <- results[["lab_abe30_left_noflash"]][["permanova"]]
+hier_abe <- results[["lab_abe30_left_noflash"]][["hclust"]]
 abe <- plot_grid(pca_abe, heat_abe, perm_abe, hier_abe, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
-pca_ind <- results["lab_ind28_left_noflash"]$pca
-heat_ind <- results["lab_ind28_left_noflash"]$heatmap
-perm_ind <- results["lab_ind28_left_noflash"]$permanova
-hier_ind <- results["lab_ind28_left_noflash"]$hclust
+pca_ind <- results[["lab_ind28_left_noflash"]][["pca"]]
+heat_ind <- results[["lab_ind28_left_noflash"]][["heatmap"]]
+perm_ind <- results[["lab_ind28_left_noflash"]][["permanova"]]
+hier_ind <- results[["lab_ind28_left_noflash"]][["hclust"]]
 ind <- plot_grid(pca_ind, heat_ind, perm_ind, hier_ind, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
 figureS9 <- plot_grid(pue, nig, uni, chl, abe, ind, nrow = 6, rel_heights = c(1, 1, 1, 1, 1, 1))
