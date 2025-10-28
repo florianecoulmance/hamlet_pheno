@@ -445,13 +445,13 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   color_by <- match.arg(color_by, c("species", "location"))
   
   if (color_by == "species") {
-    color_table <- read.delim(species_col, sep = "\t", stringsAsFactors = FALSE)
+    color_table <- species_col
     color_table$spec <- tolower(trimws(color_table$spec))
     color_map <- setNames(color_table$Color, color_table$spec)
     group_col <- "spec"
     legend_name <- "Species"
   } else {
-    color_table <- read.delim(geo_map, sep = "\t", stringsAsFactors = FALSE)
+    color_table <- geo_map
     color_table$geo <- tolower(trimws(color_table$geo))
     color_map <- setNames(color_table$Color, color_table$geo)
     group_col <- "loc"
