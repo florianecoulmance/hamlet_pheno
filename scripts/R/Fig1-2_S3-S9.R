@@ -240,7 +240,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       title_val <- ""
     }
   }
-  
+
   # Add title using ggplot2 only
   if (title_val != "") {
     p <- p + ggtitle(title_val)
@@ -727,8 +727,8 @@ for(dat in names(dataset)) {
   #-----------------------------------
   # PCA plot
   #-----------------------------------
-  p_pca <- pca_plot(pc_table, pcs[1], pcs[2], species_info, geo_table, var, color_by = color, extract_legend = TRUE)
-  s_pca <- pca_plot(pc_table, pcs[3], pcs[4], species_info, geo_table, var, color_by = color, extract_legend = TRUE)
+  p_pca <- pca_plot(pc_table, pcs[1], pcs[2], species_info, geo_table, var, color_by = color, extract_legend = FALSE)
+  s_pca <- pca_plot(pc_table, pcs[3], pcs[4], species_info, geo_table, var, color_by = color, extract_legend = FALSE)
 
   #-----------------------------------
   # VAR plot
