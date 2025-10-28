@@ -202,6 +202,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       guides(color = guide_legend(nrow = legend_rows))
     
     legend <- cowplot::get_legend(dummy_plot)
+    print("The dummy plot is: ")
     print(dummy_plot)
     return(legend)
   }
