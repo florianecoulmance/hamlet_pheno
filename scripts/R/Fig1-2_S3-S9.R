@@ -183,12 +183,13 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
               Color = first(Color),
               link = if (color_by == "species") first(link) else NA_character_,
               .groups = "drop")
+  print(centroids)
   
   # PCA scatter plot with centroids and ellipses
   p <- ggplot(plot_data, aes(x = .data[[pc_first]], y = .data[[pc_second]], color = .data[[group_col]])) +
     geom_point(size = 5, alpha = 0.5) +
     stat_ellipse(aes(color = .data[[group_col]]), linetype = 5, lwd = 1) +
-    geom_point(data = centroids, aes(x = x, y = y, color = .data[[group_col]]), size = 15, alpha = 1) +
+    # geom_point(data = centroids, aes(x = x, y = y, color = .data[[group_col]]), size = 15, alpha = 1) +
     # geom_image(data = centroids, aes(x = x, y = y, image = link), vjust=1, hjust=0, size = 0.15, asp = 1.1, alpha=1) +
     scale_color_manual(values = color_map, labels = label_map) +
     theme_minimal() +
@@ -197,8 +198,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       legend.title = element_blank(),
       legend.text = element_markdown(size = 15),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
-      axis.text = element_text(size = 20),
-      axis.title = element_text(size = 25)
+      axis.text = element_text(size = 8),
+      axis.title = element_text(size = 10)
     ) +
     scale_x_continuous(position = "bottom",labels = unit_format(unit = "k", scale = 1e-3)) +
     scale_y_continuous(labels = unit_format(unit = "k", scale = 1e-3)) +
@@ -210,6 +211,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   # 5. Add species logos (if applicable)
   # -----------------------------
+  print(names(centroids))
   if (color_by == "species" && "link" %in% names(centroids)) {
     p <- p +
       geom_image(
@@ -223,41 +225,39 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # 6. Add title (per location or per species)
   # -----------------------------
   # ---- Get title depending on color_by mode ----
+  title_val <- NULL
   if (color_by == "species") {
     # if coloring by species, title is the location name
     geo_val <- unique(plot_data$geo)
     if (length(geo_val) == 1) {
       title_val <- geo_info$Locations[geo_info$geo == geo_val]
-    } else {
-      title_val <- ""
     }
   } else if (color_by == "location") {
     # if coloring by location, title is the species name
     spec_val <- unique(plot_data$spec)
     if (length(spec_val) == 1) {
       title_val <- species_info$Species[species_info$spec == spec_val]
-    } else {
-      title_val <- ""
     }
   }
 
-  # Add title using ggplot2 only
-  if (title_val != "") {
-    p <- p + ggtitle(title_val)
-  }
   # -----------------------------
   # 7. Return plot or legend
   # -----------------------------
   if (extract_legend) {
-    legend <- get_legend(p + guides(color = guide_legend(nrow = legend_rows)))
+    p_legend <- p +
+      theme(legend.position = "bottom") +
+      guides(color = guide_legend(nrow = legend_rows))
+    legend <- get_legend(p_legend)
     return(legend)
   } else {
-    # ---- Annotate with location title ----
-    p_annot <- annotate_figure(
-      p,
-      top = text_grob(title_val, color = "black", face = "bold", size = 30,
-                      x = unit(5.5, "pt"), hjust = 0)
-    )
+    if (!is.null(title_val) && nzchar(title_val)) {
+      # ---- Annotate with location title ----
+      p_annot <- annotate_figure(
+        p,
+        top = text_grob(title_val, color = "black", face = "bold", size = 15,
+                        x = unit(5.5, "pt"), hjust = 0)
+      )
+    }
     return(p_annot)
   }
 
