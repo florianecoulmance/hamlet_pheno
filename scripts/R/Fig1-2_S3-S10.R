@@ -147,7 +147,7 @@ write_metadata_gxp <- function(PCs) {
 #   - If extract_legend = FALSE: a ggplot2 PCA scatter plot (annotated with title).
 #   - If extract_legend = TRUE : a legend grob for combined plotting.
 # ============================================================
-pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var, color_by = "species", extract_legend = FALSE, legend_rows = 2) {
+pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var, color_by = "species", extract_legend = FALSE, legend_rows = 4) {
   print(extract_legend)
   # -----------------------------
   # 1. Choose color/grouping mode
@@ -825,7 +825,7 @@ ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
   width = 8.27, 
-  height = 5.22, 
+  height = 11.69, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
