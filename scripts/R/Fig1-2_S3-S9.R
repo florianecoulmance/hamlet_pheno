@@ -214,9 +214,9 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     scale_color_manual(values = color_map, labels = label_map) +
     theme_minimal() +
     theme(
-      legend.position = if (extract_legend) "bottom" else "none",
+      legend.position = "bottom", #if (extract_legend) "bottom" else "none",
       legend.box = "horizontal",
-      legend.text = element_markdown(size = 5),
+      legend.text = element_markdown(size = 4),
       panel.background = element_blank(),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
       axis.text = element_text(size = 8),
@@ -230,11 +230,11 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     ) +
     guides(color = guide_legend(nrow = legend_rows))
 
-  print(class(p))
-  if(extract_legend){
-    leg <- cowplot::get_legend(p)
-    print(class(leg))
-  }
+  # print(class(p))
+  # if(extract_legend){
+  #   leg <- cowplot::get_legend(p)
+  #   print(class(leg))
+  # }
 
   
   if(!is.null(add_logos)) p <- p + add_logos
@@ -803,7 +803,7 @@ print(keep_names)
 all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
 pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figure1 <- plot_grid(pca_grid, leg_combined, ncol = 1, rel_heights = c(1.8, 0.2)) # adjust if legend is too big/small
+figure1 <- ggarrange(pca_grid, labels=c('(a)', '(b)','(c)','(d)','(e)','(f)'), common.legend=T, legend = "bottom", nrow=2,) # adjust if legend is too big/small
 
 # Save Figure 1 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
