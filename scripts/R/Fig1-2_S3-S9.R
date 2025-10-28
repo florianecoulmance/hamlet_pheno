@@ -50,6 +50,7 @@ library(ggnewscale)
 library(tibble)
 library(png)
 library(grid)
+library(ggtree)
 
 # ############################
 # FUNCTIONS
