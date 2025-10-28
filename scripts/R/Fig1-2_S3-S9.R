@@ -454,7 +454,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
     color_table <- geo_map
     color_table$geo <- tolower(trimws(color_table$geo))
     color_map <- setNames(color_table$Color, color_table$geo)
-    group_col <- "loc"
+    group_col <- "geo"
     legend_name <- "Location"
   }
 
@@ -661,7 +661,7 @@ cat("-----------------\n")
 
 species_info <- add_species_logos(spec_colors, logos_path)
 head(species_info)
-geo_table <- read.table(geo_colors, sep="\t", header=TRUE)
+geo_table <- read.delim(geo_colors, sep="\t", header=TRUE, stringsAsFactors = FALSE, check.names = FALSE)
 head(geo_table)
 
 # Define your locations and PCs of interest
