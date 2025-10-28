@@ -767,7 +767,7 @@ print(class(var_all))
 print(head(var_all))
 
 # Make a dummy plot to extract legend
-p_dummy <- pca_plot(df_all, "PC1", "PC2", species_info, var_all, geo_table, extract_legend = TRUE)
+p_dummy <- pca_plot(df_all, "PC1", "PC2", species_info, geo_table, var_all, color_by = "species", extract_legend = TRUE)
 
 # Extract combined legend
 combined_legend <- get_legend(p_dummy)
