@@ -190,7 +190,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # 4. Build legend-only plot if requested
   # -----------------------------
   if (extract_legend) {
-    dummy_plot <- ggplot(plot_data, aes(color = .data[[group_col]])) +
+    dummy_plot <- ggplot(plot_data, aes(color = factor(.data[[group_col]], levels = names(color_map)))) +
       geom_point(aes(x = 0, y = 0), size = 5) + # dummy points
       scale_color_manual(values = color_map, labels = label_map) +
       theme_minimal() +
