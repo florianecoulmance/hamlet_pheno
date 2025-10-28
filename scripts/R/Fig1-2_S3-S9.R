@@ -51,6 +51,8 @@ library(tibble)
 library(png)
 library(grid)
 library(ggtree)
+library(glue)
+
 
 # ############################
 # FUNCTIONS
@@ -72,10 +74,34 @@ get_arg <- function(flag, default = NULL) {
 # ============================================================
 # Function to extract legend from a plot
 # ============================================================
-exc_legend <- function(p) {
-  tmp <- ggplotGrob(p)
-  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
-  if (length(leg) > 0) tmp$grobs[[leg]] else NULL
+exc_legend <- function(pca_file, species_col, num_row = 2) {
+  # create a list of species logo to integrate to plots
+  logos_spec <- species_col %>%
+    mutate(
+      html = glue(
+        "<img src='{link}' width='110' /><br>*{Species}*"
+      )
+    ) %>%
+    { setNames(.$html, .$code) }
+
+  # Inspect the result
+  print(logos_spec)
+
+  spec_colors <- setNames(species_colors$color, species_colors$code)
+  print(spec_colors)
+
+  # PC1 vs. PC2
+  p1 <- ggplot(pca_file,aes(x=PC1,y=PC2,color=spec)) + geom_point(size = 15, alpha = 0.5) 
+  p1 <- p1 + scale_color_manual(values=spec_colors, labels = logos_spec) +
+    scale_x_continuous(position = "bottom") +
+    theme(legend.position="bottom",legend.title=element_blank(),legend.box = "horizontal",legend.text =  element_markdown(size = 15),
+          panel.background = element_blank(), panel.border = element_rect(colour = "black", fill=NA, size=0.9),
+          text = element_text(size=30), legend.key=element_blank()) +
+    guides(color = guide_legend(nrow = num_row))
+  
+  
+  legend <- get_legend(p1)
+
 }
 
 
@@ -793,9 +819,9 @@ print(keep_names)
 # print(head(results[["all"]][["data"]]))
 # combined_legend <- pca_plot(results[["all"]][["data"]], "PC1", "PC2", species_info, geo_table, results[["all"]][["variance"]], color_by = "species", extract_legend = TRUE)
 # print(combined_legend)
-leg_combined <- exc_legend(results[["all"]][["pca"]])
-print("Plot for all pheno: ")
-print(class(results[["all"]][["pca"]]))
+leg_combined <- exc_legend(results[["all"]][["data"]], species_info)
+# print("Plot for all pheno: ")
+# print(class(results[["all"]][["pca"]]))
 print("Legend for all : ")
 print(leg_combined)
 print(class(leg_combined))
