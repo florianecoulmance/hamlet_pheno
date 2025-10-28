@@ -768,15 +768,15 @@ var_all <- do.call(rbind, lapply(results[!names(results) %in% "lab_571_left_nofl
 
 # Make a dummy plot to extract legend
 p_dummy <- pca_plot(df_all, "PC1", "PC2", species_info, geo_table, var_all, color_by = "species", extract_legend = TRUE)
-
+print(class(p_dummy))
 # Extract combined legend
 combined_legend <- get_legend(p_dummy)
-
+print(combined_legend)
 
 ########## FIGURE 1 ###################
 # PCA plots for all locations with legend
 all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
-pca_grid <- wrap_plots(all_pcas, ncol = 2) # bundle location pcas in one plot
+pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
 figure1 <- plot_grid(pca_grid, combined_legend, ncol = 1, rel_heights = c(1, 0.15)) # adjust if legend is too big/small
 
