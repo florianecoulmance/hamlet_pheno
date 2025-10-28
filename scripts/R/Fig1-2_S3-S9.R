@@ -191,9 +191,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   if (extract_legend) {
     dummy_plot <- ggplot(plot_data, aes(color = factor(.data[[group_col]], levels = names(color_map)))) +
-      geom_point(aes(x = 0, y = 0), size = 5) + # dummy points
+      geom_point(aes(x = .data[[pc_first]], y = .data[[pc_second]]), size = 5) + # dummy points
       scale_color_manual(values = color_map, labels = label_map) +
-      theme_minimal() +
       theme(
         legend.position = "bottom",
         legend.title = element_blank(),
@@ -220,6 +219,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     theme(
       legend.position = "none",
       legend.text = element_markdown(size = 10),
+      panel.background = element_blank(),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
       axis.text = element_text(size = 8),
       axis.title = element_text(size = 15)
