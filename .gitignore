@@ -1,3 +1,6 @@
+.R* 
+1_phenotyping/.R*
+1_phenotyping/Rplots.pdf
 1_phenotyping/.snakemake/*
 1_phenotyping/pca/*
 .DS_Store
