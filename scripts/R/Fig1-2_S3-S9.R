@@ -245,18 +245,12 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # 7. Return plot or legend
   # -----------------------------
   if (extract_legend) {
-    p_legend <- p +
-      guides(color = guide_legend(override.aes = list(size = 5), nrow = legend_rows)) +
-      theme(
-        legend.position = "bottom",
-        legend.title = element_blank(),
-        legend.text = element_markdown(size = 15)
-      )
+    p_legend <- get_legend(p)
     print(p_legend)
     # Force ggplot to build before extracting legend
-    ggplot_build(p_legend)
-    legend <- cowplot::get_legend(p_legend)
-    return(legend)
+    # ggplot_build(p_legend)
+    # legend <- cowplot::get_legend(p_legend)
+    return(p_legend)
   } else {
     # ---- Annotate with location title ----
     p_annot <- annotate_figure(
@@ -794,7 +788,7 @@ print(keep_names)
 # Extract combined legend
 print(head(results[["all"]][["data"]]))
 combined_legend <- pca_plot(results[["all"]][["data"]], "PC1", "PC2", species_info, geo_table, results[["all"]][["variance"]], color_by = "species", extract_legend = TRUE)
-print(class(combined_legend))
+print(combined_legend)
 
 ########## FIGURE 1 ###################
 # PCA plots for all locations with legend
