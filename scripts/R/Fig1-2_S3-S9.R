@@ -207,7 +207,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
         legend.title = element_blank(),
         legend.text = element_markdown(size = 12)
       ) +
-      guides(color = guide_legend(nrow = legend_rows, override.aes = list(size = 6))) +
+      guides(color = guide_legend(nrow = legend_rows, override.aes = list(size = 6)))
 
     
     legend <- cowplot::get_legend(dummy_plot)
