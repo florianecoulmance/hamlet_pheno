@@ -789,7 +789,7 @@ print(keep_names)
 # p_dummy <- pca_plot(df_all, "PC1", "PC2", species_info, geo_table, var_all, color_by = "species", extract_legend = TRUE)
 # print(class(p_dummy))
 # Extract combined legend
-combined_legend <- pca_plot(results[["all"]][["pca"]], "PC1", "PC2", species_info, geo_table, results[["all"]][["variance"]], color_by = "species", extract_legend = TRUE)
+combined_legend <- pca_plot(results[["all"]][["data"]], "PC1", "PC2", species_info, geo_table, results[["all"]][["variance"]], color_by = "species", extract_legend = TRUE)
 print(class(combined_legend))
 
 ########## FIGURE 1 ###################
