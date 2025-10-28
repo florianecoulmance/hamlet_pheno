@@ -183,7 +183,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
               Color = first(Color),
               link = if (color_by == "species") first(link) else NA_character_,
               .groups = "drop")
-  print(centroids)
+  print(centroids$link)
   
   # PCA scatter plot with centroids and ellipses
   p <- ggplot(plot_data, aes(x = .data[[pc_first]], y = .data[[pc_second]], color = .data[[group_col]])) +
@@ -216,8 +216,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     p <- p +
       geom_image(
         data = centroids,
-        aes(x = x, y = y, image = link),
-        vjust = 1, hjust = 0, size = 0.15, asp = 1.1, alpha = 1
+        aes(image = link),
+        vjust = 1, hjust = 0, size = 0.1, asp = 1.1, alpha = 1
       )
   }
 
@@ -250,14 +250,13 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     legend <- get_legend(p_legend)
     return(legend)
   } else {
-    if (!is.null(title_val) && nzchar(title_val)) {
-      # ---- Annotate with location title ----
-      p_annot <- annotate_figure(
-        p,
-        top = text_grob(title_val, color = "black", face = "bold", size = 15,
-                        x = unit(5.5, "pt"), hjust = 0)
-      )
-    }
+    # ---- Annotate with location title ----
+    p_annot <- annotate_figure(
+      p,
+      top = text_grob(title_val, color = "black", face = "bold", size = 15,
+                      x = unit(5.5, "pt"), hjust = 0)
+    )
+    
     return(p_annot)
   }
 
