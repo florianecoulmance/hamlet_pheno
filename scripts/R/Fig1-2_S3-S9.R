@@ -760,11 +760,11 @@ results_no_overall <- results[!names(results) %in% "lab_571_left_noflash"]
 
 # Combine all data for legend
 df_all <- do.call(rbind, lapply(results[!names(results) %in% "lab_571_left_noflash"], function(x) x$data))
-print(class(df_all))
-print(head(df_all))
+# print(class(df_all))
+# print(head(df_all))
 var_all <- do.call(rbind, lapply(results[!names(results) %in% "lab_571_left_noflash"], function(x) x$variance))
-print(class(var_all))
-print(head(var_all))
+# print(class(var_all))
+# print(head(var_all))
 
 # Make a dummy plot to extract legend
 p_dummy <- pca_plot(df_all, "PC1", "PC2", species_info, geo_table, var_all, color_by = "species", extract_legend = TRUE)
