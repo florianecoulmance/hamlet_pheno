@@ -723,8 +723,8 @@ for(dat in names(dataset)) {
   #-----------------------------------
   # PCA plot
   #-----------------------------------
-  p_pca <- pca_plot(pc_table, pcs[1], pcs[2], species_info, geo_table, var, color_by = color, extract_legend = dat_name == "lab_571_left_noflash")
-  s_pca <- pca_plot(pc_table, pcs[3], pcs[4], species_info, geo_table, var, color_by = color, extract_legend = dat_name == "lab_571_left_noflash")
+  p_pca <- pca_plot(pc_table, pcs[1], pcs[2], species_info, geo_table, var, color_by = color, extract_legend = TRUE)
+  s_pca <- pca_plot(pc_table, pcs[3], pcs[4], species_info, geo_table, var, color_by = color, extract_legend = TRUE)
 
   #-----------------------------------
   # VAR plot
@@ -805,8 +805,8 @@ ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
 ########## FIGURE 2 ###################
 # Combined phenotypic space with legend
 figure2 <- results[["all"]][["pca"]]
-print(dim(results[["all"]][["data"]]))
-print(head(results[["all"]][["data"]]))
+print(dim(results[["all"]][["pca"]]))
+print(head(results[["all"]][["pca"]]))
 ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
