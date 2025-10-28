@@ -802,7 +802,7 @@ ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
 
 ########## FIGURE 2 ###################
 # Combined phenotypic space with legend
-figure2 <- results[["lab_571_left_noflash"]][["pca"]]
+figure2 <- results[["all"]][["pca"]]
 ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
@@ -815,7 +815,7 @@ ggsave(
 
 ########## FIGURE S3 ###################
 # Variance of Principal Components for combined phenotypic space
-figureS3 <- results[["lab_571_left_noflash"]][["variance_plot"]]
+figureS3 <- results[["all"]][["variance_plot"]]
 ggsave(
   filename = file.path(figure_path, "FigS3_pAllVAR.png"),
   plot = figureS3,
@@ -892,10 +892,10 @@ ggsave(filename = file.path(figure_path, "FigS7_pLocHEAT.png"),
 
 ########## FIGURE S8 ###################
 # Combined phenotypic space: supplementary PCA + PERMANOVA + hierarchical clustering + heatmaps
-sup <- results[["lab_571_left_noflash"]][["sup_pca"]]
-perm <- results[["lab_571_left_noflash"]][["permanova"]]
-hier <- results[["lab_571_left_noflash"]][["hclust"]]
-heat <- results[["lab_571_left_noflash"]][["heatmap"]]
+sup <- results[["all"]][["sup_pca"]]
+perm <- results[["all"]][["permanova"]]
+hier <- results[["all"]][["hclust"]]
+heat <- results[["all"]][["heatmap"]]
 
 # # Bottom row: hier + heat
 # bottom_row <- plot_grid(hier, heat, ncol = 2, rel_widths = c(1,1))
@@ -916,40 +916,40 @@ ggsave(
 
 ########## FIGURE S9 ###################
 # Per species phenotypic space: PCA + heatmaps + hierarchical clustering + PERMANOVA
-pca_pue <- results[["lab_pue187_left_noflash"]][["pca"]]
-heat_pue <- results[["lab_pue187_left_noflash"]][["heatmap"]]
-perm_pue <- results[["lab_pue187_left_noflash"]][["permanova"]]
-hier_pue <- results[["lab_pue187_left_noflash"]][["hclust"]]
+pca_pue <- results[["pue"]][["pca"]]
+heat_pue <- results[["pue"]][["heatmap"]]
+perm_pue <- results[["pue"]][["permanova"]]
+hier_pue <- results[["pue"]][["hclust"]]
 pue <- plot_grid(pca_pue, heat_pue, perm_pue, hier_pue, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
-pca_nig <- results[["lab_nig111_left_noflash"]][["pca"]]
-heat_nig <- results[["lab_nig111_left_noflash"]][["heatmap"]]
-perm_nig <- results[["lab_nig111_left_noflash"]][["permanova"]]
-hier_nig <- results[["lab_nig111_left_noflash"]][["hclust"]]
+pca_nig <- results[["nig"]][["pca"]]
+heat_nig <- results[["nig"]][["heatmap"]]
+perm_nig <- results[["nig"]][["permanova"]]
+hier_nig <- results[["nig"]][["hclust"]]
 nig <- plot_grid(pca_nig, heat_nig, perm_nig, hier_nig, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
-pca_uni <- results[["lab_uni74_left_noflash"]][["pca"]]
-heat_uni <- results[["lab_uni74_left_noflash"]][["heatmap"]]
-perm_uni <- results[["lab_uni74_left_noflash"]][["permanova"]]
-hier_uni <- results[["lab_uni74_left_noflash"]][["hclust"]]
+pca_uni <- results[["uni"]][["pca"]]
+heat_uni <- results[["uni"]][["heatmap"]]
+perm_uni <- results[["uni"]][["permanova"]]
+hier_uni <- results[["uni"]][["hclust"]]
 uni <- plot_grid(pca_uni, heat_uni, perm_uni, hier_uni, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
-pca_chl <- results[["lab_chl34_left_noflash"]][["pca"]]
-heat_chl <- results[["lab_chl34_left_noflash"]][["heatmap"]]
-perm_chl <- results[["lab_chl34_left_noflash"]][["permanova"]]
-hier_chl <- results[["lab_chl34_left_noflash"]][["hclust"]]
+pca_chl <- results[["chl"]][["pca"]]
+heat_chl <- results[["chl"]][["heatmap"]]
+perm_chl <- results[["chl"]][["permanova"]]
+hier_chl <- results[["chl"]][["hclust"]]
 chl <- plot_grid(pca_uni, heat_uni, perm_uni, hier_uni, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
-pca_abe <- results[["lab_abe30_left_noflash"]][["pca"]]
-heat_abe <- results[["lab_abe30_left_noflash"]][["heatmap"]]
-perm_abe <- results[["lab_abe30_left_noflash"]][["permanova"]]
-hier_abe <- results[["lab_abe30_left_noflash"]][["hclust"]]
+pca_abe <- results[["abe"]][["pca"]]
+heat_abe <- results[["abe"]][["heatmap"]]
+perm_abe <- results[["abe"]][["permanova"]]
+hier_abe <- results[["abe"]][["hclust"]]
 abe <- plot_grid(pca_abe, heat_abe, perm_abe, hier_abe, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
-pca_ind <- results[["lab_ind28_left_noflash"]][["pca"]]
-heat_ind <- results[["lab_ind28_left_noflash"]][["heatmap"]]
-perm_ind <- results[["lab_ind28_left_noflash"]][["permanova"]]
-hier_ind <- results[["lab_ind28_left_noflash"]][["hclust"]]
+pca_ind <- results[["ind"]][["pca"]]
+heat_ind <- results[["ind"]][["heatmap"]]
+perm_ind <- results[["ind"]][["permanova"]]
+hier_ind <- results[["ind"]][["hclust"]]
 ind <- plot_grid(pca_ind, heat_ind, perm_ind, hier_ind, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
 figureS9 <- plot_grid(pue, nig, uni, chl, abe, ind, nrow = 6, rel_heights = c(1, 1, 1, 1, 1, 1))
