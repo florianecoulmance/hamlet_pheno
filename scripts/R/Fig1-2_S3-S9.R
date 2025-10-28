@@ -190,7 +190,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   p <- ggplot(plot_data, aes(x = .data[[pc_first]], y = .data[[pc_second]], color = .data[[group_col]])) +
     geom_point(size = 5, alpha = 0.5, show.legend = TRUE) +
     stat_ellipse(aes(color = .data[[group_col]]), linetype = 5, lwd = 1) +
-    geom_point(data = centroids, aes(x = x, y = y, color = .data[[group_col]]), size = 15, alpha = 0, show.legend = FALSE) +
+    # geom_point(data = centroids, aes(x = x, y = y, color = .data[[group_col]]), size = 15, alpha = 0, show.legend = FALSE) +
     # geom_image(data = centroids, aes(x = x, y = y, image = link), vjust=1, hjust=0, size = 0.15, asp = 1.1, alpha=1) +
     scale_color_manual(values = color_map, labels = label_map, guide = "legend") +
     theme_minimal() +
@@ -216,8 +216,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     p <- p +
       geom_image(
         data = centroids,
-        aes(x = x, y = y, image = link),
-        inherit.aes = FALSE,
+        aes(x = x, y = y, image = link, color = .data[[group_col]]),
+        # inherit.aes = FALSE,
         vjust = 1, hjust = 0, size = 0.1, asp = 1.1, alpha = 1, show.legend = FALSE
       )
   }
@@ -250,8 +250,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     print(color_map)
     print(head(plot_data[, c(pc_first, pc_second, group_col)]))
     p_legend <- p +
-      geom_point(aes(x = 0, y = 0, color = .data[[group_col]]),
-                data = unique(plot_data[, group_col, drop = FALSE]),
+      geom_point(data = centroid, aes(x = x, y = y, color = .data[[group_col]]),
                 size = 0, show.legend = TRUE) +
       guides(color = guide_legend(override.aes = list(size = 6), nrow = legend_rows)) +
       theme(
