@@ -147,7 +147,7 @@ write_metadata_gxp <- function(PCs) {
 #   - If extract_legend = FALSE: a ggplot2 PCA scatter plot (annotated with title).
 #   - If extract_legend = TRUE : a legend grob for combined plotting.
 # ============================================================
-pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var, color_by = "species", extract_legend = FALSE, legend_rows = 4) {
+pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var, color_by = "species", extract_legend = FALSE, legend_rows = 2) {
   print(extract_legend)
   # -----------------------------
   # 1. Choose color/grouping mode
@@ -195,8 +195,9 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   if (color_by == "species" && "link" %in% names(centroids)) {
     add_logos <- geom_image(
         data = centroids,
-        aes(x = x, y = y, image = link),
-        vjust = 1, hjust = 0, size = 0.1, asp = 1.1, alpha = 1
+        aes(image = link),
+        inherit.aes=FALSE,
+        vjust = 1, hjust = 0, size = 0.15, asp = 1.1, alpha = 1
       )
   } else {
     add_logos <- NULL
@@ -989,7 +990,7 @@ figureS10 <- plot_grid(pue, nig, uni, chl, abe, ind, nrow = 6, rel_heights = c(1
 # Save as PNG (A4 size)
 ggsave(
   filename = file.path(figure_path, "FigS10_pSpe.png"),
-  plot = figureS9,
+  plot = figureS10,
   width = 18.5,    # A4 width in inches
   height = 25.5,  # A4 height in inches
   units = "in",
