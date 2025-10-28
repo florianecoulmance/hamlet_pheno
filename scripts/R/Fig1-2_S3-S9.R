@@ -223,7 +223,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     scale_color_manual(values = color_map, labels = label_map) +
     theme_minimal() +
     theme(
-      legend.position = ifelse(extract_legend, "bottom", "none"),
+      legend.position = "none",
       legend.text = element_markdown(size = 5),
       panel.background = element_blank(),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
@@ -809,7 +809,8 @@ print(keep_names)
 # print(head(results[["all"]][["data"]]))
 # combined_legend <- pca_plot(results[["all"]][["data"]], "PC1", "PC2", species_info, geo_table, results[["all"]][["variance"]], color_by = "species", extract_legend = TRUE)
 # print(combined_legend)
-leg_combined <- exc_legend(results[["all"]][["data"]], species_info)
+# leg_combined <- exc_legend(results[["all"]][["data"]], species_info)
+leg_combined <- get_plot_component(results[["all"]][["pca"]], "guide-box", return_all = TRUE) + guides(color = guide_legend(nrow = 2)) + theme(legend.position = "bottom")
 # print("Plot for all pheno: ")
 # print(class(results[["all"]][["pca"]]))
 print("Legend for all : ")
