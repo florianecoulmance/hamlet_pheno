@@ -763,7 +763,7 @@ df_all <- do.call(rbind, lapply(results[!names(results) %in% "lab_571_left_nofla
 var_all <- do.call(rbind, lapply(results[!names(results) %in% "lab_571_left_noflash"], function(x) x$variance))
 
 # Make a dummy plot to extract legend
-p_dummy <- pca_plot("PC1", "PC2", species_info, var, geo_table, extract_legend = TRUE)
+p_dummy <- pca_plot(df_all, "PC1", "PC2", species_info, var_all, geo_table, extract_legend = TRUE)
 
 # Extract combined legend
 combined_legend <- get_legend(p_dummy)
