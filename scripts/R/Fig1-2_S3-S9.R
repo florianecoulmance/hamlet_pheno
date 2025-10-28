@@ -155,7 +155,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     label_map <- setNames(info_table$Locations, info_table$geo)
   }
   
-  print(head(pca_data))
+  # print(head(pca_data))
   # -----------------------------
   # 2. Merge PCA data with info
   # -----------------------------
@@ -760,7 +760,11 @@ results_no_overall <- results[!names(results) %in% "lab_571_left_noflash"]
 
 # Combine all data for legend
 df_all <- do.call(rbind, lapply(results[!names(results) %in% "lab_571_left_noflash"], function(x) x$data))
+print(class(df_all))
+print(head(df_all))
 var_all <- do.call(rbind, lapply(results[!names(results) %in% "lab_571_left_noflash"], function(x) x$variance))
+print(class(var_all))
+print(head(var_all))
 
 # Make a dummy plot to extract legend
 p_dummy <- pca_plot(df_all, "PC1", "PC2", species_info, var_all, geo_table, extract_legend = TRUE)
