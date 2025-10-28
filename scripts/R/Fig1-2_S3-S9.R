@@ -246,6 +246,9 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   if (extract_legend) {
   # Ensure a visible color legend is built (dummy invisible points)
+    print(unique(plot_data[[group_col]]))
+    print(color_map)
+    print(head(plot_data[, c(pc_first, pc_second, group_col)]))
     p_legend <- p +
       geom_point(aes(x = 0, y = 0, color = .data[[group_col]]),
                 data = unique(plot_data[, group_col, drop = FALSE]),
