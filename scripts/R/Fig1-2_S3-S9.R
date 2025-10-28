@@ -78,6 +78,7 @@ exc_legend <- function(pca_file, species_col, num_row = 2) {
   # create a list of species logo to integrate to plots
   logos_spec <- species_col %>%
     mutate(
+      spec = spec,
       html = glue(
         "<img src='{link}' width='110' /><br>*H. {Species}*"
       )
