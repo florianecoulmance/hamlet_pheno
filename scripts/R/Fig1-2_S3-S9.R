@@ -200,6 +200,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       axis.text = element_text(size = 20),
       axis.title = element_text(size = 25)
     ) +
+    scale_x_continuous(position = "bottom",labels = unit_format(unit = "k", scale = 1e-3)) +
+    scale_y_continuous(labels = unit_format(unit = "k", scale = 1e-3)) +
     labs(
       x = paste0(pc_first,", variance =  ", format(round(var$X0[as.numeric(str_sub(pc_first, 3, -1))] * 100, 1), nsmall = 1), " %"),
       y = paste0(pc_second,", variance = ", format(round(var$X0[as.numeric(str_sub(pc_second, 3, -1))] * 100, 1), nsmall = 1), " %")
@@ -803,6 +805,8 @@ ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
 ########## FIGURE 2 ###################
 # Combined phenotypic space with legend
 figure2 <- results[["all"]][["pca"]]
+print(dim(results[["all"]][["variance_plot"]]))
+print(head(results[["all"]][["variance_plot"]]))
 ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
