@@ -90,12 +90,12 @@ add_species_logos <- function(color_file, logos_p) {
 # ============================================================
 # Function to get legend ffrom a plot
 # ============================================================
-get_legend <- function(my_plot) {
-  tmp <- ggplotGrob(my_plot + theme(legend.position = "bottom")) # make sure it has a legend
-  leg <- gtable::gtable_filter(tmp, "guide-box")
-  if (length(leg) == 0) return(NULL)
-  leg
-}
+# get_legend <- function(my_plot) {
+#   tmp <- ggplotGrob(my_plot + theme(legend.position = "bottom")) # make sure it has a legend
+#   leg <- gtable::gtable_filter(tmp, "guide-box")
+#   if (length(leg) == 0) return(NULL)
+#   leg
+# }
 
 
 # ============================================================
@@ -778,11 +778,11 @@ var_all <- do.call(rbind, lapply(results[!names(results) %in% "lab_571_left_nofl
 # print(head(var_all))
 
 # Make a dummy plot to extract legend
-p_dummy <- pca_plot(df_all, "PC1", "PC2", species_info, geo_table, var_all, color_by = "species", extract_legend = TRUE)
-print(class(p_dummy))
+# p_dummy <- pca_plot(df_all, "PC1", "PC2", species_info, geo_table, var_all, color_by = "species", extract_legend = TRUE)
+# print(class(p_dummy))
 # Extract combined legend
-combined_legend <- get_legend(p_dummy)
-print(combined_legend)
+combined_legend <- pca_plot(df_all, "PC1", "PC2", species_info, geo_table, var_all, color_by = "species", extract_legend = TRUE)
+print(class(combined_legend))
 
 ########## FIGURE 1 ###################
 # PCA plots for all locations with legend
