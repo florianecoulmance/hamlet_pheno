@@ -159,7 +159,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     info_table <- species_info
     color_map <- setNames(info_table$Color, info_table$spec)
     label_map <- setNames(
-      paste0("<img src='", info_table$link, "' width='120' /><br>*", info_table$Species, "*"),
+      paste0("<img src='", info_table$link, "' width='120' /><br>*H. ", info_table$Species, "*"),
       info_table$spec)
   } else {
     group_col <- "geo"

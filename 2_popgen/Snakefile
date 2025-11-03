@@ -1,0 +1,204 @@
+#!/usr/bin/python 
+# by: Floriane Coulmance: 31.10.2025 
+
+import os
+
+BASE_DIR="/fs/dss/work/doau0129/hamlet_pheno"  # hamlet_pheno/
+GENO_DIR=os.path.join(BASE_DIR, "2_popgen")
+SAMPLES_FILE=os.path.join(BASEDIR, "metadata/sample_names.txt")
+VCF_FILE=os.path.join(BASE_DIR, "phyps2e_m2.vcf.gz")
+
+# List of datasets
+genotyping_params = [
+    # Per location, all species
+    {"dataset": "ala"},
+    {"dataset": "arc"},
+    {"dataset": "are"},
+    {"dataset": "bar"},
+    {"dataset": "bel"},
+    {"dataset": "boc"},
+    {"dataset": "flk"},
+    {"dataset": "gun"},
+    {"dataset": "hai"},
+    {"dataset": "hon"},
+    {"dataset": "liz"},
+    {"dataset": "pri"},
+    {"dataset": "qui"},
+    {"dataset": "san"},
+    {"dataset": "tam"},
+    # Overall location (all species combined)
+    {"dataset": "all"},
+    # Specific species (geo_name = all)
+    {"dataset": "abe"},
+    {"dataset": "aff"},
+    {"dataset": "atl"},
+    {"dataset": "cas"},
+    {"dataset": "chl"},
+    {"dataset": "eco"},
+    {"dataset": "esp"},
+    {"dataset": "flo"},
+    {"dataset": "gem"},
+    {"dataset": "gum"},
+    {"dataset": "gut"},
+    {"dataset": "ind"},
+    {"dataset": "lib"},
+    {"dataset": "may"},
+    {"dataset": "nig"},
+    {"dataset": "pro"},
+    {"dataset": "pue"},
+    {"dataset": "ran"},
+    {"dataset": "tan"},
+    {"dataset": "uni"},
+]
+
+# Separate datasets into "location" and "species" groups
+locations = [p["dataset"] for p in genotyping_params if p["dataset"] in
+             ["ala","arc","are","bar","bel","boc","flk","gun","hai","hon","liz","pri","qui","san","tam"]]
+species = [p["dataset"] for p in genotyping_params if p["dataset"] not in locations + ["all"]]
+datasets = locations + species
+
+# Rule to generate all dataset-specific files
+rule all:
+    input:
+        expand("byLOC/{loc}.txt", loc=locations),
+        expand("bySPC/{spc}.txt", spc=species),
+        expand("byLOC/{loc}.vcf.gz", loc=locations),
+        expand("bySPC/{spc}.vcf.gz", spc=species),
+        # Location mode outputs in byLOC/permanova_results/
+        expand("byLOC/permanova_results/{dataset}.lm.pairwise.csv", dataset=locations),
+        # Species mode outputs in bySPC/permanova_results/
+        expand("bySPC/permanova_results/{dataset}.sm.pairwise.csv", dataset=species)
+
+
+
+# --- Create directories ---
+rule make_dirs:
+    output:
+        directory("byLOC"),
+        directory("bySPC"),
+        directory("byALL")
+    shell:
+        "mkdir -p {output}"
+
+
+# Generic rule to extract matching samples
+rule split_samples_locations:
+    input:
+        SAMPLES_FILE
+    output:
+        "byLOC/{dataset}.txt"
+    shell:
+        "grep -E '[0-9]{{5}}.*{wildcards.dataset}' {input} > {output} || true"
+
+
+# Reuse same logic for species
+rule split_samples_species:
+    input:
+        SAMPLES_FILE
+    output:
+        "bySPC/{dataset}.txt"
+    shell:
+        "grep -E '[0-9]{{5}}.*{wildcards.dataset}' {input} > {output} || true"
+
+
+rule subset_vcf:
+    input:
+        VCF_FILE = VCF_FILE,
+        FILTER_FILE = lambda wildcards: (
+            f"byLOC/{wildcards.dataset}.txt"
+            if wildcards.dataset in locations
+            else f"bySPC/{wildcards.dataset}.txt"
+        )
+    output:
+        lambda wildcards: (
+            f"byLOC/{wildcards.dataset}.vcf.gz"
+            if wildcards.dataset in locations
+            else f"bySPC/{wildcards.dataset}.vcf.gz"
+        )
+    shell:
+        r"""
+        bcftools view --threads 4 -S {input.FILTER_FILE} -Oz -o {output} {input.VCF_FILE}
+        bcftools index {output}
+        """
+
+
+rule plink_processing:
+    input:
+        VCF = lambda wildcards: (
+            f"byLOC/{wildcards.dataset}.vcf.gz"
+            if wildcards.dataset in locations
+            else f"bySPC/{wildcards.dataset}.vcf.gz"
+        )
+    output:
+        GTMAT = lambda wildcards: (
+            f"byLOC/{wildcards.dataset}_ld_pruned_gtmat.traw"
+            if wildcards.dataset in locations
+            else f"bySPC/{wildcards.dataset}_ld_pruned_gtmat.traw"
+        )
+    shell:
+        r"""
+        # Create base prefix (remove folder and extensions)
+        prefix=$(basename {input.VCF} .vcf.gz)
+
+        # Step 1: Convert to PLINK binary
+        plink --vcf {input.VCF} --allow-extra-chr --make-bed --out $(dirname {input.VCF})/{wildcards.dataset}
+
+        # Step 2: Filter for MAF and missingness
+        plink --bfile $(dirname {input.VCF})/{wildcards.dataset} \
+              --maf 0.05 --geno 0.05 --allow-extra-chr --make-bed \
+              --out $(dirname {input.VCF})/{wildcards.dataset}.flt
+
+        # Step 3: LD pruning
+        plink --bfile $(dirname {input.VCF})/{wildcards.dataset}.flt \
+              --indep-pairwise 50 10 0.2 --allow-extra-chr \
+              --out $(dirname {input.VCF})/{wildcards.dataset}.ld
+
+        plink --bfile $(dirname {input.VCF})/{wildcards.dataset}.flt \
+              --extract $(dirname {input.VCF})/{wildcards.dataset}.ld.prune.in \
+              --allow-extra-chr --make-bed \
+              --out $(dirname {input.VCF})/{wildcards.dataset}.ld.pruned
+
+        # Step 4: Export genotype matrix (transposed)
+        plink --bfile $(dirname {input.VCF})/{wildcards.dataset}.ld.pruned \
+              --recode A-transpose --allow-extra-chr \
+              --out $(dirname {input.VCF})/{wildcards.dataset}_ld_pruned_gtmat
+        """
+
+
+rule run_permanova:
+    input:
+        GTMAT = lambda wildcards: (
+            f"byLOC/{wildcards.dataset}_ld_pruned_gtmat.traw"
+            if wildcards.dataset in locations
+            else f"bySPC/{wildcards.dataset}_ld_pruned_gtmat.traw"
+        ),
+        GROUPING = lambda wildcards: (
+            f"byLOC/{wildcards.dataset}.txt"
+            if wildcards.dataset in locations
+            else f"bySPC/{wildcards.dataset}.txt"
+        )
+    output:
+        lambda wildcards: (
+            f"byLOC/permanova_results/{wildcards.dataset}.lm.pairwise.csv"
+            if wildcards.dataset in locations
+            else f"bySPC/permanova_results/{wildcards.dataset}.sm.pairwise.csv"
+        )
+    params:
+        OUTDIR = lambda wildcards: (
+            f"byLOC/permanova_results/"
+            if wildcards.dataset in locations
+            else f"bySPC/permanova_results/"
+        ),
+        MODE_FLAG = lambda wildcards: "-no-s" if wildcards.dataset in locations else "-s"
+    threads: 1
+    shell:
+        r"""
+        mkdir -p {params.OUTDIR}
+
+        python3 permanova.py \
+            -i {input.GTMAT} \
+            -g {input.GROUPING} \
+            -o {params.OUTDIR} \
+            {params.MODE_FLAG} \ \
+            -n {wildcards.dataset}
+        """
