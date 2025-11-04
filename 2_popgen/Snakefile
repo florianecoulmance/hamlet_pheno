@@ -5,46 +5,39 @@ import os
 
 BASE_DIR="/fs/dss/work/doau0129/hamlet_pheno"  # hamlet_pheno/
 GENO_DIR=os.path.join(BASE_DIR, "2_popgen")
-SAMPLES_FILE=os.path.join(BASEDIR, "metadata/sample_names.txt")
+SAMPLES_FILE=os.path.join(BASEDIR, "metadata/geno_names.txt")
 VCF_FILE=os.path.join(BASE_DIR, "phyps2e_m2.vcf.gz")
+
+FIGURES_DIR = os.path.join(BASE_DIR, "figures")
+SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
+PYTHON_SCRIPT = os.path.join(SCRIPTS_DIR, "python", "permanova.py")
+R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig3-4_S11-S15.R")
 
 # List of datasets
 genotyping_params = [
     # Per location, all species
-    {"dataset": "ala"},
     {"dataset": "arc"},
-    {"dataset": "are"},
     {"dataset": "bar"},
     {"dataset": "bel"},
     {"dataset": "boc"},
     {"dataset": "flk"},
     {"dataset": "gun"},
-    {"dataset": "hai"},
     {"dataset": "hon"},
     {"dataset": "liz"},
     {"dataset": "pri"},
     {"dataset": "qui"},
-    {"dataset": "san"},
-    {"dataset": "tam"},
     # Overall location (all species combined)
     {"dataset": "all"},
     # Specific species (geo_name = all)
     {"dataset": "abe"},
     {"dataset": "aff"},
     {"dataset": "atl"},
-    {"dataset": "cas"},
     {"dataset": "chl"},
-    {"dataset": "eco"},
-    {"dataset": "esp"},
-    {"dataset": "flo"},
     {"dataset": "gem"},
     {"dataset": "gum"},
     {"dataset": "gut"},
     {"dataset": "ind"},
-    {"dataset": "lib"},
-    {"dataset": "may"},
     {"dataset": "nig"},
-    {"dataset": "pro"},
     {"dataset": "pue"},
     {"dataset": "ran"},
     {"dataset": "tan"},
@@ -64,10 +57,30 @@ rule all:
         expand("bySPC/{spc}.txt", spc=species),
         expand("byLOC/{loc}.vcf.gz", loc=locations),
         expand("bySPC/{spc}.vcf.gz", spc=species),
+        expand("byLOC/{loc}_ld_pruned_gtmat.traw", loc=locations),
+        expand("bySPC/{spc}_ld_pruned_gtmat.traw", spc=species),
+        "byALL/all_ld_pruned_gtmat.traw",
+        "byALL/thinned_all_ld_pruned_gtmat.traw",
         # Location mode outputs in byLOC/permanova_results/
         expand("byLOC/permanova_results/{dataset}.lm.pairwise.csv", dataset=locations),
         # Species mode outputs in bySPC/permanova_results/
-        expand("bySPC/permanova_results/{dataset}.sm.pairwise.csv", dataset=species)
+        expand("bySPC/permanova_results/{dataset}.sm.pairwise.csv", dataset=species),
+        "byALL/permanova_results/all.sm.pairwise.csv"
+        "byALL/permanova_results/all.lm.pairwise.csv"
+                # Figure outputs
+        expand(
+            f"{FIGURES_DIR}/{{fig_name}}",
+            fig_name=[
+                "Fig3_gLocPCA.png",
+                "Fig4_gAllPCA.png",
+                "FigS11_gAllVAR.png",
+                "FigS12_gLocSUP.png",
+                "FigS13_gLocPERM.png",
+                "FigS14_gAllPERM.png",
+                "FigS15_gSpe.png"
+            ]
+        )
+
 
 
 
@@ -184,6 +197,7 @@ rule run_permanova:
             else f"bySPC/permanova_results/{wildcards.dataset}.sm.pairwise.csv"
         )
     params:
+        python_script = PYTHON_SCRIPT,
         OUTDIR = lambda wildcards: (
             f"byLOC/permanova_results/"
             if wildcards.dataset in locations
@@ -195,10 +209,151 @@ rule run_permanova:
         r"""
         mkdir -p {params.OUTDIR}
 
-        python3 permanova.py \
+        python3 {params.python_script} \
             -i {input.GTMAT} \
             -g {input.GROUPING} \
             -o {params.OUTDIR} \
             {params.MODE_FLAG} \ \
             -n {wildcards.dataset}
         """
+
+
+rule all_plink:
+    input:
+        VCF_FILE = VCF_FILE
+    output:
+        GTMAT = "byALL/all_ld_pruned_gtmat.traw"
+    shell:
+        r"""
+        # Create index for vcf file
+        bcftools index {input.VCF_FILE}
+
+        # Create base prefix (remove folder and extensions)
+        prefix="all"
+
+        # Step 1: Convert to PLINK binary
+        plink --vcf {input.VCF_FILE} --allow-extra-chr --make-bed --out byALL/${prefix}
+
+        # Step 2: Filter for MAF and missingness
+        plink --bfile byALL/${prefix} \
+              --maf 0.05 --geno 0.05 --allow-extra-chr --make-bed \
+              --out byALL/${prefix}.flt
+
+        # Step 3: LD pruning
+        plink --bfile byALL/${prefix}.flt \
+              --indep-pairwise 50 10 0.2 --allow-extra-chr \
+              --out byALL/${prefix}.ld
+
+        plink --bfile byALL/${prefix}.flt \
+              --extract byALL/${prefix}.ld.prune.in \
+              --allow-extra-chr --make-bed \
+              --out byALL/${prefix}.ld.pruned
+
+        # Step 4: Export genotype matrix (transposed)
+        plink --bfile byALL/${prefix}.ld.pruned \
+              --recode A-transpose --allow-extra-chr \
+              --out byALL/${prefix}_ld_pruned_gtmat
+        """
+
+
+rule thin_ld_pruned:
+    input:
+        LD_PRUNED = "byALL/all_ld_pruned_gtmat.traw"
+    output:
+        TRIMMED_TRAW = "byALL/thinned_all_ld_pruned_gtmat.traw"
+    threads: 4
+    shell:
+        r"""
+        module load hpc-env/13.1
+        module load plink-1.9-x86_64
+
+        # Thin SNPs by distance (200 bp)
+        plink --file {input.LD_PRUNED} \
+              --thin-dist 200 \
+              --recode A-transpose \
+              --allow-extra-chr \
+              --out byALL/all_ld_pruned_thinned_gtmat
+
+        # Further downsample if desired (e.g., every 500th SNP)
+        awk 'NR == 1 || (NR-1) % 500 == 0' \
+            byALL/all_ld_pruned_thinned_gtmat.traw \
+            > {output.TRIMMED_TRAW}
+        """
+
+
+rule run_permanova_all:
+    input:
+        GTMAT = "byALL/thinned_all_ld_pruned_gtmat.traw",
+        GROUPING = SAMPLES_FILE
+    output:
+        "byALL/permanova_results/all.lm.pairwise.csv"
+        "byALL/permanova_results/all.sm.pairwise.csv"
+    params:
+        python_script = PYTHON_SCRIPT,
+        OUTDIR = "byALL/permanova_results/"
+    shell:
+        r"""
+        python3 {params.python_script} \
+            -i {input.GTMAT} \
+            -g {input.GROUPING} \
+            -o {params.OUTDIR} \
+            -no-s \
+            -n all
+
+        
+        python3 {params.python_script} \
+            -i {input.GTMAT} \
+            -g {input.GROUPING} \
+            -o {params.OUTDIR} \
+            -s \
+            -n all
+        """
+
+
+rule pca_plot:
+    input:
+        gtmat = lambda wildcards: (
+            [f"byLOC/{loc}_ld_pruned_gtmat.traw" for loc in locations] +
+            [f"bySPC/{spc}_ld_pruned_gtmat.traw" for spc in species] +
+            ["byALL/thinned_all_ld_pruned_gtmat.traw"]
+        ),
+        # PERMANOVA results
+        permanova = lambda wildcards: (
+            [f"byLOC/permanova_results/{loc}.lm.pairwise.csv" for loc in locations] +
+            [f"bySPC/permanova_results/{spc}.sm.pairwise.csv" for spc in species] +
+            ["byALL/permanova_results/all.lm.pairwise.csv"] +
+            ["byALL/permanova_results/all.sm.pairwise.csv"]
+        )        
+    output:
+        f"{FIGURES_DIR}/Fig3_gLocPCA.png",
+        f"{FIGURES_DIR}/Fig4_gAllPCA.png",
+        f"{FIGURES_DIR}/FigS11_gAllVAR.png",
+        f"{FIGURES_DIR}/FigS12_gLocSUP.png",
+        f"{FIGURES_DIR}/FigS13_gLocPERM.png",
+        f"{FIGURES_DIR}/FigS14_gAllPERM.png",
+        f"{FIGURES_DIR}/FigS15_gSpe.png"
+    params:
+        base_path = BASE_DIR,
+        figure_path = FIGURES_DIR,
+        logos_path = f"{BASE_DIR}/metadata/logos_hamlet",
+        spec_colors = f"{BASE_DIR}/metadata/species_colors.tsv",
+        geo_colors = f"{BASE_DIR}/metadata/locations_colors.tsv"
+    threads: 1
+    resources:
+        mem_mb=2000,
+        time="2:00:00"
+    shell:
+        """
+        module load hpc-env/13.1
+        module load R/4.3.1-foss-2023a
+
+        Rscript {R_SCRIPT} \
+            --base_path {params.base_path} \
+            --figure_path {params.figure_path} \
+            --logos_path {params.logos_path} \
+            --spec_colors {params.spec_colors} \
+            --geo_colors {params.geo_colors}
+        """
+        
+
+
