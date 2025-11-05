@@ -12,7 +12,10 @@ phyps2e_m2.vcf.gz.csi
 2_popgen/bySPC/*.nosex
 2_popgen/byALL/*.traw
 2_popgen/byALL/*.log
-2_popgen/bySPC/*.nosex
+2_popgen/byALL/*.nosex
+2_popgen/.R*
+2_popgen/Rplots.pdf
+2_popgen/.snakemake/*
 .R* 
 1_phenotyping/.R*
 1_phenotyping/Rplots.pdf

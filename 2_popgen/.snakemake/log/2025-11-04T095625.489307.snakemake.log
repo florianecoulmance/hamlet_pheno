@@ -1,5 +1,0 @@
-TabError in file "<string>", line 148:
-inconsistent use of tabs and spaces in indentation:
-	"{OUT_DIR}/{dataset}_ld_pruned_gtmat.traw"
-  File "/user/doau0129/miniconda3/envs/phenotypic_pipeline/lib/python3.12/tokenize.py", line 588, in _generate_tokens_from_c_tokenizer
-  File "/user/doau0129/miniconda3/envs/phenotypic_pipeline/lib/python3.12/tokenize.py", line 584, in _generate_tokens_from_c_tokenizer
