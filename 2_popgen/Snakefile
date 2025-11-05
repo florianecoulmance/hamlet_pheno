@@ -5,7 +5,7 @@ import os
 
 BASE_DIR="/fs/dss/work/doau0129/hamlet_pheno"  # hamlet_pheno/
 GENO_DIR=os.path.join(BASE_DIR, "2_popgen")
-SAMPLES_FILE=os.path.join(BASEDIR, "metadata/geno_names.txt")
+SAMPLES_FILE=os.path.join(BASE_DIR, "metadata/geno_names.txt")
 VCF_FILE=os.path.join(BASE_DIR, "phyps2e_m2.vcf.gz")
 
 FIGURES_DIR = os.path.join(BASE_DIR, "figures")
@@ -65,9 +65,9 @@ rule all:
         expand("byLOC/permanova_results/{dataset}.lm.pairwise.csv", dataset=locations),
         # Species mode outputs in bySPC/permanova_results/
         expand("bySPC/permanova_results/{dataset}.sm.pairwise.csv", dataset=species),
-        "byALL/permanova_results/all.sm.pairwise.csv"
-        "byALL/permanova_results/all.lm.pairwise.csv"
-                # Figure outputs
+        "byALL/permanova_results/all.sm.pairwise.csv",
+        "byALL/permanova_results/all.lm.pairwise.csv",
+        # Figure outputs
         expand(
             f"{FIGURES_DIR}/{{fig_name}}",
             fig_name=[
@@ -123,13 +123,14 @@ rule subset_vcf:
             else f"bySPC/{wildcards.dataset}.txt"
         )
     output:
-        lambda wildcards: (
-            f"byLOC/{wildcards.dataset}.vcf.gz"
-            if wildcards.dataset in locations
-            else f"bySPC/{wildcards.dataset}.vcf.gz"
-        )
+        "by{group}/{dataset}.vcf.gz"
+    params:
+        group = lambda wildcards: "LOC" if wildcards.dataset in locations else "SPC"
     shell:
         r"""
+        module load hpc-env/13.1
+        module load BCFtools/1.18-GCC-13.1.0
+
         bcftools view --threads 4 -S {input.FILTER_FILE} -Oz -o {output} {input.VCF_FILE}
         bcftools index {output}
         """
@@ -142,14 +143,17 @@ rule plink_processing:
             if wildcards.dataset in locations
             else f"bySPC/{wildcards.dataset}.vcf.gz"
         )
-    output:
-        GTMAT = lambda wildcards: (
-            f"byLOC/{wildcards.dataset}_ld_pruned_gtmat.traw"
-            if wildcards.dataset in locations
-            else f"bySPC/{wildcards.dataset}_ld_pruned_gtmat.traw"
+    params:
+        OUT_DIR = lambda wildcards: (
+            "byLOC" if wildcards.dataset in locations else "bySPC"
         )
+    output:
+        "{OUT_DIR}/{dataset}_ld_pruned_gtmat.traw"
     shell:
         r"""
+        module load hpc-env/13.1
+        module load PLINK/v1.9b7.4-x86_64
+
         # Create base prefix (remove folder and extensions)
         prefix=$(basename {input.VCF} .vcf.gz)
 
@@ -191,11 +195,7 @@ rule run_permanova:
             else f"bySPC/{wildcards.dataset}.txt"
         )
     output:
-        lambda wildcards: (
-            f"byLOC/permanova_results/{wildcards.dataset}.lm.pairwise.csv"
-            if wildcards.dataset in locations
-            else f"bySPC/permanova_results/{wildcards.dataset}.sm.pairwise.csv"
-        )
+        "{OUTDIR}/{dataset}.{SUFFIX}.pairwise.csv"
     params:
         python_script = PYTHON_SCRIPT,
         OUTDIR = lambda wildcards: (
@@ -203,7 +203,10 @@ rule run_permanova:
             if wildcards.dataset in locations
             else f"bySPC/permanova_results/"
         ),
-        MODE_FLAG = lambda wildcards: "-no-s" if wildcards.dataset in locations else "-s"
+        MODE_FLAG = lambda wildcards: "-no-s" if wildcards.dataset in locations else "-s",
+        SUFFIX = lambda wildcards: (
+            "lm" if wildcards.dataset in locations else "sm"
+        )
     threads: 1
     shell:
         r"""
@@ -225,6 +228,10 @@ rule all_plink:
         GTMAT = "byALL/all_ld_pruned_gtmat.traw"
     shell:
         r"""
+        module load hpc-env/13.1
+        module load BCFtools/1.18-GCC-13.1.0
+        module load PLINK/v1.9b7.4-x86_64
+
         # Create index for vcf file
         bcftools index {input.VCF_FILE}
 
@@ -232,27 +239,27 @@ rule all_plink:
         prefix="all"
 
         # Step 1: Convert to PLINK binary
-        plink --vcf {input.VCF_FILE} --allow-extra-chr --make-bed --out byALL/${prefix}
+        plink --vcf {input.VCF_FILE} --allow-extra-chr --make-bed --out byALL/${{prefix}}
 
         # Step 2: Filter for MAF and missingness
-        plink --bfile byALL/${prefix} \
+        plink --bfile byALL/${{prefix}} \
               --maf 0.05 --geno 0.05 --allow-extra-chr --make-bed \
-              --out byALL/${prefix}.flt
+              --out byALL/${{prefix}}.flt
 
         # Step 3: LD pruning
-        plink --bfile byALL/${prefix}.flt \
+        plink --bfile byALL/${{prefix}}.flt \
               --indep-pairwise 50 10 0.2 --allow-extra-chr \
-              --out byALL/${prefix}.ld
+              --out byALL/${{prefix}}.ld
 
-        plink --bfile byALL/${prefix}.flt \
-              --extract byALL/${prefix}.ld.prune.in \
+        plink --bfile byALL/${{prefix}}.flt \
+              --extract byALL/${{prefix}}.ld.prune.in \
               --allow-extra-chr --make-bed \
-              --out byALL/${prefix}.ld.pruned
+              --out byALL/${{prefix}}.ld.pruned
 
         # Step 4: Export genotype matrix (transposed)
-        plink --bfile byALL/${prefix}.ld.pruned \
+        plink --bfile byALL/${{prefix}}.ld.pruned \
               --recode A-transpose --allow-extra-chr \
-              --out byALL/${prefix}_ld_pruned_gtmat
+              --out byALL/${{prefix}}_ld_pruned_gtmat
         """
 
 
@@ -265,7 +272,7 @@ rule thin_ld_pruned:
     shell:
         r"""
         module load hpc-env/13.1
-        module load plink-1.9-x86_64
+        module load PLINK/v1.9b7.4-x86_64
 
         # Thin SNPs by distance (200 bp)
         plink --file {input.LD_PRUNED} \
@@ -300,7 +307,7 @@ rule run_permanova_all:
             -no-s \
             -n all
 
-        
+
         python3 {params.python_script} \
             -i {input.GTMAT} \
             -g {input.GROUPING} \
@@ -323,7 +330,7 @@ rule pca_plot:
             [f"bySPC/permanova_results/{spc}.sm.pairwise.csv" for spc in species] +
             ["byALL/permanova_results/all.lm.pairwise.csv"] +
             ["byALL/permanova_results/all.sm.pairwise.csv"]
-        )        
+        )
     output:
         f"{FIGURES_DIR}/Fig3_gLocPCA.png",
         f"{FIGURES_DIR}/Fig4_gAllPCA.png",
@@ -354,6 +361,4 @@ rule pca_plot:
             --spec_colors {params.spec_colors} \
             --geo_colors {params.geo_colors}
         """
-        
-
 

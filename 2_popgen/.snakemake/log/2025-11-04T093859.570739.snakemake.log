@@ -1,0 +1,4 @@
+SyntaxError in file "/fs/dss/work/doau0129/hamlet_pheno/2_popgen/Snakefile", line 68:
+invalid syntax. Perhaps you forgot a comma?:
+        "byALL/permanova_results/all.lm.pairwise.csv"
+

@@ -1,0 +1,105 @@
+Assuming unrestricted shared filesystem usage.
+host: hpcl001
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 24
+Rules claiming more threads will be scaled down.
+Job stats:
+job               count
+--------------  -------
+all                   1
+all_plink             1
+pca_plot              1
+thin_ld_pruned        1
+total                 4
+
+Select jobs to execute...
+Execute 1 jobs...
+[Wed Nov  5 10:15:27 2025]
+localrule all_plink:
+    input: /fs/dss/work/doau0129/hamlet_pheno/phyps2e_m2.vcf.gz
+    output: byALL/all_ld_pruned_gtmat.traw
+    jobid: 70
+    reason: Missing output files: byALL/all_ld_pruned_gtmat.traw
+    resources: mem_mb=4000, mem_mib=3815, disk_mb=46815, disk_mib=44647, tmpdir=/tmp, time=2:00:00, threads=1
+Terminating processes on user request, this might take some time.
+RuleException:
+CalledProcessError in file "/fs/dss/work/doau0129/hamlet_pheno/2_popgen/Snakefile", line 230:
+Command 'set -euo pipefail;  
+        module load hpc-env/13.1
+        module load BCFtools/1.18-GCC-13.1.0
+        module load PLINK/v1.9b7.4-x86_64
+
+        # Create index for vcf file
+        bcftools index /fs/dss/work/doau0129/hamlet_pheno/phyps2e_m2.vcf.gz
+
+        # Create base prefix (remove folder and extensions)
+        prefix="all"
+
+        # Step 1: Convert to PLINK binary
+        plink --vcf /fs/dss/work/doau0129/hamlet_pheno/phyps2e_m2.vcf.gz --allow-extra-chr --make-bed --out byALL/${prefix}
+
+        # Step 2: Filter for MAF and missingness
+        plink --bfile byALL/${prefix} \
+              --maf 0.05 --geno 0.05 --allow-extra-chr --make-bed \
+              --out byALL/${prefix}.flt
+
+        # Step 3: LD pruning
+        plink --bfile byALL/${prefix}.flt \
+              --indep-pairwise 50 10 0.2 --allow-extra-chr \
+              --out byALL/${prefix}.ld
+
+        plink --bfile byALL/${prefix}.flt \
+              --extract byALL/${prefix}.ld.prune.in \
+              --allow-extra-chr --make-bed \
+              --out byALL/${prefix}.ld.pruned
+
+        # Step 4: Export genotype matrix (transposed)
+        plink --bfile byALL/${prefix}.ld.pruned \
+              --recode A-transpose --allow-extra-chr \
+              --out byALL/${prefix}_ld_pruned_gtmat' died with <Signals.SIGINT: 2>.
+[Wed Nov  5 10:15:48 2025]
+Error in rule all_plink:
+    message: None
+    jobid: 70
+    input: /fs/dss/work/doau0129/hamlet_pheno/phyps2e_m2.vcf.gz
+    output: byALL/all_ld_pruned_gtmat.traw
+    shell:
+        
+        module load hpc-env/13.1
+        module load BCFtools/1.18-GCC-13.1.0
+        module load PLINK/v1.9b7.4-x86_64
+
+        # Create index for vcf file
+        bcftools index /fs/dss/work/doau0129/hamlet_pheno/phyps2e_m2.vcf.gz
+
+        # Create base prefix (remove folder and extensions)
+        prefix="all"
+
+        # Step 1: Convert to PLINK binary
+        plink --vcf /fs/dss/work/doau0129/hamlet_pheno/phyps2e_m2.vcf.gz --allow-extra-chr --make-bed --out byALL/${prefix}
+
+        # Step 2: Filter for MAF and missingness
+        plink --bfile byALL/${prefix} \
+              --maf 0.05 --geno 0.05 --allow-extra-chr --make-bed \
+              --out byALL/${prefix}.flt
+
+        # Step 3: LD pruning
+        plink --bfile byALL/${prefix}.flt \
+              --indep-pairwise 50 10 0.2 --allow-extra-chr \
+              --out byALL/${prefix}.ld
+
+        plink --bfile byALL/${prefix}.flt \
+              --extract byALL/${prefix}.ld.prune.in \
+              --allow-extra-chr --make-bed \
+              --out byALL/${prefix}.ld.pruned
+
+        # Step 4: Export genotype matrix (transposed)
+        plink --bfile byALL/${prefix}.ld.pruned \
+              --recode A-transpose --allow-extra-chr \
+              --out byALL/${prefix}_ld_pruned_gtmat
+        
+        (command exited with non-zero exit code)
+Complete log(s): /fs/dss/work/doau0129/hamlet_pheno/2_popgen/.snakemake/log/2025-11-05T101527.038485.snakemake.log
+WorkflowError:
+At least one job did not complete successfully.

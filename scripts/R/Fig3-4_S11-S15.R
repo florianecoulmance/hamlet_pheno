@@ -8,7 +8,7 @@ rm(list = ls())
 
 
 # new libraries
-source("Fig1-2_S3-S10.R")
+source("../scripts/R/Fig1-2_S3-S10.R")
 library(smartsnp)
 library(ggplot2)
 library(stringi)
