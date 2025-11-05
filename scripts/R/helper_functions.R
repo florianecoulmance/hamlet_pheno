@@ -261,6 +261,10 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
 #   - ggplot object showing explained variance per PC
 # ============================================================
 plot_variance <- function(var, loc_name) {
+  print(var)
+  # Ensure var is a data frame
+  var <- as.data.frame(var)
+  print(var)
   # Ensure proper column names and indexing
   if (ncol(var) == 2) {
     colnames(var) <- c("PC", "Variance")
@@ -639,42 +643,67 @@ pca_analysis <- function(gtfile, samplefile, color_by) {
     
     # Read sample names and define groups
     allsamples <- readLines(samplefile)
+    print(allsamples)
+
+    geo  <- substr(allsamples, nchar(allsamples) - 2, nchar(allsamples))
+    spec <- substr(allsamples, nchar(allsamples) - 5, nchar(allsamples) - 3)
+
     # Extract spec and geo depending on mode
     if (speciesMODE) {
-        spec <- substr(allsamples, nchar(allsamples) - 2, nchar(allsamples))
-        geo  <- substr(allsamples, nchar(allsamples) - 5, nchar(allsamples) - 3)
+        if(length(unique(spec)) <= 1) {
+            message("Not enough different samples")
+            quit(save = "no", status = 1)
+        }
     } else {
-        geo  <- substr(allsamples, nchar(allsamples) - 2, nchar(allsamples))
-        spec <- substr(allsamples, nchar(allsamples) - 5, nchar(allsamples) - 3)
-    }
-    
-    # Check there is enough variation
-    if (length(unique(group_id)) <= 1) {
-        message("Not enough different samples")
-        quit(save = "no", status = 1)
+        if(length(unique(geo)) <= 1) {
+            message("Not enough different samples")
+            quit(save = "no", status = 1)
+        }
     }
     
     # Run SmartPCA
     sm.pca <- smart_pca(
         snp_data = gtfile,
         sample_group = if (speciesMODE) spec else geo,
-        missing_value = NA
+        missing_value = NA,
+        pc_axes = 6
     )
     
     # Extract PCA outputs
     pca_coords <- sm.pca$pca.sample_coordinates
     var_explained <- sm.pca$pca.eigenvalues
-    
+    print(head(pca_coords))
+    print(head(var_explained))
+
     # Ensure the PCA coordinates rows are in the same order as the original samples
-    pca_coords <- pca_coords[match(allsamples, rownames(pca_coords)), ]
-    
+    #pca_coords <- pca_coords[match(allsamples, rownames(pca_coords)), ]
+    #print(head(pca_coords))
+
     # Then add spec, geo, and sample
     pca_coords$spec   <- spec
     pca_coords$geo    <- geo
     pca_coords$sample <- allsamples
-    
+    print(head(pca_coords))    
+
+    # Extract the "variance explained" row as numeric
+    var_explained <- as.numeric(var_explained["variance explained", ])
+    print(var_explained)
+
+    # If currently in percentages, convert to fractions
+    var_explained <- var_explained / 100  # remove if already in 0-1 range
+
+    # Create the table in the same format as read.csv would
+    table <- data.frame(X0 = var_explained)
+    print(table)
+    # Add row numbers starting from 0 if needed
+    rownames(table) <- 0:(length(var_explained)-1)
+    print(table)
+
+    # Access the values like
+    (print(table$X0))
+
     # Return both
-    return(list(eigen = pca_coords, var = var_explained))
+    return(list(eigen = pca_coords, var = table))
 }
 
 
@@ -723,8 +752,8 @@ pca_plot_all <- function(pca_data, pc_first, pc_second, species_info, variance) 
         axis.title = element_text(size = 14)
         ) +
         labs(
-        x = paste0(pc_first, ", variance = ", format(round(variance$variation[1], 1), nsmall = 1), " %"),
-        y = paste0(pc_second, ", variance = ", format(round(variance$variation[2], 1), nsmall = 1), " %")
+        x = paste0(pc_first, ", variance = ", format(round(variance$X0[as.numeric(str_sub(pc_first, 3, -1))] * 100, 1), nsmall = 1), " %"),
+        y = paste0(pc_second, ", variance = ", format(round(variance$X0[as.numeric(str_sub(pc_second, 3, -1))] * 100, 1), nsmall = 1), " %")
         ) +
         guides(
         color = guide_legend(ncol = 1, byrow = TRUE),
@@ -789,10 +818,30 @@ plot_permanova_permdisp <- function(pair_file, params_legend = "none") {
             )
         )
 
+    print(head(df_sym))
+    print(head(df_sig))
+    
     # Reshape to matrix for plotting
     sig_pair <- dcast(as.data.table(df_sig), spc1 ~ spc2, value.var = "category")
-    sig_pair[upper.tri(as.matrix(sig_pair[,-1]))] <- NA
+    print(sig_pair)
+    
+    # Get the names of the columns to modify (all except the first)
+    cols_to_modify <- setdiff(names(sig_pair), "spc1")
+
+    # Convert all columns except the first to matrix
+    sig_pair_mat <- as.matrix(sig_pair[, ..cols_to_modify])
+    
+
+    # Set upper triangle to NA
+    sig_pair_mat[upper.tri(sig_pair_mat)] <- NA
+
+    # Assign back to the data.table
+    sig_pair[, (cols_to_modify) := as.data.table(sig_pair_mat)]
+
+    #sig_pair[upper.tri(as.matrix(sig_pair[,-1]))] <- NA
+    print(sig_pair)
     sig_pair_melt <- melt(sig_pair, id.vars = "spc1")
+    print(sig_pair_melt)
 
     # Build plot
     p_allLoc <- ggplot(sig_pair_melt) +

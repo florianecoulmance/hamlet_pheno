@@ -15,6 +15,23 @@ library(stringi)
 library(ggtext)
 library(dplyr)
 library(ggimage)
+library(scales)
+library(stringr)
+library(ggpubr)
+library(patchwork)
+library(cowplot)
+library(pairwiseAdonis)
+library(tidyverse)
+library(reshape2)
+library(ggnewscale)
+library(tibble)
+library(png)
+library(grid)
+library(ggtree)
+library(glue)
+library(viridis)
+library(scico)
+library(data.table)
 
 
 # ############################
@@ -81,7 +98,7 @@ dataset <- list(
     pue = list(dir = "bySPC", colors = "location"),
     ran = list(dir = "bySPC", colors = "location"),
     tan = list(dir = "bySPC", colors = "location"),
-    uni = list(dir = "bySPC", colors = "location"),
+    uni = list(dir = "bySPC", colors = "location")
 )
 
 # Create a list to store plots per location
@@ -90,16 +107,19 @@ results <- list()
 for(dat in names(dataset)) {
     dat_info <- dataset[[dat]]
     dat_dir <- dat_info$dir
+    print(dat_dir)
     color <- dat_info$colors
-  
-    message("Processing: ", dat_info)
+    print(color)  
+    message("Processing: ", dat)
   
     #-----------------------------------
     # Read GTMAT file + Sample file + PERMANOVA & PERMDISP result table
     #-----------------------------------
-    gtmat_file <- file.path(base_path, "2_popgen", dat_dir, if (dat_info == "all") "thinned_all_ld_pruned_gtmat.traw" else paste0(dat_info, "_ld_pruned_gtmat.traw"))
-    sample_file <- file.path(base_path, if (dat_info == "all") "metadata/geno_names.txt" else paste0("2_popgen/", dat_dir, "/", dat_info, ".txt"))
-    perm_file <- list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat_info, ".*\\.csv$"), full.names = TRUE)
+    gtmat_file <- file.path(base_path, "2_popgen", dat_dir, if (dat == "all") "thinned_all_ld_pruned_gtmat.traw" else paste0(dat, "_ld_pruned_gtmat.traw"))
+    sample_file <- file.path(base_path, if (dat == "all") "metadata/geno_names.txt" else paste0("2_popgen/", dat_dir, "/", dat, ".txt"))
+    # perm_file <- list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat, ".*\\.csv$"), full.names = TRUE)
+    perm_file <- if (dat == "all") file.path(base_path, "2_popgen", dat_dir, "permanova_results/all.lm.pairwise.csv") else list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat, ".*\\.csv$"), full.names = TRUE)
+
     print(gtmat_file)
     print(sample_file)
     print(perm_file)
@@ -110,6 +130,9 @@ for(dat in names(dataset)) {
     pca_res <- pca_analysis(gtmat_file, sample_file, color_by = color)
     pca_eigen <- pca_res$eigen
     pca_var   <- pca_res$var
+    print(pca_res)
+    print(pca_eigen)
+    print(pca_var)
 
     #-----------------------------------
     # PCA plot
@@ -129,7 +152,9 @@ for(dat in names(dataset)) {
     #-----------------------------------
     # VAR plot
     #-----------------------------------
-    p_var <- plot_variance(var, dat)
+    pca_var_df <- data.frame(PC=as.numeric(rownames(pca_var)), Variance = pca_var$X0)
+    print(pca_var_df)
+    p_var <- plot_variance(pca_var_df, dat)
 
     # -----------------------------------
     # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
@@ -227,7 +252,7 @@ ggsave(filename = file.path(figure_path, "FigS12_gLocSUP.png"),
 
 ########## FIGURE S13 ###################
 # PERMANOVA heatmaps for each location
-all_perm <- lapply(results_no_overall, `[[`, "permanova") # extract per location pcas
+all_perm <- lapply(results_locations, `[[`, "permanova") # extract per location pcas
 figureS13 <- plot_grid(plotlist = all_perm, ncol = 2) # bundle location pcas in one plot
 
 # Save Figure S13 as A4 PNG, optimized for small file size
