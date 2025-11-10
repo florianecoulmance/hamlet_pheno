@@ -193,10 +193,9 @@ all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
 pca_grid <- wrap_plots(all_pcas, ncol = 2) +
   plot_annotation(tag_levels = 'a')  # automatically label (a), (b), ...
 
-# Collect legends from all plots and put at the bottom
-figure1 <- pca_grid & 
+figure1 <- pca_grid + plot_layout(guides = "collect") & 
   theme(legend.position = "bottom")
-  
+
 # Save Figure 1 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
   plot = figure1,
