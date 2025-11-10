@@ -151,6 +151,13 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   # 2. Merge PCA data with info
   # -----------------------------
+  pca_data <- pca_data %>%
+    mutate(
+      # Fix specific naming error
+      images = ifelse(images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
+                      "PL17_160floflo-l1-s4-f4-c2-d1.png", images)
+    )
+
   plot_data <- pca_data %>%
     left_join(info_table, by = group_col)
   
@@ -302,6 +309,13 @@ plot_variance <- function(var, loc_name) {
 #   - Annotated ggplot2 heatmap of PERMANOVA R² (upper) and F.Model (lower)
 # ============================================================
 perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
+
+  pca_data <- pca_data %>%
+  mutate(
+    # Fix specific naming error
+    images = ifelse(images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
+                    "PL17_160floflo-l1-s4-f4-c2-d1.png", images)
+  )
   
   # ---- Filter groups with <5 individuals ----
   if(color_by == "species") {
