@@ -328,25 +328,47 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   vis_R <- pairwise_result %>%
     separate(pairs, into = c("group1","group2"), sep = " vs ") %>%
     select(group1, group2, R2)
-  print(vis_R)
+  # print(vis_R)
+  # Mirror the table so it’s symmetric
+  vis_R_sym <- bind_rows(
+    vis_R,
+    vis_R %>% rename(group1 = group2, group2 = group1)
+  )
+
+  # Make sure all combinations exist
+  all_groups <- unique(c(vis_R$group1, vis_R$group2))
+  vis_R_complete <- vis_R_sym %>%
+    complete(group1 = all_groups, group2 = all_groups, fill = list(R2 = NA))
+  print(vis_R_complete)
   
-  visH_R <- dcast(vis_R, group1 ~ group2, value.var = "R2") %>%
+  visH_R <- dcast(vis_R_complete, group1 ~ group2, value.var = "R2") %>%
     complete(group1 = levels(pc_table$group), fill = list()) %>%
     select(group1, intersect(levels(pc_table$group), colnames(.)))
   print(visH_R)
 
   melt_R <- melt(visH_R, id.vars = "group1")
   melt_R$value <- as.numeric(melt_R$value)
-  print(melt_R)
+  # print(melt_R)
 
   
   # ---- Reshape F.Model (lower triangle) ----
   vis_F <- pairwise_result %>%
     separate(pairs, into = c("group1","group2"), sep = " vs ") %>%
     select(group1, group2, F.Model)
-  print(vis_F)
+  # print(vis_F)
+  # Mirror the table so it’s symmetric
+  vis_F_sym <- bind_rows(
+    vis_F,
+    vis_F %>% rename(group1 = group2, group2 = group1)
+  )
 
-  visH_F <- dcast(vis_F, group1 ~ group2, value.var = "F.Model") %>%
+  # Make sure all combinations exist
+  all_groups <- unique(c(vis_F$group1, vis_F$group2))
+  vis_F_complete <- vis_F_sym %>%
+    complete(group1 = all_groups, group2 = all_groups, fill = list(F.Model = NA))
+  print(vis_F_complete)
+
+  visH_F <- dcast(vis_F_complete, group1 ~ group2, value.var = "F.Model") %>%
     complete(group1 = levels(pc_table$group), fill = list()) %>%
     select(group1, intersect(levels(pc_table$group), colnames(.))) %>%
     arrange(desc(group1))
@@ -354,14 +376,26 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
 
   melt_F <- melt(visH_F, id.vars = "group1")
   melt_F$value <- as.numeric(melt_F$value)
-  print(melt_F)
+  # print(melt_F)
 
   # ---- Reshape p-values (overlay text) ----
   vis_p <- pairwise_result %>%
     separate(pairs, into = c("group1","group2"), sep = " vs ") %>%
     select(group1, group2, p.value)
+  
+  # Mirror the table so it’s symmetric
+  vis_p_sym <- bind_rows(
+    vis_p,
+    vis_p %>% rename(group1 = group2, group2 = group1)
+  )
 
-  visH_p <- dcast(vis_p, group1 ~ group2, value.var = "p.value") %>%
+  # Make sure all combinations exist
+  all_groups <- unique(c(vis_p$group1, vis_p$group2))
+  vis_p_complete <- vis_p_sym %>%
+    complete(group1 = all_groups, group2 = all_groups, fill = list(p.value = NA))
+  print(vis_p_complete)
+
+  visH_p <- dcast(vis_p_complete, group1 ~ group2, value.var = "p.value") %>%
     complete(group1 = levels(pc_table$group), fill = list()) %>%
     select(group1, intersect(levels(pc_table$group), colnames(.))) %>%
     arrange(desc(group1))
