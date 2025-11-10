@@ -377,8 +377,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
 
   visH_F <- dcast(vis_F_complete, group1 ~ group2, value.var = "F.Model") %>%
     complete(group1 = levels(pc_table$group), fill = list()) %>%
-    select(group1, intersect(levels(pc_table$group), colnames(.))) %>%
-    arrange(desc(group1))
+    select(group1, intersect(levels(pc_table$group), colnames(.))) #%>%
+    # arrange(desc(group1))
 
   # ---- Blank upper triangle (keep only lower) ----
   mat_F <- as.matrix(visH_F[,-1])
@@ -410,8 +410,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
 
   visH_p <- dcast(vis_p_complete, group1 ~ group2, value.var = "p.adjusted") %>%
     complete(group1 = levels(pc_table$group), fill = list()) %>%
-    select(group1, intersect(levels(pc_table$group), colnames(.))) %>%
-    arrange(desc(group1))
+    select(group1, intersect(levels(pc_table$group), colnames(.))) #%>%
+    # arrange(desc(group1))
 
     # ---- Blank upper triangle (keep only lower) ----
   mat_p <- as.matrix(visH_p[,-1])
