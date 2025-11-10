@@ -336,9 +336,9 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   )
 
   # Make sure all combinations exist
-  all_groups <- unique(c(vis_R$group1, vis_R$group2))
+  all_R_groups <- unique(c(vis_R$group1, vis_R$group2))
   vis_R_complete <- vis_R_sym %>%
-    complete(group1 = all_groups, group2 = all_groups, fill = list(R2 = NA))
+    complete(group1 = all_R_groups, group2 = all_R_groups, fill = list(R2 = NA))
   print(vis_R_complete)
   
   visH_R <- dcast(vis_R_complete, group1 ~ group2, value.var = "R2") %>%
@@ -363,9 +363,9 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   )
 
   # Make sure all combinations exist
-  all_groups <- unique(c(vis_F$group1, vis_F$group2))
+  all_F_groups <- unique(c(vis_F$group1, vis_F$group2))
   vis_F_complete <- vis_F_sym %>%
-    complete(group1 = all_groups, group2 = all_groups, fill = list(F.Model = NA))
+    complete(group1 = all_F_groups, group2 = all_F_groups, fill = list(F.Model = NA))
   print(vis_F_complete)
 
   visH_F <- dcast(vis_F_complete, group1 ~ group2, value.var = "F.Model") %>%
@@ -390,9 +390,9 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   )
 
   # Make sure all combinations exist
-  all_groups <- unique(c(vis_p$group1, vis_p$group2))
+  all_p_groups <- unique(c(vis_p$group1, vis_p$group2))
   vis_p_complete <- vis_p_sym %>%
-    complete(group1 = all_groups, group2 = all_groups, fill = list(p.value = NA))
+    complete(group1 = all_p_groups, group2 = all_p_groups, fill = list(p.value = NA))
   print(vis_p_complete)
 
   visH_p <- dcast(vis_p_complete, group1 ~ group2, value.var = "p.value") %>%
@@ -413,9 +413,9 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     new_scale_fill() +
     geom_tile(aes(x = melt_F$variable, y = melt_F$group1, fill = melt_F$value), color = "transparent") +
     scale_fill_gradient(low = "#ffedec", high = "#ff5c52", na.value = "transparent", name = "F") +
-    geom_text(aes(x = melt_p$variable, y = melt_p$group1,
-          label = ifelse(is.na(melt_p$value), "", sprintf("%.2e", melt_p$value))),
-      size = 2.8, color = "black") +
+    # geom_text(aes(x = melt_p$variable, y = melt_p$group1,
+    #       label = ifelse(is.na(melt_p$value), "", sprintf("%.3f", melt_p$value))),
+    #   size = 2.8, color = "black") +
     labs(x = "", y = "", fill = "F") +
     scale_x_discrete(position = "bottom") +
     labs(x = "", y = "") +
