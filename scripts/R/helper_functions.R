@@ -345,6 +345,12 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   visH_R <- dcast(vis_R_complete, group1 ~ group2, value.var = "R2") %>%
     complete(group1 = levels(pc_table$group), fill = list()) %>%
     select(group1, intersect(levels(pc_table$group), colnames(.)))
+
+  # ---- Blank lower triangle (keep only upper) ----
+  mat_R <- as.matrix(visH_R[,-1])
+  rownames(mat_R) <- visH_R$group1
+  mat_R[lower.tri(mat_R, diag = TRUE)] <- NA
+  visH_R[,-1] <- mat_R
   print(visH_R)
 
   melt_R <- melt(visH_R, id.vars = "group1")
@@ -373,6 +379,12 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     complete(group1 = levels(pc_table$group), fill = list()) %>%
     select(group1, intersect(levels(pc_table$group), colnames(.))) %>%
     arrange(desc(group1))
+
+  # ---- Blank upper triangle (keep only lower) ----
+  mat_F <- as.matrix(visH_F[,-1])
+  rownames(mat_F) <- visH_F$group1
+  mat_F[upper.tri(mat_F, diag = TRUE)] <- NA
+  visH_F[,-1] <- mat_F
   print(visH_F)
 
   melt_F <- melt(visH_F, id.vars = "group1")
@@ -400,6 +412,12 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     complete(group1 = levels(pc_table$group), fill = list()) %>%
     select(group1, intersect(levels(pc_table$group), colnames(.))) %>%
     arrange(desc(group1))
+
+    # ---- Blank upper triangle (keep only lower) ----
+  mat_p <- as.matrix(visH_p[,-1])
+  rownames(mat_p) <- visH_p$group1
+  mat_p[upper.tri(mat_p, diag = TRUE)] <- NA
+  visH_p[,-1] <- mat_p
   print(visH_p)
 
   melt_p <- melt(visH_p, id.vars = "group1")
