@@ -21,5 +21,9 @@ phyps2e_m2.vcf.gz.csi
 1_phenotyping/Rplots.pdf
 1_phenotyping/.snakemake/*
 1_phenotyping/pca/*
+1_phenotyping/logs/*
+scripts/R/.RData
+scripts/R/.Rhistory
+scripts/R/Rplots.pdf
 .DS_Store
 **/.DS_Store
