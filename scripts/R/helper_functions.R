@@ -243,8 +243,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   p_annot <- annotate_figure(
     p,
-    top = text_grob(title_val, color = "black", face = "bold", size = 50,
-                      x = unit(10, "pt"), hjust = -1)
+    top = text_grob(title_val, color = "black", face = "bold", size = 30,
+                      x = unit(5.5, "pt"), hjust = -0.8)
   )
     
   return(p_annot)
@@ -384,8 +384,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   # ---- Annotate with location title ----
   p_annot <- annotate_figure(
     p,
-    top = text_grob(title_val, color = "black", face = "bold", size = 50,
-                    x = unit(10, "pt"), hjust = -1)
+    top = text_grob(title_val, color = "black", face = "bold", size = 30,
+                    x = unit(5.5, "pt"), hjust = -0.8)
   )
   
   return(p_annot)
@@ -489,6 +489,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   # -----------------------------
   # 6. Get title
   # -----------------------------
+  title_val <- NULL
   if(color_by == "species"){
     geo_val <- unique(tree$geo)[1]
     print(geo_val)
@@ -512,8 +513,8 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   } else {      # ---- Annotate with location title ----
     t_annot <- annotate_figure(
       t,
-      top = text_grob(title_val, color = "black", face = "bold", size = 50,
-                      x = unit(10, "pt"), hjust = -1)
+      top = text_grob(title_val, color = "black", face = "bold", size = 30,
+                      x = unit(5.5, "pt"), hjust = -0.8)
     )
     return(t_annot)
   }
@@ -606,8 +607,8 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
   
   # add title
   combined <- annotate_figure(combined, top = text_grob(
-    title_val, color = "black", face = "bold", size = 50,
-    x = unit(10, "pt"), hjust = -1
+    title_val, color = "black", face = "bold", size = 30,
+    x = unit(5.5, "pt"), hjust = -0.8
   ))
   
   return(combined)
