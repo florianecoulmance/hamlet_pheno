@@ -346,11 +346,26 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     arrange(desc(group1))
   melt_F <- melt(visH_F, id.vars = "group1")
   melt_F$value <- as.numeric(melt_F$value)
+
+  # ---- Reshape p-values (overlay text) ----
+  vis_p <- pairwise_result %>%
+    separate(pairs, into = c("group1","group2"), sep = " vs ") %>%
+    select(group1, group2, p.value)
+
+  visH_p <- dcast(vis_p, group1 ~ group2, value.var = "p.value") %>%
+    complete(group1 = levels(pc_table$group), fill = list()) %>%
+    select(group1, intersect(levels(pc_table$group), colnames(.))) %>%
+    arrange(desc(group1))
+  melt_p <- melt(visH_p, id.vars = "group1")
+  melt_p$value <- as.numeric(melt_p$value)
   
   # ---- Plot heatmap ----
   p <- ggplot() +
     geom_tile(aes(x = melt_R$group1, y = melt_R$variable, fill = melt_R$value), color = "transparent") +
     scale_fill_gradient(low = "#ffead1", high = "#fdae53", na.value = "transparent", name = "R²") +
+    geom_text(aes(x = melt_p$variable, y = melt_p$group1,
+              label = ifelse(is.na(melt_p$value), "", sprintf("%.2e", melt_p$value))),
+          size = 2.8, color = "black") +
     new_scale_fill() +
     geom_tile(aes(x = melt_F$variable, y = melt_F$group1, fill = melt_F$value), color = "transparent") +
     scale_fill_gradient(low = "#ffedec", high = "#ff5c52", na.value = "transparent", name = "F") +
