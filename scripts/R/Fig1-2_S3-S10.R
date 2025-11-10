@@ -185,10 +185,18 @@ print(keep_names)
 ########## FIGURE 1 ###################
 # PCA plots for all locations with legend
 all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
-pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
+# pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figure1 <- ggarrange(pca_grid, common.legend=T, legend = "bottom") # adjust if legend is too big/small
+# figure1 <- ggarrange(pca_grid, common.legend=T, legend = "bottom") # adjust if legend is too big/small
 
+# Combine plots into a grid with 2 columns and labels
+pca_grid <- wrap_plots(all_pcas, ncol = 2) +
+  plot_annotation(tag_levels = 'a')  # automatically label (a), (b), ...
+
+# Collect legends from all plots and put at the bottom
+figure1 <- pca_grid & 
+  theme(legend.position = "bottom")
+  
 # Save Figure 1 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
   plot = figure1,
