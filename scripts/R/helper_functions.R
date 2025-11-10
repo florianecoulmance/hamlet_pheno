@@ -477,14 +477,17 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   # -----------------------------
   # 5. Plot tree
   # -----------------------------
-  t <- ggtree(tree, layout = "fan", branch.length = "none", size = 0.5, color = scol) +
+  tree$height <- tree$height / max(tree$height)
+
+  t <- ggtree(tree, layout = "fan", ladderize = FALSE, size = 0.5, color = scol) +
     geom_tippoint(aes(color = .data[[group_col]]), size = 3, alpha = 0.5) +
     scale_color_manual(values = color_map, name = legend_name) +
     theme(
       legend.position = ifelse(extract_legend, "right", "none"),
       plot.title = element_text(size = 14, color = "gray20", face = "bold"),
       plot.subtitle = element_text(size = 10, color = "gray20")
-    )
+    ) +
+    coord_equal()
   
   # -----------------------------
   # 6. Get title
@@ -493,7 +496,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   if(color_by == "species"){
     geo_val <- unique(tree$geo)[1]
     print(geo_val)
-    if (!grepl("lab_571", data_path)) {
+    if (!(str_detect(data_path, "lab_571_"))) {
       title_val <- geo_map$Locations[geo_map$geo == geo_val]
     }
   } else if(color_by == "location"){
