@@ -85,7 +85,7 @@ rule phenotyping:
         f"{PCA_DIR}/logs/{{dataset}}.log"
     shell:
         """
-        mkdir -p {params.pca_dir} {params.heat_dir}
+        mkdir -p logs/ {params.pca_dir} {params.heat_dir}
 
         python3 {params.python_script} \
             {params.images_dir} \
