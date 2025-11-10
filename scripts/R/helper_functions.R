@@ -346,15 +346,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     complete(group1 = levels(pc_table$group), fill = list()) %>%
     select(group1, intersect(levels(pc_table$group), colnames(.)))
 
-  # ---- Blank lower triangle (keep only upper) ----
-  mat_R <- as.matrix(visH_R[,-1])
-  rownames(mat_R) <- visH_R$group1
-  mat_R[lower.tri(mat_R, diag = TRUE)] <- NA
-  visH_R[,-1] <- mat_R
-  print(visH_R)
 
-  melt_R <- melt(visH_R, id.vars = "group1")
-  melt_R$value <- as.numeric(melt_R$value)
   # print(melt_R)
 
   
@@ -379,18 +371,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     complete(group1 = levels(pc_table$group), fill = list()) %>%
     select(group1, intersect(levels(pc_table$group), colnames(.))) #%>%
     # arrange(desc(group1))
-
-  # ---- Blank upper triangle (keep only lower) ----
-  mat_F <- as.matrix(visH_F[,-1])
-  rownames(mat_F) <- visH_F$group1
-  mat_F[upper.tri(mat_F, diag = TRUE)] <- NA
-  visH_F[,-1] <- mat_F
-  print(visH_F)
-
-  melt_F <- melt(visH_F, id.vars = "group1")
-  melt_F$value <- as.numeric(melt_F$value)
-  # print(melt_F)
-
+  
   # ---- Reshape p-values (overlay text) ----
   vis_p <- pairwise_result %>%
     separate(pairs, into = c("group1","group2"), sep = " vs ") %>%
@@ -406,24 +387,43 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   all_p_groups <- unique(c(vis_p$group1, vis_p$group2))
   vis_p_complete <- vis_p_sym %>%
     complete(group1 = all_p_groups, group2 = all_p_groups, fill = list(p.adjusted = NA))
-  # print(vis_p_complete)
 
   visH_p <- dcast(vis_p_complete, group1 ~ group2, value.var = "p.adjusted") %>%
     complete(group1 = levels(pc_table$group), fill = list()) %>%
     select(group1, intersect(levels(pc_table$group), colnames(.))) #%>%
     # arrange(desc(group1))
 
-    # ---- Blank upper triangle (keep only lower) ----
+
+  # ensure all matrices have same row/column order
+  visH_R <- visH_R[match(visH_F$group1, visH_R$group1), c("group1", visH_F$group1)]
+  visH_F <- visH_F[match(visH_R$group1, visH_F$group1), c("group1", visH_R$group1)]
+  visH_p <- visH_p[match(visH_R$group1, visH_p$group1), c("group1", visH_R$group1)]
+  
+  
+  # ---- Blank lower triangle (keep only upper) ----
+  mat_R <- as.matrix(visH_R[,-1])
+  rownames(mat_R) <- visH_R$group1
+  mat_R[lower.tri(mat_R, diag = TRUE)] <- NA
+  visH_R[,-1] <- mat_R
+  print(visH_R)
+  melt_R <- melt(visH_R, id.vars = "group1")
+  melt_R$value <- as.numeric(melt_R$value)
+
+  mat_F <- as.matrix(visH_F[,-1])
+  rownames(mat_F) <- visH_F$group1
+  mat_F[upper.tri(mat_F, diag = TRUE)] <- NA
+  visH_F[,-1] <- mat_F
+  print(visH_F)
+  melt_F <- melt(visH_F, id.vars = "group1")
+  melt_F$value <- as.numeric(melt_F$value)
+
   mat_p <- as.matrix(visH_p[,-1])
   rownames(mat_p) <- visH_p$group1
   mat_p[upper.tri(mat_p, diag = TRUE)] <- NA
   visH_p[,-1] <- mat_p
   print(visH_p)
-
   melt_p <- melt(visH_p, id.vars = "group1")
   melt_p$value <- as.numeric(melt_p$value)
-  print("Pvalues PERMANOVA")
-  # print(melt_p)
   
   # ---- Plot heatmap ----
   p <- ggplot() +
@@ -434,7 +434,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     scale_fill_gradient(low = "#ffedec", high = "#ff5c52", na.value = "transparent", name = "F") +
     geom_text(data = melt_p, aes(x = variable, y = group1,
           label = ifelse(is.na(value), "", ifelse(value >= 0.05, "X", "*"))),
-      size = 2.8, color = "black") +
+      size = 8, color = "black", fontface=bold) +
     labs(x = "", y = "", fill = "F") +
     scale_x_discrete(position = "bottom") +
     labs(x = "", y = "") +
