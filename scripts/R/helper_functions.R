@@ -451,7 +451,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       axis.text.y = element_text(size = 12),
       axis.ticks = element_blank(),
       aspect.ratio = 1
-    )
+    ) +
+    guides(color = guide_legend(ncol = 1))
   
   # ---- Get title ----
   if(color_by == "species"){
@@ -558,7 +559,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   # -----------------------------
   # 5. Plot tree
   # -----------------------------
-  t <- ggtree(hc, layout = "fan", size = 0.5) %<+% tree +
+  t <- ggtree(hc, layout = "fan", size = 0.5, color = scol) %<+% tree +
     geom_tippoint(aes(color = .data[[group_col]]), size = 3, alpha = 0.5) +
     scale_color_manual(values = color_map, name = legend_name) +
     theme(
