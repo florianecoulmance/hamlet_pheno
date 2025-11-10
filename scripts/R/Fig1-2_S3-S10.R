@@ -193,7 +193,7 @@ all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
 pca_grid <- wrap_plots(all_pcas, ncol = 2) +
   plot_annotation(tag_levels = 'a')  # automatically label (a), (b), ...
 
-figure1 <- pca_grid + plot_layout(guides = "collect") & 
+figure1 <- pca_grid + plot_layout(guides = "collect") + 
   theme(legend.position = "bottom")
 
 # Save Figure 1 as A4 PNG, optimized for small file size
