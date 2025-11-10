@@ -408,33 +408,18 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   print(melt_p)
   
   # ---- Plot heatmap ----
-
-  groups <- levels(pc_table$group)
-
   p <- ggplot() +
-    # ---- R² upper triangle ----
-    geom_tile(aes(x = factor(group1, levels = groups),
-                  y = factor(variable, levels = rev(groups)),
-                  fill = value),
-              data = melt_R, color = "transparent") +
+    geom_tile(aes(x = melt_R$group1, y = melt_R$variable, fill = melt_R$value), color = "transparent") +
     scale_fill_gradient(low = "#ffead1", high = "#fdae53", na.value = "transparent", name = "R²") +
-
-    # ---- F.Model lower triangle ----
     new_scale_fill() +
-    geom_tile(aes(x = factor(variable, levels = groups),
-                  y = factor(group1, levels = rev(groups)),
-                  fill = value),
-              data = melt_F, color = "transparent") +
+    geom_tile(aes(x = melt_F$variable, y = melt_F$group1, fill = melt_F$value), color = "transparent") +
     scale_fill_gradient(low = "#ffedec", high = "#ff5c52", na.value = "transparent", name = "F") +
-
-    # ---- P-values overlay ----
-    geom_text(aes(x = factor(variable, levels = groups),
-                  y = factor(group1, levels = rev(groups)),
-                  label = ifelse(is.na(value), "", ifelse(value >= 0.05, "x", "**"))),
-              data = melt_p, color = "black", size = 2.8) +
-
-    labs(x = "", y = "") +
+    geom_text(aes(x = melt_p$variable, y = melt_p$group1,
+          label = ifelse(is.na(melt_p$value), "", sprintf("%.3f", melt_p$value))),
+      size = 2.8, color = "black") +
+    labs(x = "", y = "", fill = "F") +
     scale_x_discrete(position = "bottom") +
+    labs(x = "", y = "") +
     theme_minimal() +
     theme(
       legend.direction = "vertical",
