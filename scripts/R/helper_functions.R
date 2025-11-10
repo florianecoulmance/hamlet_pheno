@@ -157,10 +157,13 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       images = ifelse(images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
                       "PL17_160floflo-l1-s4-f4-c2-d1.png", images)
     )
+  print(pca_data$images)
 
   plot_data <- pca_data %>%
     left_join(info_table, by = group_col)
   
+  print(plot_data)
+
   # -----------------------------
   # 3. Calculate centroids
   # -----------------------------
@@ -337,13 +340,12 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   
   # ---- Pairwise PERMANOVA ----
   pairwise_result <- pairwise.adonis(dist_t, PC_table_ordered$group, perm = 10000)
-  print(pairwise_result)
 
   # ---- Reshape R² (upper triangle) ----
   vis_R <- pairwise_result %>%
     separate(pairs, into = c("group1","group2"), sep = " vs ") %>%
     select(group1, group2, R2)
-  # print(vis_R)
+
   # Mirror the table so it’s symmetric
   vis_R_sym <- bind_rows(
     vis_R,
@@ -354,21 +356,16 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   all_R_groups <- unique(c(vis_R$group1, vis_R$group2))
   vis_R_complete <- vis_R_sym %>%
     complete(group1 = all_R_groups, group2 = all_R_groups, fill = list(R2 = NA))
-  # print(vis_R_complete)
-  
+
   visH_R <- dcast(vis_R_complete, group1 ~ group2, value.var = "R2") %>%
     complete(group1 = levels(pc_table$group), fill = list()) %>%
     select(group1, intersect(levels(pc_table$group), colnames(.)))
-
-
-  # print(melt_R)
-
   
   # ---- Reshape F.Model (lower triangle) ----
   vis_F <- pairwise_result %>%
     separate(pairs, into = c("group1","group2"), sep = " vs ") %>%
     select(group1, group2, F.Model)
-  # print(vis_F)
+
   # Mirror the table so it’s symmetric
   vis_F_sym <- bind_rows(
     vis_F,
@@ -379,7 +376,6 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   all_F_groups <- unique(c(vis_F$group1, vis_F$group2))
   vis_F_complete <- vis_F_sym %>%
     complete(group1 = all_F_groups, group2 = all_F_groups, fill = list(F.Model = NA))
-  # print(vis_F_complete)
 
   visH_F <- dcast(vis_F_complete, group1 ~ group2, value.var = "F.Model") %>%
     complete(group1 = levels(pc_table$group), fill = list()) %>%
@@ -407,19 +403,17 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     select(group1, intersect(levels(pc_table$group), colnames(.))) #%>%
     # arrange(desc(group1))
 
-
   # ensure all matrices have same row/column order
   visH_R <- visH_R[match(visH_F$group1, visH_R$group1), c("group1", visH_F$group1)]
   visH_F <- visH_F[match(visH_R$group1, visH_F$group1), c("group1", visH_R$group1)]
   visH_p <- visH_p[match(visH_R$group1, visH_p$group1), c("group1", visH_R$group1)]
-  
   
   # ---- Blank lower triangle (keep only upper) ----
   mat_R <- as.matrix(visH_R[,-1])
   rownames(mat_R) <- visH_R$group1
   mat_R[lower.tri(mat_R, diag = TRUE)] <- NA
   visH_R[,-1] <- mat_R
-  print(visH_R)
+
   melt_R <- melt(visH_R, id.vars = "group1")
   melt_R$value <- as.numeric(melt_R$value)
 
@@ -427,7 +421,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   rownames(mat_F) <- visH_F$group1
   mat_F[upper.tri(mat_F, diag = TRUE)] <- NA
   visH_F[,-1] <- mat_F
-  print(visH_F)
+
   melt_F <- melt(visH_F, id.vars = "group1")
   melt_F$value <- as.numeric(melt_F$value)
 
@@ -435,7 +429,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   rownames(mat_p) <- visH_p$group1
   mat_p[upper.tri(mat_p, diag = TRUE)] <- NA
   visH_p[,-1] <- mat_p
-  print(visH_p)
+
   melt_p <- melt(visH_p, id.vars = "group1")
   melt_p$value <- as.numeric(melt_p$value)
   
