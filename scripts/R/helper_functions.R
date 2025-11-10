@@ -378,7 +378,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
   } else if(color_by == "location"){
     species_val <- unique(pc_table$spec)
-    title_val <- if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
+    title_val <- "" #if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
   }
   
   # ---- Annotate with location title ----
@@ -493,11 +493,13 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   if(color_by == "species"){
     geo_val <- unique(tree$geo)[1]
     print(geo_val)
-    title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
+    if (length(geo_val) == 1) {
+      title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
+    }
   } else if(color_by == "location"){
     species_val <- unique(tree$spec)[1]
     print(species_val)
-    title_val <- if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
+    title_val <- "" #if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
   }
 
   print(title_val)
@@ -596,7 +598,7 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
   } else if (color_by == "location") {
     # Within species across locations → use full species name
     if (abbrev %in% spec_map$spec) {
-      title_val <- paste0("H. ", spec_map$Species[match(abbrev, spec_map$spec)])
+      title_val <- "" #paste0("H. ", spec_map$Species[match(abbrev, spec_map$spec)])
     } else {
       title_val <- ""
     }
