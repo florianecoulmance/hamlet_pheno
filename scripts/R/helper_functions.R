@@ -477,7 +477,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   # -----------------------------
   # 5. Plot tree
   # -----------------------------
-  t <- ggtree(tree, layout = "fan", branch.length = "none", size = 0.5, color = scol) +
+  t <- ggtree(tree, layout = "fan", size = 0.5, color = scol) +
     geom_tippoint(aes(color = .data[[group_col]]), size = 3, alpha = 0.5) +
     scale_color_manual(values = color_map, name = legend_name) +
     theme(
