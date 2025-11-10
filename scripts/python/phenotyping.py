@@ -38,6 +38,7 @@ import numpy as np
 from matplotlib import gridspec
 import re
 import traceback
+from matplotlib.ticker import FormatStrFormatter
 
 
 
@@ -271,13 +272,13 @@ def variances(pca, res_path, data_name):
 
 def get_global_max_pixel_value(bool_mask, pca, color_space):
     """
-    Compute the maximum pixel value (norm of loadings) across PC1–PC4
+    Compute the maximum pixel value (norm of loadings) across PC1–PC15
     to normalize all heatmaps with the same scale.
     """
     feat_imp = pca.components_
     max_val = 0
 
-    for pc_index in range(4):  # PC1–PC4
+    for pc_index in range(15):  # PC1–PC15
         if color_space in ["LAB", "RGB", "HSV"]:
             im_PC = feat_imp[pc_index].reshape((bool_mask.sum(), 3), order='C')
         elif color_space == "AB":
@@ -361,6 +362,7 @@ def plot_heatmap(b_m, rgb_m, pca, component, effect, res_path, data_name, global
     ax.set_xticklabels([]) # <-- remove x tick labels
     ax.set_yticklabels([]) # <-- remove y tick labels
     cb.ax.tick_params(labelsize=30) # <-- change the font of the axis numbers
+    cb.ax.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
     ax.set(xticks=[]) # <-- remove x ticks
     ax.set(yticks=[]) # <-- remove y ticks 
     fig.subplots_adjust(hspace = 0.01, wspace = 0.01)  # <-- Add space so the colorbar doesn't overlap the plot

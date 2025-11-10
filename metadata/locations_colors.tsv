@@ -1,8 +1,21 @@
-Locations	geo	Color
-Panama	boc	#000004
-USVI	uvi	#721F81
-Belize	bel	#F1605D
-Florida Keys	flo	#B73779
-Tobago	tob	#FEB078
-Puerto Rico	por	#2C115F
-Mexico	ver	#FCFdBF
+Locations	geo	Color	coord_N.x	coord_W.x
+Panama	boc	#000004	9.332778	-82.25472
+USVI	uvi	#721F81	18.339970	-64.679395
+Belize	bel	#F1605D	16.765278	-88.14417
+Florida Keys	flo	#B73779	24.752580	-80.76065
+Tobago	tob	#FEB078	11.194840	-60.810791
+Puerto Rico	por	#2C115F	17.952820	-67.05643
+Mexico	ver	#FCFdBF	19.199498	-96.069429
+Alacranes Reef	ala	#bc3754	22.399490	-89.656060
+Cayos Arcas	arc	#f7d13d	20.203940	-91.970770
+Cayo Arenas	are	#420a68	22.115278	-91.398333
+Barbados	bar	#FCFdBF	13.223694	-59.64506
+Florida Keys	flk	#B73779	24.752580	-80.76065
+Guna Yala	gun	#FEB078	9.290722	-78.14039
+Haiti	hai	#808080	19.677000	-71.843000
+Honduras	hon	#f98e09	16.030000	-83.32861  
+Antón Lizardo	liz	#808080	19.155547	-95.863903
+Puerto Rico	pri	#2C115F	17.952820	-67.05643
+Quintana Roo	qui	#721F81	20.978806	-86.800111
+San Andrés	san	#808080	12.501617	-81.731367
+Tamiahua	tam	#808080	21.475878	-97.227000

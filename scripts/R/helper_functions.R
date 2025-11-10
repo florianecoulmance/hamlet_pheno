@@ -135,7 +135,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     info_table <- species_info
     color_map <- setNames(info_table$Color, info_table$spec)
     label_map <- setNames(
-      paste0("<img src='", info_table$link, "' width='120' /><br>*H. ", info_table$Species, "*"),
+      paste0("<img src='", info_table$link, "' width='100' /><br>*H. ", info_table$Species, "*"),
       info_table$spec)
   } else {
     group_col <- "geo"
@@ -191,7 +191,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     scale_color_manual(values = color_map, labels = label_map) +
     theme_minimal() +
     theme(
-      legend.position = "bottom", #if (extract_legend) "bottom" else "none",
+      legend.position = if (extract_legend) "bottom" else "none",
       legend.box = "horizontal",
       legend.text = element_markdown(size = 10),
       panel.background = element_blank(),
@@ -242,7 +242,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   p_annot <- annotate_figure(
     p,
-    top = text_grob(title_val, color = "black", face = "bold", size = 15,
+    top = text_grob(title_val, color = "black", face = "bold", size = 20,
                       x = unit(5.5, "pt"), hjust = 0)
   )
     
@@ -279,8 +279,9 @@ plot_variance <- function(var, loc_name) {
     geom_text(aes(label = sprintf("%.1f%%", Variance * 100)),
               vjust = -0.5, size = 3) +
     labs(x = "Principal Component", 
-         y = "Explained variance (%)",
-         title = paste0("Explained variance - ", loc_name)) +
+         y = "Explained variance (%)"#,
+        #  title = paste0("Explained variance - ", loc_name)
+         ) +
     theme_minimal(base_size = 12)
   
   return(p)
@@ -477,7 +478,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   # -----------------------------
   # 5. Plot tree
   # -----------------------------
-  t <- ggtree(tree, layout = "fan", size = 0.5, color = scol) +
+  t <- ggtree(tree, layout = "circular", branch.length = "none", size = 0.5, color = scol) +
     geom_tippoint(aes(color = .data[[group_col]]), size = 3, alpha = 0.5) +
     scale_color_manual(values = color_map, name = legend_name) +
     theme(
@@ -489,21 +490,14 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   # -----------------------------
   # 6. Get title
   # -----------------------------
-  title_val <- ""
-
-  if (color_by == "species") {
-    # If clustering by species (i.e. showing all species from one location)
-    geo_val <- unique(tree$loc)
-    if (length(geo_val) == 1 && geo_val %in% geo_map$geo) {
-      title_val <- geo_map$Locations[geo_map$geo == geo_val]
-    }
-    
-  } else if (color_by == "location") {
-    # If clustering by location (i.e. showing all locations for one species)
-    spec_val <- unique(tree$spec)
-    if (length(spec_val) == 1 && spec_val %in% species_col$spec) {
-      title_val <- species_col$Species[species_col$spec == spec_val]
-    }
+  if(color_by == "species"){
+    geo_val <- unique(tree$geo)
+    title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
+  } else if(color_by == "location"){
+    species_val <- unique(tree$spec)
+    if (length(species_val) == 1 && species_val %in% species_col$spec){
+      title_val <- species_col$Species[species_col$spec == species_val] 
+      }
   }
   
   # -----------------------------
@@ -557,11 +551,11 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
     file <- file.path(im_p, paste0(name, "_", pc, "_originalrescaled.png"))
     if (!file.exists(file)) stop(paste("Missing image file:", file))  
     img <- readPNG(file)
-    grob <- rasterGrob(img[1:500,100:1000,], interpolate = TRUE)
+    grob <- rasterGrob(img[1:500,100:1300,], interpolate = TRUE)
     grob <- annotate_figure(grob, top = text_grob(
       pc,
-      color = "black", face = "bold", size = 15,
-      x = unit(2, "pt"), hjust = -2.5, vjust = 4
+      color = "black", face = "bold", size = 20,
+      x = unit(2, "pt"), hjust = -2, vjust = 3
     ))
     return(grob)
   }
@@ -886,4 +880,385 @@ plot_permanova_permdisp <- function(pair_file, params_legend = "none") {
         )
 
     return(p_allLoc)
+}
+
+
+# ============================================================
+# Function: make_summary_by_location
+# Purpose : Summarize sample counts per location, compute scaled values 
+#           (e.g., for pie plot radii), and merge coordinate and color metadata.
+# Input   :
+#   - sample_data   : Data frame containing sample-level information with columns 'geo' and 'spec'.
+#   - location_data : Data frame containing location metadata with columns 
+#                     'geo', 'Locations', 'coord_N.x', 'coord_W.x', and optionally 'Color'.
+#   - scale_factor  : Numeric scaling factor used to compute the radius (default = 0.9).
+# Output  :
+#   - A data frame containing one row per location, counts of each category ('spec'),
+#     total count, scaled radius values, and merged coordinates/colors.
+# ============================================================
+make_summary_by_location <- function(sample_data, location_data, scale_factor = 0.9) {
+  # Step 1: join to add Locations info
+  sample_data <- sample_data %>%
+    left_join(location_data %>% select(geo, Locations), by = "geo")
+  
+  # Step 2: summarize category counts per Location
+  summary_dat <- dcast(
+    sample_data,
+    Locations ~ spec,
+    fill = 0,
+    value.var = "spec",
+    fun.aggregate = length
+  ) %>%
+    mutate(
+      total = rowSums(across(-Locations)),
+      radius = log10(total) * scale_factor
+    )
+  
+  # Step 3: add coordinates and color (if available)
+  summary_dat <- summary_dat %>%
+    left_join(
+      location_data %>% select(Locations, coord_N.x, coord_W.x),
+      by = "Locations"
+    )
+  
+  return(summary_dat)
+}
+
+
+# ============================================================
+# Function: custom_geom_scatterpie_legend
+# Purpose : Create a custom legend for scatterpie plots, allowing finer control
+#           over pie radius scaling and label text size for geographic pie charts.
+# Input   :
+#   - radius   : Numeric vector of pie radii to include in the legend.
+#   - x, y     : Numeric coordinates specifying the position of the legend.
+#   - n        : Number of legend items to display (default = 5).
+#   - labeller : Optional function to convert radius values into label text.
+#   - textsize : Numeric value controlling the size of the legend text labels (default = 6).
+# Output  :
+#   - A list of ggplot2 layers (arcs, segments, text) forming a custom legend.
+# Notes   :
+#   - Adapted from an example on the RStudio Community forum:
+#     https://community.rstudio.com/t/pie-chart-world-map-for-genetics/97192/2
+# ============================================================
+custom_geom_scatterpie_legend <- function(radius, x, y, n = 5, labeller, textsize = 6) {
+  
+  # If more radii than desired, sample evenly spaced unique values within range
+  if (length(radius) > n) {
+    radius <- unique(sapply(
+      seq(min(radius), max(radius), length.out = n),
+      scatterpie:::round_digit
+    ))
+  }
+  
+  label <- FALSE  # default: no custom label function
+  
+  # If a custom labeller function is provided, validate and activate labeling
+  if (!missing(labeller)) {
+    if (!inherits(labeller, "function")) {
+      stop("labeller should be a function for converting radius")
+    }
+    label <- TRUE
+  }
+  
+  # Build a dataframe for legend components
+  dd <- data.frame(
+    r = radius,
+    start = 0,
+    end = 2 * pi,
+    x = x,
+    y = y + radius - max(radius),
+    maxr = max(radius)
+  )
+  
+  # Apply label transformation if provided
+  dd$label <- if (label) labeller(dd$r) else dd$r
+  
+  # Return list of ggplot2 layers (arc bars, guide lines, and text labels)
+  list(
+    ggforce:::geom_arc_bar(
+      aes_(x0 = ~x, y0 = ~y, r0 = ~r, r = ~r, start = ~start, end = ~end),
+      data = dd,
+      inherit.aes = FALSE
+    ),
+    geom_segment(
+      aes_(x = ~x, xend = ~x + maxr * 1.5, y = ~y + r, yend = ~y + r),
+      data = dd,
+      inherit.aes = FALSE
+    ),
+    geom_text(
+      aes_(x = ~x + maxr * 1.6, y = ~y + r, label = ~label),
+      data = dd,
+      hjust = "left",
+      inherit.aes = FALSE,
+      size = textsize
+    )
+  )
+}
+
+
+# ============================================================
+# Function: plot_location_pies
+# Purpose : Plot scatterpie charts of sample distributions on a world map,
+#           with colors/logos by species and customizable site labels.
+# Input   :
+#   - data_table     : Data frame with one row per site, species counts in columns,
+#                      columns for Site, coord_N.x, coord_W.x, radius
+#   - species_info   : Table mapping species codes to colors and logos
+#   - radius_factor  : Scaling factor used when computing radius (default 0.9)
+#   - label_column   : Column name in data_table to use for pie chart labels
+#   - map_limits     : Vector of c(xmin, xmax, ymin, ymax) to set map limits
+#   - show_legend    : Logical, whether to display the legend
+# Output  :
+#   - ggplot object of the world map with pie charts
+# ============================================================
+plot_location_pies <- function(data_table, species_info, radius_factor = 0.9,
+                               map_limits = c(-100.15, -55.12, 6.00, 31.97),
+                               show_legend = FALSE) {
+  
+  # Load world map
+  world <- map_data('world')
+
+  info_table <- species_info
+  color_map <- setNames(info_table$Color, info_table$spec)
+  label_map <- setNames(
+      paste0("<img src='", info_table$link, "' width='120' /><br>*H. ", info_table$Species, "*"),
+      info_table$spec
+  )
+  
+  # Identify species columns (numeric counts)
+  species_cols <- colnames(data_table)[!(colnames(data_table) %in% c("Locations", "coord_N.x", "coord_W.x", "radius", "total"))]
+  
+  # # Compute radius if not already present
+  # if(!"radius" %in% colnames(data_table)) {
+  #   data_table <- data_table %>%
+  #     mutate(radius = log10(rowSums(across(all_of(species_cols)))) * radius_factor)
+  # }
+  
+  # Base map
+  p <- ggplot(data = world, aes(long, lat)) +
+    geom_map(map = world, aes(map_id = region), fill = "grey", color = "#F6F6F6", alpha = 0.8) +
+    
+    # Scatterpie
+    geom_scatterpie(aes(x = coord_W.x, y = coord_N.x, group = Locations, r = radius),
+                    data = data_table, cols = species_cols, color = NA, alpha = 1) +
+    
+    # Optional legend for pie sizes
+    custom_geom_scatterpie_legend(data_table$radius, x = -64, y = 26, n = 4,
+                                   labeller = function(x) round(10^(x / radius_factor), digits = 0)) +
+    
+    # Site labels (flexible column)
+    geom_text(aes(x = coord_W.x, y = coord_N.x, label = Locations,
+                  hjust = ifelse(.data$Locations %in% c("Quintana Roo", "Alacranes Reef", "San Andrés", "Guna Yala"), NA, 1.2),
+                  vjust = ifelse(.data$Locations %in% c("Cayo Arenas"), NA, -2)),
+              data = data_table, color = "grey20", size = 6, fontface = "italic", position = position_dodge(width = 1)) +
+    
+    # Map annotations
+    annotate(geom = "text", x = -90, y = 26, label = "Gulf of Mexico", fontface = "italic", color = "grey", size = 4) +
+    annotate(geom = "text", x = -77, y = 15, label = "Caribbean Sea", fontface = "italic", color = "grey", size = 4) +
+    annotate(geom = "text", x = -73, y = 30, label = "Atlantic", fontface = "italic", color = "grey", size = 4) +
+    annotate(geom = "text", x = -64, y = 30, label = "Sample size", fontface = "bold", color = "black", size = 6) +
+
+    # Map limits
+    coord_sf(xlim = map_limits[1:2], ylim = map_limits[3:4], expand = FALSE) +
+    
+    # Species colors + logos
+    scale_fill_manual(values = color_map,
+                      labels = label_map) +
+    
+    # Theme
+    theme_minimal() +
+    theme(
+      legend.title = element_blank(),
+      legend.text = element_markdown(size = 8),
+      legend.position = if(show_legend) "bottom" else "none",
+      axis.title = element_blank(),
+      axis.text = element_blank(),
+      axis.ticks = element_blank(),
+      panel.grid = element_blank()
+    )
+  
+  return(p)
+}
+
+
+# ============================================================
+# Function: plot_species_geo_overview
+# Purpose : Create a tally plot of species counts per location/geo,
+#           displaying species logos and names, ordered by region and species groups.
+# Input   :
+#   - dat           : A data frame containing at least columns 'spec' (species) and 'geo' (location codes).
+#   - species_info  : A data frame containing species metadata with columns:
+#                     'spec' (species code), 'Species' (full name), 'Color' (hex color), and 'link' (logo image path).
+# Output  :
+#   - A ggplot object showing counts of each species per location with logos and color coding.
+# ============================================================
+plot_species_geo_overview <- function(dat, species_info, geo_table) {
+  
+  # Use your species_info to create color and label maps
+  color_map <- setNames(species_info$Color, species_info$spec)
+  label_map <- setNames(
+    paste0("<img src='", species_info$link, "' width='30' /><br>*H. ", species_info$Species, "*"),
+    species_info$spec
+  )
+
+
+
+  # Define groups
+  ingroup <- c("abe", "aff", "atl", "cas", "chl", "eco", "esp", "flo", "gem", "gum", 
+              "gut", "ind", "lib", "may", "nig", "pro", "pue", "ran", "tan", "uni")
+  outgroup <- c("Total")
+
+  gulf <- c("liz", "tam", "ala", "arc", "are", "flk", "ver")
+  west_carib <- c("bel", "boc", "gun", "hon", "san", "qui")
+  east_carib <- c("bar", "hai", "pri", "uvi", "tob")
+  
+  # Summarize counts
+  counts <- dat %>%
+    dplyr::count(spec, geo) %>%
+    replace(is.na(.), 0) %>%
+    arrange(spec) %>%
+    mutate(geo = ifelse(geo == "flo", "flk", geo),
+           geo = ifelse(geo == "por", "pri", geo))
+  
+  # Add totals by species automatically
+  test1 <- counts %>%
+    split(.$spec) %>%
+    purrr::map_df(~ janitor::adorn_totals(., where = "row")) %>%
+    # group_by(spec) %>%
+    mutate(geo = ifelse(spec == "Total", "Total", geo),
+           spec = ifelse(spec == "Total", NA, spec)) %>%
+    fill(spec, .direction = "down") #%>%
+    # ungroup()
+    print(test1)
+  
+  # Add totals by location automatically
+  test2 <- counts %>%
+    split(.$geo) %>%
+    purrr::map_df(~ janitor::adorn_totals(., where = "row")) %>%
+    # group_by(geo) %>%
+    mutate(geo = ifelse(geo == "-", NA, geo)) %>%
+    fill(geo, .direction = "down") #%>%
+    # ungroup()
+  print(test2)
+
+  t <- unique(rbind(test1, test2))
+  print(t)
+
+  sum <- textGrob(sum(counts$n), gp = gpar(fontsize = 12, fontface = "bold"))
+
+  # Order species within groups
+  order_sp <- t %>%
+    mutate(group_sp = case_when(
+      spec %in% ingroup ~ "ingroup",
+      spec %in% outgroup ~ "outgroup"
+    )) %>%
+    dplyr::count(spec, group_sp) %>%
+    group_by(group_sp) %>%
+    arrange(desc(n), .by_group = TRUE) %>%
+    pull(spec)
+
+  print(order_sp)
+  
+  # Order locations within regions
+  order_loc1 <- t %>%
+    mutate(Region = case_when(
+      geo %in% gulf ~ "Gulf of Mexico",
+      geo %in% west_carib ~ "Western Caribbean",
+      geo %in% east_carib ~ "Eastern Caribbean",
+      geo %in% "Total" ~ " "
+    ))
+    
+  order_loc <- order_loc1 %>%
+    dplyr::count(geo, Region) %>%
+    group_by(Region) %>%
+    arrange(match(Region, c("Western Caribbean", "Eastern Caribbean", "Gulf of Mexico", " ")),
+            desc(n)) %>%
+    pull(geo)
+
+  # Compute vertical line positions dynamically
+  region_boundaries <- order_loc1 %>%
+    filter(Region != " ") %>%
+    distinct(geo, Region) %>%
+    mutate(geo_num = as.numeric(factor(geo, levels = order_loc))) %>%
+    group_by(Region) %>%
+    summarise(max_x = max(geo_num)) %>%
+    ungroup() %>%
+    # mutate(vline_x = max_x + 0.5) %>%
+    pull(max_x)
+
+  print(max(region_boundaries))
+
+  region_labels <- order_loc1 %>%
+    filter(Region != " ") %>%
+    distinct(geo, Region) %>%
+    mutate(geo_num = as.numeric(factor(geo, levels = order_loc))) %>%
+    group_by(Region) %>%
+    summarise(mid_x = mean(geo_num)) %>%
+    ungroup()
+  print(region_labels)
+
+  # Keep only the locations actually in your dataset
+  geo_table_filtered <- geo_table %>%
+    filter(geo %in% t$geo) %>%
+    arrange(match(geo, order_loc))  # optional: match the plotting order
+
+  # Create a named vector for labels
+  x_labels <- setNames(geo_table_filtered$Locations, geo_table_filtered$geo)
+  
+  # Create plot
+  p <- t %>%
+    mutate(
+      geo = fct_relevel(geo, order_loc),
+      spec = fct_relevel(spec, rev(order_sp))
+    ) %>%
+    ggplot(aes(x = geo, y = spec)) +
+    geom_count(aes(size = n, color = spec), show.legend = FALSE) +
+    geom_text(aes(label = n), size = 4, nudge_x = 0.4, color = "gray50") +
+    geom_vline(xintercept = region_boundaries + 0.6, # remove last
+             col = "gray80", linetype = "dashed") +
+    geom_hline(yintercept = 1.5, col = "gray80", linetype = "dashed") +
+    scale_color_manual(values = color_map) +
+    scale_size_area(max_size = 20) +
+    # scale_y_discrete(labels = label_map) +
+    scale_x_discrete(labels = x_labels) +  # <-- this maps geo codes to full location names
+    coord_cartesian(clip = "off") +
+    labs(title = NULL, x = NULL, y = NULL) +
+    # annotate region names dynamically
+    geom_text(data = region_labels,
+            aes(x = mid_x, y = length(unique(t$spec)) + 0.8, label = Region),
+            color = "gray20", size = 6) +
+    annotation_custom(sum, xmin = max(region_boundaries) + 1, xmax = max(region_boundaries) + 1, ymin = 1, ymax = 1) +
+    # annotate(geom = "text", 
+    #          x = c(1.5, 4, 6.8), 
+    #          y = c(16.5, 16.5, 16.5), 
+    #          label = c("Western Caribbean", "Eastern Caribbean", "Gulf of Mexico"),
+    #          color = "gray20") +
+    theme_minimal() +
+    theme(
+      panel.grid.major = element_blank(),
+      axis.text.x = element_text(face = "bold"),
+      axis.text.y = element_blank(),
+      plot.margin = margin(t = 0.5, r = 0.5, b = 0.25, l = 1.5, unit = "cm")
+    )
+
+  # Filter only the species actually present in t
+  species_info_subset <- species_info %>%
+  filter(spec %in% unique(t$spec))
+
+  p <- p +
+  geom_image(
+    data = species_info_subset,
+    aes(x = -0.5, y = spec, image = link),
+    inherit.aes = FALSE,
+    size = 0.06, by = "width"
+  ) +
+  geom_text(
+    data = species_info_subset,
+    aes(x = -0.15, y = spec, label = paste0("H. ", Species)),
+    hjust = 0, size = 3.2, fontface = "italic"
+  )
+
+  return(p)                                    
+
 }
