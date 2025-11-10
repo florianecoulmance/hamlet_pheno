@@ -491,6 +491,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   # 6. Get title
   # -----------------------------
   print(tree$geo)
+  print(tree$spec)
   if(color_by == "species"){
     geo_val <- unique(tree$geo)
     title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
