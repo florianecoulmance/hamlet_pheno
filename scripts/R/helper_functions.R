@@ -561,12 +561,14 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   t <- ggtree(hc, layout = "fan", size = 0.5) %<+% tree +
     geom_tippoint(aes(color = .data[[group_col]]), size = 3, alpha = 0.5) +
     scale_color_manual(values = color_map, name = legend_name) +
-    xlim(0, 1.5) + 
     theme(
       legend.position = ifelse(extract_legend, "right", "none"),
       plot.title = element_text(size = 14, color = "gray20", face = "bold"),
       plot.subtitle = element_text(size = 10, color = "gray20")
     )
+
+  # Extend terminal branches (multiply x for tip nodes)
+  t$data$x <- ifelse(t$data$isTip, t$data$x * 1.2, t$data$x)
   
   # -----------------------------
   # 6. Get title
