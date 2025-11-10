@@ -189,7 +189,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     geom_point(data = centroids, aes(x = x, y = y, color = .data[[group_col]]), size = 15, alpha = 0) +
     # geom_image(data = centroids, aes(x = x, y = y, image = link), vjust=1, hjust=0, size = 0.15, asp = 1.1, alpha=1) +
     scale_color_manual(values = color_map, labels = label_map) +
-    theme_minimal() +
+    # theme_minimal() +
     theme(
       legend.position = if (extract_legend) "bottom" else "none",
       legend.box = "horizontal",
