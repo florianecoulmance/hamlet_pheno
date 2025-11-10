@@ -143,11 +143,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     color_map <- setNames(info_table$Color, info_table$geo)
     label_map <- setNames(info_table$Locations, info_table$geo)
   }
-  print(color_map)
-  print(label_map)
 
-  
-  # print(head(pca_data))
+  print(head(pca_data))
   # -----------------------------
   # 2. Merge PCA data with info
   # -----------------------------
@@ -162,7 +159,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   plot_data <- pca_data %>%
     left_join(info_table, by = group_col)
   
-  print(plot_data)
+  # print(plot_data)
 
   # -----------------------------
   # 3. Calculate centroids
@@ -188,7 +185,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   } else {
     add_logos <- NULL
   }
-  print(add_logos)
+  # print(add_logos)
 
   # -----------------------------
   # 4. Build the actual PCA plot
@@ -226,7 +223,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
 
   
   if(!is.null(add_logos)) p <- p + add_logos
-  print(class(p))
+  # print(class(p))
 
 
   # -----------------------------
@@ -272,10 +269,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
 #   - ggplot object showing explained variance per PC
 # ============================================================
 plot_variance <- function(var, loc_name) {
-  print(var)
   # Ensure var is a data frame
   var <- as.data.frame(var)
-  print(var)
   # Ensure proper column names and indexing
   if (ncol(var) == 2) {
     colnames(var) <- c("PC", "Variance")
