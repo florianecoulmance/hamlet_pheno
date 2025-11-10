@@ -393,10 +393,10 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   # Make sure all combinations exist
   all_p_groups <- unique(c(vis_p$group1, vis_p$group2))
   vis_p_complete <- vis_p_sym %>%
-    complete(group1 = all_p_groups, group2 = all_p_groups, fill = list(p.value = NA))
+    complete(group1 = all_p_groups, group2 = all_p_groups, fill = list(p.adjusted = NA))
   print(vis_p_complete)
 
-  visH_p <- dcast(vis_p_complete, group1 ~ group2, value.var = "p.value") %>%
+  visH_p <- dcast(vis_p_complete, group1 ~ group2, value.var = "p.adjusted") %>%
     complete(group1 = levels(pc_table$group), fill = list()) %>%
     select(group1, intersect(levels(pc_table$group), colnames(.))) %>%
     arrange(desc(group1))
