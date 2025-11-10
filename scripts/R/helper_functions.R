@@ -323,6 +323,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   
   # ---- Pairwise PERMANOVA ----
   pairwise_result <- pairwise.adonis(dist_t, PC_table_ordered$group, perm = 10000)
+  print(pairwise_results)
   
   # ---- Reshape R² (upper triangle) ----
   vis_R <- pairwise_result %>%
