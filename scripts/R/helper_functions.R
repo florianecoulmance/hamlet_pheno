@@ -340,7 +340,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   all_R_groups <- unique(c(vis_R$group1, vis_R$group2))
   vis_R_complete <- vis_R_sym %>%
     complete(group1 = all_R_groups, group2 = all_R_groups, fill = list(R2 = NA))
-  print(vis_R_complete)
+  # print(vis_R_complete)
   
   visH_R <- dcast(vis_R_complete, group1 ~ group2, value.var = "R2") %>%
     complete(group1 = levels(pc_table$group), fill = list()) %>%
@@ -367,7 +367,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   all_F_groups <- unique(c(vis_F$group1, vis_F$group2))
   vis_F_complete <- vis_F_sym %>%
     complete(group1 = all_F_groups, group2 = all_F_groups, fill = list(F.Model = NA))
-  print(vis_F_complete)
+  # print(vis_F_complete)
 
   visH_F <- dcast(vis_F_complete, group1 ~ group2, value.var = "F.Model") %>%
     complete(group1 = levels(pc_table$group), fill = list()) %>%
@@ -394,7 +394,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   all_p_groups <- unique(c(vis_p$group1, vis_p$group2))
   vis_p_complete <- vis_p_sym %>%
     complete(group1 = all_p_groups, group2 = all_p_groups, fill = list(p.adjusted = NA))
-  print(vis_p_complete)
+  # print(vis_p_complete)
 
   visH_p <- dcast(vis_p_complete, group1 ~ group2, value.var = "p.adjusted") %>%
     complete(group1 = levels(pc_table$group), fill = list()) %>%
@@ -405,17 +405,17 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   melt_p <- melt(visH_p, id.vars = "group1")
   melt_p$value <- as.numeric(melt_p$value)
   print("Pvalues PERMANOVA")
-  print(melt_p)
+  # print(melt_p)
   
   # ---- Plot heatmap ----
   p <- ggplot() +
-    geom_tile(aes(x = melt_R$group1, y = melt_R$variable, fill = melt_R$value), color = "transparent") +
+    geom_tile(data = melt_R, aes(x = group1, y = variable, fill = value), color = "transparent") +
     scale_fill_gradient(low = "#ffead1", high = "#fdae53", na.value = "transparent", name = "R²") +
     new_scale_fill() +
-    geom_tile(aes(x = melt_F$variable, y = melt_F$group1, fill = melt_F$value), color = "transparent") +
+    geom_tile(data = melt_F, aes(x = variable, y = group1, fill = value), color = "transparent") +
     scale_fill_gradient(low = "#ffedec", high = "#ff5c52", na.value = "transparent", name = "F") +
-    geom_text(aes(x = melt_p$variable, y = melt_p$group1,
-          label = ifelse(is.na(melt_p$value), "", sprintf("%.3f", melt_p$value))),
+    geom_text(data = melt_p, aes(x = variable, y = group1,
+          label = ifelse(is.na(value), "", ifelse(value >= 0.05, "X", "*"))),
       size = 2.8, color = "black") +
     labs(x = "", y = "", fill = "F") +
     scale_x_discrete(position = "bottom") +
