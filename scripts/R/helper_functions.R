@@ -310,8 +310,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   pc_table <- pc_table %>%
   mutate(
     # Fix specific naming error
-    images = ifelse(images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
-                    "PL17_160floflo-l1-s4-f4-c2-d1.png", images)
+    spec = ifelse(images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
+                    "flo", spec)
   )
   
   # ---- Filter groups with <5 individuals ----
