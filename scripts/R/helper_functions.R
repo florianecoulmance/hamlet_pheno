@@ -377,9 +377,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
   } else if(color_by == "location"){
     species_val <- unique(pc_table$spec)
-    if (length(species_val) == 1 && species_val %in% species_col$spec){
-      title_val <- species_col$Species[species_col$spec == species_val] 
-      }
+    title_val <- if (length(species_val) == 1) species_col$Species[species_col$spec == species_val] else ""
   }
   
   # ---- Annotate with location title ----
@@ -490,16 +488,12 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   # -----------------------------
   # 6. Get title
   # -----------------------------
-  print(tree$geo)
-  print(tree$spec)
   if(color_by == "species"){
     geo_val <- unique(tree$geo)
     title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
   } else if(color_by == "location"){
     species_val <- unique(tree$spec)
-    if (length(species_val) == 1 && species_val %in% species_col$spec){
-      title_val <- species_col$Species[species_col$spec == species_val] 
-      }
+    title_val <- if (length(species_val) == 1) species_col$Species[species_col$spec == species_val] else ""
   }
 
   print(title_val)
