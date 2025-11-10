@@ -153,7 +153,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       # Fix specific naming error
       spec = ifelse(images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
                       "flo", spec))
-  print(pca_data$im)
+  print(pca_data$images)
 
   plot_data <- pca_data %>%
     left_join(info_table, by = group_col)
