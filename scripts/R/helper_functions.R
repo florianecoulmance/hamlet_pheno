@@ -358,6 +358,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     arrange(desc(group1))
   melt_p <- melt(visH_p, id.vars = "group1")
   melt_p$value <- as.numeric(melt_p$value)
+  print("Pvalues PERMANOVA")
+  print(melt_p)
   
   # ---- Plot heatmap ----
   p <- ggplot() +
@@ -459,7 +461,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
     )
   
   # Adjust positions for aesthetics
-  # tree$x[tree$isTip] <- tree$x[tree$isTip] * 1.1
+  tree$x[tree$isTip] <- tree$x[tree$isTip] * 1.1
   # tree$branch.length <- scale(tree$branch.length)
   
   # -----------------------------
