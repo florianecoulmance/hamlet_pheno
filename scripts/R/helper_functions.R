@@ -551,7 +551,7 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
     file <- file.path(im_p, paste0(name, "_", pc, "_originalrescaled.png"))
     if (!file.exists(file)) stop(paste("Missing image file:", file))  
     img <- readPNG(file)
-    grob <- rasterGrob(img[1:500,100:1300,], interpolate = TRUE)
+    grob <- rasterGrob(img[1:500,100:1100,], interpolate = TRUE)
     grob <- annotate_figure(grob, top = text_grob(
       pc,
       color = "black", face = "bold", size = 20,
