@@ -233,8 +233,8 @@ figureS4 <- ggarrange(sup_grid, common.legend=T, legend = "bottom") # adjust if 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
   plot = figureS4,
-  width = 14.2,    # A4 width in inches
-  height = 17,  # A4 height in inches
+  width = 18.5,    # A4 width in inches
+  height = 25.5,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -322,7 +322,7 @@ figureS9 <- results[["all"]][["sup_pca"]]
 ggsave(
   filename = file.path(figure_path, "FigS9_pAllSUP.png"),
   plot = figureS9,
-  width = 15,    # A4 width in inches
+  width = 16,    # A4 width in inches
   height = 17.5,  # A4 height in inches
   units = "in",
   dpi = 150,

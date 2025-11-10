@@ -243,8 +243,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   p_annot <- annotate_figure(
     p,
-    top = text_grob(title_val, color = "black", face = "bold", size = 20,
-                      x = unit(10, "pt"), hjust = -3)
+    top = text_grob(title_val, color = "black", face = "bold", size = 50,
+                      x = unit(10, "pt"), hjust = -1)
   )
     
   return(p_annot)
@@ -384,8 +384,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   # ---- Annotate with location title ----
   p_annot <- annotate_figure(
     p,
-    top = text_grob(title_val, color = "black", face = "bold", size = 30,
-                    x = unit(10, "pt"), hjust = -0.4)
+    top = text_grob(title_val, color = "black", face = "bold", size = 50,
+                    x = unit(10, "pt"), hjust = -1)
   )
   
   return(p_annot)
@@ -477,7 +477,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   # -----------------------------
   # 5. Plot tree
   # -----------------------------
-  t <- ggtree(tree, layout = "circular", branch.length = "none", size = 0.5, color = scol) +
+  t <- ggtree(tree, layout = "fan", branch.length = "none", size = 0.5, color = scol) +
     geom_tippoint(aes(color = .data[[group_col]]), size = 3, alpha = 0.5) +
     scale_color_manual(values = color_map, name = legend_name) +
     theme(
@@ -491,9 +491,11 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   # -----------------------------
   if(color_by == "species"){
     geo_val <- unique(tree$geo)
+    print(geo_val)
     title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
   } else if(color_by == "location"){
     species_val <- unique(tree$spec)
+    print(species_val)
     title_val <- if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
   }
 
@@ -510,8 +512,8 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   } else {      # ---- Annotate with location title ----
     t_annot <- annotate_figure(
       t,
-      top = text_grob(title_val, color = "black", face = "bold", size = 30,
-                      x = unit(10, "pt"), hjust = -0.4)
+      top = text_grob(title_val, color = "black", face = "bold", size = 50,
+                      x = unit(10, "pt"), hjust = -1)
     )
     return(t_annot)
   }
@@ -554,7 +556,7 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
     grob <- annotate_figure(grob, top = text_grob(
       pc,
       color = "black", face = "bold", size = 20,
-      x = unit(2, "pt"), hjust = -2, vjust = 3
+      x = unit(2, "pt"), hjust = -1, vjust = 1
     ))
     return(grob)
   }
@@ -585,7 +587,7 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
   if (color_by == "species") {
     # Between species within a location → use location name
     if (abbrev %in% geo_map$geo) {
-      title_val <- paste0("H. ", geo_map$Locations[match(abbrev, geo_map$geo)])
+      title_val <- geo_map$Locations[match(abbrev, geo_map$geo)]
     } else {
       title_val <- ""
     }
@@ -604,8 +606,8 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
   
   # add title
   combined <- annotate_figure(combined, top = text_grob(
-    title_val, color = "black", face = "bold", size = 30,
-    x = unit(10, "pt"), hjust = -0.4
+    title_val, color = "black", face = "bold", size = 50,
+    x = unit(10, "pt"), hjust = -1
   ))
   
   return(combined)
