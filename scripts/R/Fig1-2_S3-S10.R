@@ -298,10 +298,10 @@ hier <- results[["all"]][["hclust"]]
 heat <- results[["all"]][["heatmap"]]
 
 # # Bottom row: hier + heat
-bottom_row <- ggarrange(hier, heat, ncol = 2, rel_widths = c(1,1), labels=c("(b)","(c)"))
+bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"))
 
 # Combine top (perm) with bottom row
-figureS8 <- ggarrange(perm, bottom_row, nrow = 2, ncol = 1, labels=c("(a)",""), rel_heights = c(1, 0.6))
+figureS8 <- ggarrange(perm, bottom_row, nrow = 2, ncol = 1, labels=c("(a)",""))
 
 # Save as PNG (A4 size)
 ggsave(
@@ -367,7 +367,7 @@ perm_ind <- results[["ind"]][["permanova"]]
 hier_ind <- results[["ind"]][["hclust"]]
 ind <- plot_grid(pca_ind, heat_ind, perm_ind, hier_ind, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
-figureS10 <- ggarrange(pue, nig, uni, chl, abe, ind, nrow = 6, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), rel_heights = c(1, 1, 1, 1, 1, 1))
+figureS10 <- ggarrange(pue, nig, uni, chl, abe, ind, nrow = 6, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"))
 
 # Save as PNG (A4 size)
 ggsave(
