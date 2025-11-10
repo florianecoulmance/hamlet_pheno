@@ -135,7 +135,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     info_table <- species_info
     color_map <- setNames(info_table$Color, info_table$spec)
     label_map <- setNames(
-      paste0("<img src='", info_table$link, "' width='100' /><br>*H. ", info_table$Species, "*"),
+      paste0("<img src='", info_table$link, "' width='90' /><br>*H. ", info_table$Species, "*"),
       info_table$spec)
   } else {
     group_col <- "geo"
@@ -184,8 +184,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # 4. Build the actual PCA plot
   # -----------------------------
   p <- ggplot(plot_data, aes(x = .data[[pc_first]], y = .data[[pc_second]], color = .data[[group_col]])) +
-    geom_point(size = 5, alpha = 0.5) +
-    stat_ellipse(aes(color = .data[[group_col]]), linetype = 5, lwd = 1) +
+    geom_point(size = 7, alpha = 0.5) +
+    stat_ellipse(aes(color = .data[[group_col]]), linetype = 5, lwd = 2) +
     geom_point(data = centroids, aes(x = x, y = y, color = .data[[group_col]]), size = 15, alpha = 0) +
     # geom_image(data = centroids, aes(x = x, y = y, image = link), vjust=1, hjust=0, size = 0.15, asp = 1.1, alpha=1) +
     scale_color_manual(values = color_map, labels = label_map) +
@@ -193,11 +193,12 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     theme(
       legend.position = if (extract_legend) "bottom" else "none",
       legend.box = "horizontal",
-      legend.text = element_markdown(size = 10),
+      legend.title = element_blank(),
+      legend.text = element_markdown(size = 15),
       panel.background = element_blank(),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
-      axis.text = element_text(size = 10),
-      axis.title = element_text(size = 20)
+      axis.text = element_text(size = 20),
+      axis.title = element_text(size = 25)
     ) +
     scale_x_continuous(position = "bottom",labels = unit_format(unit = "k", scale = 1e-3)) +
     scale_y_continuous(labels = unit_format(unit = "k", scale = 1e-3)) +
@@ -233,7 +234,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     # if coloring by location, title is the species name
     spec_val <- unique(plot_data$spec)
     if (length(spec_val) == 1) {
-      title_val <- species_info$Species[species_info$spec == spec_val]
+      title_val <- paste0("H. ", species_info$Species[species_info$spec == spec_val])
     }
   }
 
@@ -243,7 +244,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   p_annot <- annotate_figure(
     p,
     top = text_grob(title_val, color = "black", face = "bold", size = 20,
-                      x = unit(5.5, "pt"), hjust = 0)
+                      x = unit(10, "pt"), hjust = 0)
   )
     
   return(p_annot)
@@ -377,14 +378,14 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
   } else if(color_by == "location"){
     species_val <- unique(pc_table$spec)
-    title_val <- if (length(species_val) == 1) species_col$Species[species_col$spec == species_val] else ""
+    title_val <- if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
   }
   
   # ---- Annotate with location title ----
   p_annot <- annotate_figure(
     p,
     top = text_grob(title_val, color = "black", face = "bold", size = 30,
-                    x = unit(5.5, "pt"), hjust = -0.4)
+                    x = unit(10, "pt"), hjust = -0.4)
   )
   
   return(p_annot)
@@ -493,7 +494,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
     title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
   } else if(color_by == "location"){
     species_val <- unique(tree$spec)
-    title_val <- if (length(species_val) == 1) species_col$Species[species_col$spec == species_val] else ""
+    title_val <- if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
   }
 
   print(title_val)
@@ -510,7 +511,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
     t_annot <- annotate_figure(
       t,
       top = text_grob(title_val, color = "black", face = "bold", size = 30,
-                      x = unit(5.5, "pt"), hjust = -0.4)
+                      x = unit(10, "pt"), hjust = -0.4)
     )
     return(t_annot)
   }
@@ -584,7 +585,7 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
   if (color_by == "species") {
     # Between species within a location → use location name
     if (abbrev %in% geo_map$geo) {
-      title_val <- geo_map$Locations[match(abbrev, geo_map$geo)]
+      title_val <- paste0("H. ", geo_map$Locations[match(abbrev, geo_map$geo)])
     } else {
       title_val <- ""
     }
@@ -592,7 +593,7 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
   } else if (color_by == "location") {
     # Within species across locations → use full species name
     if (abbrev %in% spec_map$spec) {
-      title_val <- spec_map$Species[match(abbrev, spec_map$spec)]
+      title_val <- paste0("H. ", spec_map$Species[match(abbrev, spec_map$spec)])
     } else {
       title_val <- ""
     }
@@ -604,7 +605,7 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
   # add title
   combined <- annotate_figure(combined, top = text_grob(
     title_val, color = "black", face = "bold", size = 30,
-    x = unit(5.5, "pt"), hjust = -0.4
+    x = unit(10, "pt"), hjust = -0.4
   ))
   
   return(combined)

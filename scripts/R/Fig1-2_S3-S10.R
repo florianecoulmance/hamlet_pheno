@@ -226,9 +226,9 @@ ggsave(
 ########## FIGURE S4 ###################
 # Other PCs combination for phenotypes per location
 all_sup <- lapply(results_no_overall, `[[`, "sup_pca") # extract per location supplementary pcas
-sup_grid <- plot_grid(plotlist = all_sup, ncol = 2) # bundle location pcas in one plot
+sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
 # Combine supplementary PCA grid with legend at the bottom
-figureS4 <- ggarrange(sup_grid, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), common.legend=T, legend = "bottom") # adjust if legend is too big/small
+figureS4 <- ggarrange(sup_grid, common.legend=T, legend = "bottom") # adjust if legend is too big/small
 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
@@ -243,9 +243,9 @@ ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
 ########## FIGURE S5 ###################
 # PERMANOVA heatmaps for each location
 all_perm <- lapply(results_no_overall, `[[`, "permanova") # extract per location pcas
-perm_grid <- plot_grid(plotlist = all_perm, ncol = 2) # bundle location permanovas in one plot
+perm_grid <- plot_grid(plotlist = all_perm, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location permanovas in one plot
 # Combine permanova grid with legend at the bottom
-figureS5 <- ggarrange(perm_grid, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # adjust if legend is too big/small
+figureS5 <- ggarrange(perm_grid) # adjust if legend is too big/small
 
 # Save Figure S3 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
@@ -260,9 +260,9 @@ ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
 ########## FIGURE S6 ###################
 # Hierarchical clustering plots for all locations with legend
 all_hier <- lapply(results_no_overall, `[[`, "hclust") # extract per location pcas
-hier_grid <- plot_grid(plotlist = all_hier, ncol = 2) # bundle location pcas in one plot
+hier_grid <- plot_grid(plotlist = all_hier, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
 # Combine hierarchical clustering grid with legend at the bottom
-figureS6 <- ggarrange(hier_grid, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # adjust if legend is too big/small
+figureS6 <- ggarrange(hier_grid) # adjust if legend is too big/small
 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
@@ -277,9 +277,9 @@ ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
 ########## FIGURE S7 ###################
 # Heatmap PC images for each location
 all_heat <- lapply(results_no_overall, `[[`, "heatmap") # extract per location pcas
-heat_grid <- plot_grid(plotlist = all_heat, ncol = 2) # bundle location pcas in one plot
+heat_grid <- plot_grid(plotlist = all_heat, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
 # Combine heatmaps grid with legend at the bottom
-figureS7 <- ggarrange(heat_grid, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"))
+figureS7 <- ggarrange(heat_grid)
 
 # Save Figure S5 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS7_pLocHEAT.png"),
