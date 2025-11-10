@@ -490,6 +490,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   # -----------------------------
   # 6. Get title
   # -----------------------------
+  print(tree$geo)
   if(color_by == "species"){
     geo_val <- unique(tree$geo)
     title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
@@ -499,6 +500,8 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
       title_val <- species_col$Species[species_col$spec == species_val] 
       }
   }
+
+  print(title_val)
   
   # -----------------------------
   # 7. Return legend or annotated tree
