@@ -155,9 +155,9 @@ legend_plot <- function(info_table) {
   geom_point(aes(x = col - 0.1, y = y_dot, color = spec), size = 10, show.legend = FALSE) +
   scale_color_manual(values = color_map) +
   # logo
-  geom_image(aes(x = col, y = y_logo, image = link), size = 0.6, asp = 1.1) +
+  geom_image(aes(x = col, y = y_logo, image = link), size = 0.7, asp = 1.1) +
   # species name
-  geom_text(aes(x = col + 0.03, y = y_text, label = paste0("H. ", Species)), size = 4, vjust = 1, fontface = "italic") +
+  geom_text(aes(x = col + 0.01, y = y_text, label = paste0("H. ", Species)), size = 4, vjust = 1, fontface = "italic") +
   theme_void() +
   theme(plot.margin = margin(0,0,0,0)) +
   coord_cartesian(clip = "off")
