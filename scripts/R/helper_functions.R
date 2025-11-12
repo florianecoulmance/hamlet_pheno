@@ -150,7 +150,7 @@ legend_plot <- function(info_table) {
   
   legend_plot <- ggplot(legend_df) +
   # colored dot
-  geom_point(aes(x = col - 0.2, y = y_dot, color = spec), size = 5, show.legend = FALSE) +
+  geom_point(aes(x = col, y = y_dot, color = spec), size = 10, show.legend = FALSE) +
   scale_color_manual(values = color_map) +
   # logo
   geom_image(aes(x = col, y = y_logo, image = link), size = 0.8, asp = 1.1) +
