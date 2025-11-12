@@ -494,7 +494,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     scale_fill_gradient(low = "#ffedec", high = "#ff5c52", na.value = "transparent", name = "F") +
     geom_text(data = melt_p, aes(x = group1, y = variable,
           label = ifelse(is.na(value), "", ifelse(value >= 0.05, "X", "*"))),
-      size = 8, color = "black", fontface="bold") +
+      size = 10, color = "black", fontface="bold") +
     labs(x = "", y = "", fill = "F") +
     scale_x_discrete(position = "bottom") +
     labs(x = "", y = "") +
