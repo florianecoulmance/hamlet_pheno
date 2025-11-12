@@ -140,10 +140,12 @@ legend_plot <- function(info_table) {
   n_rows <- 2
   print(n_rows)
 
+  x_spacing <- 1.2  # smaller = more compact columns
+
   legend_df <- legend_info %>%
     mutate(idx = row_number(),
           row = n_rows - ((idx - 1) %/% n_cols + 1),   # vertical position
-          col = (idx - 1) %% n_cols + 1,         # horizontal position
+          col = ((idx - 1) %% n_cols) x_spacing + 1,         # horizontal position
           y_dot = row + 0.5,                     # adjust vertical dot position
           y_logo = row,                          # logo y
           y_text = row - 0.1)                    # text y
