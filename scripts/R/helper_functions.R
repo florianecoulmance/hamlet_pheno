@@ -36,10 +36,10 @@ exc_legend <- function(pca_file, species_col, num_row = 2) {
   
   logos_spec <- setNames(new_spec$html, new_spec$spec)
   # Inspect the result
-  print(logos_spec)
+  # print(logos_spec)
 
   spec_colors <- setNames(species_col$Color, species_col$spec)
-  print(spec_colors)
+  # print(spec_colors)
 
   # PC1 vs. PC2
   p1 <- ggplot(pca_file,aes(x=PC1,y=PC2,color=spec)) + geom_point(size = 15, alpha = 0.5) 
@@ -141,18 +141,18 @@ legend_plot <- function(info_table) {
 
   legend_df <- legend_info %>%
     mutate(idx = row_number(),
-          row = n_rows - (idx - 1) %/% n_cols,   # vertical position
-          col = (idx - 1) %% n_cols + 1,         # horizontal position
-          y_dot = row + 0.4,                     # adjust vertical dot position
+          row = n_rows - (idx - 0.2) %/% n_cols,   # vertical position
+          col = (idx - 0.5) %% n_cols + 0.5,         # horizontal position
+          y_dot = row + 0.2,                     # adjust vertical dot position
           y_logo = row,                          # logo y
-          y_text = row - 0.4)                    # text y
+          y_text = row - 0.2)                    # text y
   
   legend_plot <- ggplot(legend_df) +
   # colored dot
   geom_point(aes(x = col, y = y_dot, color = spec), size = 5, show.legend = FALSE) +
   scale_color_manual(values = color_map) +
   # logo
-  geom_image(aes(x = col, y = y_logo, image = link), size = 0.08) +
+  geom_image(aes(x = col, y = y_logo, image = link), size = 0.5) +
   # species name
   geom_text(aes(x = col, y = y_text, label = paste0("H. ", Species)), size = 4, vjust = 1, fontface = "italic") +
   theme_void() +
@@ -182,7 +182,7 @@ legend_plot <- function(info_table) {
 #   - If extract_legend = TRUE : a legend grob for combined plotting.
 # ============================================================
 pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var, color_by = "species", extract_legend = FALSE, legend_rows = 2) {
-  print(extract_legend)
+  # print(extract_legend)
   # -----------------------------
   # 1. Choose color/grouping mode
   # -----------------------------
@@ -202,7 +202,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     label_map <- setNames(info_table$Locations, info_table$geo)
   }
 
-  print(head(pca_data))
+  # print(head(pca_data))
   # -----------------------------
   # 2. Merge PCA data with info
   # -----------------------------
@@ -211,7 +211,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       # Fix specific naming error
       spec = ifelse(images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
                       "flo", spec))
-  print(pca_data$images)
+  # print(pca_data$images)
 
   plot_data <- pca_data %>%
     left_join(info_table, by = group_col)
@@ -787,7 +787,7 @@ pca_analysis <- function(gtfile, samplefile, color_by) {
     
     # Read sample names and define groups
     allsamples <- readLines(samplefile)
-    print(allsamples)
+    # print(allsamples)
 
     geo  <- substr(allsamples, nchar(allsamples) - 2, nchar(allsamples))
     spec <- substr(allsamples, nchar(allsamples) - 5, nchar(allsamples) - 3)
@@ -816,8 +816,8 @@ pca_analysis <- function(gtfile, samplefile, color_by) {
     # Extract PCA outputs
     pca_coords <- sm.pca$pca.sample_coordinates
     var_explained <- sm.pca$pca.eigenvalues
-    print(head(pca_coords))
-    print(head(var_explained))
+    # print(head(pca_coords))
+    # print(head(var_explained))
 
     # Ensure the PCA coordinates rows are in the same order as the original samples
     #pca_coords <- pca_coords[match(allsamples, rownames(pca_coords)), ]
@@ -827,24 +827,24 @@ pca_analysis <- function(gtfile, samplefile, color_by) {
     pca_coords$spec   <- spec
     pca_coords$geo    <- geo
     pca_coords$sample <- allsamples
-    print(head(pca_coords))    
+    # print(head(pca_coords))    
 
     # Extract the "variance explained" row as numeric
     var_explained <- as.numeric(var_explained["variance explained", ])
-    print(var_explained)
+    # print(var_explained)
 
     # If currently in percentages, convert to fractions
     var_explained <- var_explained / 100  # remove if already in 0-1 range
 
     # Create the table in the same format as read.csv would
     table <- data.frame(X0 = var_explained)
-    print(table)
+    # print(table)
     # Add row numbers starting from 0 if needed
     rownames(table) <- 0:(length(var_explained)-1)
-    print(table)
+    # print(table)
 
     # Access the values like
-    (print(table$X0))
+    # (print(table$X0))
 
     # Return both
     return(list(eigen = pca_coords, var = table))
@@ -962,12 +962,12 @@ plot_permanova_permdisp <- function(pair_file, params_legend = "none") {
             )
         )
 
-    print(head(df_sym))
-    print(head(df_sig))
+    # print(head(df_sym))
+    # print(head(df_sig))
     
     # Reshape to matrix for plotting
     sig_pair <- dcast(as.data.table(df_sig), spc1 ~ spc2, value.var = "category")
-    print(sig_pair)
+    # print(sig_pair)
     
     # Get the names of the columns to modify (all except the first)
     cols_to_modify <- setdiff(names(sig_pair), "spc1")
@@ -983,9 +983,9 @@ plot_permanova_permdisp <- function(pair_file, params_legend = "none") {
     sig_pair[, (cols_to_modify) := as.data.table(sig_pair_mat)]
 
     #sig_pair[upper.tri(as.matrix(sig_pair[,-1]))] <- NA
-    print(sig_pair)
+    # print(sig_pair)
     sig_pair_melt <- melt(sig_pair, id.vars = "spc1")
-    print(sig_pair_melt)
+    # print(sig_pair_melt)
 
     # Build plot
     p_allLoc <- ggplot(sig_pair_melt) +
@@ -1280,7 +1280,7 @@ plot_species_geo_overview <- function(dat, species_info, geo_table) {
            spec = ifelse(spec == "Total", NA, spec)) %>%
     fill(spec, .direction = "down") #%>%
     # ungroup()
-    print(test1)
+    # print(test1)
   
   # Add totals by location automatically
   test2 <- counts %>%
@@ -1290,10 +1290,10 @@ plot_species_geo_overview <- function(dat, species_info, geo_table) {
     mutate(geo = ifelse(geo == "-", NA, geo)) %>%
     fill(geo, .direction = "down") #%>%
     # ungroup()
-  print(test2)
+  # print(test2)
 
   t <- unique(rbind(test1, test2))
-  print(t)
+  # print(t)
 
   sum <- textGrob(sum(counts$n), gp = gpar(fontsize = 12, fontface = "bold"))
 
@@ -1308,7 +1308,7 @@ plot_species_geo_overview <- function(dat, species_info, geo_table) {
     arrange(desc(n), .by_group = TRUE) %>%
     pull(spec)
 
-  print(order_sp)
+  # print(order_sp)
   
   # Order locations within regions
   order_loc1 <- t %>%
@@ -1337,7 +1337,7 @@ plot_species_geo_overview <- function(dat, species_info, geo_table) {
     # mutate(vline_x = max_x + 0.5) %>%
     pull(max_x)
 
-  print(max(region_boundaries))
+  # print(max(region_boundaries))
 
   region_labels <- order_loc1 %>%
     filter(Region != " ") %>%
@@ -1346,7 +1346,7 @@ plot_species_geo_overview <- function(dat, species_info, geo_table) {
     group_by(Region) %>%
     summarise(mid_x = mean(geo_num)) %>%
     ungroup()
-  print(region_labels)
+  # print(region_labels)
 
   # Keep only the locations actually in your dataset
   geo_table_filtered <- geo_table %>%

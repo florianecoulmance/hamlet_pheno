@@ -214,7 +214,7 @@ figure2 <- results[["all"]][["pca"]]
 ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
-  width = 17, 
+  width = 17.5, 
   height = 17.5, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
@@ -262,13 +262,10 @@ all_perm <- lapply(results_no_overall, `[[`, "permanova") # extract per location
 perm_grid <- plot_grid(plotlist = all_perm, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location permanovas in one plot
 # Combine permanova grid with legend at the bottom
 figureS5 <- ggarrange(
-  perm_grid,
-  leg,
-  nrow = 2,
-  heights = c(10, 1)
-  )
+  perm_grid
+)
 
-# Save Figure S3 as A4 PNG, optimized for small file size
+# Save Figure S5 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
        plot = figureS5,
        width = 14.2,    # A4 width in inches
@@ -290,7 +287,7 @@ figureS6 <- ggarrange(
   heights = c(10, 1)
   )
 
-# Save Figure S4 as A4 PNG, optimized for small file size
+# Save Figure S6 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
        plot = figureS6,
        width = 14.2,    # A4 width in inches
@@ -312,7 +309,7 @@ figureS7 <- ggarrange(
   heights = c(10, 1)
   )
 
-# Save Figure S5 as A4 PNG, optimized for small file size
+# Save Figure S7 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS7_pLocHEAT.png"),
        plot = figureS7,
        width = 14.2,    # A4 width in inches
@@ -333,6 +330,13 @@ bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"))
 
 # Combine top (perm) with bottom row
 figureS8 <- ggarrange(perm, bottom_row, nrow = 2, ncol = 1, labels=c("(a)",""))
+figureS8 <- ggarrange(
+  figureS8,
+  leg,
+  nrow = 2,
+  heights = c(10, 1) 
+)
+
 
 # Save as PNG (A4 size)
 ggsave(
@@ -353,7 +357,7 @@ figureS9 <- results[["all"]][["sup_pca"]]
 ggsave(
   filename = file.path(figure_path, "FigS9_pAllSUP.png"),
   plot = figureS9,
-  width = 17,    # A4 width in inches
+  width = 17.5,    # A4 width in inches
   height = 17.5,  # A4 height in inches
   units = "in",
   dpi = 150,
