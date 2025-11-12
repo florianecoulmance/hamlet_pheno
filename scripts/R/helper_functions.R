@@ -145,14 +145,14 @@ legend_plot <- function(info_table) {
   legend_df <- legend_info %>%
     mutate(idx = row_number(),
           row = n_rows - ((idx - 1) %/% n_cols + 1),   # vertical position
-          col = (idx - 1) %% n_cols + 0.5,         # horizontal position
+          col = (idx - 1) %% n_cols,         # horizontal position
           y_dot = row,                     # adjust vertical dot position
           y_logo = row,                          # logo y
           y_text = row - 0.3)                    # text y
   
   legend_plot <- ggplot(legend_df) +
   # colored dot
-  geom_point(aes(x = col - 0.3, y = y_dot, color = spec), size = 10, show.legend = FALSE) +
+  geom_point(aes(x = col - 0.1, y = y_dot, color = spec), size = 10, show.legend = FALSE) +
   scale_color_manual(values = color_map) +
   # logo
   geom_image(aes(x = col, y = y_logo, image = link), size = 0.8, asp = 1.1) +
