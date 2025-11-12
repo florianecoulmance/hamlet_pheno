@@ -194,7 +194,7 @@ figure1 <- ggarrange(
   pca_grid,
   leg,
   nrow = 2,
-  heights = c(10, 1)
+  heights = c(10, 1)#, widths = c (3,1)
   )
 
 # Save Figure 1 as A4 PNG, optimized for small file size
