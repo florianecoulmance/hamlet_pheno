@@ -128,7 +128,7 @@ legend_plot <- function(info_table) {
   selected_specs <- c("aff", "eco", "esp", "lib", "ran")
 
   legend_info <- info_table %>%
-    dplyr::filter(spec %in% selected_specs)
+    dplyr::filter(!(spec %in% selected_specs))
 
   color_map <- setNames(legend_info$Color, legend_info$spec)
   # label_map <- setNames(
