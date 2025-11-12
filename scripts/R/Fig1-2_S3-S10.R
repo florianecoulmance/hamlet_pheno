@@ -194,7 +194,7 @@ figure1 <- ggarrange(
   pca_grid,
   leg,
   nrow = 2,
-  heights = c(10, 0.7)#, widths = c (3,1)
+  heights = c(10, 0.5)#, widths = c (3,1)
   )
 
 # Save Figure 1 as A4 PNG, optimized for small file size
@@ -243,7 +243,7 @@ figureS4 <- ggarrange(
   sup_grid,
   leg,
   nrow = 2,
-  heights = c(10, 1)
+  heights = c(10, 0.5)
   )
 
 # Save Figure S4 as A4 PNG, optimized for small file size
@@ -284,7 +284,7 @@ figureS6 <- ggarrange(
   hier_grid,
   leg,
   nrow = 2,
-  heights = c(10, 1)
+  heights = c(10, 0.5)
   )
 
 # Save Figure S6 as A4 PNG, optimized for small file size
