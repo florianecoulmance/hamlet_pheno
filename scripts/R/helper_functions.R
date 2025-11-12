@@ -106,6 +106,64 @@ write_metadata_gxp <- function(PCs) {
 
 
 # ============================================================
+# Function: legend_plot
+# Purpose : Create a custom horizontal legend associating each species
+#           with its color, logo, and italicized label.
+# Input   :
+#   - info_table: Data frame containing species information with columns:
+#       - spec: species code
+#       - Species: species name (without "H.")
+#       - Color: color assigned to the species
+#       - link: path or URL to the species logo image
+# Output  :
+#   - Returns a ggplot object displaying the legend horizontally, where:
+#       • each species is represented by a colored dot above its logo
+#       • species names are displayed below the logo in italics
+# Notes   :
+#   - Only selected species (aff, eco, esp, lib, ran) are displayed
+#   - Layout parameters (dot/logo/text positions, n_cols) can be adjusted
+# ============================================================
+legend_plot <- function(info_table) {
+
+  selected_specs <- c("aff", "eco", "esp", "lib", "ran")
+
+  legend_info <- info_table %>%
+    dplyr::filter(spec %in% selected_specs)
+
+  color_map <- setNames(legend_info$Color, legend_info$spec)
+  # label_map <- setNames(
+  #   paste0("<img src='", legend_info$link, "' width='90' /><br>*H. ", legend_info$Species, "*"),
+  #   legend_info$spec)
+
+  n_cols <- 8   # number of columns per row (adjust as needed)
+  n_rows <- ceiling(nrow(legend_info)/n_cols)
+  print(n_rows)
+
+  legend_df <- legend_info %>%
+    mutate(idx = row_number(),
+          row = n_rows - (idx - 1) %/% n_cols,   # vertical position
+          col = (idx - 1) %% n_cols + 1,         # horizontal position
+          y_dot = row + 0.4,                     # adjust vertical dot position
+          y_logo = row,                          # logo y
+          y_text = row - 0.4)                    # text y
+  
+  legend_plot <- ggplot(legend_df) +
+  # colored dot
+  geom_point(aes(x = col, y = y_dot, color = spec), size = 5, show.legend = FALSE) +
+  scale_color_manual(values = color_map) +
+  # logo
+  geom_image(aes(x = col, y = y_logo, image = link), size = 0.08) +
+  # species name
+  geom_text(aes(x = col, y = y_text, label = paste0("H. ", Species)), size = 4, vjust = 1, fontface = "italic") +
+  theme_void() +
+  theme(plot.margin = margin(0,0,0,0)) +
+  coord_cartesian(clip = "off")
+
+  return(legend_plot)
+
+}
+
+# ============================================================
 # Function: pca_plot
 # Purpose : Create PCA scatter plot with species or location colors,
 #           including centroids, ellipses, and optional logos.

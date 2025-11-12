@@ -170,6 +170,9 @@ results_no_overall <- results[!names(results) %in% c("all", "pue", "nig", "uni",
 keep_names <- names(results_no_overall)
 print(keep_names)
 
+# Create common legend
+leg <- legend_plot(species_info)
+
 # Combine all data for legend
 # df_all <- do.call(rbind, lapply(results[!names(results) %in% c("all", "pue", "nig", "uni", "chl", "abe", "ind")], function(x) x$data))
 # var_all <- do.call(rbind, lapply(results[!names(results) %in% c("all", "pue", "nig", "uni", "chl", "abe", "ind")], function(x) x$variance))
@@ -187,7 +190,12 @@ print(keep_names)
 all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
 pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figure1 <- ggarrange(pca_grid, common.legend=T, legend = "bottom") # adjust if legend is too big/small
+figure1 <- ggarrange(
+  pca_grid,
+  leg,
+  nrow = 2,
+  heights = c(10, 1)
+  )
 
 # Save Figure 1 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
@@ -206,7 +214,7 @@ figure2 <- results[["all"]][["pca"]]
 ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
-  width = 19, 
+  width = 17, 
   height = 17.5, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
@@ -231,7 +239,12 @@ ggsave(
 all_sup <- lapply(results_no_overall, `[[`, "sup_pca") # extract per location supplementary pcas
 sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
 # Combine supplementary PCA grid with legend at the bottom
-figureS4 <- ggarrange(sup_grid, common.legend=T, legend = "bottom") # adjust if legend is too big/small
+figureS4 <- ggarrange(
+  sup_grid,
+  leg,
+  nrow = 2,
+  heights = c(10, 1)
+  )
 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
@@ -248,7 +261,12 @@ ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
 all_perm <- lapply(results_no_overall, `[[`, "permanova") # extract per location pcas
 perm_grid <- plot_grid(plotlist = all_perm, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location permanovas in one plot
 # Combine permanova grid with legend at the bottom
-figureS5 <- ggarrange(perm_grid) # adjust if legend is too big/small
+figureS5 <- ggarrange(
+  perm_grid,
+  leg,
+  nrow = 2,
+  heights = c(10, 1)
+  )
 
 # Save Figure S3 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
@@ -265,7 +283,12 @@ ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
 all_hier <- lapply(results_no_overall, `[[`, "hclust") # extract per location pcas
 hier_grid <- plot_grid(plotlist = all_hier, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
 # Combine hierarchical clustering grid with legend at the bottom
-figureS6 <- ggarrange(hier_grid) # adjust if legend is too big/small
+figureS6 <- ggarrange(
+  hier_grid,
+  leg,
+  nrow = 2,
+  heights = c(10, 1)
+  )
 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
@@ -282,7 +305,12 @@ ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
 all_heat <- lapply(results_no_overall, `[[`, "heatmap") # extract per location pcas
 heat_grid <- plot_grid(plotlist = all_heat, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
 # Combine heatmaps grid with legend at the bottom
-figureS7 <- ggarrange(heat_grid)
+figureS7 <- ggarrange(
+  heat_grid,
+  leg,
+  nrow = 2,
+  heights = c(10, 1)
+  )
 
 # Save Figure S5 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS7_pLocHEAT.png"),
@@ -325,7 +353,7 @@ figureS9 <- results[["all"]][["sup_pca"]]
 ggsave(
   filename = file.path(figure_path, "FigS9_pAllSUP.png"),
   plot = figureS9,
-  width = 16,    # A4 width in inches
+  width = 17,    # A4 width in inches
   height = 17.5,  # A4 height in inches
   units = "in",
   dpi = 150,
@@ -335,6 +363,7 @@ ggsave(
 ########## FIGURE S10 ###################
 # Per species phenotypic space: PCA + heatmaps + hierarchical clustering + PERMANOVA
 pca_pue <- results[["pue"]][["pca"]]
+leg_geo <- get_legend(results[["pue"]][["pca"]])
 heat_pue <- results[["pue"]][["heatmap"]]
 perm_pue <- results[["pue"]][["permanova"]]
 hier_pue <- results[["pue"]][["hclust"]]
@@ -371,13 +400,19 @@ hier_ind <- results[["ind"]][["hclust"]]
 ind <- plot_grid(pca_ind, heat_ind, perm_ind, hier_ind, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
 figureS10 <- ggarrange(pue, nig, uni, chl, abe, ind, nrow = 6, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"))
+figureS10 <- ggarrange(
+  figureS10,
+  leg_geo,
+  nrow = 2,
+  heights = c(10, 1)
+  )
 
 # Save as PNG (A4 size)
 ggsave(
   filename = file.path(figure_path, "FigS10_pSpe.png"),
   plot = figureS10,
-  width = 18.5,    # A4 width in inches
-  height = 25.5,  # A4 height in inches
+  width = 21.5,    # A4 width in inches
+  height = 30,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
