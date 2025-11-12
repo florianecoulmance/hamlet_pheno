@@ -214,7 +214,7 @@ figure2 <- results[["all"]][["pca"]]
 ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
-  width = 17.5, 
+  width = 18, 
   height = 17.5, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
@@ -303,10 +303,7 @@ all_heat <- lapply(results_no_overall, `[[`, "heatmap") # extract per location p
 heat_grid <- plot_grid(plotlist = all_heat, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
 # Combine heatmaps grid with legend at the bottom
 figureS7 <- ggarrange(
-  heat_grid,
-  leg,
-  nrow = 2,
-  heights = c(10, 1)
+  heat_grid
   )
 
 # Save Figure S7 as A4 PNG, optimized for small file size
@@ -357,7 +354,7 @@ figureS9 <- results[["all"]][["sup_pca"]]
 ggsave(
   filename = file.path(figure_path, "FigS9_pAllSUP.png"),
   plot = figureS9,
-  width = 17.5,    # A4 width in inches
+  width = 18,    # A4 width in inches
   height = 17.5,  # A4 height in inches
   units = "in",
   dpi = 150,

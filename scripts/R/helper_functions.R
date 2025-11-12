@@ -136,23 +136,24 @@ legend_plot <- function(info_table) {
   #   legend_info$spec)
 
   n_cols <- 8   # number of columns per row (adjust as needed)
-  n_rows <- ceiling(nrow(legend_info)/n_cols)
+  n_cols <- ceiling(nrow(legend_info)/2)
+  n_rows <- 2
   print(n_rows)
 
   legend_df <- legend_info %>%
     mutate(idx = row_number(),
-          row = n_rows - (idx - 1) %/% n_cols,   # vertical position
+          row = n_rows - ((idx - 1) %/% n_cols + 1),   # vertical position
           col = (idx - 1) %% n_cols + 1,         # horizontal position
-          y_dot = row,                     # adjust vertical dot position
+          y_dot = row + 0.5,                     # adjust vertical dot position
           y_logo = row,                          # logo y
-          y_text = row - 0.8)                    # text y
+          y_text = row - 0.1)                    # text y
   
   legend_plot <- ggplot(legend_df) +
   # colored dot
-  geom_point(aes(x = col - 0.35, y = y_dot, color = spec), size = 5, show.legend = FALSE) +
+  geom_point(aes(x = col - 0.2, y = y_dot, color = spec), size = 5, show.legend = FALSE) +
   scale_color_manual(values = color_map) +
   # logo
-  geom_image(aes(x = col, y = y_logo, image = link), size = 0.5, asp = 1.1) +
+  geom_image(aes(x = col, y = y_logo, image = link), size = 0.8, asp = 1.1) +
   # species name
   geom_text(aes(x = col, y = y_text, label = paste0("H. ", Species)), size = 4, vjust = 1, fontface = "italic") +
   theme_void() +
