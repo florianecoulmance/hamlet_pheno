@@ -195,14 +195,14 @@ figure1 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(10, 1, 0.5)#, widths = c (3,1)
+  heights = c(10, 0.3, 0.8)#, widths = c (3,1)
   )
 
 # Save Figure 1 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
   plot = figure1,
   width = 18.5,    # A4 width in inches
-  height = 26,  # A4 height in inches
+  height = 25,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
