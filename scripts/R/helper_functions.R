@@ -271,11 +271,11 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   # 2. Merge PCA data with info
   # -----------------------------
-  pca_data <- pca_data %>%
-    mutate(
-      # Fix specific naming error
-      spec = ifelse(images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
-                      "flo", spec))
+  # pca_data <- pca_data %>%
+  #   mutate(
+  #     # Fix specific naming error
+  #     spec = ifelse(images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
+  #                     "flo", spec))
   # print(pca_data$images)
 
   plot_data <- pca_data %>%
