@@ -423,8 +423,7 @@ figureS10 <- ggarrange(
   figureS10,
   leg_g,
   nrow = 2,
-  heights = c(10, 0.2),
-  widths = c(10, 6)
+  heights = c(10, 0.2)
   )
 
 # Save as PNG (A4 size)
