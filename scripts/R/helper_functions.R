@@ -213,7 +213,7 @@ legend_geo <- function(info_table) {
   
   legend_plot <- ggplot(legend_df) +
   # colored dot
-  geom_point(aes(x = col - 0.02, y = y_dot, color = geo), size = 10, show.legend = FALSE) +
+  geom_point(aes(x = col - 0.1, y = y_dot, color = geo), size = 10, show.legend = FALSE) +
   scale_color_manual(values = color_map) +
   # logo
   # geom_image(aes(x = col, y = y_logo, image = link), size = 0.8, asp = 1.1) +
@@ -363,10 +363,12 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   } else if (color_by == "location") {
     # if coloring by location, title is the species name
     spec_val <- unique(plot_data$spec)
+    print(spec_val)
     if (length(spec_val) == 1) {
       title_val <- paste0("H. ", species_info$Species[species_info$spec == spec_val])
     }
   }
+  print(title_val)
 
   # -----------------------------
   # 7. Return plot

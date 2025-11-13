@@ -404,7 +404,7 @@ pca_chl <- results[["chl"]][["pca"]]
 heat_chl <- results[["chl"]][["heatmap"]]
 perm_chl <- results[["chl"]][["permanova"]]
 hier_chl <- results[["chl"]][["hclust"]]
-chl <- plot_grid(pca_uni, heat_uni, perm_uni, hier_uni, ncol = 4, rel_widths = c(1, 1, 1, 1))
+chl <- plot_grid(pca_chl, heat_chl, perm_chl, hier_chl, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
 pca_abe <- results[["abe"]][["pca"]]
 heat_abe <- results[["abe"]][["heatmap"]]
