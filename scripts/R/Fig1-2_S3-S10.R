@@ -242,16 +242,17 @@ sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, labels=c("(a)","(b)","(c)","
 # Combine supplementary PCA grid with legend at the bottom
 figureS4 <- ggarrange(
   sup_grid,
+  NULL,
   leg,
-  nrow = 2,
-  heights = c(10, 0.5)
+  nrow = 3,
+  heights = c(10, 0.3, 0.8)
   )
 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
   plot = figureS4,
   width = 18.5,    # A4 width in inches
-  height = 26,  # A4 height in inches
+  height = 25,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -283,9 +284,10 @@ hier_grid <- plot_grid(plotlist = all_hier, ncol = 2, labels=c("(a)","(b)","(c)"
 # Combine hierarchical clustering grid with legend at the bottom
 figureS6 <- ggarrange(
   hier_grid,
+  NULL,
   leg,
-  nrow = 2,
-  heights = c(10, 0.5)
+  nrow = 3,
+  heights = c(10, 0.3, 0.8)
   )
 
 # Save Figure S6 as A4 PNG, optimized for small file size
