@@ -159,12 +159,74 @@ legend_plot <- function(info_table) {
   # species name
   geom_text(aes(x = col + 0.01, y = y_text, label = paste0("H. ", Species)), size = 4, vjust = 1, fontface = "italic") +
   theme_void() +
+  theme(plot.margin = margin(0.3,0,5,0)) +
+  coord_cartesian(clip = "off")
+
+  return(legend_plot)
+
+}
+
+
+# ============================================================
+# Function: legend_geo
+# Purpose : Create a custom horizontal legend associating each location
+#           with its color, and label.
+# Input   :
+#   - info_table: Data frame containing location information with columns:
+#       - geo: location code
+#       - Locations: location name
+#       - Color: color assigned to the species
+# Output  :
+#   - Returns a ggplot object displaying the legend horizontally, where:
+#       • each location is represented by a colored dot
+#       • location names are displayed next to the dot in italics
+# Notes   :
+#   - Only selected locations are displayed
+#   - Layout parameters (dot/text positions, n_cols) can be adjusted
+# ============================================================
+legend_geo <- function(info_table) {
+
+  selected_locs <- c("boc", "uvi", "bel", "flo", "tob")
+
+  legend_info <- info_table %>%
+    dplyr::filter(geo %in% selected_locs)
+
+  color_map <- setNames(legend_info$Color, legend_info$geo)
+  # label_map <- setNames(
+  #   paste0("<img src='", legend_info$link, "' width='90' /><br>*H. ", legend_info$Species, "*"),
+  #   legend_info$spec)
+
+  n_cols <- 5   # number of columns per row (adjust as needed)
+  # n_cols <- ceiling(nrow(legend_info)/2)
+  n_rows <- 1
+  # print(n_rows)
+
+  # x_spacing <- 1.2  # smaller = more compact columns
+
+  legend_df <- legend_info %>%
+    mutate(idx = row_number(),
+          row = n_rows - ((idx - 1) %/% n_cols + 1),   # vertical position
+          col = ((idx - 1) %% n_cols) * 0.4,         # horizontal position
+          y_dot = row,                     # adjust vertical dot position
+          y_logo = row,                          # logo y
+          y_text = row)                    # text y
+  
+  legend_plot <- ggplot(legend_df) +
+  # colored dot
+  geom_point(aes(x = col - 0.2, y = y_dot, color = geo), size = 10, show.legend = FALSE) +
+  scale_color_manual(values = color_map) +
+  # logo
+  # geom_image(aes(x = col, y = y_logo, image = link), size = 0.8, asp = 1.1) +
+  # species name
+  geom_text(aes(x = col, y = y_text, label = Locations), size = 4, vjust = 1, fontface = "bold") +
+  theme_void() +
   theme(plot.margin = margin(0.3,0,3,0)) +
   coord_cartesian(clip = "off")
 
   return(legend_plot)
 
 }
+
 
 # ============================================================
 # Function: pca_plot

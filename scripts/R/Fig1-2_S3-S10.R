@@ -172,6 +172,7 @@ print(keep_names)
 
 # Create common legend
 leg <- legend_plot(species_info)
+leg_g <- legend_geo(geo_table)
 
 # Combine all data for legend
 # df_all <- do.call(rbind, lapply(results[!names(results) %in% c("all", "pue", "nig", "uni", "chl", "abe", "ind")], function(x) x$data))
@@ -382,7 +383,6 @@ ggsave(
 ########## FIGURE S10 ###################
 # Per species phenotypic space: PCA + heatmaps + hierarchical clustering + PERMANOVA
 pca_pue <- results[["pue"]][["pca"]]
-leg_geo <- get_legend(results[["pue"]][["pca"]])
 heat_pue <- results[["pue"]][["heatmap"]]
 perm_pue <- results[["pue"]][["permanova"]]
 hier_pue <- results[["pue"]][["hclust"]]
@@ -421,7 +421,7 @@ ind <- plot_grid(pca_ind, heat_ind, perm_ind, hier_ind, ncol = 4, rel_widths = c
 figureS10 <- ggarrange(pue, nig, uni, chl, abe, ind, nrow = 6, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"))
 figureS10 <- ggarrange(
   figureS10,
-  leg_geo,
+  leg_g,
   nrow = 2,
   heights = c(10, 0.5)
   )
