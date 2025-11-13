@@ -159,7 +159,7 @@ legend_plot <- function(info_table) {
   # species name
   geom_text(aes(x = col + 0.01, y = y_text, label = paste0("H. ", Species)), size = 4, vjust = 1, fontface = "italic") +
   theme_void() +
-  theme(plot.margin = margin(0.3,0,1,0)) +
+  theme(plot.margin = margin(0.3,0,3,0)) +
   coord_cartesian(clip = "off")
 
   return(legend_plot)
