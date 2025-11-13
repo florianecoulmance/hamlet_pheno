@@ -192,9 +192,10 @@ pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, labels=c("(a)","(b)","(c)",
 # Combine PCA grid with legend at the bottom
 figure1 <- ggarrange(
   pca_grid,
+  NULL,
   leg,
-  nrow = 2,
-  heights = c(10, 0.5)#, widths = c (3,1)
+  nrow = 3,
+  heights = c(10, 1, 0.5)#, widths = c (3,1)
   )
 
 # Save Figure 1 as A4 PNG, optimized for small file size
