@@ -159,7 +159,7 @@ for(dat in names(dataset)) {
     # -----------------------------------
     # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
     #-----------------------------------
-    p_perm <- plot_permanova_permdisp(perm_file, params_legend = if(dat == "boc") c(0.3, 0.7) else if(dat == "all") c(0.2, 0.7) else "none")
+    p_perm <- plot_permanova_permdisp(perm_file, params_legend = if(dat == "bel") c(0.3, 0.7) else if(dat == "all") c(0.2, 0.7) else "none")
 
     #-----------------------------------
     # Store outputs
@@ -183,18 +183,27 @@ results_locations <- results[names(results) %in% c("hon", "bel", "boc", "pri")]
 keep_names <- names(results_locations)
 print(keep_names)
 
+# Create common legend
+leg <- legend_plot(species_info)
+leg_g <- legend_geo(geo_table)
+
 ########## FIGURE 3 ###################
 # PCA plots for all locations with legend
 all_pcas <- lapply(results_locations, `[[`, "pca_f") # extract per location pcas
-pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2) # bundle location pcas in one plot
+pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, labels=c("(a)","(b)","(c)","(d)")) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figure3 <- ggarrange(pca_grid, labels=c('(a)','(b)','(c)','(d)'), common.legend=T, legend = "bottom") # adjust if legend is too big/small
+figure3 <- ggarrange(
+  pca_grid,
+  NULL,
+  leg,
+  nrow = 3, 
+  heights = c(8, 0.3, 1)) # adjust if legend is too big/small
 
 # Save Figure 3 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig3_gLocPCA.png"),
   plot = figure3,
   width = 18.5,    # A4 width in inches
-  height = 25.5,  # A4 height in inches
+  height = 25,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -208,13 +217,22 @@ pca1 <- results[["all"]][["pca_f"]]
 pca2 <- results[["all"]][["pca_s"]]
 pca3 <- results[["all"]][["pca_t"]]
 
-figure4 <- ggarrange(pca1, pca2, pca3, ncol = 1, nrow = 3, labels=c('(a)','(b)','(c)'), common.legend=T, legend = "right")
+figure4 <- ggarrange(
+  pca1,
+  pca2,
+  pca3,
+  nrow = 3,
+  ncol = 1,
+  labels = c("(a)", "(b)", "(c)"),
+  common.legend=T,
+  legend = "right"
+  )
 
 ggsave(
   filename = file.path(figure_path, "Fig4_gAllPCA.png"),
   plot = figure4,
   width = 13, 
-  height = 26, 
+  height = 22, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -236,15 +254,20 @@ ggsave(
 ########## FIGURE S12 ###################
 # Other PCs combination for genotypes per location
 all_sup <- lapply(results_locations, `[[`, "pca_s") # extract per location pcas
-sup_grid <- plot_grid(plotlist = all_sup, ncol = 2) # bundle location pcas in one plot
+sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)")) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figureS12 <- ggarrange(sup_grid, labels=c('(a)','(b)','(c)','(d)'), common.legend=T, legend = "bottom") # adjust if legend is too big/small
+figureS12 <- ggarrange(
+  sup_grid,
+  NULL,
+  leg,
+  nrow = 3, 
+  heights = c(8, 0.3, 1)) # adjust if legend is too big/small
 
 # Save Figure S12 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS12_gLocSUP.png"),
   plot = figureS12,
   width = 18.5,    # A4 width in inches
-  height = 25.5,  # A4 height in inches
+  height = 25,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -273,8 +296,8 @@ figureS14 <- results[["all"]][["permanova"]]
 ggsave(
   filename = file.path(figure_path, "FigS14_gAllPERM.png"),
   plot = figureS14,
-  width = 14.2,    # A4 width in inches
-  height = 17,  # A4 height in inches
+  width = 15,    # A4 width in inches
+  height = 15,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -303,7 +326,15 @@ pca_uni_s <- results[["uni"]][["pca_s"]]
 perm_uni <- results[["uni"]][["permanova"]]
 uni <- plot_grid(pca_uni_f, pca_uni_s, perm_uni, ncol = 3, rel_widths = c(1, 1, 1))
 
-figureS15 <- plot_grid(pue, nig, uni, nrow = 3, rel_heights = c(1, 1, 1))
+figureS15 <- plot_grid(
+  pue,
+  nig,
+  uni,
+  leg_g,
+  nrow = 3,
+  heights = c(6, 6, 6, 0.2),
+  labels = c("(a)", "(b)", "(c)", "")
+  )
 
 # Save as PNG (A4 size)
 ggsave(

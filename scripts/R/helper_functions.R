@@ -952,7 +952,6 @@ pca_plot_all <- function(pca_data, pc_first, pc_second, species_info, variance) 
         geom_point(aes(color = .data[[group_col]], shape = boc), size = 5, alpha = 0.8) +
         scale_color_manual(values = color_map, labels = label_map) +
         scale_shape_manual(values = c(19, 8)) + # filled circle for Panama, star/other for rest
-        theme_minimal() +
         theme(
         legend.position = "right",
         legend.box = "vertical",
