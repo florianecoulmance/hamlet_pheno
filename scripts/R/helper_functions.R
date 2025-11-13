@@ -206,7 +206,7 @@ legend_geo <- function(info_table) {
   legend_df <- legend_info %>%
     mutate(idx = row_number(),
           row = n_rows - ((idx - 1) %/% n_cols + 1),   # vertical position
-          col = ((idx - 1) %% n_cols) * 0.8,         # horizontal position
+          col = ((idx - 1) %% n_cols) * 0.5,         # horizontal position
           y_dot = row,                     # adjust vertical dot position
           y_logo = row,                          # logo y
           y_text = row)                    # text y
