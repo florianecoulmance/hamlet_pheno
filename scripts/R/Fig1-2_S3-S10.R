@@ -223,7 +223,7 @@ ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
   width = 18, 
-  height = 17.5, 
+  height = 19, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -301,7 +301,7 @@ figureS6 <- ggarrange(
 ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
        plot = figureS6,
        width = 14.2,    # A4 width in inches
-       height = 19,  # A4 height in inches
+       height = 20,  # A4 height in inches
        units = "in",
        dpi = 150,       # good quality but light (~1 MB)
        type = "cairo-png" # smoother text rendering, smaller file
@@ -351,7 +351,7 @@ ggsave(
   filename = file.path(figure_path, "FigS8_pAll.png"),
   plot = figureS8,
   width = 14.2,    # A4 width in inches
-  height = 18,  # A4 height in inches
+  height = 19,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -373,7 +373,7 @@ ggsave(
   filename = file.path(figure_path, "FigS9_pAllSUP.png"),
   plot = figureS9,
   width = 18,    # A4 width in inches
-  height = 17.5,  # A4 height in inches
+  height = 19,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -431,7 +431,7 @@ ggsave(
   filename = file.path(figure_path, "FigS10_pSpe.png"),
   plot = figureS10,
   width = 24,    # A4 width in inches
-  height = 36,  # A4 height in inches
+  height = 40,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
