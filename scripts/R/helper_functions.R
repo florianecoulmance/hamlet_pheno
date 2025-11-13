@@ -213,12 +213,12 @@ legend_geo <- function(info_table) {
   
   legend_plot <- ggplot(legend_df) +
   # colored dot
-  geom_point(aes(x = col - 0.1, y = y_dot, color = geo), size = 10, show.legend = FALSE) +
+  geom_point(aes(x = col - 0.15, y = y_dot, color = geo), size = 10, show.legend = FALSE) +
   scale_color_manual(values = color_map) +
   # logo
   # geom_image(aes(x = col, y = y_logo, image = link), size = 0.8, asp = 1.1) +
   # species name
-  geom_text(aes(x = col, y = y_text, label = Locations), size = 4, vjust = 1, fontface = "bold") +
+  geom_text(aes(x = col, y = y_text, label = Locations), size = 8, vjust = 1, fontface = "bold") +
   theme_void() +
   theme(plot.margin = margin(0.3,0,3,0)) +
   coord_cartesian(clip = "off")
