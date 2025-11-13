@@ -120,8 +120,8 @@ for(dat in names(dataset)) {
   #-----------------------------------
   # PCA plot
   #-----------------------------------
-  p_pca <- pca_plot(pc_table, pcs[1], pcs[2], species_info, geo_table, var, color_by = color, extract_legend = (dat == "all"))
-  s_pca <- pca_plot(pc_table, pcs[3], pcs[4], species_info, geo_table, var, color_by = color, extract_legend = (dat == "all"))
+  p_pca <- pca_plot(pc_table, pcs[1], pcs[2], species_info, geo_table, var, color_by = color, extract_legend = FALSE)
+  s_pca <- pca_plot(pc_table, pcs[3], pcs[4], species_info, geo_table, var, color_by = color, extract_legend = FALSE)
 
   #-----------------------------------
   # VAR plot
@@ -211,7 +211,14 @@ ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
 
 ########## FIGURE 2 ###################
 # Combined phenotypic space with legend
-figure2 <- results[["all"]][["pca"]]
+figure2 <- ggarrange(
+  results[["all"]][["pca"]],
+  NULL,
+  leg,
+  nrow = 3,
+  heights = c(10, 0.3, 1)
+  )
+  
 ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
@@ -294,7 +301,7 @@ figureS6 <- ggarrange(
 ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
        plot = figureS6,
        width = 14.2,    # A4 width in inches
-       height = 18,  # A4 height in inches
+       height = 19,  # A4 height in inches
        units = "in",
        dpi = 150,       # good quality but light (~1 MB)
        type = "cairo-png" # smoother text rendering, smaller file
@@ -344,7 +351,7 @@ ggsave(
   filename = file.path(figure_path, "FigS8_pAll.png"),
   plot = figureS8,
   width = 14.2,    # A4 width in inches
-  height = 17,  # A4 height in inches
+  height = 18,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -353,7 +360,14 @@ ggsave(
 
 ########## FIGURE S9 ###################
 # Additional combined phenotypic space PCA
-figureS9 <- results[["all"]][["sup_pca"]]
+figureS9 <- ggarrange(
+  results[["all"]][["sup_pca"]],
+  NULL,
+  leg,
+  nrow = 3,
+  heights = c(10, 0.3, 1)
+)
+
 # Save as PNG (A4 size)
 ggsave(
   filename = file.path(figure_path, "FigS9_pAllSUP.png"),
@@ -409,15 +423,15 @@ figureS10 <- ggarrange(
   figureS10,
   leg_geo,
   nrow = 2,
-  heights = c(10, 1)
+  heights = c(10, 0.5)
   )
 
 # Save as PNG (A4 size)
 ggsave(
   filename = file.path(figure_path, "FigS10_pSpe.png"),
   plot = figureS10,
-  width = 21.5,    # A4 width in inches
-  height = 30,  # A4 height in inches
+  width = 24,    # A4 width in inches
+  height = 36,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
