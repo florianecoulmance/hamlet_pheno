@@ -195,7 +195,7 @@ figure1 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(10, 0.3, 0.8)#, widths = c (3,1)
+  heights = c(10, 0.3, 1)#, widths = c (3,1)
   )
 
 # Save Figure 1 as A4 PNG, optimized for small file size
@@ -245,7 +245,7 @@ figureS4 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(10, 0.3, 0.8)
+  heights = c(10, 0.3, 1)
   )
 
 # Save Figure S4 as A4 PNG, optimized for small file size
@@ -287,7 +287,7 @@ figureS6 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(10, 0.3, 0.8)
+  heights = c(10, 0.3, 1)
   )
 
 # Save Figure S6 as A4 PNG, optimized for small file size
@@ -335,7 +335,7 @@ figureS8 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(10, 0.3, 0.8) 
+  heights = c(10, 0.3, 1) 
 )
 
 
