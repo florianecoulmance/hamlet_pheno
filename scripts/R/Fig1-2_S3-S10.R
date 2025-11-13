@@ -332,9 +332,10 @@ bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"))
 figureS8 <- ggarrange(perm, bottom_row, nrow = 2, ncol = 1, labels=c("(a)",""))
 figureS8 <- ggarrange(
   figureS8,
+  NULL,
   leg,
-  nrow = 2,
-  heights = c(10, 1) 
+  nrow = 3,
+  heights = c(10, 0.3, 0.8) 
 )
 
 
