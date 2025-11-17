@@ -1123,7 +1123,7 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
     p_annot <- annotate_figure(
       p_allLoc,
       top = text_grob(title_val, color = "black", face = "bold", size = 15,
-                    x = unit(10, "pt"))
+                    hjust = -0.5)
     )
 
     return(p_annot)
