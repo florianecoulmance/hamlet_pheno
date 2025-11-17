@@ -123,9 +123,13 @@ write_metadata_gxp <- function(PCs) {
 #   - Only selected species (aff, eco, esp, lib, ran) are displayed
 #   - Layout parameters (dot/logo/text positions, n_cols) can be adjusted
 # ============================================================
-legend_plot <- function(info_table) {
+legend_plot <- function(info_table, gen = FALSE) {
 
-  selected_specs <- c("aff", "eco", "esp", "lib", "ran")
+  if (gen) {
+    selected_specs <- c("atl", "cas", "eco", "esp", "flo", "gem", "lib")
+  } else {
+    selected_specs <- c("aff", "eco", "esp", "lib", "ran")
+  }
 
   legend_info <- info_table %>%
     dplyr::filter(!(spec %in% selected_specs))
@@ -184,9 +188,13 @@ legend_plot <- function(info_table) {
 #   - Only selected locations are displayed
 #   - Layout parameters (dot/text positions, n_cols) can be adjusted
 # ============================================================
-legend_geo <- function(info_table) {
+legend_geo <- function(info_table, gen = FALSE) {
 
-  selected_locs <- c("boc", "uvi", "bel", "flo", "tob")
+  if (gen) {
+    selected_locs <- c("hon", "boc", "bel", "gun", "qui", "pri", "bar", "arc", "flk", "are", "ala")
+  } else {
+    selected_locs <- c("boc", "uvi", "bel", "flo", "tob")
+  }
 
   legend_info <- info_table %>%
     dplyr::filter(geo %in% selected_locs)
@@ -344,8 +352,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   #   print(class(leg))
   # }
 
+  # if(!is.null(add_logos)) p <- p + add_logos
   
-  if(!is.null(add_logos)) p <- p + add_logos
   # print(class(p))
 
 
@@ -986,7 +994,7 @@ pca_plot_all <- function(pca_data, pc_first, pc_second, species_info, variance) 
 # Output  :
 #   - A ggplot object with pairwise categories colored and shaped by significance.
 # ============================================================
-plot_permanova_permdisp <- function(pair_file, params_legend = "none") {
+plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by == "species", params_legend = "none") {
     # Read CSV and select only needed columns
     pair_table <- read.table(file = pair_file, sep = ",", header = TRUE) %>%
         select(spc1, spc2, n_spc1, n_spc2, permanova_corr_pval, permadisp_corr_pval) %>%
@@ -1096,7 +1104,25 @@ plot_permanova_permdisp <- function(pair_file, params_legend = "none") {
         aspect.ratio = 1
         )
 
-    return(p_allLoc)
+    # ---- Get title ----
+    if(color_by == "species"){
+      geo_val <- substr(pair_file, 1, 3)
+      print(geo_val)
+      title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
+    } else if(color_by == "location"){
+      species_val <- substr(pair_file, 1, 3)
+      print(species_val)
+      title_val <- "" #if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
+    }
+
+    # ---- Annotate with location title ----
+    p_annot <- annotate_figure(
+      p_allLoc,
+      top = text_grob(title_val, color = "black", face = "bold", size = 30,
+                      x = unit(5.5, "pt"), hjust = -0.8)
+    )
+
+    return(p_annot)
 }
 
 

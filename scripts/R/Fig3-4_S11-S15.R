@@ -159,7 +159,7 @@ for(dat in names(dataset)) {
     # -----------------------------------
     # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
     #-----------------------------------
-    p_perm <- plot_permanova_permdisp(perm_file, params_legend = if(dat == "bel") c(0.3, 0.7) else if(dat == "all") c(0.2, 0.7) else "none")
+    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat == "bel") c(0.3, 0.7) else if(dat == "all") c(0.2, 0.7) else "none")
 
     #-----------------------------------
     # Store outputs
@@ -184,8 +184,8 @@ keep_names <- names(results_locations)
 print(keep_names)
 
 # Create common legend
-leg <- legend_plot(species_info)
-leg_g <- legend_geo(geo_table)
+leg <- legend_plot(species_info, gen = TRUE)
+leg_g <- legend_geo(geo_table, gen = TRUE)
 
 ########## FIGURE 3 ###################
 # PCA plots for all locations with legend
@@ -231,8 +231,8 @@ figure4 <- ggarrange(
 ggsave(
   filename = file.path(figure_path, "Fig4_gAllPCA.png"),
   plot = figure4,
-  width = 13, 
-  height = 22, 
+  width = 14, 
+  height = 28, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -276,7 +276,7 @@ ggsave(filename = file.path(figure_path, "FigS12_gLocSUP.png"),
 ########## FIGURE S13 ###################
 # PERMANOVA heatmaps for each location
 all_perm <- lapply(results_locations, `[[`, "permanova") # extract per location pcas
-figureS13 <- plot_grid(plotlist = all_perm, ncol = 2) # bundle location pcas in one plot
+figureS13 <- plot_grid(plotlist = all_perm, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)")) # bundle location pcas in one plot
 
 # Save Figure S13 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS13_gLocPERM.png"),
@@ -331,7 +331,7 @@ figureS15 <- plot_grid(
   nig,
   uni,
   leg_g,
-  nrow = 3,
+  ncol = 1,
   heights = c(6, 6, 6, 0.2),
   labels = c("(a)", "(b)", "(c)", "")
   )
