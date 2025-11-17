@@ -198,7 +198,7 @@ figure3 <- ggarrange(
   leg,
   nrow = 3, 
   heights = c(8, 0.3, 1),
-  rel_widths = c(8, 8, 7)
+  widths = c(8, 8, 7)
   ) # adjust if legend is too big/small
 
 # Save Figure 3 as A4 PNG, optimized for small file size
@@ -264,7 +264,7 @@ figureS12 <- ggarrange(
   leg,
   nrow = 3,
   heights = c(8, 0.3, 1),
-  rel_widths = c(8, 8, 7)
+  widths = c(8, 8, 7)
   ) # adjust if legend is too big/small
 
 # Save Figure S12 as A4 PNG, optimized for small file size
