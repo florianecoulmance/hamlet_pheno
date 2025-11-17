@@ -337,7 +337,7 @@ figureS15 <- plot_grid(
   leg_g,
   ncol = 1,
   heights = c(6, 6, 6, 0.2),
-  widths = c(10, 10, 10, 8)
+  widths = c(10, 10, 10, 8),
   labels = c("(a)", "(b)", "(c)", "")
   )
 
