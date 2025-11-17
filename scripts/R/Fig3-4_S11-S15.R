@@ -205,7 +205,7 @@ figure3 <- ggarrange(
 ggsave(filename = file.path(figure_path, "Fig3_gLocPCA.png"),
   plot = figure3,
   width = 14,    # A4 width in inches
-  height = 16,  # A4 height in inches
+  height = 17,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -233,8 +233,8 @@ figure4 <- ggarrange(
 ggsave(
   filename = file.path(figure_path, "Fig4_gAllPCA.png"),
   plot = figure4,
-  width = 14, 
-  height = 25, 
+  width = 12, 
+  height = 24, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -262,14 +262,16 @@ figureS12 <- ggarrange(
   sup_grid,
   NULL,
   leg,
-  nrow = 3, 
-  heights = c(8, 0.3, 1)) # adjust if legend is too big/small
+  nrow = 3,
+  heights = c(8, 0.3, 1),
+  widths = c(8, 8, 6)
+  ) # adjust if legend is too big/small
 
 # Save Figure S12 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS12_gLocSUP.png"),
   plot = figureS12,
-  width = 18.5,    # A4 width in inches
-  height = 26,  # A4 height in inches
+  width = 14,    # A4 width in inches
+  height = 17,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -283,8 +285,8 @@ figureS13 <- plot_grid(plotlist = all_perm, ncol = 2, labels = c("(a)", "(b)", "
 # Save Figure S13 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS13_gLocPERM.png"),
        plot = figureS13,
-       width = 14.2,    # A4 width in inches
-       height = 17,  # A4 height in inches
+       width = 14,    # A4 width in inches
+       height = 14,  # A4 height in inches
        units = "in",
        dpi = 150,       # good quality but light (~1 MB)
        type = "cairo-png" # smoother text rendering, smaller file
@@ -335,6 +337,7 @@ figureS15 <- plot_grid(
   leg_g,
   ncol = 1,
   heights = c(6, 6, 6, 0.2),
+  widths = c(10, 10, 10, 8)
   labels = c("(a)", "(b)", "(c)", "")
   )
 
@@ -343,7 +346,7 @@ ggsave(
   filename = file.path(figure_path, "FigS15_gSpe.png"),
   plot = figureS15,
   width = 20,    # A4 width in inches
-  height = 18.5,  # A4 height in inches
+  height = 15,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"

@@ -159,7 +159,7 @@ legend_plot <- function(info_table, gen = FALSE) {
   geom_point(aes(x = col - 0.2, y = y_dot, color = spec), size = 10, show.legend = FALSE) +
   scale_color_manual(values = color_map) +
   # logo
-  geom_image(aes(x = col, y = y_logo, image = link), size = 0.6, asp = 1.1) +
+  geom_image(aes(x = col, y = y_logo, image = link), size = 0.7, asp = 1.1) +
   # species name
   geom_text(aes(x = col + 0.01, y = y_text, label = paste0("H. ", Species)), size = 4, vjust = 1, fontface = "italic") +
   theme_void() +
@@ -227,7 +227,7 @@ legend_geo <- function(info_table, gen = FALSE) {
   # logo
   # geom_image(aes(x = col, y = y_logo, image = link), size = 0.8, asp = 1.1) +
   # species name
-  geom_text(aes(x = col, y = y_text, label = Locations), size = 8, vjust = 1, fontface = "bold") +
+  geom_text(aes(x = col, y = y_text, label = Locations), size = 6, vjust = 1, fontface = "bold") +
   theme_void() +
   theme(plot.margin = margin(0.3,0,3,0)) +
   coord_cartesian(clip = "off")
@@ -337,7 +337,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       panel.border = element_rect(color = "black", fill = NA, size = 1),
       axis.text = element_text(size = 20),
       axis.title = element_text(size = 25),
-      plot.margin = margin(0.5,0,0,0)
+      plot.margin = margin(0.5,0.5,0,0)
     ) +
     scale_x_continuous(position = "bottom",labels = unit_format(unit = "k", scale = 1e-3)) +
     scale_y_continuous(labels = unit_format(unit = "k", scale = 1e-3)) +
@@ -968,8 +968,9 @@ pca_plot_all <- function(pca_data, pc_first, pc_second, species_info, variance) 
         legend.title = element_blank(),
         panel.background = element_blank(),
         panel.border = element_rect(color = "black", fill = NA, size = 1),
-        axis.text = element_text(size = 10),
-        axis.title = element_text(size = 14)
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20),
+        plot.margin = margin(0,0,0.5,0)
         ) +
         labs(
         x = paste0(pc_first, ", variance = ", format(round(variance$X0[as.numeric(str_sub(pc_first, 3, -1))] * 100, 1), nsmall = 1), " %"),
@@ -1120,7 +1121,7 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
     p_annot <- annotate_figure(
       p_allLoc,
       top = text_grob(title_val, color = "black", face = "bold", size = 30,
-                      x = unit(5.5, "pt"), hjust = -0.8)
+                      x = unit(5.5, "pt"))
     )
 
     return(p_annot)
