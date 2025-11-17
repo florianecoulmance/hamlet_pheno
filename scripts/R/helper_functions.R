@@ -1107,6 +1107,7 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
         )
 
     # ---- Get title ----
+    print(pair_file)
     if(color_by == "species"){
       geo_val <- substr(pair_file, 1, 3)
       print(geo_val)
@@ -1121,8 +1122,7 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
     # ---- Annotate with location title ----
     p_annot <- annotate_figure(
       p_allLoc,
-      top = text_grob(title_val, color = "black", face = "bold", size = 30,
-                      x = unit(5.5, "pt"))
+      top = text_grob(title_val, color = "black", face = "bold", size = 15)
     )
 
     return(p_annot)
