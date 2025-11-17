@@ -142,7 +142,7 @@ legend_plot <- function(info_table, gen = FALSE) {
   n_cols <- 8   # number of columns per row (adjust as needed)
   n_cols <- ceiling(nrow(legend_info)/2)
   n_rows <- 2
-  print(n_rows)
+  # print(n_rows)
 
   # x_spacing <- 1.2  # smaller = more compact columns
 
@@ -192,8 +192,10 @@ legend_geo <- function(info_table, gen = FALSE) {
 
   if (gen) {
     selected_locs <- c("hon", "boc", "bel", "gun", "qui", "pri", "bar", "arc", "flk", "are", "ala")
+    n_cols <- 11   # number of columns per row (adjust as needed)
   } else {
     selected_locs <- c("boc", "uvi", "bel", "flo", "tob")
+    n_cols <- 5   # number of columns per row (adjust as needed)
   }
 
   legend_info <- info_table %>%
@@ -204,7 +206,6 @@ legend_geo <- function(info_table, gen = FALSE) {
   #   paste0("<img src='", legend_info$link, "' width='90' /><br>*H. ", legend_info$Species, "*"),
   #   legend_info$spec)
 
-  n_cols <- 5   # number of columns per row (adjust as needed)
   # n_cols <- ceiling(nrow(legend_info)/2)
   n_rows <- 1
   # print(n_rows)

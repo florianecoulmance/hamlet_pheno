@@ -159,7 +159,7 @@ for(dat in names(dataset)) {
     # -----------------------------------
     # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
     #-----------------------------------
-    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat == "bel") c(0.3, 0.7) else if(dat == "all") c(0.2, 0.7) else "none")
+    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "pue")) c(0.3, 0.7) else if(dat == "all") c(0.2, 0.7) else "none")
 
     #-----------------------------------
     # Store outputs
@@ -203,7 +203,7 @@ figure3 <- ggarrange(
 ggsave(filename = file.path(figure_path, "Fig3_gLocPCA.png"),
   plot = figure3,
   width = 18.5,    # A4 width in inches
-  height = 25,  # A4 height in inches
+  height = 26,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -232,7 +232,7 @@ ggsave(
   filename = file.path(figure_path, "Fig4_gAllPCA.png"),
   plot = figure4,
   width = 14, 
-  height = 28, 
+  height = 27, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -267,7 +267,7 @@ figureS12 <- ggarrange(
 ggsave(filename = file.path(figure_path, "FigS12_gLocSUP.png"),
   plot = figureS12,
   width = 18.5,    # A4 width in inches
-  height = 25,  # A4 height in inches
+  height = 26,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
