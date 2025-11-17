@@ -1109,11 +1109,11 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
     # ---- Get title ----
     print(pair_file)
     if(color_by == "species"){
-      geo_val <- substr(pair_file, -19, -17)
+      geo_val <- substr(pair_file, nchar(pair_file) - 19 + 1, nchar(pair_file) - 17 + 1)
       print(geo_val)
       title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
     } else if(color_by == "location"){
-      species_val <- substr(pair_file, -19, -17)
+      species_val <- substr(pair_file, nchar(pair_file) - 19 + 1, nchar(pair_file) - 17 + 1)
       print(species_val)
       title_val <- "" #if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
     }
