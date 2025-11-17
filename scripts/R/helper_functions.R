@@ -337,7 +337,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       panel.border = element_rect(color = "black", fill = NA, size = 1),
       axis.text = element_text(size = 20),
       axis.title = element_text(size = 25),
-      plot.margin = margin(0.5,0.5,0,0)
+      plot.margin = margin(3,3,0,0)
     ) +
     scale_x_continuous(position = "bottom",labels = unit_format(unit = "k", scale = 1e-3)) +
     scale_y_continuous(labels = unit_format(unit = "k", scale = 1e-3)) +
@@ -970,7 +970,7 @@ pca_plot_all <- function(pca_data, pc_first, pc_second, species_info, variance) 
         panel.border = element_rect(color = "black", fill = NA, size = 1),
         axis.text = element_text(size = 15),
         axis.title = element_text(size = 20),
-        plot.margin = margin(0,0,0.5,0)
+        plot.margin = margin(0,0,3,0)
         ) +
         labs(
         x = paste0(pc_first, ", variance = ", format(round(variance$X0[as.numeric(str_sub(pc_first, 3, -1))] * 100, 1), nsmall = 1), " %"),
