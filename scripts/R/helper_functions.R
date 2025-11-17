@@ -1116,6 +1116,7 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
       print(species_val)
       title_val <- "" #if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
     }
+    print(title_val)
 
     # ---- Annotate with location title ----
     p_annot <- annotate_figure(
