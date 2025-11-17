@@ -203,8 +203,8 @@ figure3 <- ggarrange(
 # Save Figure 3 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig3_gLocPCA.png"),
   plot = figure3,
-  width = 14,    # A4 width in inches
-  height = 19,  # A4 height in inches
+  width = 16,    # A4 width in inches
+  height = 17.5,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -268,8 +268,8 @@ figureS12 <- ggarrange(
 # Save Figure S12 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS12_gLocSUP.png"),
   plot = figureS12,
-  width = 14,    # A4 width in inches
-  height = 19,  # A4 height in inches
+  width = 16,    # A4 width in inches
+  height = 17.5,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -336,7 +336,7 @@ figureS15 <- plot_grid(
   leg_g,
   ncol = 1,
   nrow = 5,
-  rel_heights = c(5, 5, 5, 1, 0.2),
+  rel_heights = c(5, 5, 5, 0.5, 1),
   rel_widths = c(20, 20, 20, 20, 16),
   labels = c("(a)", "(b)", "(c)", "")
   )
