@@ -69,9 +69,9 @@ cat("-----------------\n")
 # ############################
 
 species_info <- add_species_logos(spec_colors, logos_path)
-head(species_info)
+# head(species_info)
 geo_table <- read.delim(geo_colors, sep="\t", header=TRUE, stringsAsFactors = FALSE, check.names = FALSE)
-head(geo_table)
+# head(geo_table)
 
 # Define your locations and PCs of interest
 dataset <- list(
@@ -107,9 +107,9 @@ results <- list()
 for(dat in names(dataset)) {
     dat_info <- dataset[[dat]]
     dat_dir <- dat_info$dir
-    print(dat_dir)
+    # print(dat_dir)
     color <- dat_info$colors
-    print(color)  
+    # print(color)  
     message("Processing: ", dat)
   
     #-----------------------------------
@@ -120,9 +120,9 @@ for(dat in names(dataset)) {
     # perm_file <- list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat, ".*\\.csv$"), full.names = TRUE)
     perm_file <- if (dat == "all") file.path(base_path, "2_popgen", dat_dir, "permanova_results/all.lm.pairwise.csv") else list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat, ".*\\.csv$"), full.names = TRUE)
 
-    print(gtmat_file)
-    print(sample_file)
-    print(perm_file)
+    # print(gtmat_file)
+    # print(sample_file)
+    # print(perm_file)
 
     #-----------------------------------
     # PCA
@@ -130,9 +130,9 @@ for(dat in names(dataset)) {
     pca_res <- pca_analysis(gtmat_file, sample_file, color_by = color)
     pca_eigen <- pca_res$eigen
     pca_var   <- pca_res$var
-    print(pca_res)
-    print(pca_eigen)
-    print(pca_var)
+    # print(pca_res)
+    # print(pca_eigen)
+    # print(pca_var)
 
     #-----------------------------------
     # PCA plot
@@ -153,13 +153,13 @@ for(dat in names(dataset)) {
     # VAR plot
     #-----------------------------------
     pca_var_df <- data.frame(PC=as.numeric(rownames(pca_var)), Variance = pca_var$X0)
-    print(pca_var_df)
+    # print(pca_var_df)
     p_var <- plot_variance(pca_var_df, dat)
 
     # -----------------------------------
     # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
     #-----------------------------------
-    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "pue")) c(0.3, 0.7) else if(dat == "all") c(0.2, 0.7) else "none")
+    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "nig")) c(0.3, 0.7) else if(dat == "all") c(0.2, 0.7) else "none")
 
     #-----------------------------------
     # Store outputs
@@ -181,7 +181,7 @@ for(dat in names(dataset)) {
 # Set datasets for plots
 results_locations <- results[names(results) %in% c("hon", "bel", "boc", "pri")]
 keep_names <- names(results_locations)
-print(keep_names)
+# print(keep_names)
 
 # Create common legend
 leg <- legend_plot(species_info, gen = TRUE)
@@ -197,13 +197,15 @@ figure3 <- ggarrange(
   NULL,
   leg,
   nrow = 3, 
-  heights = c(8, 0.3, 1)) # adjust if legend is too big/small
+  heights = c(8, 0.3, 1),
+  widths = c(8, 8, 6)
+  ) # adjust if legend is too big/small
 
 # Save Figure 3 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig3_gLocPCA.png"),
   plot = figure3,
-  width = 18.5,    # A4 width in inches
-  height = 26,  # A4 height in inches
+  width = 14,    # A4 width in inches
+  height = 16,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -232,7 +234,7 @@ ggsave(
   filename = file.path(figure_path, "Fig4_gAllPCA.png"),
   plot = figure4,
   width = 14, 
-  height = 27, 
+  height = 25, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -340,8 +342,8 @@ figureS15 <- plot_grid(
 ggsave(
   filename = file.path(figure_path, "FigS15_gSpe.png"),
   plot = figureS15,
-  width = 18.5,    # A4 width in inches
-  height = 25.5,  # A4 height in inches
+  width = 20,    # A4 width in inches
+  height = 18.5,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
