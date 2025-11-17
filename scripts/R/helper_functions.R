@@ -994,7 +994,7 @@ pca_plot_all <- function(pca_data, pc_first, pc_second, species_info, variance) 
 # Output  :
 #   - A ggplot object with pairwise categories colored and shaped by significance.
 # ============================================================
-plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by == "species", params_legend = "none") {
+plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = "species", params_legend = "none") {
     # Read CSV and select only needed columns
     pair_table <- read.table(file = pair_file, sep = ",", header = TRUE) %>%
         select(spc1, spc2, n_spc1, n_spc2, permanova_corr_pval, permadisp_corr_pval) %>%
