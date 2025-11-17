@@ -190,16 +190,15 @@ leg_g <- legend_geo(geo_table, gen = TRUE)
 ########## FIGURE 3 ###################
 # PCA plots for all locations with legend
 all_pcas <- lapply(results_locations, `[[`, "pca_f") # extract per location pcas
-pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, labels=c("(a)","(b)","(c)","(d)")) # bundle location pcas in one plot
+pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, rel_widths = c(1, 1.2), labels=c("(a)","(b)","(c)","(d)")) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
 figure3 <- ggarrange(
   pca_grid,
   NULL,
   leg,
   nrow = 3, 
-  heights = c(8, 0.3, 1),
-  widths = c(8, 8, 7)
-  ) # adjust if legend is too big/small
+  heights = c(8, 0.3, 1)
+) # adjust if legend is too big/small
 
 # Save Figure 3 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig3_gLocPCA.png"),
@@ -256,16 +255,15 @@ ggsave(
 ########## FIGURE S12 ###################
 # Other PCs combination for genotypes per location
 all_sup <- lapply(results_locations, `[[`, "pca_s") # extract per location pcas
-sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)")) # bundle location pcas in one plot
+sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, rel_widths = c(1, 1.2), labels = c("(a)", "(b)", "(c)", "(d)")) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
 figureS12 <- ggarrange(
   sup_grid,
   NULL,
   leg,
   nrow = 3,
-  heights = c(8, 0.3, 1),
-  widths = c(8, 8, 7)
-  ) # adjust if legend is too big/small
+  heights = c(8, 0.3, 1)
+) # adjust if legend is too big/small
 
 # Save Figure S12 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS12_gLocSUP.png"),
@@ -338,7 +336,7 @@ figureS15 <- plot_grid(
   leg_g,
   ncol = 1,
   rel_heights = c(6, 6, 6, 1, 0.2),
-  rel_widths = c(10, 10, 10, 10, 8),
+  widths = c(10, 10, 10, 10, 7),
   labels = c("(a)", "(b)", "(c)", "")
   )
 
