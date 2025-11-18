@@ -341,7 +341,10 @@ rule pca_plot:
         f"{FIGURES_DIR}/FigS12_gLocSUP.png",
         f"{FIGURES_DIR}/FigS13_gLocPERM.png",
         f"{FIGURES_DIR}/FigS14_gAllPERM.png",
-        f"{FIGURES_DIR}/FigS15_gSpe.png"
+        f"{FIGURES_DIR}/FigS15_gSpe.png",
+        f"{FIGURES_DIR}/FigS16_gLocFST.png",
+        f"{FIGURES_DIR}/FigS17_gAllFST.png",
+        f"{FIGURES_DIR}/FigS18_gSpeFST.png"
     params:
         base_path = BASE_DIR,
         figure_path = FIGURES_DIR,
