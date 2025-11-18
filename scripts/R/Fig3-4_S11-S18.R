@@ -32,6 +32,7 @@ library(glue)
 library(viridis)
 library(scico)
 library(data.table)
+library(hierfstat)
 
 
 # ############################
@@ -161,6 +162,12 @@ for(dat in names(dataset)) {
     #-----------------------------------
     p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "nig")) c(0.3, 0.7) else if(dat == "all") c(0.2, 0.7) else "none")
 
+
+    # -----------------------------------
+    # FST (filter <3 inds per species)
+    #-----------------------------------
+    p_fst <- fst_analysis(gtmat_file, color_by = color, species_info, geo_table)
+
     #-----------------------------------
     # Store outputs
     #-----------------------------------
@@ -169,7 +176,8 @@ for(dat in names(dataset)) {
       pca_s = p_pca2,
       pca_t = p_pca3,
       variance_plot = p_var,
-      permanova = p_perm
+      permanova = p_perm,
+      fst = p_fst
     )
 }
 
@@ -347,6 +355,92 @@ ggsave(
   plot = figureS15,
   width = 20,    # A4 width in inches
   height = 16,  # A4 height in inches
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
+
+
+########## FIGURE S16 ###################
+# Per location FST
+# arc_fs <- results[["arc"]][["fst"]]
+# bar_fs <- results[["bar"]][["fst"]]
+# bel_fs <- results[["bel"]][["fst"]]
+# boc_fs <- results[["boc"]][["fst"]]
+# flk_fs <- results[["flk"]][["fst"]]
+# gun_fs <- results[["gun"]][["fst"]]
+# hon_fs <- results[["hon"]][["fst"]]
+# pri_fs <- results[["pri"]][["fst"]]
+# qui_fs <- results[["qui"]][["fst"]]
+
+figureS16 <- ggarrange(
+  results[["bel"]][["fst"]],
+  results[["boc"]][["fst"]],
+  results[["hon"]][["fst"]],
+  results[["pri"]][["fst"]],
+  results[["arc"]][["fst"]],
+  results[["bar"]][["fst"]],
+  results[["flk"]][["fst"]],
+  results[["gun"]][["fst"]],
+  results[["qui"]][["fst"]],
+  ncol = 3,
+  nrow = 3,
+  labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)")
+)
+
+# Save as PNG (A4 size)
+ggsave(
+  filename = file.path(figure_path, "FigS16_gLocFST.png"),
+  plot = figureS16,
+  width = 14,    # A4 width in inches
+  height = 19.5,  # A4 height in inches
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
+
+
+########## FIGURE S17 ###################
+# Combined genotypic space: FST
+
+figureS17 <- results[["all"]][["fst"]]
+
+# Save as PNG (A4 size)
+ggsave(
+  filename = file.path(figure_path, "FigS17_gAllFST.png"),
+  plot = figureS17,
+  width = 15,    # A4 width in inches
+  height = 15,  # A4 height in inches
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
+
+
+########## FIGURE S18 ###################
+# Per species: FST
+figureS18 <- ggarrange(
+  results[["pue"]][["fst"]],
+  results[["nig"]][["fst"]],
+  results[["uni"]][["fst"]],
+  results[["abe"]][["fst"]],
+  results[["aff"]][["fst"]],
+  results[["chl"]][["fst"]],
+  results[["gem"]][["fst"]],
+  results[["gum"]][["fst"]],
+  results[["ind"]][["fst"]],
+  results[["tan"]][["fst"]],
+  ncol = 2,
+  nrow = 5,
+  labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)", "(j)")
+)
+
+# Save as PNG (A4 size)
+ggsave(
+  filename = file.path(figure_path, "FigS18_gSpeFST.png"),
+  plot = figureS18,
+  width = 14,    # A4 width in inches
+  height = 19.5,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"

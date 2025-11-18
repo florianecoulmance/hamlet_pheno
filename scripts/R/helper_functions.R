@@ -1131,6 +1131,142 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
 
 
 # ============================================================
+# Function: fst_analysis
+# Purpose : Compute pairwise Weir & Cockerham FST values from a 
+#           gtraw genotype file, filtering out groups with <3 samples.
+# Input   :
+#   - gtfile      : Path to gtraw file.
+#   - color_by    : "species" or "location" (defines populations).
+#   - species_col : Species lookup table.
+#   - geo_map     : Location lookup table.
+# Output  :
+#   - Pairwise FST matrix (optionally reshaped for plotting).
+# ============================================================
+fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
+
+  gtraw <- read.table(gtfile, header = TRUE, check.names = FALSE)
+  geno <- gtraw[, 7:ncol(gtraw)]   # genotypes start at column 7
+  geno <- t(geno)                  # hierfstat wants samples as rows
+  print(head(geno))
+
+
+  samples <- colnames(gtraw)[7:ncol(gtraw)]
+
+  # Remove the duplicated second part after "_"
+  samples_clean <- sub("_.*", "", samples)
+
+  # Species = letters 1–3 after digits
+  spec <- sub("^[0-9]+([a-z]{3}).*", "\\1", samples_clean)
+
+  # Location = last 3 letters
+  geo <- sub(".*([a-z]{3})$", "\\1", samples_clean)
+
+  print(head(data.frame(samples_clean, species, location)))
+
+  pop <- if (color_by == "species") spec else geo
+  
+  # Check there is variation
+  if (length(unique(pop)) <= 1) {
+        stop("Not enough groups for FST.")
+  }
+
+  data_fst <- data.frame(pop = pop, geno)
+
+  # ---- Filter out populations with fewer than 3 individuals ----
+  pop_counts <- table(data_fst$pop)
+  keep_pops <- names(pop_counts[pop_counts >= 3])
+
+  if (length(keep_pops) < 2) {
+    stop("Not enough populations with ≥3 individuals to compute pairwise FST.")
+  }
+
+  data_fst <- data_fst[data_fst$pop %in% keep_pops, ]
+
+  # Compute pairwise FST
+  fst_mat <- pairwise.WCfst(data_fst)
+    
+  return(fst_mat)
+
+  fst_df <- fst_mat %>%
+    as.data.frame() %>%
+    rownames_to_column("pop1") %>%
+    pivot_longer(-pop1, names_to = "pop2", values_to = "fst") %>%
+    filter(pop1 != pop2)   # remove diagonal
+
+  fst_dt <- as.data.table(fst_df)
+
+  # dcast to matrix format
+  fst_mat <- dcast(
+      fst_dt,
+      pop1 ~ pop2,
+      value.var = "fst"
+  )
+
+  cols_to_modify <- setdiff(names(fst_mat), "pop1")
+  fst_mat_mat <- as.matrix(fst_mat[, ..cols_to_modify])
+
+  # remove upper triangle
+  fst_mat_mat[upper.tri(fst_mat_mat)] <- NA
+  print(fst_mat_mat)
+
+  # assign back
+  fst_mat[, (cols_to_modify) := as.data.table(fst_mat_mat)]
+
+  fst_melt <- melt(fst_mat, id.vars = "pop1")
+  print(fst_melt)
+
+
+  # Build plot
+  p <- ggplot() +
+    geom_tile(data = fst_melt, aes(x = pop1, y = variable, fill = value), color = "transparent") +
+    scale_fill_gradient(low = "#F3D6F3", high = "#A964B7", na.value = "transparent", name = "FST") +
+    geom_text(data = fst_melt,
+              aes(x = pop1, y = variable, label = value),
+              size = 10, color = "black", fontface="bold") +
+    labs(x = "", y = "", fill = "FST") +
+    scale_x_discrete(position = "bottom") +
+    labs(x = "", y = "") +
+    theme_minimal() +
+    theme(
+      legend.direction = "vertical",
+      legend.box = "horizontal",
+      legend.text = element_text(size = 10),
+      legend.title = element_text(size = 20),
+      legend.key.height = unit(1, "cm"),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.text.x = element_text(angle = 0, size = 12),
+      axis.text.y = element_text(size = 12),
+      axis.ticks = element_blank(),
+      aspect.ratio = 1
+    ) +
+    guides(color = guide_legend(ncol = 1))
+
+  # ---- Get title ----
+  print(pair_file)
+  if(color_by == "species"){
+    print(geo)
+    title_val <- if(length(geo) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
+  } else if(color_by == "location"){
+    print(spec)
+    title_val <- if (length(spec) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
+  }
+  print(title_val)
+
+  # ---- Annotate with location title ----
+  p_annot <- annotate_figure(
+    p,
+    top = text_grob(title_val, color = "black", face = "bold", size = 15,
+                  x = unit(5.5, "pt"), hjust = -0.5)
+  )
+
+  return(p_annot)
+
+}
+
+
+
+# ============================================================
 # Function: make_summary_by_location
 # Purpose : Summarize sample counts per location, compute scaled values 
 #           (e.g., for pie plot radii), and merge coordinate and color metadata.

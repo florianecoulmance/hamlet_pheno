@@ -163,7 +163,7 @@ figureS1 <- ggarrange(pheno_t, pheno_m, ncol = 1, nrow = 2, labels=c("(a)","(b)"
 ggsave(filename = file.path(figure_path, "FigS1_pSampling.png"),
   plot = figureS1,
   width = 18.5,    # A4 width in inches
-  height = 25.5,  # A4 height in inches
+  height = 24,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -177,7 +177,7 @@ figureS2 <- ggarrange(geno_t, geno_m, ncol = 1, nrow = 2, labels=c("(a)","(b)"))
 ggsave(filename = file.path(figure_path, "FigS2_gSampling.png"),
   plot = figureS2,
   width = 18.5,    # A4 width in inches
-  height = 25.5,  # A4 height in inches
+  height = 24,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file

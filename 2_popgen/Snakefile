@@ -11,7 +11,7 @@ VCF_FILE=os.path.join(BASE_DIR, "phyps2e_m2.vcf.gz")
 FIGURES_DIR = os.path.join(BASE_DIR, "figures")
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 PYTHON_SCRIPT = os.path.join(SCRIPTS_DIR, "python", "permanova.py")
-R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig3-4_S11-S15.R")
+R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig3-4_S11-S18.R")
 
 # List of datasets
 genotyping_params = [
@@ -77,7 +77,10 @@ rule all:
                 "FigS12_gLocSUP.png",
                 "FigS13_gLocPERM.png",
                 "FigS14_gAllPERM.png",
-                "FigS15_gSpe.png"
+                "FigS15_gSpe.png",
+                "FigS16_gLocFST.png",
+                "FigS17_gAllFST.png",
+                "FigS18_gSpeFST.png"
             ]
         )
 
