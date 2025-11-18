@@ -1147,7 +1147,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   gtraw <- read.table(gtfile, header = TRUE, check.names = FALSE)
   geno <- gtraw[, 7:ncol(gtraw)]   # genotypes start at column 7
   geno <- t(geno)                  # hierfstat wants samples as rows
-  print(head(geno))
+  # print(head(geno))
 
 
   samples <- colnames(gtraw)[7:ncol(gtraw)]
