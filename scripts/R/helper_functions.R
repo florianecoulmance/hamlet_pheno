@@ -1161,7 +1161,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   # Location = last 3 letters
   geo <- sub(".*([a-z]{3})$", "\\1", samples_clean)
 
-  print(head(data.frame(samples_clean, species, location)))
+  print(head(data.frame(samples_clean, spec, geo)))
 
   pop <- if (color_by == "species") spec else geo
   
