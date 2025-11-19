@@ -1173,22 +1173,25 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
 
   print("BEFORE POP AND GENO")
   data_fst <- data.frame(pop = pop, geno)
-  print("BEFORE POP AND GENO")
+  print("AFTER POP AND GENO")
 
   # ---- Filter out populations with fewer than 3 individuals ----
   pop_counts <- table(data_fst$pop)
   keep_pops <- names(pop_counts[pop_counts >= 3])
+  print(keep_pops)
 
   if (length(keep_pops) < 2) {
     stop("Not enough populations with ≥3 individuals to compute pairwise FST.")
   }
 
   data_fst <- data_fst[data_fst$pop %in% keep_pops, ]
+  print(head(data_fst, 1))
 
   # Compute pairwise FST
   fst_mat <- pairwise.WCfst(data_fst)
-    
-  return(fst_mat)
+  print(head(fst_mat))
+
+  # return(fst_mat)
 
   fst_df <- fst_mat %>%
     as.data.frame() %>%
