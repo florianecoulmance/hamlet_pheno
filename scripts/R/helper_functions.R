@@ -1150,9 +1150,10 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   samples <- colnames(gtraw)[7:ncol(gtraw)]
 
   # ---- Extract species & location ----
-  samples_clean <- sub("_.*", "", samples)
-  spec <- sub("^[0-9]+([a-z]{3}).*", "\\1", samples_clean)
-  geo <- sub(".*([a-z]{3})$", "\\1", samples_clean)
+  # samples_clean <- sub("_.*", "", samples)
+  sample_id <- substr(samples, 1, nchar(samples) - 6)
+  spec <- substr(samples, nchar(samples) - 5, nchar(samples) - 3)
+  geo <- substr(samples, nchar(samples) - 2, nchar(samples))
   print(head(data.frame(samples_clean, spec, geo)))
 
   pop <- if (color_by == "species") spec else geo
@@ -1186,7 +1187,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   # ---- Compute pairwise FST ----
   fst_mat <- pairwise_fst(geno, sample_groups)
   print(fst_mat$Fst)
-  print(fst_mat)
+  # print(fst_mxat)
 
 
   # ---- Reshape for plotting ----
