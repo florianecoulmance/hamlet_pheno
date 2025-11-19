@@ -1143,68 +1143,75 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
 #   - Pairwise FST matrix (optionally reshaped for plotting).
 # ============================================================
 fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
-
+  
+  # ---- Load genotype data ----
   gtraw <- read.table(gtfile, header = TRUE, check.names = FALSE)
-  geno <- gtraw[, 7:ncol(gtraw)]   # genotypes start at column 7
-  geno <- t(geno)                  # hierfstat wants samples as rows
-  # print(head(geno))
-
-
+  geno <- t(gtraw[, 7:ncol(gtraw)])   # genotypes start at column 7
   samples <- colnames(gtraw)[7:ncol(gtraw)]
 
-  # Remove the duplicated second part after "_"
+  # ---- Extract species & location ----
   samples_clean <- sub("_.*", "", samples)
-
-  # Species = letters 1–3 after digits
   spec <- sub("^[0-9]+([a-z]{3}).*", "\\1", samples_clean)
-
-  # Location = last 3 letters
   geo <- sub(".*([a-z]{3})$", "\\1", samples_clean)
-
   print(head(data.frame(samples_clean, spec, geo)))
 
   pop <- if (color_by == "species") spec else geo
   print(pop)
 
-  # Check there is variation
-  if (length(unique(pop)) <= 1) {
-        stop("Not enough groups for FST.")
-  }
-
-  print("BEFORE POP AND GENO")
-  data_fst <- data.frame(pop = pop, geno)
-  print("AFTER POP AND GENO")
-
-  # ---- Filter out populations with fewer than 3 individuals ----
+  # ---- Filter out populations with <3 individuals ----
   pop_counts <- table(data_fst$pop)
   keep_pops <- names(pop_counts[pop_counts >= 3])
   print(keep_pops)
-
   if (length(keep_pops) < 2) {
     stop("Not enough populations with ≥3 individuals to compute pairwise FST.")
   }
 
-  message("FST: ")
-  t3 <- Sys.time()
-  data_fst <- data_fst[data_fst$pop %in% keep_pops, ]
-  t4 <- Sys.time()
-  print(t4 - t3)
-  print(head(data_fst, 1))
+  keep_idx <- pop %in% keep_pops
+  pop <- pop[keep_idx]
+  geno <- geno[keep_idx, , drop = FALSE]
+  samples <- samples[keep_idx]
 
-  # Compute pairwise FST
-  fst_mat <- pairwise.WCfst(data_fst)
-  print(head(fst_mat))
+  # ---- FAST FST via SNPRelate ----
+    # Create a temporary GDS file
+  gdsfile <- tempfile(fileext = ".gds")
+
+  snpgdsCreateGeno(
+    gdsfile,
+    genmat   = geno,
+    sample.id = samples,
+    snp.id   = colnames(geno),
+    snpfirstdim = FALSE  # markers in columns
+  )
+
+  gds <- snpgdsOpen(gdsfile)
+
+  fst_out <- snpgdsFST(gds, population = pop)
+
+  snpgdsClose(gds)
+  print(head(fst_out$Fst))
+
+  # message("FST: ")
+  # t3 <- Sys.time()
+  # data_fst <- data_fst[data_fst$pop %in% keep_pops, ]
+  # t4 <- Sys.time()
+  # print(t4 - t3)
+  # print(head(data_fst, 1))
+
+  # # Compute pairwise FST
+  # fst_mat <- pairwise.WCfst(data_fst)
+  # print(head(fst_mat))
 
   # return(fst_mat)
 
-  fst_df <- fst_mat %>%
-    as.data.frame() %>%
-    rownames_to_column("pop1") %>%
-    pivot_longer(-pop1, names_to = "pop2", values_to = "fst") %>%
-    filter(pop1 != pop2)   # remove diagonal
+  # fst_df <- fst_mat %>%
+  #   as.data.frame() %>%
+  #   rownames_to_column("pop1") %>%
+  #   pivot_longer(-pop1, names_to = "pop2", values_to = "fst") %>%
+  #   filter(pop1 != pop2)   # remove diagonal
 
-  fst_dt <- as.data.table(fst_df)
-
+  fst_dt <- as.data.table(fst_out$Fst)
+  setnames(fst_dt, "Fst", "fst")
+  
   # dcast to matrix format
   fst_mat <- dcast(
       fst_dt,

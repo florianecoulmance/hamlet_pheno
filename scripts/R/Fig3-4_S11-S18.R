@@ -33,6 +33,7 @@ library(viridis)
 library(scico)
 library(data.table)
 library(hierfstat)
+library(SNPRelate)
 
 
 # ############################
