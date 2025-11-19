@@ -1169,7 +1169,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   keep_idx <- pop %in% keep_pops
   pop <- pop[keep_idx]
   geno <- geno[keep_idx, , drop = FALSE]
-  samples <- samples[keep_idx]
+  samples <- samples_clean[keep_idx]
   print(samples)
 
   # ---- FAST FST via SNPRelate ----
