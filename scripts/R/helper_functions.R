@@ -1170,7 +1170,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   keep_pops <- names(pop_counts[pop_counts >= 3])
   # print(keep_pops)
   if (length(keep_pops) < 2) {
-    stop("Not enough populations with ≥3 individuals to compute pairwise FST.")
+    message("Not enough populations with ≥3 individuals to compute pairwise FST.")
     return(NULL)
   }
 
