@@ -1154,7 +1154,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   sample_id <- substr(samples, 1, nchar(samples) - 6)
   spec <- substr(samples, nchar(samples) - 5, nchar(samples) - 3)
   geo <- substr(samples, nchar(samples) - 2, nchar(samples))
-  print(head(data.frame(samples_clean, spec, geo)))
+  print(data.frame(sample_id, spec, geo))
 
   pop <- if (color_by == "species") spec else geo
   print(pop)
