@@ -1159,7 +1159,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   print(pop)
 
   # ---- Filter out populations with <3 individuals ----
-  pop_counts <- table(data_fst$pop)
+  pop_counts <- table(pop)
   keep_pops <- names(pop_counts[pop_counts >= 3])
   print(keep_pops)
   if (length(keep_pops) < 2) {
@@ -1211,7 +1211,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
 
   fst_dt <- as.data.table(fst_out$Fst)
   setnames(fst_dt, "Fst", "fst")
-  
+
   # dcast to matrix format
   fst_mat <- dcast(
       fst_dt,
