@@ -1191,20 +1191,9 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   fst_out <- snpgdsFst(gds, population = pop, method = "W&C84")
 
   snpgdsClose(gds)
-  print(head(fst_out$Fst))
+  print(fst_out)
+  print(fst_out$Fst)
 
-  # message("FST: ")
-  # t3 <- Sys.time()
-  # data_fst <- data_fst[data_fst$pop %in% keep_pops, ]
-  # t4 <- Sys.time()
-  # print(t4 - t3)
-  # print(head(data_fst, 1))
-
-  # # Compute pairwise FST
-  # fst_mat <- pairwise.WCfst(data_fst)
-  # print(head(fst_mat))
-
-  # return(fst_mat)
 
   # fst_df <- fst_mat %>%
   #   as.data.frame() %>%
