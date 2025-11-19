@@ -1164,13 +1164,16 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   print(head(data.frame(samples_clean, spec, geo)))
 
   pop <- if (color_by == "species") spec else geo
-  
+  print(pop)
+
   # Check there is variation
   if (length(unique(pop)) <= 1) {
         stop("Not enough groups for FST.")
   }
 
+  print("BEFORE POP AND GENO")
   data_fst <- data.frame(pop = pop, geno)
+  print("BEFORE POP AND GENO")
 
   # ---- Filter out populations with fewer than 3 individuals ----
   pop_counts <- table(data_fst$pop)
