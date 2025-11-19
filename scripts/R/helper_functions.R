@@ -1170,15 +1170,15 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   keep_idx <- pop %in% keep_pops
   pop <- pop[keep_idx]
   geno <- geno[keep_idx, , drop = FALSE]
-  samples_clean <- samples_clean[keep_idx]
-  print(samples_clean)
+  sample_id <- sample_id[keep_idx]
+  print(sample_id)
 
   # Assign rownames
-  rownames(geno) <- samples_clean
+  rownames(geno) <- sample_id
 
   # ---- Build sample_groups tibble for pairwise_fst ----
   sample_groups <- tibble(
-    sample = samples_clean,
+    sample = sample_id,
     group  = pop
   )
 
