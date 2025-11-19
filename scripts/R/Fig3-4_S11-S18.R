@@ -34,7 +34,7 @@ library(scico)
 library(data.table)
 library(hierfstat)
 library(SNPRelate)
-
+library(genoscapeRtools)
 
 # ############################
 # CONFIG
