@@ -88,7 +88,8 @@ dataset <- list(
     liz = list(dir = "byLOC", colors = "species"),
     pri = list(dir = "byLOC", colors = "species"),
     qui = list(dir = "byLOC", colors = "species"),
-    all = list(dir = "byALL", colors = "species"),
+    all_s = list(dir = "byALL", colors = "species"),
+    all_l = list(dir = "byALL", colors = "location"),
     abe = list(dir = "bySPC", colors = "location"),
     aff = list(dir = "bySPC", colors = "location"),
     atl = list(dir = "bySPC", colors = "location"),
@@ -118,10 +119,10 @@ for(dat in names(dataset)) {
     #-----------------------------------
     # Read GTMAT file + Sample file + PERMANOVA & PERMDISP result table
     #-----------------------------------
-    gtmat_file <- file.path(base_path, "2_popgen", dat_dir, if (dat == "all") "thinned_all_ld_pruned_gtmat.traw" else paste0(dat, "_ld_pruned_gtmat.traw"))
-    sample_file <- file.path(base_path, if (dat == "all") "metadata/geno_names.txt" else paste0("2_popgen/", dat_dir, "/", dat, ".txt"))
+    gtmat_file <- file.path(base_path, "2_popgen", dat_dir, if (dat %in% c("all_s", "all_l")) "thinned_all_ld_pruned_gtmat.traw" else paste0(dat, "_ld_pruned_gtmat.traw"))
+    sample_file <- file.path(base_path, if (dat %in% c("all_s", "all_l")) "metadata/geno_names.txt" else paste0("2_popgen/", dat_dir, "/", dat, ".txt"))
     # perm_file <- list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat, ".*\\.csv$"), full.names = TRUE)
-    perm_file <- if (dat == "all") file.path(base_path, "2_popgen", dat_dir, "permanova_results/all.lm.pairwise.csv") else list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat, ".*\\.csv$"), full.names = TRUE)
+    perm_file <- if (dat == "all_s") file.path(base_path, "2_popgen", dat_dir, "permanova_results/all.lm.pairwise.csv") else if (dat == "all_l") file.path(base_path, "2_popgen", dat_dir, "permanova_results/all.sm.pairwise.csv") else list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat, ".*\\.csv$"), full.names = TRUE)
 
     # print(gtmat_file)
     # print(sample_file)
@@ -140,7 +141,7 @@ for(dat in names(dataset)) {
     #-----------------------------------
     # PCA plot
     #-----------------------------------
-    if (dat == "all") {
+    if (dat %in% c("all_s", "all_l")) {
         # For the "all" dataset, generate three PCA plots (PC1-2, PC3-4, PC5-6)
         p_pca1 <- pca_plot_all(pca_eigen, "PC1", "PC2", species_info, pca_var)
         p_pca2 <- pca_plot_all(pca_eigen, "PC3", "PC4", species_info, pca_var)
@@ -162,7 +163,7 @@ for(dat in names(dataset)) {
     # -----------------------------------
     # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
     #-----------------------------------
-    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "nig")) c(0.3, 0.7) else if(dat == "all") c(0.2, 0.7) else "none")
+    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "nig")) c(0.3, 0.7) else if(dat %in% c("all_s", "all_l")) c(0.2, 0.7) else "none")
 
 
     # -----------------------------------
@@ -224,9 +225,9 @@ ggsave(filename = file.path(figure_path, "Fig3_gLocPCA.png"),
 ########## FIGURE 4 ###################
 # Combined genetic space with legend
 # Access each PCA plot for the "all" dataset
-pca1 <- results[["all"]][["pca_f"]]
-pca2 <- results[["all"]][["pca_s"]]
-pca3 <- results[["all"]][["pca_t"]]
+pca1 <- results[["all_s"]][["pca_f"]]
+pca2 <- results[["all_s"]][["pca_s"]]
+pca3 <- results[["all_s"]][["pca_t"]]
 
 figure4 <- ggarrange(
   pca1,
@@ -251,7 +252,7 @@ ggsave(
 
 ########## FIGURE S11 ###################
 # Variance of Principal Components for combined genetic space
-figureS11 <- results[["all"]][["variance_plot"]]
+figureS11 <- results[["all_s"]][["variance_plot"]]
 ggsave(
   filename = file.path(figure_path, "FigS11_gAllVAR.png"),
   plot = figureS11,
@@ -302,7 +303,7 @@ ggsave(filename = file.path(figure_path, "FigS13_gLocPERM.png"),
 
 ########## FIGURE S14 ###################
 # Combined genotypic space: PERMANOVA
-figureS14 <- results[["all"]][["permanova"]]
+figureS14 <- results[["all_s"]][["permanova"]]
 
 # Save as PNG (A4 size)
 ggsave(
@@ -395,7 +396,7 @@ ggsave(
   filename = file.path(figure_path, "FigS16_gLocFST.png"),
   plot = figureS16,
   width = 14,    # A4 width in inches
-  height = 19.5,  # A4 height in inches
+  height = 14,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -405,11 +406,11 @@ ggsave(
 ########## FIGURE S17 ###################
 # Combined genotypic space: FST
 
-figureS17 <- results[["all"]][["fst"]]
+figureS17 <- results[["all_s"]][["fst"]]
 
 # Save as PNG (A4 size)
 ggsave(
-  filename = file.path(figure_path, "FigS17_gAllFST.png"),
+  filename = file.path(figure_path, "FigS17_gAllsFST.png"),
   plot = figureS17,
   width = 15,    # A4 width in inches
   height = 15,  # A4 height in inches
@@ -443,6 +444,23 @@ ggsave(
   plot = figureS18,
   width = 14,    # A4 width in inches
   height = 19.5,  # A4 height in inches
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
+
+
+########## FIGURE S19 ###################
+# Combined genotypic space: FST
+
+figureS19 <- results[["all_l"]][["fst"]]
+
+# Save as PNG (A4 size)
+ggsave(
+  filename = file.path(figure_path, "FigS19_gAlllFST.png"),
+  plot = figureS19,
+  width = 15,    # A4 width in inches
+  height = 15,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"

@@ -1242,9 +1242,9 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
     scale_fill_gradient(low = "#F3D6F3", high = "#A964B7", na.value = "transparent", name = "FST") +
     geom_text(data = fst_dt,
               aes(x = pop1, y = pop2, label = round(fst, 3)),
-              size = 10, color = "black", fontface="bold") +
+              size = 6, color = "black", fontface="bold") +
     labs(x = "", y = "", fill = "FST") +
-    scale_x_discrete(position = "bottom") +
+    scale_x_discrete(position = "top") +
     labs(x = "", y = "") +
     theme_minimal() +
     theme(
