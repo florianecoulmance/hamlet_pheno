@@ -1142,7 +1142,7 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
 # Output  :
 #   - Pairwise FST matrix (optionally reshaped for plotting).
 # ============================================================
-fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
+fst_analysis <- function(gtfile, color_by, species_col, geo_map, label) {
   
   # ---- Load genotype data ----
   gtraw <- read.table(gtfile, header = TRUE, check.names = FALSE)
@@ -1155,11 +1155,11 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
     sapply(strsplit(samples, "_"), function(x) paste(x[1:2], collapse = "_")),
     sub("_.*", "", samples)
   )
-  print(samples_clean)
+  # print(samples_clean)
   spec <- substr(samples_clean, nchar(samples_clean) - 5, nchar(samples_clean) - 3)
-  print(spec)
+  # print(spec)
   geo <- substr(samples_clean, nchar(samples_clean) - 2, nchar(samples_clean))
-  print(geo)
+  # print(geo)
   # print(head(data.frame(samples_clean, spec, geo)))
 
   pop <- if (color_by == "species") spec else geo
@@ -1193,48 +1193,19 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
 
   # ---- Compute pairwise FST ----
   fst_mat <- pairwise_fst(geno, sample_groups)
-  print(fst_mat$Fst)
+  # print(fst_mat$Fst)
   # print(fst_mxat)
+
+  FST_RESULTS[[label]] <- fst_mat$Fst
 
 
   # ---- Reshape for plotting ----
   fst_dt <- as.data.table(fst_mat$Fst)
   setnames(fst_dt, "Fst", "fst")         # rename column
-  print(fst_dt)
+  # print(fst_dt)
   # Remove diagonal
   fst_dt[pop1 == pop2, fst := NA]
-  print(fst_dt)
-
-  # fst_melt <- melt(fst_dt, id.vars = "pop1", variable.name = "pop2", value.name = "fst")
-  # print(fst_melt)
-  # fst_melt[fst_melt$pop1 == fst_melt$pop2, "fst"] <- NA  # remove diagonal
-  # print(fst_melt)
-
-
-  # fst_dt <- as.data.table(fst_out$Fst)
   # print(fst_dt)
-  # setnames(fst_dt, "Fst", "fst")
-
-  # # dcast to matrix format
-  # fst_mat <- dcast(
-  #     fst_dt,
-  #     pop1 ~ pop2,
-  #     value.var = "fst"
-  # )
-
-  # cols_to_modify <- setdiff(names(fst_mat), "pop1")
-  # fst_mat_mat <- as.matrix(fst_mat[, ..cols_to_modify])
-
-  # # remove upper triangle
-  # fst_mat_mat[upper.tri(fst_mat_mat)] <- NA
-  # print(fst_mat_mat)
-
-  # # assign back
-  # fst_mat[, (cols_to_modify) := as.data.table(fst_mat_mat)]
-
-  # fst_melt <- melt(fst_mat, id.vars = "pop1")
-  # print(fst_melt)
-
 
   # Build plot
   p <- ggplot() +
@@ -1242,7 +1213,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
     scale_fill_gradient(low = "#F3D6F3", high = "#A964B7", na.value = "transparent", name = "FST") +
     geom_text(data = fst_dt,
               aes(x = pop1, y = pop2, label = round(fst, 3)),
-              size = 6, color = "black", fontface="bold") +
+              size = 4, color = "black", fontface="bold") +
     labs(x = "", y = "", fill = "FST") +
     scale_x_discrete(position = "top") +
     labs(x = "", y = "") +
@@ -1264,11 +1235,11 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
 
   # ---- Get title ----
   if(color_by == "species"){
-    print(geo)
+    # print(geo)
     geo_val <- unique(geo)
     title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
   } else if(color_by == "location"){
-    print(spec)
+    # print(spec)
     species_val <- unique(spec)
     title_val <- if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
   }

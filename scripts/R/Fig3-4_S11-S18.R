@@ -107,6 +107,7 @@ dataset <- list(
 
 # Create a list to store plots per location
 results <- list()
+FST_RESULTS <- list()
 
 for(dat in names(dataset)) {
     dat_info <- dataset[[dat]]
@@ -169,7 +170,7 @@ for(dat in names(dataset)) {
     # -----------------------------------
     # FST (filter <3 inds per species)
     #-----------------------------------
-    p_fst <- fst_analysis(gtmat_file, color_by = color, species_info, geo_table)
+    p_fst <- fst_analysis(gtmat_file, color_by = color, species_info, geo_table, dat)
 
     #-----------------------------------
     # Store outputs
@@ -183,6 +184,8 @@ for(dat in names(dataset)) {
       fst = p_fst
     )
 }
+
+print(names(FST_RESULTS))
 
 
 # ############################
@@ -366,16 +369,6 @@ ggsave(
 
 ########## FIGURE S16 ###################
 # Per location FST
-# arc_fs <- results[["arc"]][["fst"]]
-# bar_fs <- results[["bar"]][["fst"]]
-# bel_fs <- results[["bel"]][["fst"]]
-# boc_fs <- results[["boc"]][["fst"]]
-# flk_fs <- results[["flk"]][["fst"]]
-# gun_fs <- results[["gun"]][["fst"]]
-# hon_fs <- results[["hon"]][["fst"]]
-# pri_fs <- results[["pri"]][["fst"]]
-# qui_fs <- results[["qui"]][["fst"]]
-
 figureS16 <- ggarrange(
   results[["bel"]][["fst"]],
   results[["boc"]][["fst"]],
@@ -396,7 +389,7 @@ ggsave(
   filename = file.path(figure_path, "FigS16_gLocFST.png"),
   plot = figureS16,
   width = 14,    # A4 width in inches
-  height = 14,  # A4 height in inches
+  height = 12,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -461,6 +454,51 @@ ggsave(
   plot = figureS19,
   width = 15,    # A4 width in inches
   height = 15,  # A4 height in inches
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
+
+
+########## FIGURE S20 ###################
+# FST boxplots
+fst_species <- FST_RESULTS[names(FST_RESULTS) %in% c("all_s", "hon", "bel", "boc", "pri", "arc", "bar", "flk", "gun", "liz", "qui")]
+fst_locations <- FST_RESULTS[names(FST_RESULTS) %in% c("all_l", "pue", "nig", "uni", "abe", "aff", "chl", "gem", "gum", "ind", "tan")]
+
+# for (nm in names(fst_species)) {
+#   print(nm)
+#   print(fst_species[[nm]])
+# }
+
+fst_species_df <- map_df(
+  names(fst_species),
+  ~ fst_species[[.x]] %>% mutate(dataset = .x)
+)
+print(fst_species_df)
+
+fst_locations_df <- map_df(
+  names(fst_locations),
+  ~ fst_locations[[.x]] %>% mutate(dataset = .x)
+)
+print(fst_locations_df)
+
+p1 <- ggplot(fst_species_df, aes(x = dataset, y = FST)) + geom_boxplot()
+p2 <- ggplot(fst_locations_df, aes(x = dataset, y = FST)) + geom_boxplot()
+
+figureS20 <- ggarrange(
+  p1,
+  p2,
+  ncol = 1,
+  nrow = 2,
+  labels = c("(a)", "(b)")
+)
+
+# Save as PNG (A4 size)
+ggsave(
+  filename = file.path(figure_path, "FigS20_gFSTbox.png"),
+  plot = figureS20,
+  width = 15,    # A4 width in inches
+  height = 12,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"

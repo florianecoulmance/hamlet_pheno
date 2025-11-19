@@ -81,7 +81,8 @@ rule all:
                 "FigS16_gLocFST.png",
                 "FigS17_gAllsFST.png",
                 "FigS18_gSpeFST.png",
-                "FigS19_gAlllFST.png"
+                "FigS19_gAlllFST.png",
+                "FigS20_gFSTbox.png"
             ]
         )
 
@@ -344,7 +345,8 @@ rule pca_plot:
         f"{FIGURES_DIR}/FigS16_gLocFST.png",
         f"{FIGURES_DIR}/FigS17_gAllsFST.png",
         f"{FIGURES_DIR}/FigS18_gSpeFST.png",
-        f"{FIGURES_DIR}/FigS19_gAlllFST.png"
+        f"{FIGURES_DIR}/FigS19_gAlllFST.png",
+        f"{FIGURES_DIR}/FigS20_gFSTbox.png"
     params:
         base_path = BASE_DIR,
         figure_path = FIGURES_DIR,
