@@ -1191,7 +1191,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   fst_out <- snpgdsFst(gds, population = pop, method = "W&C84")
 
   snpgdsClose(gds)
-  print(fst_out)
+  print(head(fst_out, 1))
   print(fst_out$Fst)
 
 
