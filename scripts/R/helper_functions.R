@@ -1232,7 +1232,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   p <- ggplot() +
     geom_tile(data = fst_dt, aes(x = pop1, y = pop2, fill = fst), color = "transparent") +
     scale_fill_gradient(low = "#F3D6F3", high = "#A964B7", na.value = "transparent", name = "FST") +
-    geom_text(data = fst_melt,
+    geom_text(data = fst_dt,
               aes(x = pop1, y = pop2, label = round(fst, 3)),
               size = 10, color = "black", fontface="bold") +
     labs(x = "", y = "", fill = "FST") +
