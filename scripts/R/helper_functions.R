@@ -1178,6 +1178,8 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
     group  = pop
   )
 
+  print(sample_groups)
+
   # ---- Compute pairwise FST ----
   fst_mat <- pairwise_fst(geno, sample_groups)
   print(fst_mat)
