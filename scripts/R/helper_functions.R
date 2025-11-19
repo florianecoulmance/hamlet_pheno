@@ -1151,21 +1151,22 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
 
   # ---- Extract species & location ----
   samples_clean <- ifelse(
-  grepl("PL17", samples),
-  sapply(strsplit(samples, "_"), function(x) paste(x[1:2], collapse = "_")),
-  sub("_.*", "", samples)
-)
+    grepl("PL17", samples),
+    sapply(strsplit(samples, "_"), function(x) paste(x[1:2], collapse = "_")),
+    sub("_.*", "", samples)
+  )
+  print(samples_clean)
   spec <- sub("^[0-9]+([a-z]{3}).*", "\\1", samples_clean)
   geo <- sub(".*([a-z]{3})$", "\\1", samples_clean)
-  print(head(data.frame(samples_clean, spec, geo)))
+  # print(head(data.frame(samples_clean, spec, geo)))
 
   pop <- if (color_by == "species") spec else geo
-  print(pop)
+  # print(pop)
 
   # ---- Filter out populations with <3 individuals ----
   pop_counts <- table(pop)
   keep_pops <- names(pop_counts[pop_counts >= 3])
-  print(keep_pops)
+  # print(keep_pops)
   if (length(keep_pops) < 2) {
     stop("Not enough populations with ≥3 individuals to compute pairwise FST.")
   }
@@ -1174,7 +1175,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   pop <- pop[keep_idx]
   geno <- geno[keep_idx, , drop = FALSE]
   samples_clean <- samples_clean[keep_idx]
-  print(samples_clean)
+  # print(samples_clean)
 
   # Assign rownames
   rownames(geno) <- samples_clean
@@ -1185,7 +1186,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
     group  = pop
   )
 
-  print(sample_groups)
+  # print(sample_groups)
 
   # ---- Compute pairwise FST ----
   fst_mat <- pairwise_fst(geno, sample_groups)
