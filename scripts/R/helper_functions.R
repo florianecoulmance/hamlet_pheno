@@ -1170,6 +1170,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   pop <- pop[keep_idx]
   geno <- geno[keep_idx, , drop = FALSE]
   samples <- samples[keep_idx]
+  print(samples)
 
   # ---- FAST FST via SNPRelate ----
     # Create a temporary GDS file
@@ -1185,6 +1186,8 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
 
   gds <- snpgdsOpen(gdsfile)
 
+  pop <- factor(pop)
+  print(pop)
   fst_out <- snpgdsFst(gds, population = pop)
 
   snpgdsClose(gds)
