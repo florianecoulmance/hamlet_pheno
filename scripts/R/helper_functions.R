@@ -1184,7 +1184,11 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
     stop("Not enough populations with ≥3 individuals to compute pairwise FST.")
   }
 
+  message("FST: ")
+  t3 <- Sys.time()
   data_fst <- data_fst[data_fst$pop %in% keep_pops, ]
+  t4 <- Sys.time()
+  print(t4 - t3)
   print(head(data_fst, 1))
 
   # Compute pairwise FST
