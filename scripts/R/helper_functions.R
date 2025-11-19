@@ -1156,9 +1156,9 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
     sub("_.*", "", samples)
   )
   print(samples_clean)
-  spec <- sub("^[0-9]+([a-z]{3}).*", "\\1", samples_clean)
+  spec <- substr(samples_clean, nchar(samples_clean) - 5, nchar(samples_clean) - 3)
   print(spec)
-  geo <- sub(".*([a-z]{3})$", "\\1", samples_clean)
+  geo <- substr(samples_clean, nchar(samples_clean) - 2, nchar(samples_clean))
   print(geo)
   # print(head(data.frame(samples_clean, spec, geo)))
 
@@ -1264,10 +1264,12 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   # ---- Get title ----
   if(color_by == "species"){
     print(geo)
-    title_val <- if(length(geo) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
+    geo_val <- unique(geo)
+    title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
   } else if(color_by == "location"){
     print(spec)
-    title_val <- if (length(spec) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
+    species_val <- unique(spec)
+    title_val <- if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
   }
   print(title_val)
 
