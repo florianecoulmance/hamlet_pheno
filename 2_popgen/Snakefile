@@ -86,8 +86,6 @@ rule all:
         )
 
 
-
-
 # --- Create directories ---
 rule make_dirs:
     output:
@@ -369,4 +367,3 @@ rule pca_plot:
             --spec_colors {params.spec_colors} \
             --geo_colors {params.geo_colors}
         """
-
