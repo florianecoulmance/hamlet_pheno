@@ -79,7 +79,7 @@ rule all:
                 "FigS14_gAllPERM.png",
                 "FigS15_gSpe.png",
                 "FigS16_gLocFST.png",
-                "FigS17_gAllFST.png",
+                "FigS17_gAllsFST.png",
                 "FigS18_gSpeFST.png",
                 "FigS19_gAlllFST.png"
             ]
@@ -342,7 +342,7 @@ rule pca_plot:
         f"{FIGURES_DIR}/FigS14_gAllPERM.png",
         f"{FIGURES_DIR}/FigS15_gSpe.png",
         f"{FIGURES_DIR}/FigS16_gLocFST.png",
-        f"{FIGURES_DIR}/FigS17_gAllFST.png",
+        f"{FIGURES_DIR}/FigS17_gAllsFST.png",
         f"{FIGURES_DIR}/FigS18_gSpeFST.png",
         f"{FIGURES_DIR}/FigS19_gAlllFST.png"
     params:
