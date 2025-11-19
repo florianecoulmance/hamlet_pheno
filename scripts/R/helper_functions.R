@@ -1185,15 +1185,22 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
 
   # ---- Compute pairwise FST ----
   fst_mat <- pairwise_fst(geno, sample_groups)
+  print(fst_mat$Fst)
   print(fst_mat)
 
+
   # ---- Reshape for plotting ----
-  fst_dt <- as.data.table(fst_mat, keep.rownames = "pop1")
+  fst_dt <- as.data.table(fst_mat$Fst)
+  setnames(fst_dt, "Fst", "fst")         # rename column
   print(fst_dt)
-  fst_melt <- melt(fst_dt, id.vars = "pop1", variable.name = "pop2", value.name = "fst")
-  print(fst_melt)
-  fst_melt[fst_melt$pop1 == fst_melt$pop2, "fst"] <- NA  # remove diagonal
-  print(fst_melt)
+  # Remove diagonal
+  fst_dt[pop1 == pop2, fst := NA]
+  print(fst_dt)
+
+  # fst_melt <- melt(fst_dt, id.vars = "pop1", variable.name = "pop2", value.name = "fst")
+  # print(fst_melt)
+  # fst_melt[fst_melt$pop1 == fst_melt$pop2, "fst"] <- NA  # remove diagonal
+  # print(fst_melt)
 
 
   # fst_dt <- as.data.table(fst_out$Fst)
@@ -1223,10 +1230,10 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
 
   # Build plot
   p <- ggplot() +
-    geom_tile(data = fst_melt, aes(x = pop1, y = variable, fill = value), color = "transparent") +
+    geom_tile(data = fst_dt, aes(x = pop1, y = pop2, fill = fst), color = "transparent") +
     scale_fill_gradient(low = "#F3D6F3", high = "#A964B7", na.value = "transparent", name = "FST") +
     geom_text(data = fst_melt,
-              aes(x = pop1, y = variable, label = value),
+              aes(x = pop1, y = pop2, label = round(fst, 3)),
               size = 10, color = "black", fontface="bold") +
     labs(x = "", y = "", fill = "FST") +
     scale_x_discrete(position = "bottom") +
