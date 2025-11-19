@@ -1172,6 +1172,9 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   samples_clean <- samples_clean[keep_idx]
   print(samples_clean)
 
+  # Assign rownames
+  rownames(geno) <- samples_clean
+
   # ---- Build sample_groups tibble for pairwise_fst ----
   sample_groups <- tibble(
     sample = samples_clean,

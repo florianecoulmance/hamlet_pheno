@@ -35,6 +35,7 @@ library(data.table)
 library(hierfstat)
 library(SNPRelate)
 library(genoscapeRtools)
+library(gridExtra)
 
 # ############################
 # CONFIG
