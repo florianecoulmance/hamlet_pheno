@@ -1255,7 +1255,6 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
     guides(color = guide_legend(ncol = 1))
 
   # ---- Get title ----
-  print(pair_file)
   if(color_by == "species"){
     print(geo)
     title_val <- if(length(geo) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
