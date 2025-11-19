@@ -1150,11 +1150,14 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   samples <- colnames(gtraw)[7:ncol(gtraw)]
 
   # ---- Extract species & location ----
-  # samples_clean <- sub("_.*", "", samples)
-  sample_id <- substr(samples, 1, nchar(samples) - 6)
-  spec <- substr(samples, nchar(samples) - 5, nchar(samples) - 3)
-  geo <- substr(samples, nchar(samples) - 2, nchar(samples))
-  print(data.frame(sample_id, spec, geo))
+  samples_clean <- ifelse(
+  grepl("PL17", samples),
+  sapply(strsplit(samples, "_"), function(x) paste(x[1:2], collapse = "_")),
+  sub("_.*", "", samples)
+)
+  spec <- sub("^[0-9]+([a-z]{3}).*", "\\1", samples_clean)
+  geo <- sub(".*([a-z]{3})$", "\\1", samples_clean)
+  print(head(data.frame(samples_clean, spec, geo)))
 
   pop <- if (color_by == "species") spec else geo
   print(pop)
@@ -1170,15 +1173,15 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   keep_idx <- pop %in% keep_pops
   pop <- pop[keep_idx]
   geno <- geno[keep_idx, , drop = FALSE]
-  sample_id <- sample_id[keep_idx]
-  print(sample_id)
+  samples_clean <- samples_clean[keep_idx]
+  print(samples_clean)
 
   # Assign rownames
-  rownames(geno) <- sample_id
+  rownames(geno) <- samples_clean
 
   # ---- Build sample_groups tibble for pairwise_fst ----
   sample_groups <- tibble(
-    sample = sample_id,
+    sample = samples_clean,
     group  = pop
   )
 
