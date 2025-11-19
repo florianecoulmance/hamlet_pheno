@@ -1169,60 +1169,51 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map) {
   keep_idx <- pop %in% keep_pops
   pop <- pop[keep_idx]
   geno <- geno[keep_idx, , drop = FALSE]
-  samples <- samples_clean[keep_idx]
-  print(samples)
+  samples_clean <- samples_clean[keep_idx]
+  print(samples_clean)
 
-  # ---- FAST FST via SNPRelate ----
-    # Create a temporary GDS file
-  gdsfile <- tempfile(fileext = ".gds")
-
-  snpgdsCreateGeno(
-    gdsfile,
-    genmat   = geno,
-    sample.id = samples,
-    snp.id   = colnames(geno),
-    snpfirstdim = FALSE  # markers in columns
+  # ---- Build sample_groups tibble for pairwise_fst ----
+  sample_groups <- tibble(
+    sample = samples_clean,
+    group  = pop
   )
 
-  gds <- snpgdsOpen(gdsfile)
+  # ---- Compute pairwise FST ----
+  fst_mat <- pairwise_fst(geno, sample_groups)
+  print(fst_mat)
 
-  pop <- factor(pop)
-  print(pop)
-  fst_out <- snpgdsFst(gds, population = pop, method = "W&C84")
-
-  snpgdsClose(gds)
-  print(head(fst_out, 1))
-  print(fst_out$Fst)
-
-
-  # fst_df <- fst_mat %>%
-  #   as.data.frame() %>%
-  #   rownames_to_column("pop1") %>%
-  #   pivot_longer(-pop1, names_to = "pop2", values_to = "fst") %>%
-  #   filter(pop1 != pop2)   # remove diagonal
-
-  fst_dt <- as.data.table(fst_out$Fst)
-  setnames(fst_dt, "Fst", "fst")
-
-  # dcast to matrix format
-  fst_mat <- dcast(
-      fst_dt,
-      pop1 ~ pop2,
-      value.var = "fst"
-  )
-
-  cols_to_modify <- setdiff(names(fst_mat), "pop1")
-  fst_mat_mat <- as.matrix(fst_mat[, ..cols_to_modify])
-
-  # remove upper triangle
-  fst_mat_mat[upper.tri(fst_mat_mat)] <- NA
-  print(fst_mat_mat)
-
-  # assign back
-  fst_mat[, (cols_to_modify) := as.data.table(fst_mat_mat)]
-
-  fst_melt <- melt(fst_mat, id.vars = "pop1")
+  # ---- Reshape for plotting ----
+  fst_dt <- as.data.table(fst_mat, keep.rownames = "pop1")
+  print(fst_dt)
+  fst_melt <- melt(fst_dt, id.vars = "pop1", variable.name = "pop2", value.name = "fst")
   print(fst_melt)
+  fst_melt[fst_melt$pop1 == fst_melt$pop2, "fst"] <- NA  # remove diagonal
+  print(fst_melt)
+
+
+  # fst_dt <- as.data.table(fst_out$Fst)
+  # print(fst_dt)
+  # setnames(fst_dt, "Fst", "fst")
+
+  # # dcast to matrix format
+  # fst_mat <- dcast(
+  #     fst_dt,
+  #     pop1 ~ pop2,
+  #     value.var = "fst"
+  # )
+
+  # cols_to_modify <- setdiff(names(fst_mat), "pop1")
+  # fst_mat_mat <- as.matrix(fst_mat[, ..cols_to_modify])
+
+  # # remove upper triangle
+  # fst_mat_mat[upper.tri(fst_mat_mat)] <- NA
+  # print(fst_mat_mat)
+
+  # # assign back
+  # fst_mat[, (cols_to_modify) := as.data.table(fst_mat_mat)]
+
+  # fst_melt <- melt(fst_mat, id.vars = "pop1")
+  # print(fst_melt)
 
 
   # Build plot
