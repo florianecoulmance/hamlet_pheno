@@ -1195,9 +1195,9 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map, label) {
   fst_mat <- pairwise_fst(geno, sample_groups)
   # print(fst_mat$Fst)
   # print(fst_mxat)
-
-  FST_RESULTS[[label]] <- fst_mat$Fst
-
+  print(paste("label inside function =", label))
+  FST_RESULTS[[label]] <<- fst_mat$Fst
+  print(names(FST_RESULTS))
 
   # ---- Reshape for plotting ----
   fst_dt <- as.data.table(fst_mat$Fst)
