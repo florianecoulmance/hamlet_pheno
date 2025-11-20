@@ -482,8 +482,8 @@ fst_locations_df <- map_df(
 )
 print(fst_locations_df)
 
-p1 <- ggplot(fst_species_df, aes(x = dataset, y = fst)) + geom_boxplot()
-p2 <- ggplot(fst_locations_df, aes(x = dataset, y = fst)) + geom_boxplot()
+p1 <- ggplot(fst_species_df, aes(x = dataset, y = Fst)) + geom_boxplot()
+p2 <- ggplot(fst_locations_df, aes(x = dataset, y = Fst)) + geom_boxplot()
 
 figureS20 <- ggarrange(
   p1,

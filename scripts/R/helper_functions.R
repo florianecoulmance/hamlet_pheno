@@ -1201,18 +1201,17 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map, label) {
 
   # ---- Reshape for plotting ----
   fst_dt <- as.data.table(fst_mat$Fst)
-  setnames(fst_dt, "Fst", "fst")         # rename column
   # print(fst_dt)
   # Remove diagonal
-  fst_dt[pop1 == pop2, fst := NA]
+  fst_dt[pop1 == pop2, Fst := NA]
   # print(fst_dt)
 
   # Build plot
   p <- ggplot() +
-    geom_tile(data = fst_dt, aes(x = pop1, y = pop2, fill = fst), color = "transparent") +
+    geom_tile(data = fst_dt, aes(x = pop1, y = pop2, fill = Fst), color = "transparent") +
     scale_fill_gradient(low = "#F3D6F3", high = "#A964B7", na.value = "transparent", name = "FST") +
     geom_text(data = fst_dt,
-              aes(x = pop1, y = pop2, label = round(fst, 3)),
+              aes(x = pop1, y = pop2, label = round(Fst, 3)),
               size = 4, color = "black", fontface="bold") +
     labs(x = "", y = "", fill = "FST") +
     scale_x_discrete(position = "top") +
