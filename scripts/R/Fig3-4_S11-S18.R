@@ -370,15 +370,15 @@ ggsave(
 ########## FIGURE S16 ###################
 # Per location FST
 figureS16 <- ggarrange(
-  results[["bel"]][["fst"]],
-  results[["boc"]][["fst"]],
-  results[["hon"]][["fst"]],
-  results[["pri"]][["fst"]],
-  results[["arc"]][["fst"]],
-  results[["bar"]][["fst"]],
-  results[["flk"]][["fst"]],
-  results[["gun"]][["fst"]],
-  results[["qui"]][["fst"]],
+  FST_RESULTS[["bel"]][["fst"]],
+  FST_RESULTS[["boc"]][["fst"]],
+  FST_RESULTS[["hon"]][["fst"]],
+  FST_RESULTS[["pri"]][["fst"]],
+  FST_RESULTS[["arc"]][["fst"]],
+  FST_RESULTS[["bar"]][["fst"]],
+  FST_RESULTS[["flk"]][["fst"]],
+  FST_RESULTS[["gun"]][["fst"]],
+  FST_RESULTS[["qui"]][["fst"]],
   ncol = 3,
   nrow = 3,
   labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)")
@@ -399,7 +399,7 @@ ggsave(
 ########## FIGURE S17 ###################
 # Combined genotypic space: FST
 
-figureS17 <- results[["all_s"]][["fst"]]
+figureS17 <- FST_RESULTS[["all_s"]][["fst"]]
 
 # Save as PNG (A4 size)
 ggsave(
@@ -416,16 +416,16 @@ ggsave(
 ########## FIGURE S18 ###################
 # Per species: FST
 figureS18 <- ggarrange(
-  results[["pue"]][["fst"]],
-  results[["nig"]][["fst"]],
-  results[["uni"]][["fst"]],
-  results[["abe"]][["fst"]],
-  results[["aff"]][["fst"]],
-  results[["chl"]][["fst"]],
-  results[["gem"]][["fst"]],
-  results[["gum"]][["fst"]],
-  results[["ind"]][["fst"]],
-  results[["tan"]][["fst"]],
+  FST_RESULTS[["pue"]][["fst"]],
+  FST_RESULTS[["nig"]][["fst"]],
+  FST_RESULTS[["uni"]][["fst"]],
+  FST_RESULTS[["abe"]][["fst"]],
+  FST_RESULTS[["aff"]][["fst"]],
+  FST_RESULTS[["chl"]][["fst"]],
+  FST_RESULTS[["gem"]][["fst"]],
+  FST_RESULTS[["gum"]][["fst"]],
+  FST_RESULTS[["ind"]][["fst"]],
+  FST_RESULTS[["tan"]][["fst"]],
   ncol = 2,
   nrow = 5,
   labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)", "(j)")
@@ -446,7 +446,7 @@ ggsave(
 ########## FIGURE S19 ###################
 # Combined genotypic space: FST
 
-figureS19 <- results[["all_l"]][["fst"]]
+figureS19 <- FST_RESULTS[["all_l"]][["fst"]]
 
 # Save as PNG (A4 size)
 ggsave(
