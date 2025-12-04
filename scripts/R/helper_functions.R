@@ -161,7 +161,7 @@ legend_plot <- function(info_table, gen = FALSE) {
   # logo
   geom_image(aes(x = col, y = y_logo, image = link), size = 0.6, asp = 1.1) +
   # species name
-  geom_text(aes(x = col + 0.01, y = y_text, label = paste0("H. ", Species)), size = 6, vjust = 1, fontface = "italic") +
+  geom_text(aes(x = col + 0.01, y = y_text, label = paste0("H. ", Species)), size = 5, vjust = 1, fontface = "italic") +
   theme_void() +
   theme(plot.margin = margin(0.3,0,5,0)) +
   coord_cartesian(clip = "off")
