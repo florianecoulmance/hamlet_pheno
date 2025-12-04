@@ -305,8 +305,8 @@ figureS6 <- ggarrange(
 # Save Figure S6 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
        plot = figureS6,
-       width = 10,    # A4 width in inches
-       height = 12,  # A4 height in inches
+       width = 12,    # A4 width in inches
+       height = 14,  # A4 height in inches
        units = "in",
        dpi = 150,       # good quality but light (~1 MB)
        type = "cairo-png" # smoother text rendering, smaller file

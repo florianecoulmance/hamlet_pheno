@@ -161,7 +161,7 @@ legend_plot <- function(info_table, gen = FALSE) {
   # logo
   geom_image(aes(x = col, y = y_logo, image = link), size = 0.6, asp = 1.1) +
   # species name
-  geom_text(aes(x = col, y = y_text, label = paste0("H. ", Species)), size = 4.5, vjust = 1, fontface = "italic") +
+  geom_text(aes(x = col - 0.15, y = y_text, label = paste0("H. ", Species)), size = 4.5, vjust = 1, fontface = "italic") +
   theme_void() +
   theme(plot.margin = margin(0.3,0,5,0)) +
   coord_cartesian(clip = "off")
@@ -738,7 +738,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
   } else {      # ---- Annotate with location title ----
     t_annot <- annotate_figure(
       t,
-      top = text_grob(title_val, color = "black", face = "bold", size = 28,
+      top = text_grob(title_val, color = "black", face = "bold", size = 26,
                       x = unit(5.5, "pt"), hjust = -0.8)
     )
     return(t_annot)
