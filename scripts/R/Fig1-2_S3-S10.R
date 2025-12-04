@@ -197,7 +197,7 @@ figure1 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(8, 0.3, 1, 0.3)#, widths = c (3,1)
+  heights = c(9, 0.3, 1, 0.1)#, widths = c (3,1)
   )
 
 # Save Figure 1 as A4 PNG, optimized for small file size
@@ -219,14 +219,14 @@ figure2 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(8, 0.3, 1, 0.3)
+  heights = c(8, 0.3, 1, 0.1)
   )
   
 ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
   width = 10, 
-  height = 11, 
+  height = 13, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -256,7 +256,7 @@ figureS4 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(8, 0.3, 1, 0.3)
+  heights = c(9, 0.3, 1, 0.1)
   )
 
 # Save Figure S4 as A4 PNG, optimized for small file size
@@ -305,7 +305,7 @@ figureS6 <- ggarrange(
 # Save Figure S6 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
        plot = figureS6,
-       width = 10,    # A4 width in inches
+       width = 11.5,    # A4 width in inches
        height = 14,  # A4 height in inches
        units = "in",
        dpi = 150,       # good quality but light (~1 MB)
@@ -356,7 +356,7 @@ figureS8 <- ggarrange(
 ggsave(
   filename = file.path(figure_path, "FigS8_pAll.png"),
   plot = figureS8,
-  width = 10,    # A4 width in inches
+  width = 12,    # A4 width in inches
   height = 16,  # A4 height in inches
   units = "in",
   dpi = 150,
@@ -372,7 +372,7 @@ figureS9 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(8, 0.3, 1, 0.3)
+  heights = c(8, 0.3, 1, 0.1)
 )
 
 # Save as PNG (A4 size)
@@ -380,7 +380,7 @@ ggsave(
   filename = file.path(figure_path, "FigS9_pAllSUP.png"),
   plot = figureS9,
   width = 10,    # A4 width in inches
-  height = 11,  # A4 height in inches
+  height = 13,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
