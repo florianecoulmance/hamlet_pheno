@@ -205,7 +205,7 @@ leg_g <- legend_geo(geo_table, gen = TRUE)
 ########## FIGURE 3 ###################
 # PCA plots for all locations with legend
 all_pcas <- lapply(results_locations, `[[`, "pca_f") # extract per location pcas
-pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, labels=c("(a)","(b)","(c)","(d)"), label_size=30) # bundle location pcas in one plot
+pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, labels=c("(a)","(b)","(c)","(d)"), label_size=25) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
 figure3 <- ggarrange(
   pca_grid,
@@ -241,7 +241,7 @@ figure4 <- ggarrange(
   nrow = 3,
   ncol = 1,
   labels = c("(a)", "(b)", "(c)"),
-  font.label=list(color="black",size=30),
+  font.label=list(color="black",size=20),
   common.legend=T,
   legend = "right"
   )
@@ -272,7 +272,7 @@ ggsave(
 ########## FIGURE S12 ###################
 # Other PCs combination for genotypes per location
 all_sup <- lapply(results_locations, `[[`, "pca_s") # extract per location pcas
-sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)"), label_size=30) # bundle location pcas in one plot
+sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)"), label_size=25) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
 figureS12 <- ggarrange(
   sup_grid,
@@ -296,7 +296,7 @@ ggsave(filename = file.path(figure_path, "FigS12_gLocSUP.png"),
 ########## FIGURE S13 ###################
 # PERMANOVA heatmaps for each location
 all_perm <- lapply(results_locations, `[[`, "permanova") # extract per location pcas
-figureS13 <- plot_grid(plotlist = all_perm, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)"), label_size=30) # bundle location pcas in one plot
+figureS13 <- plot_grid(plotlist = all_perm, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)"), label_size=20) # bundle location pcas in one plot
 
 # Save Figure S13 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS13_gLocPERM.png"),
@@ -316,8 +316,8 @@ figureS14 <- results[["all_s"]][["permanova"]]
 ggsave(
   filename = file.path(figure_path, "FigS14_gAllPERM.png"),
   plot = figureS14,
-  width = 12,    # A4 width in inches
-  height = 12,  # A4 height in inches
+  width = 8,    # A4 width in inches
+  height = 8,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -354,7 +354,7 @@ figureS15 <- plot_grid(
   leg_g,
   ncol = 1,
   nrow = 5,
-  rel_heights = c(5, 5, 5, 0.5, 1),
+  rel_heights = c(6, 6, 6, 0.2, 1),
   rel_widths = c(20, 20, 20, 20, 16),
   labels = c("(a)", "(b)", "(c)", ""),
   label_size=30
@@ -424,16 +424,22 @@ fst_all_df <- fst_all_df %>%
 
 print(fst_all_df)
 
-figureS16 <- ggplot(fst_all_df, aes(x = dataset, y = Fst, fill = group)) +
+figureS16 <- ggplot(fst_all_df, aes(x = group, y = Fst, fill = group)) +
   geom_violin(trim = FALSE) +
   geom_boxplot(width = 0.15, outlier.shape = NA, fill = "transparent") +
   geom_jitter(width = 0.1, alpha = 0.6, size = 1) +
-  theme_bw() +
+  scale_fill_manual(values=c("#64CAD0", "#D06495", "#D09F64"))
+  theme_classic() +
   labs(
     x = "",
     y = "Pairwise FST"
   ) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(
+    axis.text.x = element_blank(),
+    legend.title = element_blank(),
+    legend.position = "bottom"
+  ) +
+  guides(color = guide_legend(nrow = 1))
 
 # Save as PNG (A4 size)
 ggsave(
@@ -462,7 +468,7 @@ figureS17 <- ggarrange(
   ncol = 3,
   nrow = 3,
   labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)"),
-  font.label=list(color="black",size=30)
+  font.label=list(color="black",size=20)
 )
 
 # Save as PNG (A4 size)
@@ -510,7 +516,7 @@ figureS19 <- ggarrange(
   ncol = 2,
   nrow = 5,
   labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)", "(j)"),
-  font.label=list(color="black",size=30)
+  font.label=list(color="black",size=20)
 )
 
 # Save as PNG (A4 size)
