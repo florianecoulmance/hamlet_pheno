@@ -196,14 +196,14 @@ figure1 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(10, 0.3, 3)#, widths = c (3,1)
+  heights = c(8, 0.3, 1)#, widths = c (3,1)
   )
 
 # Save Figure 1 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
   plot = figure1,
-  width = 16,    # A4 width in inches
-  height = 26,  # A4 height in inches
+  width = 18.5,    # A4 width in inches
+  height = 25,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -217,7 +217,7 @@ figure2 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(8, 0.3, 2)
+  heights = c(8, 0.5, 1)
   )
   
 ggsave(
@@ -253,14 +253,14 @@ figureS4 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(10, 0.3, 3)
+  heights = c(8, 0.3, 1)
   )
 
 # Save Figure S4 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
   plot = figureS4,
-  width = 16,    # A4 width in inches
-  height = 26,  # A4 height in inches
+  width = 18.5,    # A4 width in inches
+  height = 25,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -295,7 +295,7 @@ figureS6 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(8, 0.3, 2)
+  heights = c(8, 0.3, 1)
   )
 
 # Save Figure S6 as A4 PNG, optimized for small file size
@@ -343,7 +343,7 @@ figureS8 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(9, 0.3, 1) 
+  heights = c(9, 0.2, 1) 
 )
 
 
@@ -351,7 +351,7 @@ figureS8 <- ggarrange(
 ggsave(
   filename = file.path(figure_path, "FigS8_pAll.png"),
   plot = figureS8,
-  width = 14.2,    # A4 width in inches
+  width = 14.5,    # A4 width in inches
   height = 20,  # A4 height in inches
   units = "in",
   dpi = 150,
@@ -366,7 +366,7 @@ figureS9 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(10, 0.3, 2.5)
+  heights = c(8, 0.5, 1)
 )
 
 # Save as PNG (A4 size)
