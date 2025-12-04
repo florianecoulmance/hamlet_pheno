@@ -158,7 +158,7 @@ for(name in names(datasets)) {
 pheno_t <- results[["pheno"]][["p_tally"]]
 pheno_m <- results[["pheno"]][["p_map"]]
 
-figureS1 <- ggarrange(pheno_t, pheno_m, ncol = 1, nrow = 2, labels=c("(a)","(b)"))
+figureS1 <- ggarrange(pheno_t, pheno_m, ncol = 1, nrow = 2, labels=c("(a)","(b)"), font.label=list(color="black",size=30), heights = c(14,12))
 
 ggsave(filename = file.path(figure_path, "FigS1_pSampling.png"),
   plot = figureS1,
@@ -173,7 +173,7 @@ ggsave(filename = file.path(figure_path, "FigS1_pSampling.png"),
 geno_t <- results[["geno"]][["p_tally"]]
 geno_m <- results[["geno"]][["p_map"]]
 
-figureS2 <- ggarrange(geno_t, geno_m, ncol = 1, nrow = 2, labels=c("(a)","(b)"))
+figureS2 <- ggarrange(geno_t, geno_m, ncol = 1, nrow = 2, labels=c("(a)","(b)"), font.label=list(color="black",size=30), heights = c(14,12))
 ggsave(filename = file.path(figure_path, "FigS2_gSampling.png"),
   plot = figureS2,
   width = 18.5,    # A4 width in inches

@@ -189,7 +189,7 @@ leg_g <- legend_geo(geo_table)
 ########## FIGURE 1 ###################
 # PCA plots for all locations with legend
 all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
-pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
+pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
 figure1 <- ggarrange(
   pca_grid,
@@ -246,7 +246,7 @@ ggsave(
 ########## FIGURE S4 ###################
 # Other PCs combination for phenotypes per location
 all_sup <- lapply(results_no_overall, `[[`, "sup_pca") # extract per location supplementary pcas
-sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
+sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30) # bundle location pcas in one plot
 # Combine supplementary PCA grid with legend at the bottom
 figureS4 <- ggarrange(
   sup_grid,
@@ -269,7 +269,7 @@ ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
 ########## FIGURE S5 ###################
 # PERMANOVA heatmaps for each location
 all_perm <- lapply(results_no_overall, `[[`, "permanova") # extract per location pcas
-perm_grid <- plot_grid(plotlist = all_perm, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location permanovas in one plot
+perm_grid <- plot_grid(plotlist = all_perm, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30) # bundle location permanovas in one plot
 # Combine permanova grid with legend at the bottom
 figureS5 <- ggarrange(
   perm_grid
@@ -288,7 +288,7 @@ ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
 ########## FIGURE S6 ###################
 # Hierarchical clustering plots for all locations with legend
 all_hier <- lapply(results_no_overall, `[[`, "hclust") # extract per location pcas
-hier_grid <- plot_grid(plotlist = all_hier, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
+hier_grid <- plot_grid(plotlist = all_hier, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30) # bundle location pcas in one plot
 # Combine hierarchical clustering grid with legend at the bottom
 figureS6 <- ggarrange(
   hier_grid,
@@ -311,7 +311,7 @@ ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
 ########## FIGURE S7 ###################
 # Heatmap PC images for each location
 all_heat <- lapply(results_no_overall, `[[`, "heatmap") # extract per location pcas
-heat_grid <- plot_grid(plotlist = all_heat, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)")) # bundle location pcas in one plot
+heat_grid <- plot_grid(plotlist = all_heat, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30) # bundle location pcas in one plot
 # Combine heatmaps grid with legend at the bottom
 figureS7 <- ggarrange(
   heat_grid
@@ -334,10 +334,10 @@ hier <- results[["all"]][["hclust"]]
 heat <- results[["all"]][["heatmap"]]
 
 # # Bottom row: hier + heat
-bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"))
+bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"), font.label=list(color="black",size=30))
 
 # Combine top (perm) with bottom row
-figureS8 <- ggarrange(perm, bottom_row, nrow = 2, ncol = 1, labels=c("(a)",""))
+figureS8 <- ggarrange(perm, bottom_row, nrow = 2, ncol = 1, labels=c("(a)",""), font.label=list(color="black",size=30))
 figureS8 <- ggarrange(
   figureS8,
   NULL,
@@ -418,7 +418,7 @@ perm_ind <- results[["ind"]][["permanova"]]
 hier_ind <- results[["ind"]][["hclust"]]
 ind <- plot_grid(pca_ind, heat_ind, perm_ind, hier_ind, ncol = 4, rel_widths = c(1, 1, 1, 1))
 
-figureS10 <- ggarrange(pue, nig, uni, chl, abe, ind, nrow = 6, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"))
+figureS10 <- ggarrange(pue, nig, uni, chl, abe, ind, nrow = 6, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), font.label=list(color="black",size=30))
 figureS10 <- ggarrange(
   figureS10,
   leg_g,

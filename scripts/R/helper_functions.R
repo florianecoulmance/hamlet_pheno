@@ -161,7 +161,7 @@ legend_plot <- function(info_table, gen = FALSE) {
   # logo
   geom_image(aes(x = col, y = y_logo, image = link), size = 0.7, asp = 1.1) +
   # species name
-  geom_text(aes(x = col + 0.01, y = y_text, label = paste0("H. ", Species)), size = 4, vjust = 1, fontface = "italic") +
+  geom_text(aes(x = col + 0.01, y = y_text, label = paste0("H. ", Species)), size = 6, vjust = 1, fontface = "italic") +
   theme_void() +
   theme(plot.margin = margin(0.3,0,5,0)) +
   coord_cartesian(clip = "off")
@@ -1519,7 +1519,7 @@ plot_species_geo_overview <- function(dat, species_info, geo_table) {
   t <- unique(rbind(test1, test2))
   # print(t)
 
-  sum <- textGrob(sum(counts$n), gp = gpar(fontsize = 12, fontface = "bold"))
+  sum <- textGrob(sum(counts$n), gp = gpar(col="black", fontsize = 22, fontface = "bold"))
 
   # Order species within groups
   order_sp <- t %>%
@@ -1579,6 +1579,7 @@ plot_species_geo_overview <- function(dat, species_info, geo_table) {
 
   # Create a named vector for labels
   x_labels <- setNames(geo_table_filtered$Locations, geo_table_filtered$geo)
+  print(x_labels)
   
   # Create plot
   p <- t %>%
@@ -1588,20 +1589,31 @@ plot_species_geo_overview <- function(dat, species_info, geo_table) {
     ) %>%
     ggplot(aes(x = geo, y = spec)) +
     geom_count(aes(size = n, color = spec), show.legend = FALSE) +
-    geom_text(aes(label = n), size = 4, nudge_x = 0.4, color = "gray50") +
+    geom_text(aes(label = n), size = 6, nudge_x = 0.4, color = "gray50") +
     geom_vline(xintercept = region_boundaries + 0.6, # remove last
              col = "gray80", linetype = "dashed") +
     geom_hline(yintercept = 1.5, col = "gray80", linetype = "dashed") +
     scale_color_manual(values = color_map) +
     scale_size_area(max_size = 20) +
     # scale_y_discrete(labels = label_map) +
-    scale_x_discrete(labels = x_labels) +  # <-- this maps geo codes to full location names
+    scale_x_discrete(labels = function(geo) {
+                                ifelse(
+                                  is.na(x_labels[geo]), 
+                                  "Total",   # keep NA labels blank
+                                  ifelse(
+                                    seq_along(x_labels[geo]) %% 2 == 0,
+                                    paste0("\n", x_labels[geo]),
+                                    paste0(x_labels[geo], "\n")
+                                  )
+                                )
+                              }
+                    ) +  # <-- this maps geo codes to full location names
     coord_cartesian(clip = "off") +
     labs(title = NULL, x = NULL, y = NULL) +
     # annotate region names dynamically
     geom_text(data = region_labels,
             aes(x = mid_x, y = length(unique(t$spec)) + 0.8, label = Region),
-            color = "gray20", size = 6) +
+            color = "gray20", size = 7) +
     annotation_custom(sum, xmin = max(region_boundaries) + 1, xmax = max(region_boundaries) + 1, ymin = 1, ymax = 1) +
     # annotate(geom = "text", 
     #          x = c(1.5, 4, 6.8), 
@@ -1611,7 +1623,7 @@ plot_species_geo_overview <- function(dat, species_info, geo_table) {
     theme_minimal() +
     theme(
       panel.grid.major = element_blank(),
-      axis.text.x = element_text(face = "bold"),
+      axis.text.x = element_text(face = "bold", size = 15),
       axis.text.y = element_blank(),
       plot.margin = margin(t = 0.5, r = 0.5, b = 0.25, l = 1.5, unit = "cm")
     )
@@ -1623,14 +1635,14 @@ plot_species_geo_overview <- function(dat, species_info, geo_table) {
   p <- p +
   geom_image(
     data = species_info_subset,
-    aes(x = -0.5, y = spec, image = link),
+    aes(x = -0.95, y = spec, image = link),
     inherit.aes = FALSE,
-    size = 0.06, by = "width"
+    size = 0.08, by = "width"
   ) +
   geom_text(
     data = species_info_subset,
-    aes(x = -0.15, y = spec, label = paste0("H. ", Species)),
-    hjust = 0, size = 3.2, fontface = "italic"
+    aes(x = -0.85, y = spec, label = paste0("H. ", Species)),
+    hjust = 0, vjust = 2, size = 5, fontface = "italic"
   )
 
   return(p)                                    
