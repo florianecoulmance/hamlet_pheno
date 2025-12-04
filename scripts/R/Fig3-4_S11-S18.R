@@ -36,6 +36,7 @@ library(hierfstat)
 library(SNPRelate)
 library(genoscapeRtools)
 library(gridExtra)
+library(purrr)
 
 # ############################
 # CONFIG
@@ -204,21 +205,22 @@ leg_g <- legend_geo(geo_table, gen = TRUE)
 ########## FIGURE 3 ###################
 # PCA plots for all locations with legend
 all_pcas <- lapply(results_locations, `[[`, "pca_f") # extract per location pcas
-pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, labels=c("(a)","(b)","(c)","(d)")) # bundle location pcas in one plot
+pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, labels=c("(a)","(b)","(c)","(d)"), label_size=30) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
 figure3 <- ggarrange(
   pca_grid,
   NULL,
   leg,
-  nrow = 3, 
-  heights = c(8, 0.3, 1)
+  NULL,
+  nrow = 4, 
+  heights = c(8, 0.3, 1, 0.05)
 ) # adjust if legend is too big/small
 
 # Save Figure 3 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig3_gLocPCA.png"),
   plot = figure3,
-  width = 16,    # A4 width in inches
-  height = 17.5,  # A4 height in inches
+  width = 12,    # A4 width in inches
+  height = 14,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -239,6 +241,7 @@ figure4 <- ggarrange(
   nrow = 3,
   ncol = 1,
   labels = c("(a)", "(b)", "(c)"),
+  font.label=list(color="black",size=30),
   common.legend=T,
   legend = "right"
   )
@@ -246,8 +249,8 @@ figure4 <- ggarrange(
 ggsave(
   filename = file.path(figure_path, "Fig4_gAllPCA.png"),
   plot = figure4,
-  width = 12, 
-  height = 24, 
+  width = 8, 
+  height = 16, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -269,21 +272,22 @@ ggsave(
 ########## FIGURE S12 ###################
 # Other PCs combination for genotypes per location
 all_sup <- lapply(results_locations, `[[`, "pca_s") # extract per location pcas
-sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)")) # bundle location pcas in one plot
+sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)"), label_size=30) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
 figureS12 <- ggarrange(
   sup_grid,
   NULL,
   leg,
-  nrow = 3,
-  heights = c(8, 0.3, 1)
+  NULL,
+  nrow = 4,
+  heights = c(8, 0.3, 1, 0.05)
 ) # adjust if legend is too big/small
 
 # Save Figure S12 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS12_gLocSUP.png"),
   plot = figureS12,
-  width = 16,    # A4 width in inches
-  height = 17.5,  # A4 height in inches
+  width = 12,    # A4 width in inches
+  height = 14,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -292,13 +296,13 @@ ggsave(filename = file.path(figure_path, "FigS12_gLocSUP.png"),
 ########## FIGURE S13 ###################
 # PERMANOVA heatmaps for each location
 all_perm <- lapply(results_locations, `[[`, "permanova") # extract per location pcas
-figureS13 <- plot_grid(plotlist = all_perm, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)")) # bundle location pcas in one plot
+figureS13 <- plot_grid(plotlist = all_perm, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)"), label_size=30) # bundle location pcas in one plot
 
 # Save Figure S13 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS13_gLocPERM.png"),
        plot = figureS13,
-       width = 14,    # A4 width in inches
-       height = 14,  # A4 height in inches
+       width = 10,    # A4 width in inches
+       height = 10,  # A4 height in inches
        units = "in",
        dpi = 150,       # good quality but light (~1 MB)
        type = "cairo-png" # smoother text rendering, smaller file
@@ -312,8 +316,8 @@ figureS14 <- results[["all_s"]][["permanova"]]
 ggsave(
   filename = file.path(figure_path, "FigS14_gAllPERM.png"),
   plot = figureS14,
-  width = 15,    # A4 width in inches
-  height = 15,  # A4 height in inches
+  width = 12,    # A4 width in inches
+  height = 12,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -352,7 +356,8 @@ figureS15 <- plot_grid(
   nrow = 5,
   rel_heights = c(5, 5, 5, 0.5, 1),
   rel_widths = c(20, 20, 20, 20, 16),
-  labels = c("(a)", "(b)", "(c)", "")
+  labels = c("(a)", "(b)", "(c)", ""),
+  label_size=30
   )
 
 # Save as PNG (A4 size)
@@ -368,102 +373,10 @@ ggsave(
 
 
 ########## FIGURE S16 ###################
-# Per location FST
-figureS16 <- ggarrange(
-  results[["bel"]][["fst"]],
-  results[["boc"]][["fst"]],
-  results[["hon"]][["fst"]],
-  results[["pri"]][["fst"]],
-  results[["arc"]][["fst"]],
-  results[["bar"]][["fst"]],
-  results[["flk"]][["fst"]],
-  results[["gun"]][["fst"]],
-  results[["qui"]][["fst"]],
-  ncol = 3,
-  nrow = 3,
-  labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)")
-)
-
-# Save as PNG (A4 size)
-ggsave(
-  filename = file.path(figure_path, "FigS16_gLocFST.png"),
-  plot = figureS16,
-  width = 14,    # A4 width in inches
-  height = 12,  # A4 height in inches
-  units = "in",
-  dpi = 150,
-  type = "cairo-png"
-)
-
-
-########## FIGURE S17 ###################
-# Combined genotypic space: FST
-
-figureS17 <- results[["all_s"]][["fst"]]
-
-# Save as PNG (A4 size)
-ggsave(
-  filename = file.path(figure_path, "FigS17_gAllsFST.png"),
-  plot = figureS17,
-  width = 15,    # A4 width in inches
-  height = 15,  # A4 height in inches
-  units = "in",
-  dpi = 150,
-  type = "cairo-png"
-)
-
-
-########## FIGURE S18 ###################
-# Per species: FST
-figureS18 <- ggarrange(
-  results[["pue"]][["fst"]],
-  results[["nig"]][["fst"]],
-  results[["uni"]][["fst"]],
-  results[["abe"]][["fst"]],
-  results[["aff"]][["fst"]],
-  results[["chl"]][["fst"]],
-  results[["gem"]][["fst"]],
-  results[["gum"]][["fst"]],
-  results[["ind"]][["fst"]],
-  results[["tan"]][["fst"]],
-  ncol = 2,
-  nrow = 5,
-  labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)", "(j)")
-)
-
-# Save as PNG (A4 size)
-ggsave(
-  filename = file.path(figure_path, "FigS18_gSpeFST.png"),
-  plot = figureS18,
-  width = 14,    # A4 width in inches
-  height = 19.5,  # A4 height in inches
-  units = "in",
-  dpi = 150,
-  type = "cairo-png"
-)
-
-
-########## FIGURE S19 ###################
-# Combined genotypic space: FST
-
-figureS19 <- results[["all_l"]][["fst"]]
-
-# Save as PNG (A4 size)
-ggsave(
-  filename = file.path(figure_path, "FigS19_gAlllFST.png"),
-  plot = figureS19,
-  width = 15,    # A4 width in inches
-  height = 15,  # A4 height in inches
-  units = "in",
-  dpi = 150,
-  type = "cairo-png"
-)
-
-
-########## FIGURE S20 ###################
 # FST boxplots
-fst_species <- FST_RESULTS[names(FST_RESULTS) %in% c("all_s", "hon", "bel", "boc", "pri", "arc", "bar", "flk", "gun", "liz", "qui")]
-fst_locations <- FST_RESULTS[names(FST_RESULTS) %in% c("all_l", "pue", "nig", "uni", "abe", "aff", "chl", "gem", "gum", "ind", "tan")]
+fst_species <- FST_RESULTS[names(FST_RESULTS) %in% "all_s"]
+fst_symp <- FST_RESULTS[names(FST_RESULTS) %in% c("hon", "bel", "boc", "pri", "arc", "bar", "flk", "gun", "qui")]
+fst_locations <- FST_RESULTS[names(FST_RESULTS) %in% c("atl", "pue", "nig", "uni", "abe", "aff", "chl", "gem", "gum", "ind", "tan")]
 
 # for (nm in names(fst_species)) {
 #   print(nm)
@@ -476,30 +389,154 @@ fst_species_df <- map_df(
 )
 print(fst_species_df)
 
+fst_symp_df <- map_df(
+  names(fst_symp),
+  ~ fst_symp[[.x]] %>% mutate(dataset = .x)
+)
+print(fst_symp_df)
+
 fst_locations_df <- map_df(
   names(fst_locations),
   ~ fst_locations[[.x]] %>% mutate(dataset = .x)
 )
 print(fst_locations_df)
 
-p1 <- ggplot(fst_species_df, aes(x = dataset, y = Fst)) + geom_boxplot()
-p2 <- ggplot(fst_locations_df, aes(x = dataset, y = Fst)) + geom_boxplot()
+# Combine everything into one long df
+fst_all_df <- bind_rows(
+  fst_species_df,
+  fst_symp_df,
+  fst_locations_df
+)
 
-figureS20 <- ggarrange(
-  p1,
-  p2,
-  ncol = 1,
-  nrow = 2,
-  labels = c("(a)", "(b)")
+fst_all_df$dataset <- factor(
+  fst_all_df$dataset,
+  levels = c(names(fst_species), names(fst_symp), names(fst_locations))
+)
+
+fst_all_df <- fst_all_df %>%
+  mutate(group =
+    case_when(
+      dataset %in% names(fst_species) ~ "between species",
+      dataset %in% names(fst_symp) ~ "between sympatric species",
+      dataset %in% names(fst_locations) ~ "between locations per species"
+    )
+  )
+
+print(fst_all_df)
+
+figureS16 <- ggplot(fst_all_df, aes(x = dataset, y = Fst, fill = group)) +
+  geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.15, outlier.shape = NA, fill = "transparent") +
+  geom_jitter(width = 0.1, alpha = 0.6, size = 1) +
+  theme_bw() +
+  labs(
+    x = "",
+    y = "Pairwise FST"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Save as PNG (A4 size)
+ggsave(
+  filename = file.path(figure_path, "FigS16_gFSTviolin.png"),
+  plot = figureS16,
+  width = 10,    # A4 width in inches
+  height = 7,  # A4 height in inches
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
+
+
+########## FIGURE S17 ###################
+# Per location FST
+figureS17 <- ggarrange(
+  results[["bel"]][["fst"]],
+  results[["boc"]][["fst"]],
+  results[["hon"]][["fst"]],
+  results[["pri"]][["fst"]],
+  results[["arc"]][["fst"]],
+  results[["bar"]][["fst"]],
+  results[["flk"]][["fst"]],
+  results[["gun"]][["fst"]],
+  results[["qui"]][["fst"]],
+  ncol = 3,
+  nrow = 3,
+  labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)"),
+  font.label=list(color="black",size=30)
 )
 
 # Save as PNG (A4 size)
 ggsave(
-  filename = file.path(figure_path, "FigS20_gFSTbox.png"),
-  plot = figureS20,
-  width = 15,    # A4 width in inches
+  filename = file.path(figure_path, "FigS17_gLocFST.png"),
+  plot = figureS17,
+  width = 14,    # A4 width in inches
   height = 12,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
 )
+
+
+########## FIGURE S18 ###################
+# Combined genotypic space: FST
+
+figureS18 <- results[["all_s"]][["fst"]]
+
+# Save as PNG (A4 size)
+ggsave(
+  filename = file.path(figure_path, "FigS18_gAllsFST.png"),
+  plot = figureS18,
+  width = 15,    # A4 width in inches
+  height = 15,  # A4 height in inches
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
+
+
+########## FIGURE S19 ###################
+# Per species: FST
+figureS19 <- ggarrange(
+  results[["pue"]][["fst"]],
+  results[["nig"]][["fst"]],
+  results[["uni"]][["fst"]],
+  results[["abe"]][["fst"]],
+  results[["aff"]][["fst"]],
+  results[["chl"]][["fst"]],
+  results[["gem"]][["fst"]],
+  results[["gum"]][["fst"]],
+  results[["ind"]][["fst"]],
+  results[["tan"]][["fst"]],
+  ncol = 2,
+  nrow = 5,
+  labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)", "(j)"),
+  font.label=list(color="black",size=30)
+)
+
+# Save as PNG (A4 size)
+ggsave(
+  filename = file.path(figure_path, "FigS19_gSpeFST.png"),
+  plot = figureS19,
+  width = 14,    # A4 width in inches
+  height = 19.5,  # A4 height in inches
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
+
+
+# ########## FIGURE S19 ###################
+# # Combined genotypic space: FST
+
+# figureS19 <- results[["all_l"]][["fst"]]
+
+# # Save as PNG (A4 size)
+# ggsave(
+#   filename = file.path(figure_path, "FigS19_gAlllFST.png"),
+#   plot = figureS19,
+#   width = 15,    # A4 width in inches
+#   height = 15,  # A4 height in inches
+#   units = "in",
+#   dpi = 150,
+#   type = "cairo-png"
+# )
