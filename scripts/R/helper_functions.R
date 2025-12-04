@@ -570,7 +570,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     geom_tile(data = melt_F, aes(x = group1, y = variable, fill = value), color = "transparent") +
     scale_fill_gradient(low = "#ffedec", high = "#ff5c52", na.value = "transparent", name = "F") +
     geom_text(data = melt_p, aes(x = group1, y = variable,
-          label = ifelse(is.na(value), "", ifelse(value >= 0.05, "ns", ifelse(value >= 0.01, "*", ifelse(value >= 0.001, "**", "***"))))),
+          label = ifelse(is.na(value), "", ifelse(value <0.001, "***", ifelse(value <0.01, "**", ifelse(value <0.05, "*", "ns"))))),
       size = 10, color = "black", fontface="bold") +
     labs(x = "", y = "", fill = "F") +
     scale_x_discrete(position = "bottom") +

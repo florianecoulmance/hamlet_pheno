@@ -203,7 +203,7 @@ figure1 <- ggarrange(
 ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
   plot = figure1,
   width = 18.5,    # A4 width in inches
-  height = 25,  # A4 height in inches
+  height = 26,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -217,7 +217,7 @@ figure2 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(10, 0.3, 1)
+  heights = c(10, 0.3, 2.5)
   )
   
 ggsave(
@@ -260,7 +260,7 @@ figureS4 <- ggarrange(
 ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
   plot = figureS4,
   width = 18.5,    # A4 width in inches
-  height = 25,  # A4 height in inches
+  height = 26,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -295,7 +295,7 @@ figureS6 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(10, 0.3, 1)
+  heights = c(10, 0.3, 2.5)
   )
 
 # Save Figure S6 as A4 PNG, optimized for small file size
@@ -352,7 +352,7 @@ ggsave(
   filename = file.path(figure_path, "FigS8_pAll.png"),
   plot = figureS8,
   width = 14.2,    # A4 width in inches
-  height = 19,  # A4 height in inches
+  height = 20,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -366,7 +366,7 @@ figureS9 <- ggarrange(
   NULL,
   leg,
   nrow = 3,
-  heights = c(10, 0.3, 1)
+  heights = c(10, 0.3, 2.5)
 )
 
 # Save as PNG (A4 size)
@@ -423,7 +423,7 @@ figureS10 <- ggarrange(
   figureS10,
   leg_g,
   nrow = 2,
-  heights = c(10, 0.2)
+  heights = c(10, 0.5)
   )
 
 # Save as PNG (A4 size)
