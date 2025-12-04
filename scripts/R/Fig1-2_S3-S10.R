@@ -203,7 +203,7 @@ figure1 <- ggarrange(
 ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
   plot = figure1,
   width = 18.5,    # A4 width in inches
-  height = 27,  # A4 height in inches
+  height = 28,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
@@ -223,8 +223,8 @@ figure2 <- ggarrange(
 ggsave(
   filename = file.path(figure_path, "Fig2_pAllPCA.png"),
   plot = figure2,
-  width = 18, 
-  height = 21, 
+  width = 10, 
+  height = 16, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
