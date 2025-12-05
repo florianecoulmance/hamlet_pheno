@@ -428,7 +428,7 @@ figureS16 <- ggplot(fst_all_df, aes(x = group, y = Fst, fill = group)) +
   geom_violin(trim = FALSE) +
   geom_boxplot(width = 0.15, outlier.shape = NA, fill = "transparent") +
   geom_jitter(width = 0.1, alpha = 0.6, size = 1) +
-  scale_fill_manual(values=c("#64CAD0", "#D06495", "#D09F64"))
+  scale_fill_manual(values=c("#64CAD0", "#D06495", "#D09F64")) +
   theme_classic() +
   labs(
     x = "",
