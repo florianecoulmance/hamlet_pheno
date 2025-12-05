@@ -165,7 +165,7 @@ for(dat in names(dataset)) {
     # -----------------------------------
     # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
     #-----------------------------------
-    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "pue")) c(0.4, 0.7) else if(dat %in% c("all_s", "all_l")) c(0.2, 0.7) else "none")
+    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "uni")) c(0.4, 0.7) else if(dat %in% c("all_s", "all_l")) c(0.2, 0.7) else "none")
 
 
     # -----------------------------------
@@ -316,8 +316,8 @@ figureS14 <- results[["all_s"]][["permanova"]]
 ggsave(
   filename = file.path(figure_path, "FigS14_gAllPERM.png"),
   plot = figureS14,
-  width = 7,    # A4 width in inches
-  height = 7,  # A4 height in inches
+  width = 7.5,    # A4 width in inches
+  height = 7.5,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -364,8 +364,8 @@ figureS15 <- plot_grid(
 ggsave(
   filename = file.path(figure_path, "FigS15_gSpe.png"),
   plot = figureS15,
-  width = 14,    # A4 width in inches
-  height = 14,  # A4 height in inches
+  width = 15,    # A4 width in inches
+  height = 15,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -426,10 +426,10 @@ print(fst_all_df)
 
 figureS16 <- ggplot(fst_all_df, aes(x = group, y = Fst, fill = group)) +
   geom_violin(trim = FALSE) +
-  geom_boxplot(width = 0.05, outlier.shape = NA, fill = "white") +
   geom_jitter(aes(color = group), width = 0.05, alpha = 0.6, size = 1) +
+  geom_boxplot(width = 0.05, outlier.shape = NA, fill = "white") +
   scale_fill_manual(values=c("#64CAD0", "#D06495", "#D09F64")) +
-  scale_color_manual(values=c("#64CAD0", "#D06495", "#D09F64")) +
+  scale_color_manual(values=c("#1b4042ff", "#5b2a40ff", "#4e3a21ff")) +
   theme_minimal() +
   labs(
     x = "",
