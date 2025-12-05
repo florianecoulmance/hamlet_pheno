@@ -227,7 +227,7 @@ legend_geo <- function(info_table, gen = FALSE) {
   # logo
   # geom_image(aes(x = col, y = y_logo, image = link), size = 0.8, asp = 1.1) +
   # species name
-  geom_text(aes(x = col, y = y_text, label = Locations), size = 5, hjust = 1, vjust = 2, fontface = "bold") +
+  geom_text(aes(x = col, y = y_text, label = Locations), size = 4.5, hjust = 1, vjust = 2, fontface = "bold") +
   theme_void() +
   theme(plot.margin = margin(0.3,0,3,0)) +
   coord_cartesian(clip = "off")
@@ -1094,8 +1094,8 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
         legend.position = params_legend,
         legend.direction = "vertical",
         legend.box = "horizontal",
-        legend.text = element_text(size = 11, margin = margin(0, 50, 0, 0)),
-        legend.title = element_text(size = 13),
+        legend.text = element_text(size = 13, margin = margin(0, 50, 0, 0)),
+        legend.title = element_text(size = 16),
         legend.key.height = unit(1.5, 'cm'),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
