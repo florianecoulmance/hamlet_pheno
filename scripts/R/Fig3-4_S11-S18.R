@@ -165,7 +165,7 @@ for(dat in names(dataset)) {
     # -----------------------------------
     # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
     #-----------------------------------
-    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "nig")) c(0.3, 0.7) else if(dat %in% c("all_s", "all_l")) c(0.2, 0.7) else "none")
+    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "pue")) c(0.4, 0.7) else if(dat %in% c("all_s", "all_l")) c(0.2, 0.7) else "none")
 
 
     # -----------------------------------
@@ -364,8 +364,8 @@ figureS15 <- plot_grid(
 ggsave(
   filename = file.path(figure_path, "FigS15_gSpe.png"),
   plot = figureS15,
-  width = 12,    # A4 width in inches
-  height = 12,  # A4 height in inches
+  width = 14,    # A4 width in inches
+  height = 14,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -427,8 +427,9 @@ print(fst_all_df)
 figureS16 <- ggplot(fst_all_df, aes(x = group, y = Fst, fill = group)) +
   geom_violin(trim = FALSE) +
   geom_boxplot(width = 0.05, outlier.shape = NA, fill = "white") +
-  geom_jitter(aes(fill = group), width = 0.1, alpha = 0.6, size = 2) +
+  geom_jitter(aes(color = group), width = 0.05, alpha = 0.6, size = 1) +
   scale_fill_manual(values=c("#64CAD0", "#D06495", "#D09F64")) +
+  scale_color_manual(values=c("#64CAD0", "#D06495", "#D09F64")) +
   theme_minimal() +
   labs(
     x = "",
@@ -439,7 +440,8 @@ figureS16 <- ggplot(fst_all_df, aes(x = group, y = Fst, fill = group)) +
     legend.title = element_blank(),
     legend.position = "bottom"
   ) +
-  guides(fill = guide_legend(nrow = 1))
+  guides(fill = guide_legend(nrow = 1),
+         color = "none")
 
 # Save as PNG (A4 size)
 ggsave(

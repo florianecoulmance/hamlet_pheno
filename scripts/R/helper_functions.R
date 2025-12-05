@@ -944,14 +944,14 @@ pca_analysis <- function(gtfile, samplefile, color_by) {
 # ============================================================
 pca_plot_all <- function(pca_data, pc_first, pc_second, species_info, variance) {
     
-    pca_data$boc <- ifelse(pca_data$geo == "boc", "Panama", "all other locations")
+    pca_data$boc <- ifelse(pca_data$geo == "boc", "Panama", "other locations")
 
     # Always species mode
     group_col <- "spec"
     info_table <- species_info
     color_map <- setNames(info_table$Color, info_table$spec)
     label_map <- setNames(
-        paste0("<img src='", info_table$link, "' width='60' /><br>*H. ", info_table$Species, "*"),
+        paste0("<img src='", info_table$link, "' width='70' /><br>*H. ", info_table$Species, "*"),
         info_table$spec
     )
 
@@ -1094,8 +1094,8 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
         legend.position = params_legend,
         legend.direction = "vertical",
         legend.box = "horizontal",
-        legend.text = element_text(size = 14, margin = margin(0, 50, 0, 0)),
-        legend.title = element_text(size = 16),
+        legend.text = element_text(size = 11, margin = margin(0, 50, 0, 0)),
+        legend.title = element_text(size = 13),
         legend.key.height = unit(1.5, 'cm'),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
