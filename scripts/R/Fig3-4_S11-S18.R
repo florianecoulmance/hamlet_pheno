@@ -439,7 +439,7 @@ figureS16 <- ggplot(fst_all_df, aes(x = group, y = Fst, fill = group)) +
     legend.title = element_blank(),
     legend.position = "bottom"
   ) +
-  guides(color = guide_legend(nrow = 1))
+  guides(fill = guide_legend(nrow = 1))
 
 # Save as PNG (A4 size)
 ggsave(
