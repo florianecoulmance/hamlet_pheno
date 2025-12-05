@@ -296,7 +296,7 @@ ggsave(filename = file.path(figure_path, "FigS12_gLocSUP.png"),
 ########## FIGURE S13 ###################
 # PERMANOVA heatmaps for each location
 all_perm <- lapply(results_locations, `[[`, "permanova") # extract per location pcas
-figureS13 <- plot_grid(plotlist = all_perm, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)"), label_size=20) # bundle location pcas in one plot
+figureS13 <- plot_grid(plotlist = all_perm, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)"), label_size=20)# bundle location pcas in one plot
 
 # Save Figure S13 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS13_gLocPERM.png"),
@@ -316,8 +316,8 @@ figureS14 <- results[["all_s"]][["permanova"]]
 ggsave(
   filename = file.path(figure_path, "FigS14_gAllPERM.png"),
   plot = figureS14,
-  width = 8,    # A4 width in inches
-  height = 8,  # A4 height in inches
+  width = 7,    # A4 width in inches
+  height = 7,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -364,8 +364,8 @@ figureS15 <- plot_grid(
 ggsave(
   filename = file.path(figure_path, "FigS15_gSpe.png"),
   plot = figureS15,
-  width = 20,    # A4 width in inches
-  height = 16,  # A4 height in inches
+  width = 12,    # A4 width in inches
+  height = 12,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -426,10 +426,10 @@ print(fst_all_df)
 
 figureS16 <- ggplot(fst_all_df, aes(x = group, y = Fst, fill = group)) +
   geom_violin(trim = FALSE) +
-  geom_boxplot(width = 0.15, outlier.shape = NA, fill = "transparent") +
-  geom_jitter(width = 0.1, alpha = 0.6, size = 1) +
+  geom_boxplot(width = 0.05, outlier.shape = NA, fill = "white") +
+  geom_jitter(aes(fill = group), width = 0.1, alpha = 0.6, size = 2) +
   scale_fill_manual(values=c("#64CAD0", "#D06495", "#D09F64")) +
-  theme_classic() +
+  theme_minimal() +
   labs(
     x = "",
     y = "Pairwise FST"
@@ -445,7 +445,7 @@ figureS16 <- ggplot(fst_all_df, aes(x = group, y = Fst, fill = group)) +
 ggsave(
   filename = file.path(figure_path, "FigS16_gFSTviolin.png"),
   plot = figureS16,
-  width = 10,    # A4 width in inches
+  width = 7,    # A4 width in inches
   height = 7,  # A4 height in inches
   units = "in",
   dpi = 150,

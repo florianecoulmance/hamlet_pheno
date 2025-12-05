@@ -951,7 +951,7 @@ pca_plot_all <- function(pca_data, pc_first, pc_second, species_info, variance) 
     info_table <- species_info
     color_map <- setNames(info_table$Color, info_table$spec)
     label_map <- setNames(
-        paste0("<img src='", info_table$link, "' width='80' /><br>*H. ", info_table$Species, "*"),
+        paste0("<img src='", info_table$link, "' width='60' /><br>*H. ", info_table$Species, "*"),
         info_table$spec
     )
 
@@ -1099,6 +1099,7 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
         legend.key.height = unit(1.5, 'cm'),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
+        plot.margin = margin(0,5,0,0),
         axis.text.x = element_text(angle = 0, size = 16),
         axis.text.y = element_text(size = 16),
         axis.ticks.x = element_blank(),
