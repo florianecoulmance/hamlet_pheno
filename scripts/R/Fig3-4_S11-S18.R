@@ -437,8 +437,8 @@ figureS16 <- ggplot(fst_all_df, aes(x = group, y = Fst, fill = group)) +
   ) +
   theme(
     axis.text.x = element_blank(),
-    axis.text.y = element_text(size = 20),
-    axis.ticks.y = element_text(size = 15),
+    axis.title.y = element_text(size = 20),
+    axis.text.y = element_text(size = 15),
     legend.text = element_text(size = 15),
     legend.title = element_blank(),
     legend.position = "bottom"
