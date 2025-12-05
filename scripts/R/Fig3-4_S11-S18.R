@@ -165,7 +165,7 @@ for(dat in names(dataset)) {
     # -----------------------------------
     # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
     #-----------------------------------
-    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "uni")) c(0.4, 0.9) else if(dat %in% c("all_s", "all_l")) c(0.2, 0.7) else "none")
+    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "uni")) c(0.4, 0.8) else if(dat %in% c("all_s", "all_l")) c(0.2, 0.7) else "none")
 
 
     # -----------------------------------
@@ -437,9 +437,9 @@ figureS16 <- ggplot(fst_all_df, aes(x = group, y = Fst, fill = group)) +
   ) +
   theme(
     axis.text.x = element_blank(),
-    axis.title.y = element_text(size = 20),
-    axis.text.y = element_text(size = 15),
-    legend.text = element_text(size = 15),
+    axis.title.y = element_text(size = 15),
+    axis.text.y = element_text(size = 10),
+    legend.text = element_text(size = 10),
     legend.title = element_blank(),
     legend.position = "bottom"
   ) +
