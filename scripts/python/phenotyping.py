@@ -5,13 +5,13 @@
 # usage: 
 # python3 phenotype_continuous.py <IMAGE_PATH> <MASK_PATH> <COLOR_SPACE> <OUTPUT_PATH> <FIGURE_PATH> <MASK_LABEL> <DATA_LABEL>
 # ----------------------------------------------------------------------------------------------
-# IMAGE_PATH : "/Users/fco/Desktop/PhD/3_CHAPTER3/0_IMAGE_PIP/alignment_folder/align/3-registred/Modalities/RGB/"
-# MASK_PATH : "/Users/fco/Desktop/PhD/3_CHAPTER3/0_IMAGE_PIP/alignment_folder/align/mask_full2.tif"
-# COLOR_SPACE : LAB, L, AB
-# OUTPUT_PATH : "/Users/fco/Desktop/PhD/3_CHAPTER3/0_IMAGE_PIP/alignment_folder/571_left_noflash/pca/"
-# FIGURE_PATH : "/Users/fco/Desktop/PhD/3_CHAPTER3/0_IMAGE_PIP/alignment_folder/571_left_noflash/images/RGB_greenBG/"
-# MASK_LABEL : bodym or fullm
-# DATA_LABEL : left_54off, left_59on, left_54off_59on, left_38barred, left_75unbarred
+# IMAGE_PATH : "~/images"
+# MASK_PATH : "~/metadata/full_mask.tif"
+# COLOR_SPACE : LAB
+# OUTPUT_PATH : "~/1_phenotyping/pca"
+# FIGURE_PATH : "~/1_phenotyping/heatmaps"
+# MASK_LABEL : fullm
+# DATA_LABEL : 
 # ----------------------------------------------------------------------------------------------
 
 
@@ -306,7 +306,7 @@ def plot_heatmap(b_m, rgb_m, pca, component, effect, res_path, data_name, global
     feat_imp = pca.components_ 
 
     pc_index = component - 1
-    print(pc_index)
+    # print(pc_index)
 
 
     if ((effect == "LAB") or (effect == "RGB") or (effect == "HSV")):
@@ -337,7 +337,7 @@ def plot_heatmap(b_m, rgb_m, pca, component, effect, res_path, data_name, global
 
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", colors)
     mapper = cm.ScalarMappable(cmap=cmap,norm=norm)
-    print(mapper)
+    # print(mapper)
     bounds = [0, global_max/3, 2*global_max/3, global_max] # <-- create min and max for the colorbar scale
 
     color_mask = np.array([(r, g, b) for r, g, b, a in mapper.to_rgba(im_PCscores)])
@@ -345,7 +345,7 @@ def plot_heatmap(b_m, rgb_m, pca, component, effect, res_path, data_name, global
     rgb_im = np.array(rgb_m) # <-- transform the black and white input image as a numpy array
     rgb_im[b_m] = color_mask # <-- fill the positions of the black and white numpy image where the boolean mask is TRUE with the color values
     
-    print(rgb_im.shape)
+    # print(rgb_im.shape)
 
     img_cropped = rgb_im[200:700, 240:1350, :]
 
@@ -439,45 +439,36 @@ def main():
 
 if __name__ == "__main__":
     
-    print ("The script is called %s" % (sys.argv[0])) # <-- name of the script running
-    arguments = len(sys.argv) - 1 # <-- count the arguments
+    print ("The script is called %s" % (sys.argv[0])) # <-- running script name
+    arguments = len(sys.argv) - 1 # <-- count # of arguments
     print ("The script is called with %i arguments" % (arguments))
     
-    path_images = sys.argv[1] # <-- give path to the aligned images
-    print(path_images)
-    # path_images = "/Users/fco/Desktop/PhD/3_CHAPTER3/chapter3/alignment_folder/align/3-registred/Modalities/RGB/"
+    path_images = sys.argv[1] # <-- path to aligned images
+    # print(path_images)
     
-    mask = cv2.imread(sys.argv[2], 0) # <-- open the mask file
-    print(mask)
-    # mask = cv2.imread("/Users/fco/Desktop/PhD/3_CHAPTER3/chapter3/alignment_folder/full_mask.tif", 0)
+    mask = cv2.imread(sys.argv[2], 0) # <-- open the mask file as binary
+    # print(mask)
 
-    color_space = sys.argv[3] # <-- give the effect to use
-    print(color_space)
-    # color_space = "LAB"
+    color_space = sys.argv[3] # <-- color space to work with
+    # print(color_space)
 
-    path_results = sys.argv[4] # <-- path to the result folder
-    print(path_results)
-    # path_results = "/Users/fco/Desktop/PhD/3_CHAPTER3/chapter3/alignment_folder/571_left_noflash/pca/"
+    path_results = sys.argv[4] # <-- pca result path
+    # print(path_results)
 
-    path_figures = sys.argv[5] # <-- path to the figure folder
-    print(path_figures)
-    # path_figures = "/Users/fco/Desktop/PhD/3_CHAPTER3/chapter3/alignment_folder/571_left_noflash/images/AB_greenBG/"
+    path_figures = sys.argv[5] # <-- heatmap plots path
+    # print(path_figures)
 
-    mask_name = sys.argv[6] # <-- name of mask
-    print(mask_name)
-    # mask_name = "fullm"
+    mask_name = sys.argv[6] # <-- mask name
+    # print(mask_name)
 
-    spec_name = sys.argv[7] # <-- name of mask
+    spec_name = sys.argv[7] # <-- species name
     print(spec_name)
-    # spec_name = "all"
 
-    geo_name = sys.argv[8]
+    geo_name = sys.argv[8] # <-- location name
     print(geo_name)
-    # geo_name = "flo"
  
-    dataset = sys.argv[9] # <-- name of dataset
+    dataset = sys.argv[9] # <-- dataset prefix
     print(dataset)
-    # dataset = "ab_flo29_left_noflash"
 
     print(f"Processing dataset: {dataset}, species: {spec_name}, location: {geo_name}", file=sys.stderr, flush=True)
 

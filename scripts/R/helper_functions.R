@@ -372,12 +372,12 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   } else if (color_by == "location") {
     # if coloring by location, title is the species name
     spec_val <- unique(plot_data$spec)
-    print(spec_val)
+    # print(spec_val)
     if (length(spec_val) == 1) {
       title_val <- paste0("H. ", species_info$Species[species_info$spec == spec_val])
     }
   }
-  print(title_val)
+  # print(title_val)
 
   # -----------------------------
   # 7. Return plot
@@ -469,6 +469,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   
   # ---- Pairwise PERMANOVA ----
   pairwise_result <- pairwise.adonis(dist_t, PC_table_ordered$group, perm = 10000)
+  print(pairwise_result)
 
   # ---- Reshape R² (upper triangle) ----
   vis_R <- pairwise_result %>%
@@ -725,7 +726,7 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
     title_val <- NULL
   }
 
-  print(title_val)
+  # print(title_val)
   
   # -----------------------------
   # 7. Return legend or annotated tree
