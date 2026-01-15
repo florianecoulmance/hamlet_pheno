@@ -227,7 +227,7 @@ legend_geo <- function(info_table, gen = FALSE) {
   # logo
   # geom_image(aes(x = col, y = y_logo, image = link), size = 0.8, asp = 1.1) +
   # species name
-  geom_text(aes(x = col, y = y_text, label = Locations), size = 4.5, hjust = 1, vjust = 2, fontface = "bold") +
+  geom_text(aes(x = col, y = y_text, label = Locations), size = 7, hjust = 2, vjust = 2, fontface = "bold") +
   theme_void() +
   theme(plot.margin = margin(0.3,0,3,0)) +
   coord_cartesian(clip = "off")
@@ -420,7 +420,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   } else if (color_by == "location") {
       p_annot <- annotate_figure(
       p,
-      top = text_grob(title_val, color = "black", face = "italic", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
+      top = text_grob(title_val, color = "black", face = "bolditalic", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
     )
   }
     
