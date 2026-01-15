@@ -322,8 +322,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # 4. Build the actual PCA plot
   # -----------------------------
   p <- ggplot(plot_data, aes(x = .data[[pc_first]], y = .data[[pc_second]], color = .data[[group_col]])) +
-    geom_point(size = 7, alpha = 0.5) +
-    stat_ellipse(aes(color = .data[[group_col]]), linetype = 5, lwd = 2) +
+    geom_point(size = 4, alpha = 1) +
+    stat_ellipse(aes(color = .data[[group_col]]), linetype = 5, lwd = 1.5) +
     geom_point(data = centroids, aes(x = x, y = y, color = .data[[group_col]]), size = 15, alpha = 0) +
     # geom_image(data = centroids, aes(x = x, y = y, image = link), vjust=1, hjust=0, size = 0.15, asp = 1.1, alpha=1) +
     scale_color_manual(values = color_map, labels = label_map) +
@@ -368,7 +368,21 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     geo_val <- unique(plot_data$geo)
     if (length(geo_val) == 1) {
       title_val <- geo_info$Locations[geo_info$geo == geo_val]
-    }
+      if (title_val=="Panama") {
+        title_val <- "(a) Panama"
+      } else if (title_val=="USVI") {
+        title_val <- "(b) USVI"
+      } else if (title_val=="Belize") {
+        title_val <- "(c) Belize"
+      } else if (title_val=="Florida Keys") {
+        title_val <- "(d) Florida Keys"
+      } else if (title_val=="Tobago") {
+        title_val <- "(e) Tobago"
+      } else if (title_val=="Veracruz") {
+        title_val <- "(f) Veracruz"
+      } else {
+        title_val <- "Greater Caribbean"
+      }
   } else if (color_by == "location") {
     # if coloring by location, title is the species name
     spec_val <- unique(plot_data$spec)
@@ -384,8 +398,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   p_annot <- annotate_figure(
     p,
-    top = text_grob(title_val, color = "black", face = "bold", size = 30,
-                      x = unit(5.5, "pt"), hjust = -0.8)
+    top = text_grob(title_val, color = "black", face = "bold", size = 20,
+                      x = unit(5.5, "pt")) #hjust = -0.8)
   )
     
   return(p_annot)
@@ -945,7 +959,7 @@ pca_analysis <- function(gtfile, samplefile, color_by) {
 # ============================================================
 pca_plot_all <- function(pca_data, pc_first, pc_second, species_info, variance) {
     
-    pca_data$boc <- ifelse(pca_data$geo == "boc", "Panama", "other locations")
+    pca_data$boc <- ifelse(pca_data$geo == "boc", "Panama", "other")
 
     # Always species mode
     group_col <- "spec"
