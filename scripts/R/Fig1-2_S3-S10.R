@@ -272,7 +272,7 @@ ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
 ########## FIGURE S5 ###################
 # PERMANOVA heatmaps for each location
 all_perm <- lapply(results_no_overall, `[[`, "permanova") # extract per location pcas
-perm_grid <- plot_grid(plotlist = all_perm, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30, rel_widths = c(1, 1), scale=0.95) # bundle location permanovas in one plot
+perm_grid <- plot_grid(plotlist = all_perm, ncol = 2, rel_widths = c(1, 1), scale=0.95) # bundle location permanovas in one plot
 # Combine permanova grid with legend at the bottom
 figureS5 <- ggarrange(
   perm_grid
@@ -291,7 +291,7 @@ ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
 ########## FIGURE S6 ###################
 # Hierarchical clustering plots for all locations with legend
 all_hier <- lapply(results_no_overall, `[[`, "hclust") # extract per location pcas
-hier_grid <- plot_grid(plotlist = all_hier, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30, rel_widths = c(1, 1), scale=0.95) # bundle location pcas in one plot
+hier_grid <- plot_grid(plotlist = all_hier, ncol = 2, rel_widths = c(1, 1), scale=0.95) # bundle location pcas in one plot
 # Combine hierarchical clustering grid with legend at the bottom
 figureS6 <- ggarrange(
   hier_grid,
@@ -315,7 +315,7 @@ ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
 ########## FIGURE S7 ###################
 # Heatmap PC images for each location
 all_heat <- lapply(results_no_overall, `[[`, "heatmap") # extract per location pcas
-heat_grid <- plot_grid(plotlist = all_heat, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30, rel_widths = c(1, 1), scale=0.95) # bundle location pcas in one plot
+heat_grid <- plot_grid(plotlist = all_heat, ncol = 2, rel_widths = c(1, 1), scale=0.95) # bundle location pcas in one plot
 # Combine heatmaps grid with legend at the bottom
 figureS7 <- ggarrange(
   heat_grid
@@ -338,10 +338,10 @@ hier <- results[["all"]][["hclust"]]
 heat <- results[["all"]][["heatmap"]]
 
 # # Bottom row: hier + heat
-bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"), font.label=list(color="black",size=25))
+bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"), font.label=list(color="black",size=20))
 
 # Combine top (perm) with bottom row
-figureS8 <- ggarrange(perm, bottom_row, nrow = 2, ncol = 1, labels=c("(a)",""), font.label=list(color="black",size=25))
+figureS8 <- ggarrange(perm, bottom_row, nrow = 2, ncol = 1)
 figureS8 <- ggarrange(
   figureS8,
   NULL,
