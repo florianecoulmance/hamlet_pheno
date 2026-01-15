@@ -645,7 +645,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       } else if (title_val=="Mexico") {
         title_val <- "(f) Mexico"
       } else {
-        title_val <- "(a) Greater Caribbean"
+        title_val <- "(a)"
       }
   } else if (color_by == "location"){
     species_val <- unique(pc_table$spec)

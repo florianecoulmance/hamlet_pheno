@@ -343,7 +343,7 @@ bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"), font.label=
 # Combine top (perm) with bottom row
 figureS8 <- ggarrange(perm, bottom_row, nrow = 3, ncol = 1)
 figureS8 <- ggarrange(
-  NULL
+  NULL,
   figureS8,
   NULL,
   leg,
