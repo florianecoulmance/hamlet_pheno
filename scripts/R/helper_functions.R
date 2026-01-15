@@ -335,7 +335,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       legend.text = element_markdown(size = 15),
       panel.background = element_blank(),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
-      axis.text = element_text(size = 14),
+      axis.text = element_text(size = 12),
       axis.title = element_text(size = 18),
       plot.margin = margin(3,3,0,0)
     ) +
@@ -399,8 +399,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   p_annot <- annotate_figure(
     p,
-    top = text_grob(title_val, color = "black", face = "bold", size = 20,
-                      x = 0) #hjust = -0.8)
+    top = text_grob(title_val, color = "black", face = "bold", size = 20), fig.lab.pos = "top.left" #,hjust = -0.8)
   )
     
   return(p_annot)
