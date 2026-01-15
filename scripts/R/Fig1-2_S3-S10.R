@@ -196,14 +196,14 @@ figure1test1 <- ggarrange(
   leg,
   NULL,
   nrow = 7,
-  heights = c(0.08, 8, 0.2, 5.3, 0.2, 1, 0.05)
+  heights = c(0.08, 1, 0.2, 0.5, 0.2, 0.15, 0.05)
   )
   
 ggsave(
   filename = file.path(figure_path, "figure1test1.png"),
   plot = figure1test1,
   width = 12, 
-  height = 18, 
+  height = 16, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -211,6 +211,7 @@ ggsave(
 
 ########## FIGURE S4 TEST 1 ###################
 figures4test1 <- ggarrange(
+  NULL,
   ggarrange(
     results[["boc"]][["pca"]],
     NULL,
@@ -229,8 +230,8 @@ figures4test1 <- ggarrange(
   NULL,
   leg,
   NULL,
-  nrow = 6,
-  heights = c(1, 0.08, 1, 0.08, 0.3, 0.05)
+  nrow = 7,
+  heights = c(0.08, 1, 0.08, 1, 0.08, 0.15, 0.05)
   )
   
 ggsave(
@@ -245,6 +246,7 @@ ggsave(
 
 ########## FIGURE 1 TEST 2 ###################
 figure1test2 <- ggarrange(
+  NULL,
   results[["all"]][["pca"]],
   NULL,
   ggarrange(results[["uvi"]][["pca"]], NULL, results[["boc"]][["pca"]], ncol=3, widths = c(1, 0.08, 1)),
@@ -253,15 +255,15 @@ figure1test2 <- ggarrange(
   NULL,
   leg,
   NULL,
-  nrow = 8,
-  heights = c(8, 0.2, 4, 0.2, 4, 0.2, 1, 0.05)
+  nrow = 9,
+  heights = c(0.08, 8, 0.2, 4, 0.2, 4, 0.2, 1, 0.05)
   )
   
 ggsave(
   filename = file.path(figure_path, "figure1test2.png"),
   plot = figure1test2,
   width = 12, 
-  height = 17, 
+  height = 18, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -269,6 +271,7 @@ ggsave(
 
 ########## FIGURE S4 TEST 2 ###################
 figures4test2 <- ggarrange(
+  NULL,
   ggarrange(
     results[["bel"]][["pca"]],
     NULL,
@@ -279,8 +282,8 @@ figures4test2 <- ggarrange(
   NULL,
   leg,
   NULL,
-  nrow = 4,
-  heights = c(1, 0.08, 0.2, 0.08)
+  nrow = 5,
+  heights = c(0.08, 1, 0.08, 0.15, 0.08)
   )
   
 ggsave(
