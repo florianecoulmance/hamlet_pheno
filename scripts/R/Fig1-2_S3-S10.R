@@ -341,14 +341,15 @@ heat <- results[["all"]][["heatmap"]]
 bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"), font.label=list(color="black",size=20))
 
 # Combine top (perm) with bottom row
-figureS8 <- ggarrange(NULL, perm, bottom_row, nrow = 3, ncol = 1, heights = c(0.2, 9, 9))
+figureS8 <- ggarrange(perm, bottom_row, nrow = 3, ncol = 1)
 figureS8 <- ggarrange(
+  NULL
   figureS8,
   NULL,
   leg,
   NULL,
   nrow = 4,
-  heights = c(9, 0.2, 1, 0.05) 
+  heights = c(0.2, 9, 0.2, 1, 0.05) 
 )
 
 
@@ -424,7 +425,7 @@ perm_ind <- results[["ind"]][["permanova"]]
 hier_ind <- results[["ind"]][["hclust"]]
 ind <- plot_grid(pca_ind, heat_ind, perm_ind, hier_ind, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
 
-figureS10 <- ggarrange(pue, nig, uni, chl, abe, ind, nrow = 6, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), font.label=list(color="black",size=30))
+figureS10 <- ggarrange(pue, NULL, nig, NULL, uni, NULL, chl, NULL, abe, NULL, ind, nrow = 11, heights = c(10, 0.3, 10, 0.3, 10, 0.3, 10, 0.3, 10, 0.3, 10))
 figureS10 <- ggarrange(
   figureS10,
   leg_g,

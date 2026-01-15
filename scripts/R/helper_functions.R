@@ -383,24 +383,46 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       } else {
         title_val <- "Greater Caribbean"
       }
+    }
   } else if (color_by == "location") {
     # if coloring by location, title is the species name
     spec_val <- unique(plot_data$spec)
     # print(spec_val)
     if (length(spec_val) == 1) {
       title_val <- paste0("H. ", species_info$Species[species_info$spec == spec_val])
+      if (title_val=="H. puella") {
+        title_val <- "(a) H. puella"
+      } else if (title_val=="H. nigricans") {
+        title_val <- "(b) H. nigricans"
+      } else if (title_val=="H. unicolor") {
+        title_val <- "(c) H. unicolor"
+      } else if (title_val=="H. chlorurus") {
+        title_val <- "(d) H. chlorurus"
+      } else if (title_val=="H. aberrans") {
+        title_val <- "(e) H. aberrans"
+      } else if (title_val=="H. indigo") {
+        title_val <- "(f) H. indigo"
+      } else {
+        title_val <- ""
+      }
     }
-  }
   }
   print(title_val)
 
   # -----------------------------
   # 7. Return plot
   # -----------------------------
-  p_annot <- annotate_figure(
-    p,
-    top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
-  )
+  if (color_by == "species") {
+    p_annot <- annotate_figure(
+      p,
+      top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
+    )
+  } else if (color_by == "location") {
+      p_annot <- annotate_figure(
+      p,
+      top = text_grob(title_val, color = "black", face = "italic", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
+    )
+  }
     
   return(p_annot)
 
