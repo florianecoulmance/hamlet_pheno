@@ -202,7 +202,7 @@ ggsave(
   filename = file.path(figure_path, "figure1test1.png"),
   plot = figure1test1,
   width = 12, 
-  height = 13, 
+  height = 17, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -212,9 +212,9 @@ ggsave(
 figure1test2 <- ggarrange(
   results[["all"]][["pca"]],
   NULL,
-  ggarrange(results[["uvi"]][["pca"]], results[["boc"]][["pca"]], ncol=2, widths = c(1, 1)),
+  ggarrange(results[["uvi"]][["pca"]], NULL, results[["boc"]][["pca"]], ncol=3, widths = c(1, 0.2, 1)),
   NULL,
-  ggarrange(results[["tob"]][["pca"]], results[["ver"]][["pca"]], ncol=2, widths = c(1, 1)),
+  ggarrange(results[["tob"]][["pca"]], NULL, results[["ver"]][["pca"]], ncol=3, widths = c(1, 0.2, 1)),
   NULL,
   leg,
   NULL,
@@ -226,7 +226,7 @@ ggsave(
   filename = file.path(figure_path, "figure1test2.png"),
   plot = figure1test2,
   width = 12, 
-  height = 13, 
+  height = 17, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing

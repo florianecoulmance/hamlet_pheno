@@ -373,7 +373,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       if (title_val=="Panama") {
         title_val <- "(b) Panama"
       } else if (title_val=="USVI") {
-        title_val <- "(a) USVI"
+        title_val <- "(b) USVI"
       } else if (title_val=="Belize") {
         title_val <- "(c) Belize"
       } else if (title_val=="Florida Keys") {
@@ -381,7 +381,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       } else if (title_val=="Tobago") {
         title_val <- "(e) Tobago"
       } else if (title_val=="Mexico") {
-        title_val <- "(f) Mexico"
+        title_val <- "(c) Mexico"
       } else {
         title_val <- "Greater Caribbean"
       }
