@@ -227,7 +227,7 @@ legend_geo <- function(info_table, gen = FALSE) {
   # logo
   # geom_image(aes(x = col, y = y_logo, image = link), size = 0.8, asp = 1.1) +
   # species name
-  geom_text(aes(x = col, y = y_text, label = Locations), size = 7, hjust = 1.5, vjust = 4, fontface = "bold") +
+  geom_text(aes(x = col, y = y_text, label = Locations), size = 7, hjust = 1, vjust = 3, fontface = "bold") +
   theme_void() +
   theme(plot.margin = margin(0.3,0,3,0)) +
   coord_cartesian(clip = "off")
