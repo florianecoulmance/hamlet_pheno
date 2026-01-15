@@ -391,7 +391,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       title_val <- paste0("H. ", species_info$Species[species_info$spec == spec_val])
     }
   }
-  # print(title_val)
+  }
+  print(title_val)
 
   # -----------------------------
   # 7. Return plot
