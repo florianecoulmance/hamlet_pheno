@@ -378,8 +378,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
         title_val <- "(d) Florida Keys"
       } else if (title_val=="Tobago") {
         title_val <- "(e) Tobago"
-      } else if (title_val=="Veracruz") {
-        title_val <- "(f) Veracruz"
+      } else if (title_val=="Mexico") {
+        title_val <- "(f) Mexico"
       } else {
         title_val <- "Greater Caribbean"
       }
@@ -399,7 +399,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   p_annot <- annotate_figure(
     p,
-    top = text_grob(title_val, color = "black", face = "bold", size = 20), fig.lab.pos = "top.left" #,hjust = -0.8)
+    top = text_grob(title_val, color = "black", face = "bold", size = 20), fig.lab.pos = "top.left" ,hjust = -0.5
   )
     
   return(p_annot)

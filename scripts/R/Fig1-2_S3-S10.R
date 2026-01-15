@@ -189,7 +189,7 @@ leg_g <- legend_geo(geo_table)
 ########## FIGURE 1 ###################
 # PCA plots for all locations with legend
 all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
-pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, rel_widths = c(1, 1), scale = 0.9) # bundle location pcas in one plot
+pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
 figure1 <- ggarrange(
   pca_grid,
@@ -248,7 +248,7 @@ ggsave(
 ########## FIGURE S4 ###################
 # Other PCs combination for phenotypes per location
 all_sup <- lapply(results_no_overall, `[[`, "sup_pca") # extract per location supplementary pcas
-sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30) # bundle location pcas in one plot
+sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
 # Combine supplementary PCA grid with legend at the bottom
 figureS4 <- ggarrange(
   sup_grid,
