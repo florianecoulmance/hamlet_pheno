@@ -406,6 +406,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
         title_val <- ""
       }
     }
+  } else {
+    title_val <- "(a) Greater Caribbean"
   }
   print(title_val)
 

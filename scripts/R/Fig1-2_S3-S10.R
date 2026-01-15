@@ -186,6 +186,52 @@ leg_g <- legend_geo(geo_table)
 # print(leg_combined)
 # print(class(leg_combined))
 
+########## FIGURE 1 TEST 1 ###################
+figure1test1 <- ggarrange(
+  results[["all"]][["pca"]],
+  NULL,
+  ggarrange(results[["uvi"]][["pca"]], results[["ver"]][["pca"]], ncol=2, widths = c(1, 1)),
+  NULL,
+  leg,
+  NULL,
+  nrow = 6,
+  heights = c(8, 0.2, 5.3, 0.2, 1, 0.05)
+  )
+  
+ggsave(
+  filename = file.path(figure_path, "figure1test1.png"),
+  plot = figure1test1,
+  width = 12, 
+  height = 13, 
+  units = "in",      # inches
+  dpi = 150,         # moderate dpi to reduce file size but keep quality
+  type = "cairo-png" # better compression and anti-aliasing
+)
+
+########## FIGURE 1 TEST 2 ###################
+figure1test2 <- ggarrange(
+  results[["all"]][["pca"]],
+  NULL,
+  ggarrange(results[["uvi"]][["pca"]], results[["boc"]][["pca"]], ncol=2, widths = c(1, 1)),
+  NULL,
+  ggarrange(results[["tob"]][["pca"]], results[["ver"]][["pca"]], ncol=2, widths = c(1, 1)),
+  NULL,
+  leg,
+  NULL,
+  nrow = 8,
+  heights = c(8, 0.2, 4, 0.2, 4, 0.2, 1, 0.05)
+  )
+  
+ggsave(
+  filename = file.path(figure_path, "figure1test2.png"),
+  plot = figure1test2,
+  width = 12, 
+  height = 13, 
+  units = "in",      # inches
+  dpi = 150,         # moderate dpi to reduce file size but keep quality
+  type = "cairo-png" # better compression and anti-aliasing
+)
+
 ########## FIGURE 1 ###################
 # PCA plots for all locations with legend
 all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
