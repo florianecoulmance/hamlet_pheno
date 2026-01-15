@@ -256,7 +256,7 @@ figure1test2 <- ggarrange(
   leg,
   NULL,
   nrow = 9,
-  heights = c(0.08, 8, 0.2, 4, 0.2, 4, 0.2, 1, 0.05)
+  heights = c(0.02, 2, 0.05, 1, 0.05, 1, 0.05, 0.2, 0.02)
   )
   
 ggsave(
@@ -283,14 +283,14 @@ figures4test2 <- ggarrange(
   leg,
   NULL,
   nrow = 5,
-  heights = c(0.08, 1, 0.08, 0.15, 0.08)
+  heights = c(0.02, 1, 0.05, 0.2, 0.02)
   )
   
 ggsave(
   filename = file.path(figure_path, "figures4test2.png"),
   plot = figures4test2,
   width = 12, 
-  height = 6, 
+  height = 7, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
