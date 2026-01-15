@@ -77,12 +77,12 @@ head(geo_table)
 
 # Define your locations and PCs of interest
 dataset <- list(
-  boc = list(name = "lab_boc229_left_noflash", pcs = c("PC1", "PC3", "PC2", "PC4"), colors = "species"),
   uvi = list(name = "lab_uvi136_left_noflash", pcs = c("PC1", "PC4", "PC2", "PC3"), colors = "species"),
-  tob = list(name = "lab_tob69_left_noflash", pcs = c("PC1", "PC3", "PC2", "PC4"), colors = "species"),
-  ver = list(name = "lab_ver60_left_noflash", pcs = c("PC1", "PC2", "PC3", "PC4"), colors = "species"),
+  boc = list(name = "lab_boc229_left_noflash", pcs = c("PC1", "PC3", "PC2", "PC4"), colors = "species"),
   bel = list(name = "lab_bel46_left_noflash", pcs = c("PC1", "PC2", "PC3", "PC4"), colors = "species"),
   flo = list(name = "lab_flo29_left_noflash", pcs = c("PC1", "PC4", "PC2", "PC3"), colors = "species"),
+  tob = list(name = "lab_tob69_left_noflash", pcs = c("PC1", "PC3", "PC2", "PC4"), colors = "species"),
+  ver = list(name = "lab_ver60_left_noflash", pcs = c("PC1", "PC2", "PC3", "PC4"), colors = "species"),
   all = list(name = "lab_571_left_noflash", pcs = c("PC1","PC4", "PC2", "PC3"), colors = "species"),
   pue = list(name = "lab_pue187_left_noflash", pcs = c("PC1","PC2", "PC3", "PC4"), colors = "location"),
   nig = list(name = "lab_nig111_left_noflash", pcs = c("PC1","PC2", "PC3", "PC4"), colors = "location"),
