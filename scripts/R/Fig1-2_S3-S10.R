@@ -225,7 +225,7 @@ figures4test1 <- ggarrange(
     results[["tob"]][["pca"]],
     ncol = 3,
     widths = c(1, 0.08, 1)
-  )
+  ),
   NULL,
   leg,
   NULL,
