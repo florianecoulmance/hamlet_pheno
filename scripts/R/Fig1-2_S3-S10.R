@@ -341,7 +341,7 @@ heat <- results[["all"]][["heatmap"]]
 bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"), font.label=list(color="black",size=20))
 
 # Combine top (perm) with bottom row
-figureS8 <- ggarrange(perm, bottom_row, nrow = 2, ncol = 1)
+figureS8 <- ggarrange(NULL, perm, bottom_row, nrow = 3, ncol = 1, heights = c(0.2, 9, 9))
 figureS8 <- ggarrange(
   figureS8,
   NULL,
