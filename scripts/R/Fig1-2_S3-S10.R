@@ -196,7 +196,7 @@ figure1test1 <- ggarrange(
   leg,
   NULL,
   nrow = 7,
-  heights = c(0.08, 1, 0.2, 0.5, 0.2, 0.15, 0.05)
+  heights = c(0.02, 2, 0.02, 1, 0.02, 0.2, 0.02)
   )
   
 ggsave(
@@ -231,7 +231,7 @@ figures4test1 <- ggarrange(
   leg,
   NULL,
   nrow = 7,
-  heights = c(0.08, 1, 0.08, 1, 0.08, 0.15, 0.05)
+  heights = c(0.08, 1, 0.08, 1, 0.08, 0.2, 0.05)
   )
   
 ggsave(
