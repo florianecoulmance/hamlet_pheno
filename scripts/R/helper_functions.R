@@ -399,7 +399,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   # -----------------------------
   p_annot <- annotate_figure(
     p,
-    top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(1, "lines"))#, fig.lab.pos = "top.left"
+    top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
   )
     
   return(p_annot)
