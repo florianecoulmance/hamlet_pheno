@@ -188,21 +188,56 @@ leg_g <- legend_geo(geo_table)
 
 ########## FIGURE 1 TEST 1 ###################
 figure1test1 <- ggarrange(
+  NULL,
   results[["all"]][["pca"]],
   NULL,
-  ggarrange(results[["uvi"]][["pca"]], results[["ver"]][["pca"]], ncol=2, widths = c(1, 1)),
+  ggarrange(results[["uvi"]][["pca"]], NULL, results[["ver"]][["pca"]], ncol=3, widths = c(1, 0.08, 1)),
   NULL,
   leg,
   NULL,
-  nrow = 6,
-  heights = c(8, 0.2, 5.3, 0.2, 1, 0.05)
+  nrow = 7,
+  heights = c(0.08, 8, 0.2, 5.3, 0.2, 1, 0.05)
   )
   
 ggsave(
   filename = file.path(figure_path, "figure1test1.png"),
   plot = figure1test1,
   width = 12, 
-  height = 17, 
+  height = 18, 
+  units = "in",      # inches
+  dpi = 150,         # moderate dpi to reduce file size but keep quality
+  type = "cairo-png" # better compression and anti-aliasing
+)
+
+########## FIGURE S4 TEST 1 ###################
+figures4test1 <- ggarrange(
+  ggarrange(
+    results[["boc"]][["pca"]],
+    NULL,
+    results[["bel"]][["pca"]],
+    ncol = 3,
+    widths = c(1, 0.08, 1)
+  ),
+  NULL,
+  ggarrange(
+    results[["flo"]][["pca"]],
+    NULL,
+    results[["tob"]][["pca"]],
+    ncol = 3,
+    widths = c(1, 0.08, 1)
+  )
+  NULL,
+  leg,
+  NULL,
+  nrow = 6,
+  heights = c(1, 0.08, 1, 0.08, 0.3, 0.05)
+  )
+  
+ggsave(
+  filename = file.path(figure_path, "figures4test1.png"),
+  plot = figures4test1,
+  width = 12, 
+  height = 18, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -212,9 +247,9 @@ ggsave(
 figure1test2 <- ggarrange(
   results[["all"]][["pca"]],
   NULL,
-  ggarrange(results[["uvi"]][["pca"]], NULL, results[["boc"]][["pca"]], ncol=3, widths = c(1, 0.2, 1)),
+  ggarrange(results[["uvi"]][["pca"]], NULL, results[["boc"]][["pca"]], ncol=3, widths = c(1, 0.08, 1)),
   NULL,
-  ggarrange(results[["tob"]][["pca"]], NULL, results[["ver"]][["pca"]], ncol=3, widths = c(1, 0.2, 1)),
+  ggarrange(results[["tob"]][["pca"]], NULL, results[["ver"]][["pca"]], ncol=3, widths = c(1, 0.08, 1)),
   NULL,
   leg,
   NULL,
