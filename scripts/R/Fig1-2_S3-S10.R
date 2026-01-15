@@ -272,7 +272,7 @@ ggsave(filename = file.path(figure_path, "FigS4_pLocSUP.png"),
 ########## FIGURE S5 ###################
 # PERMANOVA heatmaps for each location
 all_perm <- lapply(results_no_overall, `[[`, "permanova") # extract per location pcas
-perm_grid <- plot_grid(plotlist = all_perm, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30) # bundle location permanovas in one plot
+perm_grid <- plot_grid(plotlist = all_perm, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30, rel_widths = c(1, 1), scale=0.95) # bundle location permanovas in one plot
 # Combine permanova grid with legend at the bottom
 figureS5 <- ggarrange(
   perm_grid
@@ -291,7 +291,7 @@ ggsave(filename = file.path(figure_path, "FigS5_pLocPERM.png"),
 ########## FIGURE S6 ###################
 # Hierarchical clustering plots for all locations with legend
 all_hier <- lapply(results_no_overall, `[[`, "hclust") # extract per location pcas
-hier_grid <- plot_grid(plotlist = all_hier, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30) # bundle location pcas in one plot
+hier_grid <- plot_grid(plotlist = all_hier, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30, rel_widths = c(1, 1), scale=0.95) # bundle location pcas in one plot
 # Combine hierarchical clustering grid with legend at the bottom
 figureS6 <- ggarrange(
   hier_grid,
@@ -315,7 +315,7 @@ ggsave(filename = file.path(figure_path, "FigS6_pLocHCLUST.png"),
 ########## FIGURE S7 ###################
 # Heatmap PC images for each location
 all_heat <- lapply(results_no_overall, `[[`, "heatmap") # extract per location pcas
-heat_grid <- plot_grid(plotlist = all_heat, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30) # bundle location pcas in one plot
+heat_grid <- plot_grid(plotlist = all_heat, ncol = 2, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), label_size=30, rel_widths = c(1, 1), scale=0.95) # bundle location pcas in one plot
 # Combine heatmaps grid with legend at the bottom
 figureS7 <- ggarrange(
   heat_grid
@@ -338,10 +338,10 @@ hier <- results[["all"]][["hclust"]]
 heat <- results[["all"]][["heatmap"]]
 
 # # Bottom row: hier + heat
-bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"), font.label=list(color="black",size=30))
+bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"), font.label=list(color="black",size=25))
 
 # Combine top (perm) with bottom row
-figureS8 <- ggarrange(perm, bottom_row, nrow = 2, ncol = 1, labels=c("(a)",""), font.label=list(color="black",size=30))
+figureS8 <- ggarrange(perm, bottom_row, nrow = 2, ncol = 1, labels=c("(a)",""), font.label=list(color="black",size=25))
 figureS8 <- ggarrange(
   figureS8,
   NULL,
@@ -392,37 +392,37 @@ pca_pue <- results[["pue"]][["pca"]]
 heat_pue <- results[["pue"]][["heatmap"]]
 perm_pue <- results[["pue"]][["permanova"]]
 hier_pue <- results[["pue"]][["hclust"]]
-pue <- plot_grid(pca_pue, heat_pue, perm_pue, hier_pue, ncol = 4, rel_widths = c(1, 1, 1, 1))
+pue <- plot_grid(pca_pue, heat_pue, perm_pue, hier_pue, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
 
 pca_nig <- results[["nig"]][["pca"]]
 heat_nig <- results[["nig"]][["heatmap"]]
 perm_nig <- results[["nig"]][["permanova"]]
 hier_nig <- results[["nig"]][["hclust"]]
-nig <- plot_grid(pca_nig, heat_nig, perm_nig, hier_nig, ncol = 4, rel_widths = c(1, 1, 1, 1))
+nig <- plot_grid(pca_nig, heat_nig, perm_nig, hier_nig, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
 
 pca_uni <- results[["uni"]][["pca"]]
 heat_uni <- results[["uni"]][["heatmap"]]
 perm_uni <- results[["uni"]][["permanova"]]
 hier_uni <- results[["uni"]][["hclust"]]
-uni <- plot_grid(pca_uni, heat_uni, perm_uni, hier_uni, ncol = 4, rel_widths = c(1, 1, 1, 1))
+uni <- plot_grid(pca_uni, heat_uni, perm_uni, hier_uni, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
 
 pca_chl <- results[["chl"]][["pca"]]
 heat_chl <- results[["chl"]][["heatmap"]]
 perm_chl <- results[["chl"]][["permanova"]]
 hier_chl <- results[["chl"]][["hclust"]]
-chl <- plot_grid(pca_chl, heat_chl, perm_chl, hier_chl, ncol = 4, rel_widths = c(1, 1, 1, 1))
+chl <- plot_grid(pca_chl, heat_chl, perm_chl, hier_chl, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
 
 pca_abe <- results[["abe"]][["pca"]]
 heat_abe <- results[["abe"]][["heatmap"]]
 perm_abe <- results[["abe"]][["permanova"]]
 hier_abe <- results[["abe"]][["hclust"]]
-abe <- plot_grid(pca_abe, heat_abe, perm_abe, hier_abe, ncol = 4, rel_widths = c(1, 1, 1, 1))
+abe <- plot_grid(pca_abe, heat_abe, perm_abe, hier_abe, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
 
 pca_ind <- results[["ind"]][["pca"]]
 heat_ind <- results[["ind"]][["heatmap"]]
 perm_ind <- results[["ind"]][["permanova"]]
 hier_ind <- results[["ind"]][["hclust"]]
-ind <- plot_grid(pca_ind, heat_ind, perm_ind, hier_ind, ncol = 4, rel_widths = c(1, 1, 1, 1))
+ind <- plot_grid(pca_ind, heat_ind, perm_ind, hier_ind, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
 
 figureS10 <- ggarrange(pue, nig, uni, chl, abe, ind, nrow = 6, labels=c("(a)","(b)","(c)","(d)","(e)","(f)"), font.label=list(color="black",size=30))
 figureS10 <- ggarrange(
