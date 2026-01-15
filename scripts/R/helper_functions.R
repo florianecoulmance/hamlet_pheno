@@ -335,8 +335,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       legend.text = element_markdown(size = 15),
       panel.background = element_blank(),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
-      axis.text = element_text(size = 20),
-      axis.title = element_text(size = 25),
+      axis.text = element_text(size = 14),
+      axis.title = element_text(size = 18),
       plot.margin = margin(3,3,0,0)
     ) +
     scale_x_continuous(position = "bottom",labels = unit_format(unit = "k", scale = 1e-3)) +
@@ -400,7 +400,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   p_annot <- annotate_figure(
     p,
     top = text_grob(title_val, color = "black", face = "bold", size = 20,
-                      x = unit(5.5, "pt")) #hjust = -0.8)
+                      x = 0) #hjust = -0.8)
   )
     
   return(p_annot)
