@@ -420,7 +420,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   } else if (color_by == "location") {
       p_annot <- annotate_figure(
       p,
-      top = text_grob(title_val, color = "black", face = "bolditalic", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
+      top = text_grob(title_val, color = "black", face = "bold.italic", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
     )
   }
     
