@@ -366,6 +366,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   if (color_by == "species") {
     # if coloring by species, title is the location name
     geo_val <- unique(plot_data$geo)
+    print(geo_val)
+    print(length(geo_val))
     if (length(geo_val) == 1) {
       title_val <- geo_info$Locations[geo_info$geo == geo_val]
       if (title_val=="Panama") {
@@ -383,6 +385,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       } else {
         title_val <- "Greater Caribbean"
       }
+    } else {
+      title_val <- "(a) Greater Caribbean"
     }
   } else if (color_by == "location") {
     # if coloring by location, title is the species name
