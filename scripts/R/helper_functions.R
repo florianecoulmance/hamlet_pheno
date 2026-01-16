@@ -432,6 +432,11 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       p,
       top = text_grob(title_val, color = "black", face = "bold.italic", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
     )
+  } else {
+    p_annot <- annotate_figure(
+      p,
+      top = NULL
+    )
   }
     
   return(p_annot)
@@ -655,7 +660,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       } else if (title_val=="Mexico") {
         title_val <- "(a) Mexico"
       } else {
-        title_val <- ""
+        title_val <- "(a)"
       }
   } else if (color_by == "location"){
     species_val <- unique(pc_table$spec)
