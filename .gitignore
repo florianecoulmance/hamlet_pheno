@@ -11,7 +11,10 @@ phyps2e_m2.vcf.gz.csi
 2_popgen/bySPC/*.log
 2_popgen/bySPC/*.nosex
 2_popgen/byALL/*.traw
-2_popgen/byALL/*.log
+2_popgen/byALL/*.bed
+2_popgen/byALL/*.bim
+2_popgen/byALL/*.fam
+2_popgen/byALL/*.log  
 2_popgen/byALL/*.nosex
 2_popgen/.R*
 2_popgen/Rplots.pdf
