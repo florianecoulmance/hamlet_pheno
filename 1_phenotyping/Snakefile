@@ -50,8 +50,8 @@ rule all:
         expand(
             f"{FIGURES_DIR}/{{fig_name}}",
             fig_name=[
-                "Fig1_pLocPCA.png",
-                "Fig2_pAllPCA.png",
+                "Fig1_pAllPCA.png",
+                "Fig2_pLocPCA.png",
                 "FigS3_pAllVAR.png",
                 "FigS4_pLocSUP.png",
                 "FigS5_pLocPERM.png",
@@ -106,8 +106,8 @@ rule plot_figures:
         pca=lambda wildcards: [f"{PCA_DIR}/{p['dataset']}_PCs.csv" for p in phenotyping_params],
         var=lambda wildcards: [f"{PCA_DIR}/{p['dataset']}_var.csv" for p in phenotyping_params]
     output:
-        f"{FIGURES_DIR}/Fig1_pLocPCA.png",
-        f"{FIGURES_DIR}/Fig2_pAllPCA.png",
+        f"{FIGURES_DIR}/Fig1_pAllPCA.png",
+        f"{FIGURES_DIR}/Fig2_pLocPCA.png",
         f"{FIGURES_DIR}/FigS3_pAllVAR.png",
         f"{FIGURES_DIR}/FigS4_pLocSUP.png",
         f"{FIGURES_DIR}/FigS5_pLocPERM.png",

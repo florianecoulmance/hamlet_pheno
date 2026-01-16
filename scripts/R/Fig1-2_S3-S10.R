@@ -186,117 +186,138 @@ leg_g <- legend_geo(geo_table)
 # print(leg_combined)
 # print(class(leg_combined))
 
-########## FIGURE 1 TEST 1 ###################
-figure1test1 <- ggarrange(
-  NULL,
-  results[["all"]][["pca"]],
-  NULL,
-  ggarrange(results[["uvi"]][["pca"]], NULL, results[["ver"]][["pca"]], ncol=3, widths = c(1, 0.08, 1)),
-  NULL,
-  leg,
-  NULL,
-  nrow = 7,
-  heights = c(0.02, 2, 0.05, 1, 0.05, 0.2, 0.02)
-  )
+# ########## FIGURE 1 TEST 1 ###################
+# figure1test1 <- ggarrange(
+#   NULL,
+#   results[["all"]][["pca"]],
+#   NULL,
+#   ggarrange(results[["uvi"]][["pca"]], NULL, results[["ver"]][["pca"]], ncol=3, widths = c(1, 0.08, 1)),
+#   NULL,
+#   leg,
+#   NULL,
+#   nrow = 7,
+#   heights = c(0.02, 2, 0.05, 1, 0.05, 0.2, 0.02)
+#   )
   
-ggsave(
-  filename = file.path(figure_path, "figure1test1.png"),
-  plot = figure1test1,
-  width = 12, 
-  height = 17, 
-  units = "in",      # inches
-  dpi = 150,         # moderate dpi to reduce file size but keep quality
-  type = "cairo-png" # better compression and anti-aliasing
-)
+# ggsave(
+#   filename = file.path(figure_path, "figure1test1.png"),
+#   plot = figure1test1,
+#   width = 12, 
+#   height = 17, 
+#   units = "in",      # inches
+#   dpi = 150,         # moderate dpi to reduce file size but keep quality
+#   type = "cairo-png" # better compression and anti-aliasing
+# )
 
-########## FIGURE S4 TEST 1 ###################
-figures4test1 <- ggarrange(
-  NULL,
-  ggarrange(
-    results[["boc"]][["pca"]],
-    NULL,
-    results[["bel"]][["pca"]],
-    ncol = 3,
-    widths = c(1, 0.08, 1)
-  ),
-  NULL,
-  ggarrange(
-    results[["flo"]][["pca"]],
-    NULL,
-    results[["tob"]][["pca"]],
-    ncol = 3,
-    widths = c(1, 0.08, 1)
-  ),
-  NULL,
-  leg,
-  NULL,
-  nrow = 7,
-  heights = c(0.08, 1, 0.08, 1, 0.08, 0.2, 0.05)
-  )
+# ########## FIGURE S4 TEST 1 ###################
+# figures4test1 <- ggarrange(
+#   NULL,
+#   ggarrange(
+#     results[["boc"]][["pca"]],
+#     NULL,
+#     results[["bel"]][["pca"]],
+#     ncol = 3,
+#     widths = c(1, 0.08, 1)
+#   ),
+#   NULL,
+#   ggarrange(
+#     results[["flo"]][["pca"]],
+#     NULL,
+#     results[["tob"]][["pca"]],
+#     ncol = 3,
+#     widths = c(1, 0.08, 1)
+#   ),
+#   NULL,
+#   leg,
+#   NULL,
+#   nrow = 7,
+#   heights = c(0.08, 1, 0.08, 1, 0.08, 0.2, 0.05)
+#   )
   
-ggsave(
-  filename = file.path(figure_path, "figures4test1.png"),
-  plot = figures4test1,
-  width = 12, 
-  height = 14, 
-  units = "in",      # inches
-  dpi = 150,         # moderate dpi to reduce file size but keep quality
-  type = "cairo-png" # better compression and anti-aliasing
-)
+# ggsave(
+#   filename = file.path(figure_path, "figures4test1.png"),
+#   plot = figures4test1,
+#   width = 12, 
+#   height = 14, 
+#   units = "in",      # inches
+#   dpi = 150,         # moderate dpi to reduce file size but keep quality
+#   type = "cairo-png" # better compression and anti-aliasing
+# )
 
-########## FIGURE 1 TEST 2 ###################
-figure1test2 <- ggarrange(
-  NULL,
-  results[["all"]][["pca"]],
-  NULL,
-  ggarrange(results[["uvi"]][["pca"]], NULL, results[["boc"]][["pca"]], ncol=3, widths = c(1, 0.08, 1)),
-  NULL,
-  ggarrange(results[["tob"]][["pca"]], NULL, results[["ver"]][["pca"]], ncol=3, widths = c(1, 0.08, 1)),
-  NULL,
-  leg,
-  NULL,
-  nrow = 9,
-  heights = c(0.02, 2, 0.05, 1, 0.05, 1, 0.05, 0.2, 0.02)
-  )
+# ########## FIGURE 1 TEST 2 ###################
+# figure1test2 <- ggarrange(
+#   NULL,
+#   results[["all"]][["pca"]],
+#   NULL,
+#   ggarrange(results[["uvi"]][["pca"]], NULL, results[["boc"]][["pca"]], ncol=3, widths = c(1, 0.08, 1)),
+#   NULL,
+#   ggarrange(results[["tob"]][["pca"]], NULL, results[["ver"]][["pca"]], ncol=3, widths = c(1, 0.08, 1)),
+#   NULL,
+#   leg,
+#   NULL,
+#   nrow = 9,
+#   heights = c(0.02, 2, 0.05, 1, 0.05, 1, 0.05, 0.2, 0.02)
+#   )
   
-ggsave(
-  filename = file.path(figure_path, "figure1test2.png"),
-  plot = figure1test2,
-  width = 12, 
-  height = 18, 
-  units = "in",      # inches
-  dpi = 150,         # moderate dpi to reduce file size but keep quality
-  type = "cairo-png" # better compression and anti-aliasing
-)
+# ggsave(
+#   filename = file.path(figure_path, "figure1test2.png"),
+#   plot = figure1test2,
+#   width = 12, 
+#   height = 18, 
+#   units = "in",      # inches
+#   dpi = 150,         # moderate dpi to reduce file size but keep quality
+#   type = "cairo-png" # better compression and anti-aliasing
+# )
 
-########## FIGURE S4 TEST 2 ###################
-figures4test2 <- ggarrange(
-  NULL,
-  ggarrange(
-    results[["bel"]][["pca"]],
-    NULL,
-    results[["flo"]][["pca"]],
-    ncol = 3,
-    widths = c(1, 0.08, 1)
-  ),
-  NULL,
-  leg,
-  NULL,
-  nrow = 5,
-  heights = c(0.02, 1, 0.05, 0.2, 0.02)
-  )
+# ########## FIGURE S4 TEST 2 ###################
+# figures4test2 <- ggarrange(
+#   NULL,
+#   ggarrange(
+#     results[["bel"]][["pca"]],
+#     NULL,
+#     results[["flo"]][["pca"]],
+#     ncol = 3,
+#     widths = c(1, 0.08, 1)
+#   ),
+#   NULL,
+#   leg,
+#   NULL,
+#   nrow = 5,
+#   heights = c(0.02, 1, 0.05, 0.2, 0.02)
+#   )
   
-ggsave(
-  filename = file.path(figure_path, "figures4test2.png"),
-  plot = figures4test2,
-  width = 12, 
-  height = 7, 
-  units = "in",      # inches
-  dpi = 150,         # moderate dpi to reduce file size but keep quality
-  type = "cairo-png" # better compression and anti-aliasing
-)
+# ggsave(
+#   filename = file.path(figure_path, "figures4test2.png"),
+#   plot = figures4test2,
+#   width = 12, 
+#   height = 7, 
+#   units = "in",      # inches
+#   dpi = 150,         # moderate dpi to reduce file size but keep quality
+#   type = "cairo-png" # better compression and anti-aliasing
+# )
 
 ########## FIGURE 1 ###################
+# Combined phenotypic space with legend
+figure1 <- ggarrange(
+  results[["all"]][["pca"]],
+  NULL,
+  leg,
+  NULL,
+  nrow = 4,
+  heights = c(8, 0.3, 1, 0.05)
+  )
+  
+ggsave(
+  filename = file.path(figure_path, "Fig1_pAllPCA.png"),
+  plot = figure2,
+  width = 12, 
+  height = 13, 
+  units = "in",      # inches
+  dpi = 150,         # moderate dpi to reduce file size but keep quality
+  type = "cairo-png" # better compression and anti-aliasing
+)
+
+########## FIGURE 2 ###################
 # PCA plots for all locations with legend
 all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
 pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
@@ -311,35 +332,13 @@ figure1 <- ggarrange(
   )
 
 # Save Figure 1 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "Fig1_pLocPCA.png"),
+ggsave(filename = file.path(figure_path, "Fig2_pLocPCA.png"),
   plot = figure1,
   width = 12,    # A4 width in inches
   height = 17,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
-)
-
-
-########## FIGURE 2 ###################
-# Combined phenotypic space with legend
-figure2 <- ggarrange(
-  results[["all"]][["pca"]],
-  NULL,
-  leg,
-  NULL,
-  nrow = 4,
-  heights = c(8, 0.3, 1, 0.05)
-  )
-  
-ggsave(
-  filename = file.path(figure_path, "Fig2_pAllPCA.png"),
-  plot = figure2,
-  width = 12, 
-  height = 13, 
-  units = "in",      # inches
-  dpi = 150,         # moderate dpi to reduce file size but keep quality
-  type = "cairo-png" # better compression and anti-aliasing
 )
 
 ########## FIGURE S3 ###################

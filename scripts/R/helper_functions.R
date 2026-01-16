@@ -383,10 +383,10 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       } else if (title_val=="Mexico") {
         title_val <- "(a) Mexico"
       } else {
-        title_val <- "Greater Caribbean"
+        title_val <- ""
       }
     } else {
-      title_val <- "(a) Greater Caribbean"
+      title_val <- ""
     }
   } else if (color_by == "location") {
     # if coloring by location, title is the species name
@@ -411,7 +411,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       }
     }
   } else {
-    title_val <- "(a) Greater Caribbean"
+    title_val <- ""
   }
   print(title_val)
 
@@ -639,19 +639,19 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     geo_val <- unique(pc_table$geo)
     title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
     if (title_val=="Panama") {
-        title_val <- "(b) Panama"
+        title_val <- "(e) Panama"
       } else if (title_val=="USVI") {
-        title_val <- "(a) USVI"
+        title_val <- "(f) USVI"
       } else if (title_val=="Belize") {
-        title_val <- "(c) Belize"
+        title_val <- "(d) Belize"
       } else if (title_val=="Florida Keys") {
-        title_val <- "(d) Florida Keys"
+        title_val <- "(c) Florida Keys"
       } else if (title_val=="Tobago") {
-        title_val <- "(e) Tobago"
+        title_val <- "(b) Tobago"
       } else if (title_val=="Mexico") {
-        title_val <- "(f) Mexico"
+        title_val <- "(a) Mexico"
       } else {
-        title_val <- "(a)"
+        title_val <- ""
       }
   } else if (color_by == "location"){
     species_val <- unique(pc_table$spec)
@@ -775,19 +775,19 @@ hierClustering <- function(data_path, pca_file, species_col, geo_map, color_by =
       geo_val <- unique(tree$geo)[1]
       title_val <- geo_map$Locations[geo_map$geo == geo_val]
       if (title_val=="Panama") {
-        title_val <- "(b) Panama"
+        title_val <- "(e) Panama"
       } else if (title_val=="USVI") {
-        title_val <- "(a) USVI"
+        title_val <- "(f) USVI"
       } else if (title_val=="Belize") {
-        title_val <- "(c) Belize"
+        title_val <- "(d) Belize"
       } else if (title_val=="Florida Keys") {
-        title_val <- "(d) Florida Keys"
+        title_val <- "(c) Florida Keys"
       } else if (title_val=="Tobago") {
-        title_val <- "(e) Tobago"
+        title_val <- "(b) Tobago"
       } else if (title_val=="Mexico") {
-        title_val <- "(f) Mexico"
+        title_val <- "(a) Mexico"
       } else {
-        title_val <- "Greater Caribbean"
+        title_val <- ""
       }
     } else if (color_by == "location"){
       species_val <- unique(tree$spec)[1]
@@ -886,19 +886,19 @@ heat_plots <- function(im_p, name, pcs, spec_map, geo_map, color_by = "species")
     if (abbrev %in% geo_map$geo) {
       title_val <- geo_map$Locations[match(abbrev, geo_map$geo)]
       if (title_val=="Panama") {
-        title_val <- "(b) Panama"
+        title_val <- "(e) Panama"
       } else if (title_val=="USVI") {
-        title_val <- "(a) USVI"
+        title_val <- "(f) USVI"
       } else if (title_val=="Belize") {
-        title_val <- "(c) Belize"
+        title_val <- "(d) Belize"
       } else if (title_val=="Florida Keys") {
-        title_val <- "(d) Florida Keys"
+        title_val <- "(c) Florida Keys"
       } else if (title_val=="Tobago") {
-        title_val <- "(e) Tobago"
+        title_val <- "(b) Tobago"
       } else if (title_val=="Mexico") {
-        title_val <- "(f) Mexico"
+        title_val <- "(a) Mexico"
       } else {
-        title_val <- "Greater Caribbean"
+        title_val <- ""
       }
     } else {
       title_val <- ""
