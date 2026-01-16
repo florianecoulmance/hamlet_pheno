@@ -145,9 +145,9 @@ for(dat in names(dataset)) {
     #-----------------------------------
     if (dat %in% c("all_s", "all_l")) {
         # For the "all" dataset, generate three PCA plots (PC1-2, PC3-4, PC5-6)
-        p_pca1 <- pca_plot_all(pca_eigen, "PC1", "PC2", species_info, pca_var) %>% annotate_figure(., top = text_grob("(a) PC1 vs. PC2", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
-        p_pca2 <- pca_plot_all(pca_eigen, "PC3", "PC4", species_info, pca_var) %>% annotate_figure(., top = text_grob("(b) PC3 vs. PC4", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
-        p_pca3 <- pca_plot_all(pca_eigen, "PC5", "PC6", species_info, pca_var) %>% annotate_figure(., top = text_grob("(c) PC5 vs. PC6", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
+        p_pca1 <- pca_plot_all(pca_eigen, "PC1", "PC2", species_info, pca_var) %>% annotate_figure(., top = text_grob("(a)", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
+        p_pca2 <- pca_plot_all(pca_eigen, "PC3", "PC4", species_info, pca_var) %>% annotate_figure(., top = text_grob("(b)", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
+        p_pca3 <- pca_plot_all(pca_eigen, "PC5", "PC6", species_info, pca_var) %>% annotate_figure(., top = text_grob("(c)", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
     } else {
         # For all other datasets, generate only PC1-2 and PC3-4
         p_pca1 <- pca_plot(pca_eigen, "PC1", "PC2", species_info, geo_table, pca_var, color_by = color)
