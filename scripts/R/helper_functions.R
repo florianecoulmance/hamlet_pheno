@@ -371,17 +371,17 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     if (length(geo_val) == 1) {
       title_val <- geo_info$Locations[geo_info$geo == geo_val]
       if (title_val=="Panama") {
-        title_val <- "Panama"
+        title_val <- "(e) Panama"
       } else if (title_val=="USVI") {
-        title_val <- "(b) USVI"
+        title_val <- "(f) USVI"
       } else if (title_val=="Belize") {
-        title_val <- "(a) Belize"
+        title_val <- "(d) Belize"
       } else if (title_val=="Florida Keys") {
-        title_val <- "(b) Florida Keys"
+        title_val <- "(c) Florida Keys"
       } else if (title_val=="Tobago") {
-        title_val <- "(c) Tobago"
+        title_val <- "(b) Tobago"
       } else if (title_val=="Mexico") {
-        title_val <- "Mexico"
+        title_val <- "(a) Mexico"
       } else {
         title_val <- "Greater Caribbean"
       }
