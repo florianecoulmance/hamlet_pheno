@@ -8,7 +8,7 @@ rm(list = ls())
 
 
 # new libraries
-source("helper_functions.R")
+source("scripts/R/helper_functions.R")
 library(dplyr)
 library(data.table)
 library(tidyverse)
@@ -155,29 +155,29 @@ for(name in names(datasets)) {
 # ############################
 
 ########## FIGURE S1 ###################
-pheno_t <- results[["pheno"]][["p_tally"]]
-pheno_m <- results[["pheno"]][["p_map"]]
+pheno_t <- results[["pheno"]][["p_tally"]] %>% annotate_figure(., top = text_grob("(a)", color = "black", face = "bold", size = 30, x = unit(0, "lines"), vjust=0, hjust=0))
+pheno_m <- results[["pheno"]][["p_map"]] %>% annotate_figure(., top = text_grob("(b)", color = "black", face = "bold", size = 30, x = unit(0, "lines"), vjust=0, hjust=0))
 
-figureS1 <- ggarrange(pheno_t, pheno_m, ncol = 1, nrow = 2, labels=c("(a)","(b)"), font.label=list(color="black",size=30), heights = c(14,12))
+figureS1 <- ggarrange(NULL, pheno_t, pheno_m, ncol = 1, nrow = 3, heights = c(0.05, 14, 12))
 
 ggsave(filename = file.path(figure_path, "FigS1_pSampling.png"),
   plot = figureS1,
   width = 18.5,    # A4 width in inches
-  height = 24,  # A4 height in inches
+  height = 24.5,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
 )
 
 ########## FIGURE S2 ###################
-geno_t <- results[["geno"]][["p_tally"]]
-geno_m <- results[["geno"]][["p_map"]]
+geno_t <- results[["geno"]][["p_tally"]] %>% annotate_figure(., top = text_grob("(a)", color = "black", face = "bold", size = 30, x = unit(0, "lines"), vjust=0, hjust=0))
+geno_m <- results[["geno"]][["p_map"]] %>% annotate_figure(., top = text_grob("(b)", color = "black", face = "bold", size = 30, x = unit(0, "lines"), vjust=0, hjust=0))
 
-figureS2 <- ggarrange(geno_t, geno_m, ncol = 1, nrow = 2, labels=c("(a)","(b)"), font.label=list(color="black",size=30), heights = c(14,12))
+figureS2 <- ggarrange(NULL, geno_t, geno_m, ncol = 1, nrow = 3, heights = c(0.05, 14, 12))
 ggsave(filename = file.path(figure_path, "FigS2_gSampling.png"),
   plot = figureS2,
   width = 18.5,    # A4 width in inches
-  height = 24,  # A4 height in inches
+  height = 24.5,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
