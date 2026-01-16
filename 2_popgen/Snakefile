@@ -59,7 +59,7 @@ rule all:
         expand("bySPC/{spc}.vcf.gz", spc=species),
         expand("byLOC/{loc}_ld_pruned_gtmat.traw", loc=locations),
         expand("bySPC/{spc}_ld_pruned_gtmat.traw", spc=species),
-        "byALL/all_ld_pruned_gtmat.traw",
+        "byALL/all.agg.ld_pruned_gtmat",
         # Location mode outputs in byLOC/permanova_results/
         expand("byLOC/permanova_results/{dataset}.lm.pairwise.csv", dataset=locations),
         # Species mode outputs in bySPC/permanova_results/
