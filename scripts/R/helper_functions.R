@@ -427,7 +427,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       p,
       top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
     )
-  } else if (color_by == "location") {
+  } else if (color_by == "location" && pc_first=="PC1") {
       p_annot <- annotate_figure(
       p,
       top = text_grob(title_val, color = "black", face = "bold.italic", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
@@ -1392,8 +1392,7 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map, label) {
   # ---- Annotate with location title ----
   p_annot <- annotate_figure(
     p,
-    top = text_grob(title_val, color = "black", face = "bold", size = 15,
-                  x = unit(5.5, "pt"), hjust = -0.5)
+    top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
   )
 
   return(p_annot)

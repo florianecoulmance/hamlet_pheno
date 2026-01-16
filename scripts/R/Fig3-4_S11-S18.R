@@ -151,7 +151,7 @@ for(dat in names(dataset)) {
     } else {
         # For all other datasets, generate only PC1-2 and PC3-4
         p_pca1 <- pca_plot(pca_eigen, "PC1", "PC2", species_info, geo_table, pca_var, color_by = color)
-        p_pca2 <- pca_plot(pca_eigen, "PC3", "PC4", species_info, geo_table, pca_var, color_by = color) %>% annotate_figure(., top = NULL)
+        p_pca2 <- pca_plot(pca_eigen, "PC3", "PC4", species_info, geo_table, pca_var, color_by = color)
         p_pca3 <- NULL
     }
 
@@ -165,7 +165,7 @@ for(dat in names(dataset)) {
     # -----------------------------------
     # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
     #-----------------------------------
-    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "uni")) c(0.4, 0.8) else if(dat %in% c("all_s", "all_l")) c(0.2, 0.7) else "none")
+    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "uni")) c(0.4, 0.8) else if(dat %in% c("all_s", "all_l")) c(0.3, 0.7) else "none")
 
 
     # -----------------------------------
@@ -211,14 +211,15 @@ pca2 <- results[["all_s"]][["pca_s"]]
 pca3 <- results[["all_s"]][["pca_t"]]
 
 figure3 <- ggarrange(
+  NULL,
   pca1,
   NULL,
   pca2,
   NULL,
   pca3,
-  nrow = 5,
+  nrow = 6,
   ncol = 1,
-  heights = c(1, 0.15, 1, 0.15, 1),
+  heights = c(0.05, 1, 0.05, 1, 0.05, 1),
   common.legend=T,
   legend = "right"
   )
@@ -249,7 +250,7 @@ figure4 <- ggarrange(
 
 # Save Figure 3 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig4_gLocPCA.png"),
-  plot = figure3,
+  plot = figure4,
   width = 12,    # A4 width in inches
   height = 14,  # A4 height in inches
   units = "in",
@@ -332,7 +333,7 @@ keep_spc <- names(results_spc)
 # print(keep_spc)
 
 pca_pue_f <- results[["pue"]][["pca_f"]]
-pca_pue_s <- results[["pue"]][["pca_s"]]
+pca_pue_s <- results[["pue"]][["pca_s"]] %>% annotate_figure(., top=NULL)
 perm_pue <- results[["pue"]][["permanova"]]
 pue <- plot_grid(pca_pue_f, pca_pue_s, perm_pue, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
 
@@ -355,10 +356,11 @@ figureS15 <- plot_grid(
   uni,
   NULL,
   leg_g,
+  NULL,
   ncol = 1,
-  nrow = 7,
-  rel_heights = c(6, 0.2, 6, 0.2, 6, 0.2, 1),
-  rel_widths = c(20, 20, 20, 20, 20, 20, 16)
+  nrow = 8,
+  rel_heights = c(6, 0.2, 6, 0.2, 6, 0.2, 1, 0.2),
+  rel_widths = c(20, 20, 20, 20, 20, 20, 16, 20)
   )
 
 # Save as PNG (A4 size)
@@ -366,7 +368,7 @@ ggsave(
   filename = file.path(figure_path, "FigS15_gSpe.png"),
   plot = figureS15,
   width = 15,    # A4 width in inches
-  height = 15,  # A4 height in inches
+  height = 16,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -508,16 +510,21 @@ ggsave(
 figureS19 <- ggarrange(
   results[["pue"]][["fst"]],
   results[["nig"]][["fst"]],
+  NULL,
   results[["uni"]][["fst"]],
   results[["abe"]][["fst"]],
+  NULL,
   results[["aff"]][["fst"]],
   results[["chl"]][["fst"]],
+  NULL,
   results[["gem"]][["fst"]],
   results[["gum"]][["fst"]],
+  NULL,
   results[["ind"]][["fst"]],
   results[["tan"]][["fst"]],
   ncol = 2,
-  nrow = 5)
+  nrow = 9,
+  heights = c(1, 0.05, 1, 0.05, 1, 0.05, 1, 0.05, 1))
 
 # Save as PNG (A4 size)
 ggsave(
