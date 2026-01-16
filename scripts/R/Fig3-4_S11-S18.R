@@ -121,7 +121,7 @@ for(dat in names(dataset)) {
     #-----------------------------------
     # Read GTMAT file + Sample file + PERMANOVA & PERMDISP result table
     #-----------------------------------
-    gtmat_file <- file.path(base_path, "2_popgen", dat_dir, if (dat %in% c("all_s", "all_l")) "thinned_all_ld_pruned_gtmat.traw" else paste0(dat, "_ld_pruned_gtmat.traw"))
+    gtmat_file <- file.path(base_path, "2_popgen", dat_dir, if (dat %in% c("all_s", "all_l")) "all.agg.ld_pruned_gtmat.traw" else paste0(dat, "_ld_pruned_gtmat.traw"))
     sample_file <- file.path(base_path, if (dat %in% c("all_s", "all_l")) "metadata/geno_names.txt" else paste0("2_popgen/", dat_dir, "/", dat, ".txt"))
     # perm_file <- list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat, ".*\\.csv$"), full.names = TRUE)
     perm_file <- if (dat == "all_s") file.path(base_path, "2_popgen", dat_dir, "permanova_results/all.lm.pairwise.csv") else if (dat == "all_l") file.path(base_path, "2_popgen", dat_dir, "permanova_results/all.sm.pairwise.csv") else list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat, ".*\\.csv$"), full.names = TRUE)
