@@ -146,8 +146,8 @@ for(dat in names(dataset)) {
     if (dat %in% c("all_s", "all_l")) {
         # For the "all" dataset, generate three PCA plots (PC1-2, PC3-4, PC5-6)
         p_pca1 <- pca_plot_all(pca_eigen, "PC1", "PC2", species_info, pca_var) %>% annotate_figure(., top = text_grob("(a) PC1 vs. PC2", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
-        p_pca2 <- pca_plot_all(pca_eigen, "PC3", "PC4", species_info, pca_var) %>% annotate_figure(., top = text_grob("(a) PC3 vs. PC4", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
-        p_pca3 <- pca_plot_all(pca_eigen, "PC5", "PC6", species_info, pca_var) %>% annotate_figure(., top = text_grob("(a) PC5 vs. PC6", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
+        p_pca2 <- pca_plot_all(pca_eigen, "PC3", "PC4", species_info, pca_var) %>% annotate_figure(., top = text_grob("(b) PC3 vs. PC4", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
+        p_pca3 <- pca_plot_all(pca_eigen, "PC5", "PC6", species_info, pca_var) %>% annotate_figure(., top = text_grob("(c) PC5 vs. PC6", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
     } else {
         # For all other datasets, generate only PC1-2 and PC3-4
         p_pca1 <- pca_plot(pca_eigen, "PC1", "PC2", species_info, geo_table, pca_var, color_by = color)
@@ -210,25 +210,29 @@ pca1 <- results[["all_s"]][["pca_f"]]
 pca2 <- results[["all_s"]][["pca_s"]]
 pca3 <- results[["all_s"]][["pca_t"]]
 
-figure3 <- ggarrange(
-  NULL,
+plot <- ggarrange(
   pca1,
-  NULL,
   pca2,
-  NULL,
   pca3,
-  nrow = 6,
+  nrow = 3,
   ncol = 1,
-  heights = c(0.05, 1, 0.05, 1, 0.05, 1),
   common.legend=T,
   legend = "right"
+  )
+
+figure3 <- ggarrange(
+  NULL,
+  plot,
+  nrow = 2,
+  ncol = 1,
+  heights = c(0.02, 15)
   )
 
 ggsave(
   filename = file.path(figure_path, "Fig3_gAllPCA.png"),
   plot = figure3,
   width = 8, 
-  height = 16, 
+  height = 18, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
@@ -359,7 +363,7 @@ figureS15 <- plot_grid(
   NULL,
   ncol = 1,
   nrow = 8,
-  rel_heights = c(6, 0.2, 6, 0.2, 6, 0.2, 1, 0.2),
+  rel_heights = c(6, 0.2, 6, 0.2, 6, 0.2, 2, 0.05),
   rel_widths = c(20, 20, 20, 20, 20, 20, 16, 20)
   )
 
@@ -368,7 +372,7 @@ ggsave(
   filename = file.path(figure_path, "FigS15_gSpe.png"),
   plot = figureS15,
   width = 15,    # A4 width in inches
-  height = 16,  # A4 height in inches
+  height = 18,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -464,17 +468,24 @@ ggsave(
 ########## FIGURE S17 ###################
 # Per location FST
 figureS17 <- ggarrange(
-  results[["bel"]][["fst"]],
-  results[["boc"]][["fst"]],
-  results[["hon"]][["fst"]],
-  results[["pri"]][["fst"]],
-  results[["arc"]][["fst"]],
-  results[["bar"]][["fst"]],
-  results[["flk"]][["fst"]],
-  results[["gun"]][["fst"]],
-  results[["qui"]][["fst"]],
-  ncol = 3,
-  nrow = 3)
+  NULL,
+  ggarrange(
+    results[["bel"]][["fst"]],
+    results[["boc"]][["fst"]],
+    results[["hon"]][["fst"]],
+    results[["pri"]][["fst"]],
+    results[["arc"]][["fst"]],
+    results[["bar"]][["fst"]],
+    results[["flk"]][["fst"]],
+    results[["gun"]][["fst"]],
+    results[["qui"]][["fst"]],
+    ncol = 3,
+    nrow = 3
+    ),
+  ncol = 1,
+  nrow = 2,
+  heights = c (0.2, 10)
+  )
 
 # Save as PNG (A4 size)
 ggsave(
@@ -508,23 +519,25 @@ ggsave(
 ########## FIGURE S19 ###################
 # Per species: FST
 figureS19 <- ggarrange(
-  results[["pue"]][["fst"]],
-  results[["nig"]][["fst"]],
   NULL,
-  results[["uni"]][["fst"]],
-  results[["abe"]][["fst"]],
-  NULL,
-  results[["aff"]][["fst"]],
-  results[["chl"]][["fst"]],
-  NULL,
-  results[["gem"]][["fst"]],
-  results[["gum"]][["fst"]],
-  NULL,
-  results[["ind"]][["fst"]],
-  results[["tan"]][["fst"]],
-  ncol = 2,
-  nrow = 9,
-  heights = c(1, 0.05, 1, 0.05, 1, 0.05, 1, 0.05, 1))
+  ggarrange(
+    results[["pue"]][["fst"]],
+    results[["nig"]][["fst"]],
+    results[["uni"]][["fst"]],
+    results[["abe"]][["fst"]],
+    results[["aff"]][["fst"]],
+    results[["chl"]][["fst"]],
+    results[["gem"]][["fst"]],
+    results[["gum"]][["fst"]],
+    results[["ind"]][["fst"]],
+    results[["tan"]][["fst"]],
+    ncol = 2,
+    nrow = 5,
+    heights = c(1, 1, 1, 1, 1)
+    ),
+  nrow = 2,
+  heights = c(0.02, 15)
+  )
 
 # Save as PNG (A4 size)
 ggsave(

@@ -60,7 +60,6 @@ rule all:
         expand("byLOC/{loc}_ld_pruned_gtmat.traw", loc=locations),
         expand("bySPC/{spc}_ld_pruned_gtmat.traw", spc=species),
         "byALL/all_ld_pruned_gtmat.traw",
-        "byALL/thinned_all_ld_pruned_gtmat.traw",
         # Location mode outputs in byLOC/permanova_results/
         expand("byLOC/permanova_results/{dataset}.lm.pairwise.csv", dataset=locations),
         # Species mode outputs in bySPC/permanova_results/
@@ -227,7 +226,7 @@ rule all_plink:
     input:
         VCF_FILE = VCF_FILE
     output:
-        GTMAT = "byALL/all_ld_pruned_gtmat.traw"
+        GTMAT = "byALL/all.agg.ld_pruned_gtmat.traw"
     shell:
         r"""
         module load hpc-env/13.1
@@ -250,7 +249,7 @@ rule all_plink:
 
         # Step 3: LD pruning
         plink --bfile byALL/${{prefix}}.flt \
-              --indep-pairwise 50 10 0.2 --allow-extra-chr \
+              --indep-pairwise 50 5 0.1 --allow-extra-chr \
               --out byALL/${{prefix}}.ld
 
         plink --bfile byALL/${{prefix}}.flt \
@@ -261,38 +260,12 @@ rule all_plink:
         # Step 4: Export genotype matrix (transposed)
         plink --bfile byALL/${{prefix}}.ld.pruned \
               --recode A-transpose --allow-extra-chr \
-              --out byALL/${{prefix}}_ld_pruned_gtmat
+              --out byALL/${{prefix}}.agg.ld_pruned_gtmat
         """
-
-
-rule thin_ld_pruned:
-    input:
-        LD_PRUNED = "byALL/all_ld_pruned_gtmat.traw"
-    output:
-        TRIMMED_TRAW = "byALL/thinned_all_ld_pruned_gtmat.traw"
-    threads: 4
-    shell:
-        r"""
-        module load hpc-env/13.1
-        module load PLINK/v1.9b7.4-x86_64
-
-        # Thin SNPs by distance (200 bp)
-        plink --file {input.LD_PRUNED} \
-              --thin-dist 200 \
-              --recode A-transpose \
-              --allow-extra-chr \
-              --out byALL/all_ld_pruned_thinned_gtmat
-
-        # Further downsample if desired (e.g., every 500th SNP)
-        awk 'NR == 1 || (NR-1) % 500 == 0' \
-            byALL/all_ld_pruned_thinned_gtmat.traw \
-            > {output.TRIMMED_TRAW}
-        """
-
 
 rule run_permanova_all:
     input:
-        GTMAT = "byALL/thinned_all_ld_pruned_gtmat.traw",
+        GTMAT = "byALL/all.agg.ld_pruned_gtmat.traw",
         GROUPING = SAMPLES_FILE
     output:
         "byALL/permanova_results/all.lm.pairwise.csv"
@@ -324,7 +297,7 @@ rule pca_plot:
         gtmat = lambda wildcards: (
             [f"byLOC/{loc}_ld_pruned_gtmat.traw" for loc in locations] +
             [f"bySPC/{spc}_ld_pruned_gtmat.traw" for spc in species] +
-            ["byALL/thinned_all_ld_pruned_gtmat.traw"]
+            ["byALL/all.agg.ld_pruned_gtmat.traw"]
         ),
         # PERMANOVA results
         permanova = lambda wildcards: (
