@@ -145,13 +145,13 @@ for(dat in names(dataset)) {
     #-----------------------------------
     if (dat %in% c("all_s", "all_l")) {
         # For the "all" dataset, generate three PCA plots (PC1-2, PC3-4, PC5-6)
-        p_pca1 <- pca_plot_all(pca_eigen, "PC1", "PC2", species_info, pca_var)
-        p_pca2 <- pca_plot_all(pca_eigen, "PC3", "PC4", species_info, pca_var)
-        p_pca3 <- pca_plot_all(pca_eigen, "PC5", "PC6", species_info, pca_var)
+        p_pca1 <- pca_plot_all(pca_eigen, "PC1", "PC2", species_info, pca_var) %>% annotate_figure(., top = text_grob("(a) PC1 vs. PC2", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
+        p_pca2 <- pca_plot_all(pca_eigen, "PC3", "PC4", species_info, pca_var) %>% annotate_figure(., top = text_grob("(a) PC3 vs. PC4", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
+        p_pca3 <- pca_plot_all(pca_eigen, "PC5", "PC6", species_info, pca_var) %>% annotate_figure(., top = text_grob("(a) PC5 vs. PC6", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
     } else {
         # For all other datasets, generate only PC1-2 and PC3-4
         p_pca1 <- pca_plot(pca_eigen, "PC1", "PC2", species_info, geo_table, pca_var, color_by = color)
-        p_pca2 <- pca_plot(pca_eigen, "PC3", "PC4", species_info, geo_table, pca_var, color_by = color)
+        p_pca2 <- pca_plot(pca_eigen, "PC3", "PC4", species_info, geo_table, pca_var, color_by = color) %>% annotate_figure(., top = NULL)
         p_pca3 <- NULL
     }
 
@@ -202,12 +202,43 @@ keep_names <- names(results_locations)
 leg <- legend_plot(species_info, gen = TRUE)
 leg_g <- legend_geo(geo_table, gen = TRUE)
 
+
 ########## FIGURE 3 ###################
+# Combined genetic space with legend
+# Access each PCA plot for the "all" dataset
+pca1 <- results[["all_s"]][["pca_f"]]
+pca2 <- results[["all_s"]][["pca_s"]]
+pca3 <- results[["all_s"]][["pca_t"]]
+
+figure3 <- ggarrange(
+  pca1,
+  NULL,
+  pca2,
+  NULL,
+  pca3,
+  nrow = 5,
+  ncol = 1,
+  heights = c(1, 0.15, 1, 0.15, 1),
+  common.legend=T,
+  legend = "right"
+  )
+
+ggsave(
+  filename = file.path(figure_path, "Fig3_gAllPCA.png"),
+  plot = figure3,
+  width = 8, 
+  height = 16, 
+  units = "in",      # inches
+  dpi = 150,         # moderate dpi to reduce file size but keep quality
+  type = "cairo-png" # better compression and anti-aliasing
+)
+
+########## FIGURE 4 ###################
 # PCA plots for all locations with legend
 all_pcas <- lapply(results_locations, `[[`, "pca_f") # extract per location pcas
-pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, labels=c("(a)","(b)","(c)","(d)"), label_size=25) # bundle location pcas in one plot
+pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figure3 <- ggarrange(
+figure4 <- ggarrange(
   pca_grid,
   NULL,
   leg,
@@ -217,43 +248,13 @@ figure3 <- ggarrange(
 ) # adjust if legend is too big/small
 
 # Save Figure 3 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "Fig3_gLocPCA.png"),
+ggsave(filename = file.path(figure_path, "Fig4_gLocPCA.png"),
   plot = figure3,
   width = 12,    # A4 width in inches
   height = 14,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
-)
-
-
-########## FIGURE 4 ###################
-# Combined genetic space with legend
-# Access each PCA plot for the "all" dataset
-pca1 <- results[["all_s"]][["pca_f"]]
-pca2 <- results[["all_s"]][["pca_s"]]
-pca3 <- results[["all_s"]][["pca_t"]]
-
-figure4 <- ggarrange(
-  pca1,
-  pca2,
-  pca3,
-  nrow = 3,
-  ncol = 1,
-  labels = c("(a)", "(b)", "(c)"),
-  font.label=list(color="black",size=20),
-  common.legend=T,
-  legend = "right"
-  )
-
-ggsave(
-  filename = file.path(figure_path, "Fig4_gAllPCA.png"),
-  plot = figure4,
-  width = 8, 
-  height = 16, 
-  units = "in",      # inches
-  dpi = 150,         # moderate dpi to reduce file size but keep quality
-  type = "cairo-png" # better compression and anti-aliasing
 )
 
 ########## FIGURE S11 ###################
@@ -272,7 +273,7 @@ ggsave(
 ########## FIGURE S12 ###################
 # Other PCs combination for genotypes per location
 all_sup <- lapply(results_locations, `[[`, "pca_s") # extract per location pcas
-sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)"), label_size=25) # bundle location pcas in one plot
+sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
 figureS12 <- ggarrange(
   sup_grid,
@@ -296,7 +297,7 @@ ggsave(filename = file.path(figure_path, "FigS12_gLocSUP.png"),
 ########## FIGURE S13 ###################
 # PERMANOVA heatmaps for each location
 all_perm <- lapply(results_locations, `[[`, "permanova") # extract per location pcas
-figureS13 <- plot_grid(plotlist = all_perm, ncol = 2, labels = c("(a)", "(b)", "(c)", "(d)"), label_size=20)# bundle location pcas in one plot
+figureS13 <- plot_grid(plotlist = all_perm, ncol = 2, rel_widths = c(1, 1), scale = 0.95)# bundle location pcas in one plot
 
 # Save Figure S13 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS13_gLocPERM.png"),
@@ -326,38 +327,38 @@ ggsave(
 ########## FIGURE S15 ###################
 # Per species genotypic space: PCA + PERMANOVA + PERMDISP
 # Remove the overall entry before extracting plots
-results_spc <- results[names(results) %in% c("pue", "nig", "uni", "pri")]
+results_spc <- results[names(results) %in% c("pue", "nig", "uni")]
 keep_spc <- names(results_spc)
 # print(keep_spc)
 
 pca_pue_f <- results[["pue"]][["pca_f"]]
 pca_pue_s <- results[["pue"]][["pca_s"]]
 perm_pue <- results[["pue"]][["permanova"]]
-pue <- plot_grid(pca_pue_f, pca_pue_s, perm_pue, ncol = 3, rel_widths = c(1, 1, 1))
+pue <- plot_grid(pca_pue_f, pca_pue_s, perm_pue, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
 
 
 pca_nig_f <- results[["nig"]][["pca_f"]]
 pca_nig_s <- results[["nig"]][["pca_s"]]
 perm_nig <- results[["nig"]][["permanova"]]
-nig <- plot_grid(pca_nig_f, pca_nig_s, perm_nig, ncol = 3, rel_widths = c(1, 1, 1))
+nig <- plot_grid(pca_nig_f, pca_nig_s, perm_nig, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
 
 pca_uni_f <- results[["uni"]][["pca_f"]]
 pca_uni_s <- results[["uni"]][["pca_s"]]
 perm_uni <- results[["uni"]][["permanova"]]
-uni <- plot_grid(pca_uni_f, pca_uni_s, perm_uni, ncol = 3, rel_widths = c(1, 1, 1))
+uni <- plot_grid(pca_uni_f, pca_uni_s, perm_uni, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
 
 figureS15 <- plot_grid(
   pue,
+  NULL,
   nig,
+  NULL,
   uni,
   NULL,
   leg_g,
   ncol = 1,
-  nrow = 5,
-  rel_heights = c(6, 6, 6, 0.2, 1),
-  rel_widths = c(20, 20, 20, 20, 16),
-  labels = c("(a)", "(b)", "(c)", ""),
-  label_size=30
+  nrow = 7,
+  rel_heights = c(6, 0.2, 6, 0.2, 6, 0.2, 1),
+  rel_widths = c(20, 20, 20, 20, 20, 20, 16)
   )
 
 # Save as PNG (A4 size)
@@ -471,10 +472,7 @@ figureS17 <- ggarrange(
   results[["gun"]][["fst"]],
   results[["qui"]][["fst"]],
   ncol = 3,
-  nrow = 3,
-  labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)"),
-  font.label=list(color="black",size=20)
-)
+  nrow = 3)
 
 # Save as PNG (A4 size)
 ggsave(
@@ -519,10 +517,7 @@ figureS19 <- ggarrange(
   results[["ind"]][["fst"]],
   results[["tan"]][["fst"]],
   ncol = 2,
-  nrow = 5,
-  labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)", "(j)"),
-  font.label=list(color="black",size=20)
-)
+  nrow = 5)
 
 # Save as PNG (A4 size)
 ggsave(

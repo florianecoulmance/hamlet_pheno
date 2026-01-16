@@ -371,17 +371,21 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     if (length(geo_val) == 1) {
       title_val <- geo_info$Locations[geo_info$geo == geo_val]
       if (title_val=="Panama") {
-        title_val <- "(e) Panama"
+        title_val <- "(b) Panama"
       } else if (title_val=="USVI") {
         title_val <- "(f) USVI"
       } else if (title_val=="Belize") {
-        title_val <- "(d) Belize"
+        title_val <- "(a) Belize"
       } else if (title_val=="Florida Keys") {
         title_val <- "(c) Florida Keys"
       } else if (title_val=="Tobago") {
         title_val <- "(b) Tobago"
       } else if (title_val=="Mexico") {
         title_val <- "(a) Mexico"
+      } else if (title_val=="Honduras") { 
+        title_val <- "(c) Honduras"
+      } else if (title_val=="Puerto Rico") { 
+        title_val <- "(d) Puerto Rico"
       } else {
         title_val <- ""
       }
@@ -1180,7 +1184,7 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
         legend.position = params_legend,
         legend.direction = "vertical",
         legend.box = "horizontal",
-        legend.text = element_text(size = 13, margin = margin(0, 50, 0, 0)),
+        legend.text = element_text(size = 13, margin = margin(0, 53, 0, 0)),
         legend.title = element_text(size = 16),
         legend.key.height = unit(1.5, 'cm'),
         panel.grid.major = element_blank(),
@@ -1199,6 +1203,17 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
       geo_val <- substr(pair_file, nchar(pair_file) - 19 + 1, nchar(pair_file) - 17 + 1)
       print(geo_val)
       title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
+      if (title_val=="Panama") {
+        title_val <- "(b) Panama"
+      } else if (title_val=="Belize") {
+        title_val <- "(a) Belize"
+      } else if (title_val=="Honduras") {
+        title_val <- "(c) Honduras"
+      } else if (title_val=="Puerto Rico") {
+        title_val <- "(d) Puerto Rico"
+      } else {
+        title_val <- ""
+      }
     } else if(color_by == "location"){
       species_val <- substr(pair_file, nchar(pair_file) - 19 + 1, nchar(pair_file) - 17 + 1)
       print(species_val)
@@ -1209,8 +1224,7 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
     # ---- Annotate with location title ----
     p_annot <- annotate_figure(
       p_allLoc,
-      top = text_grob(title_val, color = "black", face = "bold", size = 15,
-                    x = unit(5.5, "pt"), hjust = -0.75)
+      top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
     )
 
     return(p_annot)
@@ -1324,10 +1338,54 @@ fst_analysis <- function(gtfile, color_by, species_col, geo_map, label) {
     # print(geo)
     geo_val <- unique(geo)
     title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
+    if (title_val=="Panama") {
+        title_val <- "(b) Panama"
+      } else if (title_val=="Cayos Arcas") {
+        title_val <- "(e) Cayos Arcas"
+      } else if (title_val=="Belize") {
+        title_val <- "(a) Belize"
+      } else if (title_val=="Florida Keys") {
+        title_val <- "(g) Florida Keys"
+      } else if (title_val=="Barbados") {
+        title_val <- "(f) Barbados"
+      } else if (title_val=="Guna Yala") {
+        title_val <- "(h) Guna Yala"
+      } else if (title_val=="Honduras") { 
+        title_val <- "(c) Honduras"
+      } else if (title_val=="Puerto Rico") { 
+        title_val <- "(d) Puerto Rico"
+      } else if (title_val=="Quintana Roo") {
+        title_val <- "(i) Quintana Roo"
+      } else {
+        title_val <- ""
+      }
   } else if(color_by == "location"){
     # print(spec)
     species_val <- unique(spec)
     title_val <- if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
+    if (title_val=="H. puella") {
+        title_val <- "(a) H. puella"
+      } else if (title_val=="H. nigricans") {
+        title_val <- "(b) H. nigricans"
+      } else if (title_val=="H. unicolor") {
+        title_val <- "(c) H. unicolor"
+      } else if (title_val=="H. chlorurus") {
+        title_val <- "(f) H. chlorurus"
+      } else if (title_val=="H. aberrans") {
+        title_val <- "(d) H. aberrans"
+      } else if (title_val=="H. indigo") {
+        title_val <- "(i) H. indigo"
+      } else if (title_val=="H. affinis") {
+        title_val <- "(e) H. affinis"
+      } else if (title_val=="H. gemma") {
+        title_val <- "(g) H. gemma"
+      } else if (title_val=="H. gummigutta") {
+        title_val <- "(h) H. gummigutta"
+      } else if (title_val=="H. sp1") {
+        title_val <- "(j) H. sp1"
+      } else {
+        title_val <- ""
+      }
   }
   print(title_val)
 

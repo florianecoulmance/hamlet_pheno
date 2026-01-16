@@ -71,8 +71,8 @@ rule all:
         expand(
             f"{FIGURES_DIR}/{{fig_name}}",
             fig_name=[
-                "Fig3_gLocPCA.png",
-                "Fig4_gAllPCA.png",
+                "Fig3_gAllPCA.png",
+                "Fig4_gLocPCA.png",
                 "FigS11_gAllVAR.png",
                 "FigS12_gLocSUP.png",
                 "FigS13_gLocPERM.png",
@@ -334,8 +334,8 @@ rule pca_plot:
             ["byALL/permanova_results/all.sm.pairwise.csv"]
         )
     output:
-        f"{FIGURES_DIR}/Fig3_gLocPCA.png",
-        f"{FIGURES_DIR}/Fig4_gAllPCA.png",
+        f"{FIGURES_DIR}/Fig3_gAllPCA.png",
+        f"{FIGURES_DIR}/Fig4_gLocPCA.png",
         f"{FIGURES_DIR}/FigS11_gAllVAR.png",
         f"{FIGURES_DIR}/FigS12_gLocSUP.png",
         f"{FIGURES_DIR}/FigS13_gLocPERM.png",
