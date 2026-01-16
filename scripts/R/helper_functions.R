@@ -1203,13 +1203,13 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
       geo_val <- substr(pair_file, nchar(pair_file) - 19 + 1, nchar(pair_file) - 17 + 1)
       print(geo_val)
       title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
-      if (title_val=="Panama") {
+      if (length(title_val) == 1 && title_val=="Panama") {
         title_val <- "(b) Panama"
-      } else if (title_val=="Belize") {
+      } else if (length(title_val) == 1 && title_val=="Belize") {
         title_val <- "(a) Belize"
-      } else if (title_val=="Honduras") {
+      } else if (length(title_val) == 1 && title_val=="Honduras") {
         title_val <- "(c) Honduras"
-      } else if (title_val=="Puerto Rico") {
+      } else if (length(title_val) == 1 && title_val=="Puerto Rico") {
         title_val <- "(d) Puerto Rico"
       } else {
         title_val <- ""
