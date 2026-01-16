@@ -309,7 +309,7 @@ figure1 <- ggarrange(
   
 ggsave(
   filename = file.path(figure_path, "Fig1_pAllPCA.png"),
-  plot = figure2,
+  plot = figure1,
   width = 12, 
   height = 13, 
   units = "in",      # inches
@@ -322,7 +322,7 @@ ggsave(
 all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
 pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figure1 <- ggarrange(
+figure2 <- ggarrange(
   pca_grid,
   NULL,
   leg,
@@ -333,7 +333,7 @@ figure1 <- ggarrange(
 
 # Save Figure 1 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "Fig2_pLocPCA.png"),
-  plot = figure1,
+  plot = figure2,
   width = 12,    # A4 width in inches
   height = 17,  # A4 height in inches
   units = "in",
