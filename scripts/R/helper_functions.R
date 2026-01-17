@@ -1071,6 +1071,8 @@ pca_plot_all <- function(pca_data, pc_first, pc_second, species_info, variance) 
         theme(
         legend.position = "right",
         legend.box = "vertical",
+        legend.background = if (pc_first %in% c("PC1", "PC5")) element_rect(fill = "transparent", color = NA) else element_rect(fill = "white", color = NA),
+        legend.key = if (pc_first %in% c("PC1", "PC5")) element_rect(fill = "transparent", color = NA) else element_rect(fill = "white", color = NA),
         legend.text = if (pc_first %in% c("PC1", "PC5")) element_blank() else element_markdown(size = 12),
         legend.title = element_blank(),
         panel.background = element_blank(),
