@@ -1071,8 +1071,6 @@ pca_plot_all <- function(pca_data, pc_first, pc_second, species_info, variance) 
         theme(
         legend.position = "right",
         legend.box = "vertical",
-        legend.background = if (pc_first %in% c("PC1", "PC5")) element_rect(fill = "transparent", color = NA) else element_rect(fill = "white", color = NA),
-        legend.key = if (pc_first %in% c("PC1", "PC5")) element_rect(fill = "transparent", color = NA) else element_rect(fill = "white", color = NA),
         legend.text = if (pc_first %in% c("PC1", "PC5")) element_blank() else element_markdown(size = 12),
         legend.title = element_blank(),
         panel.background = element_blank(),
@@ -1086,8 +1084,8 @@ pca_plot_all <- function(pca_data, pc_first, pc_second, species_info, variance) 
         y = paste0(pc_second, ", variance = ", format(round(variance$X0[as.numeric(str_sub(pc_second, 3, -1))] * 100, 1), nsmall = 1), " %")
         ) +
         guides(
-        color = guide_legend(ncol = 1, byrow = TRUE),
-        shape = guide_legend(ncol = 1)
+        color = guide_legend(ncol = 1, byrow = TRUE, override.aes = if (pc_first %in% c("PC1", "PC5")) list(alpha = 0, size = 0.25) else list()),
+        shape = guide_legend(ncol = 1, override.aes = if (pc_first %in% c("PC1", "PC5")) list(alpha = 0, size = 0.25) else list())
         )
 
     return(p)
