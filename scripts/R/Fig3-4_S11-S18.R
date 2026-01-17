@@ -231,8 +231,8 @@ figure3 <- ggarrange(
 ggsave(
   filename = file.path(figure_path, "Fig3_gAllPCA.png"),
   plot = figure3,
-  width = 8, 
-  height = 16.5, 
+  width = 6, 
+  height = 16, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
   type = "cairo-png" # better compression and anti-aliasing
