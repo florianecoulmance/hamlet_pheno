@@ -340,3 +340,81 @@ rule pca_plot:
             --spec_colors {params.spec_colors} \
             --geo_colors {params.geo_colors}
         """
+
+
+rule newhyb_from_pruned:
+    input:
+        bed="byLOC/{loc}.ld.pruned.bed",
+        bim="byLOC/{loc}.ld.pruned.bim",
+        fam="byLOC/{loc}.ld.pruned.fam",
+        samples="byLOC/{loc}.txt"
+    output:
+        "newhyb/{loc}/done.txt"
+    shell:
+        r"""
+        module load hpc-env/13.1
+        module load BCFtools/1.18-GCC-13.1.0
+        module load PLINK/v1.9b7.4-x86_64
+
+        mkdir -p newhyb/{wildcards.loc}
+
+        # extract species from sample names
+        species=$(sed 's/.*\([a-z]\{{3\}}\){wildcards.loc}$/\1/' {input.samples} | sort | uniq)
+
+        for sp1 in $species; do
+            for sp2 in $species; do
+
+                if [[ "$sp1" < "$sp2" ]]; then
+
+                    echo "Running {wildcards.loc}: $sp1 vs $sp2"
+
+                    outdir=newhyb/{wildcards.loc}/${{sp1}}_${{sp2}}
+                    mkdir -p $outdir
+
+                    # create keep file (plink format: FID IID)
+                    awk -v s1=$sp1 -v s2=$sp2 -v loc={wildcards.loc} \
+                        '($1 ~ s1 loc) || ($1 ~ s2 loc) {{print $1, $1}}' \
+                        {input.samples} > $outdir/keep.txt
+
+                    # count individuals per species
+                    n1=$(grep ${sp1}{wildcards.loc} {input.samples} | wc -l)
+                    n2=$(grep ${sp2}{wildcards.loc} {input.samples} | wc -l)
+
+                    if [ $n1 -lt 5 ] || [ $n2 -lt 5 ]; then
+                        echo "Skipping $sp1-$sp2 (low N)"
+                        continue
+                    fi
+
+                    # subset PLINK dataset
+                    plink \
+                        --bfile byLOC/{wildcards.loc}.ld.pruned \
+                        --keep $outdir/keep.txt \
+                        --allow-extra-chr \
+                        --recode vcf \
+                        --out $outdir/data
+
+                    # compress VCF
+                    bgzip -f $outdir/data.vcf
+                    bcftools index $outdir/data.vcf.gz
+
+                    # count SNPs
+                    nsnps=$(bcftools view -H $outdir/data.vcf.gz | wc -l)
+                    echo -e "{wildcards.loc}\t$sp1\t$sp2\t$nsnps" >> newhyb/snp_counts.tsv
+
+                    # convert to NewHybrids format
+                    PGDSpider2-cli \
+                        -inputfile $outdir/data.vcf.gz \
+                        -inputformat VCF \
+                        -outputfile $outdir/input.txt \
+                        -outputformat NEWHYBRIDS \
+                        -spid ressources/vcf2nh.spid
+
+                    # run NewHybrids
+                    Rscript scripts/R/newhybrids.R $outdir
+
+                fi
+            done
+        done
+
+        touch {output}
+        """
