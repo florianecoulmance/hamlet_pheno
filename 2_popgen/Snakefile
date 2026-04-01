@@ -83,7 +83,7 @@ rule all:
                 "FigS19_gSpeFST.png"
             ]
         ),
-        expand("byLOC/newhyb/{loc}/done.txt", loc=locations)
+        "byLOC/newhyb/{dataset}/done.txt"
 
 
 # --- Create directories ---
@@ -345,12 +345,12 @@ rule pca_plot:
 
 rule newhyb_from_pruned:
     input:
-        bed = lambda wildcards: (f"byLOC/{wildcards.dataset}.ld.pruned.bed" for wildcards.dataset in locations),
-        bim = lambda wildcards: (f"byLOC/{wildcards.dataset}.ld.pruned.bim" for wildcards.dataset in locations),
-        fam = lambda wildcards: (f"byLOC/{wildcards.dataset}.ld.pruned.fam" for wildcards.dataset in locations),
-        samples = lambda wildcards: (f"byLOC/{wildcards.dataset}.txt" for wildcards.dataset in locations)
+        bed="byLOC/{dataset}.ld.pruned.bed",
+        bim="byLOC/{dataset}.ld.pruned.bim",
+        fam="byLOC/{dataset}.ld.pruned.fam",
+        samples="byLOC/{dataset}.txt"
     output:
-        "newhyb/{dataset}/done.txt"
+        "byLOC/newhyb/{dataset}/done.txt"
     shell:
         """
         module load hpc-env/13.1
