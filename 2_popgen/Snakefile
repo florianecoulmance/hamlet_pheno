@@ -345,41 +345,41 @@ rule pca_plot:
 
 rule newhyb_from_pruned:
     input:
-        bed = lambda wildcards: (f"byLOC/{wildcards.dataset}.ld.pruned.bed" for wildcards.dataset in locations),
-        bim = lambda wildcards: (f"byLOC/{wildcards.dataset}.ld.pruned.bim" for wildcards.dataset in locations),
-        fam = lambda wildcards: (f"byLOC/{wildcards.dataset}.ld.pruned.fam" for wildcards.dataset in locations),
-        samples = lambda wildcards: (f"byLOC/{wildcards.dataset}.txt" for wildcards.dataset in locations)
+        bed = "byLOC/{dataset}.ld.pruned.bed",
+        bim = "byLOC/{dataset}.ld.pruned.bim",
+        fam = "byLOC/{dataset}.ld.pruned.fam",
+        samples = "byLOC/{dataset}.txt"
     output:
-        "newhyb/{loc}/done.txt"
+        "newhyb/{dataset}/done.txt"
     shell:
-        r"""
+        """
         module load hpc-env/13.1
         module load BCFtools/1.18-GCC-13.1.0
         module load PLINK/v1.9b7.4-x86_64
 
-        mkdir -p newhyb/{wildcards.loc}
+        mkdir -p newhyb/{wildcards.dataset}
 
         # extract species from sample names
-        species=$(sed 's/.*\([a-z]\{{3\}}\){wildcards.loc}$/\1/' {input.samples} | sort | uniq)
+        species=$(sed 's/.*\([a-z]\{{3\}}\){wildcards.dataset}$/\1/' {input.samples} | sort | uniq)
 
         for sp1 in $species; do
             for sp2 in $species; do
 
                 if [[ "$sp1" < "$sp2" ]]; then
 
-                    echo "Running {wildcards.loc}: $sp1 vs $sp2"
+                    echo "Running {wildcards.dataset}: $sp1 vs $sp2"
 
-                    outdir=newhyb/{wildcards.loc}/${{sp1}}_${{sp2}}
+                    outdir=newhyb/{wildcards.dataset}/${{sp1}}_${{sp2}}
                     mkdir -p $outdir
 
                     # create keep file (plink format: FID IID)
-                    awk -v s1=$sp1 -v s2=$sp2 -v loc={wildcards.loc} \
+                    awk -v s1=$sp1 -v s2=$sp2 -v loc={wildcards.dataset} \
                         '($1 ~ s1 loc) || ($1 ~ s2 loc) {{print $1, $1}}' \
                         {input.samples} > $outdir/keep.txt
 
                     # count individuals per species
-                    n1=$(grep ${sp1}{wildcards.loc} {input.samples} | wc -l)
-                    n2=$(grep ${sp2}{wildcards.loc} {input.samples} | wc -l)
+                    n1=$(grep ${sp1}{wildcards.dataset} {input.samples} | wc -l)
+                    n2=$(grep ${sp2}{wildcards.dataset} {input.samples} | wc -l)
 
                     if [ $n1 -lt 5 ] || [ $n2 -lt 5 ]; then
                         echo "Skipping $sp1-$sp2 (low N)"
@@ -388,7 +388,7 @@ rule newhyb_from_pruned:
 
                     # subset PLINK dataset
                     plink \
-                        --bfile byLOC/{wildcards.loc}.ld.pruned \
+                        --bfile byLOC/{wildcards.dataset}.ld.pruned \
                         --keep $outdir/keep.txt \
                         --allow-extra-chr \
                         --recode vcf \
@@ -400,7 +400,7 @@ rule newhyb_from_pruned:
 
                     # count SNPs
                     nsnps=$(bcftools view -H $outdir/data.vcf.gz | wc -l)
-                    echo -e "{wildcards.loc}\t$sp1\t$sp2\t$nsnps" >> newhyb/snp_counts.tsv
+                    echo -e "{wildcards.dataset}\t$sp1\t$sp2\t$nsnps" >> newhyb/snp_counts.tsv
 
                     # convert to NewHybrids format
                     PGDSpider2-cli \
