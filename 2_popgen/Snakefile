@@ -410,7 +410,7 @@ rule newhyb_from_pruned:
                         -inputformat VCF \
                         -outputfile $outdir/input.txt \
                         -outputformat NEWHYBRIDS \
-                        -spid ressources/vcf2nh.spid
+                        -spid scripts/sh/vcf2nh.spid
 
                     # run NewHybrids
                     Rscript scripts/R/newhybrids.R $outdir
