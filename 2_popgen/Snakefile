@@ -83,7 +83,7 @@ rule all:
                 "FigS19_gSpeFST.png"
             ]
         ),
-        expand("byLOC/newhyb/{dataset}/done.txt", dataset=locations)
+        expand("newhyb/{dataset}/done.txt", dataset=locations)
 
 
 # --- Create directories ---
@@ -350,7 +350,7 @@ rule newhyb_from_pruned:
         fam="byLOC/{dataset}.ld.pruned.fam",
         samples="byLOC/{dataset}.txt"
     output:
-        "byLOC/newhyb/{dataset}/done.txt"
+        "newhyb/{dataset}/done.txt"
     shell:
         """
         module load hpc-env/13.1
