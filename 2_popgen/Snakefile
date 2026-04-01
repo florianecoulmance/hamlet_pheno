@@ -360,8 +360,8 @@ rule newhyb_from_pruned:
         mkdir -p newhyb/{wildcards.dataset}
 
         # extract species from sample names
-        species=$(sed 's/.*\([a-z]\{3\}\){wildcards.dataset}$/\1/' {input.samples} | sort | uniq)
-
+        species=$(sed 's/.*\([a-z]\{{3\}}\){wildcards.dataset}$/\1/' {input.samples} | sort | uniq)
+        
         for sp1 in ${{species}}; do
             for sp2 in ${{species}}; do
 
