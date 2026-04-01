@@ -12,6 +12,8 @@ FIGURES_DIR = os.path.join(BASE_DIR, "figures")
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 PYTHON_SCRIPT = os.path.join(SCRIPTS_DIR, "python", "permanova.py")
 R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig3-4_S11-S18.R")
+SPID_SCRIPT = os.path.join(SCRIPTS_DIR, "sh", "vcf2nh.spid")
+
 
 # List of datasets
 genotyping_params = [
@@ -410,7 +412,7 @@ rule newhyb_from_pruned:
                         -inputformat VCF \
                         -outputfile $outdir/input.txt \
                         -outputformat NEWHYBRIDS \
-                        -spid scripts/sh/vcf2nh.spid
+                        -spid {SPID_SCRIPT}
 
                     # run NewHybrids
                     Rscript scripts/R/newhybrids.R $outdir
