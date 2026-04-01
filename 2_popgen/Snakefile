@@ -83,7 +83,7 @@ rule all:
                 "FigS19_gSpeFST.png"
             ]
         ),
-        "byLOC/newhyb/{dataset}/done.txt"
+        expand("byLOC/newhyb/{dataset}/done.txt", dataset=locations)
 
 
 # --- Create directories ---
