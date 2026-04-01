@@ -358,13 +358,15 @@ rule newhyb_from_pruned:
         module load hpc-env/13.1
         module load BCFtools/1.18-GCC-13.1.0
         module load PLINK/v1.9b7.4-x86_64
+        module load R/4.3.1-foss-2023a
+
 
         mkdir -p newhyb/{wildcards.dataset}
 
-    species=$(awk '{{print substr($1, length($1)-5, 3)}}' {input.samples} | sort -u)
+        species=$(awk '{{print substr($1, length($1)-5, 3)}}' {input.samples} | sort -u)
 
-    echo "Species detected:"
-    echo "${{species}}"
+        echo "Species detected:"
+        echo "${{species}}"
 
         for sp1 in ${{species}}; do
             for sp2 in ${{species}}; do
@@ -415,7 +417,7 @@ rule newhyb_from_pruned:
                         -spid {SPID_SCRIPT}
 
                     # run NewHybrids
-                    Rscript scripts/R/newhybrids.R $outdir
+                    Rscript {SCRIPTS_DIR}/R/newhybrids.R $outdir
 
                 fi
             done
