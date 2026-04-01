@@ -352,7 +352,7 @@ rule newhyb_from_pruned:
     output:
         "newhyb/{dataset}/done.txt"
     shell:
-        """
+        r"""
         module load hpc-env/13.1
         module load BCFtools/1.18-GCC-13.1.0
         module load PLINK/v1.9b7.4-x86_64
@@ -369,7 +369,7 @@ rule newhyb_from_pruned:
 
                     echo "Running {wildcards.dataset}: $sp1 vs $sp2"
 
-                    outdir=newhyb/{wildcards.dataset}/${{sp1}}_${{sp2}}
+                    outdir=newhyb/{wildcards.dataset}/$sp1_$sp2
                     mkdir -p $outdir
 
                     # create keep file (plink format: FID IID)
