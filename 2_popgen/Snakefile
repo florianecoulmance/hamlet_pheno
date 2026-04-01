@@ -401,8 +401,6 @@ rule newhyb_from_pruned:
                         --out $outdir/data
 
                     # compress VCF
-                    cp $outdir/data.vcf $outdir/data.uncompressed.vcf
-
                     bgzip -c $outdir/data.vcf > $outdir/data.vcf.gz
                     bcftools index $outdir/data.vcf.gz
 
@@ -412,7 +410,7 @@ rule newhyb_from_pruned:
 
                     # convert to NewHybrids format
                     /user/doau0129/miniconda3/envs/phenotypic_pipeline/share/pgdspider-2.1.1.5-1/PGDSpider2-cli \
-                        -inputfile $outdir/data.uncompressed.vcf \
+                        -inputfile $outdir/data.vcf \
                         -inputformat VCF \
                         -outputfile $outdir/input.txt \
                         -outputformat NEWHYBRIDS \
