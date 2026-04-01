@@ -345,10 +345,10 @@ rule pca_plot:
 
 rule newhyb_from_pruned:
     input:
-        bed = "byLOC/{dataset}.ld.pruned.bed",
-        bim = "byLOC/{dataset}.ld.pruned.bim",
-        fam = "byLOC/{dataset}.ld.pruned.fam",
-        samples = "byLOC/{dataset}.txt"
+        bed = lambda wildcards: (f"byLOC/{wildcards.dataset}.ld.pruned.bed" if wildcards.dataset in locations),
+        bim = lambda wildcards: (f"byLOC/{wildcards.dataset}.ld.pruned.bim" if wildcards.dataset in locations),
+        fam = lambda wildcards: (f"byLOC/{wildcards.dataset}.ld.pruned.fam" if wildcards.dataset in locations),
+        samples = lambda wildcards: (f"byLOC/{wildcards.dataset}.txt" if wildcards.dataset in locations)
     output:
         "newhyb/{dataset}/done.txt"
     shell:
