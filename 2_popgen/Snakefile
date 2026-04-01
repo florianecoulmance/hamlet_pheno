@@ -46,7 +46,7 @@ genotyping_params = [
 
 # Separate datasets into "location" and "species" groups
 locations = [p["dataset"] for p in genotyping_params if p["dataset"] in
-             ["ala","arc","are","bar","bel","boc","flk","gun","hai","hon","liz","pri","qui","san","tam"]]
+             ["arc","bar","bel","boc","flk","gun","hon","liz","pri","qui"]]
 species = [p["dataset"] for p in genotyping_params if p["dataset"] not in locations + ["all"]]
 datasets = locations + species
 
