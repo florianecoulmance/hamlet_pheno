@@ -352,7 +352,7 @@ rule newhyb_from_pruned:
     output:
         "newhyb/{dataset}/done.txt"
     shell:
-        r"""
+        """
         module load hpc-env/13.1
         module load BCFtools/1.18-GCC-13.1.0
         module load PLINK/v1.9b7.4-x86_64
@@ -362,12 +362,12 @@ rule newhyb_from_pruned:
         # extract species from sample names
         species=$(sed 's/.*\([a-z]\{{3\}}\){wildcards.dataset}$/\1/' {input.samples} | sort | uniq)
 
-        for sp1 in $species; do
-            for sp2 in $species; do
+        for sp1 in ${{species}}; do
+            for sp2 in ${{species}}; do
 
-                if [[ "$sp1" < "$sp2" ]]; then
+                if [[ "${{sp1}}" < "${{sp2}}" ]]; then
 
-                    echo "Running {wildcards.dataset}: $sp1 vs $sp2"
+                    echo "Running {wildcards.dataset}: ${{sp1}} vs ${{sp2}}"
 
                     outdir=newhyb/{wildcards.dataset}/$sp1_$sp2
                     mkdir -p $outdir
