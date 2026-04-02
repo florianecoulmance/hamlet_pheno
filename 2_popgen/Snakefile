@@ -403,12 +403,18 @@ rule newhyb_from_pruned:
                     # compress VCF
                     bcftools index $outdir/data.vcf.gz
 
-                    # count SNPs
+                    # subsample SNPs (fast + simple)
+                    bcftools view -H $outdir/data.vcf.gz | shuf -n 200 | cut -f1,2 > $outdir/snps.txt
+
+                    bcftools view -R $outdir/snps.txt $outdir/data.vcf.gz -Oz -o $outdir/data.subset.vcf.gz
+                    bcftools index $outdir/data.subset.vcf.gz
+
+                    # count SNPs: can comment since we thin the data
                     nsnps=$(bcftools view -H $outdir/data.vcf.gz | wc -l)
                     echo -e "{wildcards.dataset}\t${{sp1}}\t${{sp2}}\t${{nsnps}}" >> newhyb/snp_counts.tsv
 
                     # convert to NewHybrids format
-                    samples=$(bcftools query -l $outdir/data.vcf.gz)
+                    samples=$(bcftools query -l $outdir/data.subset.vcf.gz)
                     echo -e "locus\t${{samples}}" > $outdir/input.txt
 
                     # genotype conversion
