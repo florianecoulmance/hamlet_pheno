@@ -418,11 +418,11 @@ rule newhyb_from_pruned:
                     echo -e "locus\t${{samples}}" > $outdir/input.txt
 
                     # genotype conversion
-                    bcftools query -f '%CHROM:%POS[\\t%GT]\\n' $outdir/data.vcf.gz > $outdir/tmp.geno
+                    bcftools query -f '%CHROM:%POS[\\t%GT]\\n' $outdir/data.subset.vcf.gz > $outdir/tmp.geno
 
                     # count
                     nloc=$(wc -l < $outdir/tmp.geno)
-                    nind=$(bcftools query -l $outdir/data.vcf.gz | wc -l)
+                    nind=$(bcftools query -l $outdir/data.subset.vcf.gz | wc -l)
 
                     # header
                     echo "NumIndivs ${{nind}}" > $outdir/input.txt
@@ -456,7 +456,7 @@ rule newhyb_from_pruned:
                     }}' $outdir/tmp.geno >> $outdir/input.txt
 
 
-                    bcftools query -l $outdir/data.vcf.gz | awk '{{print $1 "\\t0"}}' > $outdir/indiv.txt
+                    bcftools query -l $outdir/data.subset.vcf.gz | awk '{{print $1 "\\t0"}}' > $outdir/indiv.txt
 
 
                     # run NewHybrids
