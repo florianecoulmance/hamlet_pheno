@@ -412,17 +412,45 @@ rule newhyb_from_pruned:
                     echo -e "locus\t${{samples}}" > $outdir/input.txt
 
                     # genotype conversion
-                    bcftools query -f '%CHROM:%POS[\\t%GT]\\n' $outdir/data.vcf.gz | \
+                    bcftools query -f '%CHROM:%POS[\\t%GT]\\n' $outdir/data.vcf.gz > $outdir/tmp.geno
+
+                    # count
+                    nloc=$(wc -l < $outdir/tmp.geno)
+                    nind=$(bcftools query -l $outdir/data.vcf.gz | wc -l)
+
+                    # header
+                    echo "NumIndivs ${{nind}}" > $outdir/input.txt
+                    echo "NumLoci ${{nloc}}" >> $outdir/input.txt
+                    echo "Digits 1" >> $outdir/input.txt
+                    echo "Format Lumped" >> $outdir/input.txt
+                    
+                    # locus names
+                    awk '{printf "SNP_%d ", NR} END {printf "\\n"}' $outdir/tmp.geno | \
+                    sed '1s/^/LocusNames /' >> $outdir/input.txt
+                    
+                    # transpose + recode
                     awk '{{
-                        printf "%s", $1;
                         for(i=2; i<=NF; i++) {{
-                            if($i=="0/0") printf " 11";
-                            else if($i=="0/1" || $i=="1/0") printf " 12";
-                            else if($i=="1/1") printf " 22";
-                            else printf " 0";
+                            g=$i;
+                            if(g=="0/0") v="11";
+                            else if(g=="0/1" || g=="1/0") v="12";
+                            else if(g=="1/1") v="22";
+                            else v="0";
+                            matrix[i-1,NR]=v;
                         }}
-                        printf "\\n";
-                    }}' > $outdir/input.txt
+                    }}
+                    END {{
+                        for(i=1; i<=length(matrix); i++) {{
+                            prinf i;
+                            for(j=1; j<=NR; j++) {{
+                                printf " %s", matrix[i,j];
+                            }}
+                            printf "\\n";
+                        }}
+                    }}' $outdir/tmp.geno >> $outdir/input.txt
+
+
+                    bcftools query -l $outdir/data.vcf.gz | awk '{{print $1 "\\t0"}}' > $outdir/indiv.txt
 
 
                     # run NewHybrids
