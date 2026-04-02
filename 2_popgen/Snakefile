@@ -439,11 +439,12 @@ rule newhyb_from_pruned:
                             else if(g=="1/1") v="22";
                             else v="0";
                             matrix[i-1,NR]=v;
+                            if(i-1 > max_ind) max_ind=i-1;
                         }}
                     }}
                     END {{
-                        for(i=1; i<=length(matrix); i++) {{
-                            printf i;
+                        for(i=1; i<=max_ind; i++) {{
+                            printf "%d", i;
                             for(j=1; j<=NR; j++) {{
                                 printf " %s", matrix[i,j];
                             }}
