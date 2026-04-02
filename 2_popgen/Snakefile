@@ -425,7 +425,7 @@ rule newhyb_from_pruned:
                     echo "Format Lumped" >> $outdir/input.txt
                     
                     # locus names
-                    awk '{printf "SNP_%d ", NR} END {printf "\\n"}' $outdir/tmp.geno | \
+                    awk '{{printf "SNP_%d ", NR}} END {{printf "\\n"}}' $outdir/tmp.geno | \
                     sed '1s/^/LocusNames /' >> $outdir/input.txt
                     
                     # transpose + recode
@@ -441,7 +441,7 @@ rule newhyb_from_pruned:
                     }}
                     END {{
                         for(i=1; i<=length(matrix); i++) {{
-                            prinf i;
+                            printf i;
                             for(j=1; j<=NR; j++) {{
                                 printf " %s", matrix[i,j];
                             }}
