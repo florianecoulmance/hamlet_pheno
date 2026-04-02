@@ -418,7 +418,7 @@ rule newhyb_from_pruned:
 
                     # count
                     nloc=$(wc -l < $outdir/tmp.geno)
-                    nind=$(head -n1 $outdir/tmp.geno | awk '{print NF-1}')
+                    nind=$(head -n1 $outdir/tmp.geno | awk '{{print NF-1}}')
                     
                     # header
                     echo "NumIndivs ${{nind}}" > $outdir/input.txt
