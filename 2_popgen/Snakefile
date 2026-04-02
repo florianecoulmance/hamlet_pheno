@@ -413,17 +413,13 @@ rule newhyb_from_pruned:
                     nsnps=$(bcftools view -H $outdir/data.vcf.gz | wc -l)
                     echo -e "{wildcards.dataset}\t${{sp1}}\t${{sp2}}\t${{nsnps}}" >> newhyb/snp_counts.tsv
 
-                    # convert to NewHybrids format
-                    samples=$(bcftools query -l $outdir/data.subset.vcf.gz)
-                    echo -e "locus\t${{samples}}" > $outdir/input.txt
-
                     # genotype conversion
                     bcftools query -f '%CHROM:%POS[\\t%GT]\\n' $outdir/data.subset.vcf.gz > $outdir/tmp.geno
 
                     # count
                     nloc=$(wc -l < $outdir/tmp.geno)
-                    nind=$(bcftools query -l $outdir/data.subset.vcf.gz | wc -l)
-
+                    nind=$(head -n1 $outdir/tmp.geno | awk '{print NF-1}')
+                    
                     # header
                     echo "NumIndivs ${{nind}}" > $outdir/input.txt
                     echo "NumLoci ${{nloc}}" >> $outdir/input.txt
