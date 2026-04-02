@@ -377,6 +377,7 @@ rule newhyb_from_pruned:
 
                     outdir=newhyb/{wildcards.dataset}/${{sp1}}_${{sp2}}
                     mkdir -p $outdir
+                    mkdir -p $outdir/nh_input
 
                     # create keep file (plink format: FID IID)
                     awk -v s1=${{sp1}} -v s2=${{sp2}} -v loc={wildcards.dataset} \
@@ -450,14 +451,14 @@ rule newhyb_from_pruned:
                             }}
                             printf "\\n";
                         }}
-                    }}' $outdir/tmp.geno >> $outdir/input.txt
+                    }}' $outdir/tmp.geno >> $outdir/nh_input/input.txt
 
 
-                    bcftools query -l $outdir/data.subset.vcf.gz | awk '{{print $1 "\\t0"}}' > $outdir/indiv.txt
+                    bcftools query -l $outdir/data.subset.vcf.gz | awk '{{print $1 "\\t0"}}' > $outdir/nh_input/indiv.txt
 
 
                     # run NewHybrids
-                    Rscript {SCRIPTS_DIR}/R/newhybrids.R $outdir
+                    Rscript {SCRIPTS_DIR}/R/newhybrids.R $outdir/nh_input
 
                 fi
             done
