@@ -398,7 +398,7 @@ rule newhyb_from_pruned:
                         --bfile byLOC/{wildcards.dataset}.ld.pruned \
                         --keep $outdir/keep.txt \
                         --allow-extra-chr \
-                        --recode vcf bgz \
+                        --recode vcf-iid bgz \
                         --out $outdir/data
 
                     # compress VCF
