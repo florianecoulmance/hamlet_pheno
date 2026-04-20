@@ -381,7 +381,7 @@ rule newhyb_from_pruned:
 
                     # create keep file (plink format: FID IID)
                     awk -v s1=${{sp1}} -v s2=${{sp2}} -v loc={wildcards.dataset} \
-                        '($1 ~ s1 loc) || ($1 ~ s2 loc) {{print $1, $1}}' \
+                        '($1 ~ s1 loc) || ($1 ~ s2 loc) {{split($1, a, "_"); print a[1], a[1];}}' \
                         {input.samples} > $outdir/keep.txt
 
                     # count individuals per species
@@ -422,9 +422,9 @@ rule newhyb_from_pruned:
                     nind=$(head -n1 $outdir/tmp.geno | awk '{{print NF-1}}')
                     
                     # header
-                    echo "NumIndivs ${{nind}}" > $outdir/input.txt
-                    echo "NumLoci ${{nloc}}" >> $outdir/input.txt
-                    echo "Digits 1" >> $outdir/input.txt
+                    echo "NumIndivs ${{nind}}" > $outdir/nh_input/input.txt
+                    echo "NumLoci ${{nloc}}" >> $outdir/nh_input/input.txt
+                    echo "Digits 1" >> $outdir/nh_input/input.txt
                     echo "Format Lumped" >> $outdir/nh_input/input.txt
                     
                     # locus names
@@ -454,7 +454,11 @@ rule newhyb_from_pruned:
                     }}' $outdir/tmp.geno >> $outdir/nh_input/input.txt
 
 
-                    bcftools query -l $outdir/data.subset.vcf.gz > $outdir/nh_input/indiv.txt
+                    bcftools query -l $outdir/data.subset.vcf.gz \
+                    awk '{{
+                        split($1,a,"_");
+                        print a[1];
+                    }}' > $outdir/nh_input/indiv.txt
 
 
                     # run NewHybrids
