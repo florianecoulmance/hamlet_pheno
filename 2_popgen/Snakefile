@@ -458,11 +458,11 @@ rule newhyb_from_pruned:
                     awk '{{
                         split($1,a,"_");
                         print a[1];
-                    }}' > $outdir/nh_input/indiv.txt
+                    }}' > $outdir/nh_input/individuals.txt
 
 
                     # run NewHybrids
-                    Rscript {SCRIPTS_DIR}/R/newhybrids.R $outdir/nh_input
+                    Rscript {SCRIPTS_DIR}/R/newhybrids.R $outdir/nh_input/
 
                 fi
             done
