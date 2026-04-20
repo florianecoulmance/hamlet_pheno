@@ -425,11 +425,11 @@ rule newhyb_from_pruned:
                     echo "NumIndivs ${{nind}}" > $outdir/input.txt
                     echo "NumLoci ${{nloc}}" >> $outdir/input.txt
                     echo "Digits 1" >> $outdir/input.txt
-                    echo "Format Lumped" >> $outdir/input.txt
+                    echo "Format Lumped" >> $outdir/nh_input/input.txt
                     
                     # locus names
                     awk '{{printf "SNP_%d ", NR}} END {{printf "\\n"}}' $outdir/tmp.geno | \
-                    sed '1s/^/LocusNames /' >> $outdir/input.txt
+                    sed '1s/^/LocusNames /' >> $outdir/nh_input/input.txt
                     
                     # transpose + recode
                     awk '{{
@@ -454,7 +454,7 @@ rule newhyb_from_pruned:
                     }}' $outdir/tmp.geno >> $outdir/nh_input/input.txt
 
 
-                    bcftools query -l $outdir/data.subset.vcf.gz | awk '{{print $1 "\\t0"}}' > $outdir/nh_input/indiv.txt
+                    bcftools query -l $outdir/data.subset.vcf.gz > $outdir/nh_input/indiv.txt
 
 
                     # run NewHybrids
