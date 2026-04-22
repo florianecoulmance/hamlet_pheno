@@ -376,8 +376,8 @@ rule newhyb_from_pruned:
         mkdir -p $outdir/nh_input
 
         # count individuals
-        n1=$(grep -c ${{sp1}}{wildcards.dataset} {input.samples} | wc -l || true)
-        n2=$(grep -c  ${{sp2}}{wildcards.dataset} {input.samples} | wc -l || true)
+        n1=$(grep -c ${{sp1}}{wildcards.dataset} {input.samples} || true)
+        n2=$(grep -c ${{sp2}}{wildcards.dataset} {input.samples} || true)
 
         # n1=$(awk -v sp=${{sp1}} -v loc={wildcards.dataset} '$1 ~ sp && $1 ~ loc {{c++}} END {{print c+0}}' byLOC/{wildcards.dataset}.txt)
         # n2=$(awk -v sp=${{sp2}} -v loc={wildcards.dataset} '$1 ~ sp && $1 ~ loc {{c++}} END {{print c+0}}' byLOC/{wildcards.dataset}.txt)
