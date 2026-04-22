@@ -44,6 +44,8 @@ genotyping_params = [
     {"dataset": "ran"},
     {"dataset": "tan"},
     {"dataset": "uni"},
+    {"dataset": "may"},
+
 ]
 
 # Separate datasets into "location" and "species" groups
