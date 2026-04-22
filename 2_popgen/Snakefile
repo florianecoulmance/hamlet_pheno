@@ -376,8 +376,11 @@ rule newhyb_from_pruned:
         mkdir -p $outdir/nh_input
 
         # count individuals
-        n1=$(grep ${{sp1}}{wildcards.dataset} {input.samples} | wc -l)
-        n2=$(grep ${{sp2}}{wildcards.dataset} {input.samples} | wc -l)
+        # n1=$(grep ${{sp1}}{wildcards.dataset} {input.samples} | wc -l)
+        # n2=$(grep ${{sp2}}{wildcards.dataset} {input.samples} | wc -l)
+
+        n1=$(awk -v sp=${{sp1}} -v loc={wildcards.dataset} '$1 ~ sp && $1 ~ loc {c++} END {print c+0}' byLOC/{wildcards.dataset}.txt)
+        n2=$(awk -v sp=${{sp2}} -v loc={wildcards.dataset} '$1 ~ sp && $1 ~ loc {c++} END {print c+0}' byLOC/{wildcards.dataset}.txt)
 
         if [ ${{n1}} -lt 5 ] || [ ${{n2}} -lt 5 ]; then
             echo "Skipping ${{sp1}}-${{sp2}} (low N)"
