@@ -1816,3 +1816,141 @@ plot_species_geo_overview <- function(dat, species_info, geo_table) {
   return(p)                                    
 
 }
+
+
+# ---------------------------------------------------------
+# GET RESULT PATHS (NEW STRUCTURE)
+# ---------------------------------------------------------
+
+get_nh_result_paths <- function(base_dir) {
+  list.dirs(base_dir, recursive = TRUE, full.names = TRUE) %>%
+    keep(~ grepl("NH.Results/.+_Results$", .x))
+}
+
+# ---------------------------------------------------------
+# EXTRACT PofZ
+# ---------------------------------------------------------
+
+read_pofz <- function(path) {
+
+  pofz_file <- list.files(path, pattern = "PofZ.txt", full.names = TRUE)
+  indiv_file <- list.files(path, pattern = "_individuals.txt", full.names = TRUE)
+
+  if (length(pofz_file) == 0 | length(indiv_file) == 0) {
+    return(NULL)
+  }
+
+  # extract pair + location
+  pair_dir <- dirname(dirname(path))
+  runname <- basename(pair_dir)
+
+  loc <- basename(dirname(dirname(dirname(path))))
+
+  pops <- str_split(runname, "_")[[1]]
+
+  df <- vroom::vroom(pofz_file,
+                     delim = "\t",
+                     skip = 1,
+                     col_names = c("indNR", "IndivName",
+                                   "P1", "P2", "F1", "F2",
+                                   "P1_bc", "P2_bc"))
+
+  inds <- vroom::vroom(indiv_file, col_names = "IndivName") %>% pull()
+
+  df$IndivName <- inds
+
+  df %>%
+    pivot_longer(cols = -c(indNR, IndivName),
+                 names_to = "class",
+                 values_to = "prob") %>%
+    mutate(
+      run = runname,
+      pop1 = pops[1],
+      pop2 = pops[2],
+      loc = str_sub(runname, -3, -1),
+      ind_order = str_c(str_sub(IndivName, -6, -1), "_",
+                        str_sub(IndivName, 1, -7))
+    )
+}
+
+# ---------------------------------------------------------
+# COLOR PALETTE (IDENTICAL TO OLD FIGURE)
+# ---------------------------------------------------------
+
+get_hybrid_colors <- function() {
+  clr <- paletteer_c("ggthemes::Red-Green-Gold Diverging", 3) %>%
+    c(., clr_lighten(.)) %>%
+    color()
+
+  clr[c(1,4,2,5,6,3)] %>%
+    set_names(c("P1","P1_bc","F1","F2","P2_bc","P2"))
+}
+
+# ---------------------------------------------------------
+# PLOT ONE LOCATION
+# ---------------------------------------------------------
+
+plot_location <- function(df, species_meta) {
+
+  # detect hybrids
+  hybrids <- df %>%
+    filter(!str_detect(class, "pure"),
+           prob > 0.99) %>%
+    pull(ind_order) %>%
+    unique()
+
+  df <- df %>%
+    mutate(
+      ind_label = ifelse(ind_order %in% hybrids,
+                         paste0("**", ind_order, "**"),
+                         ind_order)
+    )
+
+  # species labels via metadata
+  sp_lookup <- species_meta %>%
+    select(spec, Species)
+
+  df <- df %>%
+    mutate(
+      run_label = paste0("*H. ",
+                         sp_lookup$Species[match(pop1, sp_lookup$spec)],
+                         "* - *H. ",
+                         sp_lookup$Species[match(pop2, sp_lookup$spec)],
+                         "*")
+    )
+
+  colors <- get_hybrid_colors()
+
+  ggplot(df, aes(x = ind_order, y = prob, fill = class)) +
+    geom_bar(stat = "identity", position = "stack") +
+    scale_fill_manual(values = colors) +
+    scale_x_discrete(labels = unique(df$ind_label)) +
+    facet_grid(run_label ~ .) +
+    theme_minimal() +
+    theme(
+      legend.position = "bottom",
+      strip.text.y = element_markdown(),
+      axis.text.x = element_markdown(angle = 90),
+      axis.title.x = element_blank(),
+      axis.title.y = element_text(vjust = 4)
+    )
+}
+
+# ---------------------------------------------------------
+# FINAL FIGURE
+# ---------------------------------------------------------
+
+combine_plots <- function(plot_list, output_path) {
+
+  p <- wrap_plots(plot_list, ncol = 1) +
+    plot_annotation(tag_levels = "a")
+
+  ggsave(
+  filename = output_path,
+  plot = p,
+  height = 16,
+  width = 10,
+  dpi = 600,
+  bg = "white"
+  )
+}

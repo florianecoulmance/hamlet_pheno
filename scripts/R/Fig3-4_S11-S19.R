@@ -1,6 +1,6 @@
 # by: Floriane Coulmance: 03/11/2025
 # usage:
-# Rscript Fig3-4_S11-S15.R 
+# Rscript Fig3-4_S11-S19.R 
 #___________________________________________________________________
 
 # Clear the work space
