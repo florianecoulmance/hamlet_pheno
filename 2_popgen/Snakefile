@@ -356,7 +356,10 @@ rule newhyb_from_pruned:
         "newhyb/{dataset}/{pair}/done.txt"
     params:
         sp1=lambda wc: wc.pair.split("_")[0],
-        sp2=lambda wc: wc.pair.split("_")[1]    
+        sp2=lambda wc: wc.pair.split("_")[1]
+    resources:
+        mem_mb=8000,
+        time="12:00:00"
     shell:
         """
         module load hpc-env/13.1
