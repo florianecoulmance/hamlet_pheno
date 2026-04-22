@@ -392,7 +392,7 @@ rule newhyb_from_pruned:
         
         # create keep file (plink format: FID IID)
         awk -v s1=${{sp1}} -v s2=${{sp2}} -v loc={wildcards.dataset} \
-            '($1 ~ s1 loc) || ($1 ~ s2 loc) {{split($1, a, "_"); print a[1], a[1];}}' \
+            '($1 ~ s1 && $1 ~ loc) || ($1 ~ s2 && $1 ~ loc) {{print $1, $1}}' \
             {input.samples} > $outdir/keep.txt
 
         # subset PLINK dataset
