@@ -367,6 +367,8 @@ rule newhyb_from_pruned:
         module load PLINK/v1.9b7.4-x86_64
         module load R/4.3.1-foss-2023a
 
+        set -x
+
         sp1={params.sp1}
         sp2={params.sp2}
 
@@ -406,6 +408,14 @@ rule newhyb_from_pruned:
 
         bcftools view -R $outdir/snps.txt $outdir/data.vcf.gz -Oz -o $outdir/data.subset.vcf.gz
         bcftools index $outdir/data.subset.vcf.gz
+
+        nind_vcf=$(bcftools query -l $outdir/data.subset.vcf.gz | wc -l)
+
+        if [ "$nind_vcf" -eq 0 ]; then
+            echo "No individuals left after filtering for ${{sp1}}-${{sp2}}"
+            touch {output}
+            exit 0
+        fi
 
         # count SNPs: can comment since we thin the data
         # nsnps=$(bcftools view -H $outdir/data.vcf.gz | wc -l)
