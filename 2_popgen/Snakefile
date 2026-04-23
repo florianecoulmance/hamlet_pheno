@@ -59,7 +59,7 @@ PAIRS = [f"{a}_{b}" for i,a in enumerate(species) for b in species[i+1:]]
 rule all:
     input:
         expand("byLOC/{loc}.txt", loc=locations),
-        expand("bySPC/{spc}.txt", spc=species),
+        expand("bySPC/{spc}.txt", spc=plink_species),
         expand("byLOC/{loc}.vcf.gz", loc=locations),
         expand("bySPC/{spc}.vcf.gz", spc=plink_species),
         expand("byLOC/{loc}_ld_pruned_gtmat.traw", loc=locations),
