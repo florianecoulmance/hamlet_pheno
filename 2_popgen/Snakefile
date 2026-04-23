@@ -61,7 +61,7 @@ rule all:
         expand("byLOC/{loc}.txt", loc=locations),
         expand("bySPC/{spc}.txt", spc=species),
         expand("byLOC/{loc}.vcf.gz", loc=locations),
-        expand("bySPC/{spc}.vcf.gz", spc=species),
+        expand("bySPC/{spc}.vcf.gz", spc=plink_species),
         expand("byLOC/{loc}_ld_pruned_gtmat.traw", loc=locations),
         expand("bySPC/{spc}_ld_pruned_gtmat.traw", spc=plink_species),
         "byALL/all.agg.ld_pruned_gtmat.traw",
