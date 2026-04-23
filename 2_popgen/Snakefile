@@ -51,6 +51,7 @@ SPID_SCRIPT = os.path.join(SCRIPTS_DIR, "sh", "vcf2nh.spid")
 # Separate datasets into "location" and "species" groups
 locations = ["arc","bar","bel","boc","flk","gun","hon","liz","pri","qui"]
 species = ["abe","aff","atl","chl","gem","gum","gut","ind","nig","pue","ran","tan","uni","may"]
+plink_species = [s for s in species if s != "may"]
 datasets = locations + ["all"] #+ species
 PAIRS = [f"{a}_{b}" for i,a in enumerate(species) for b in species[i+1:]]
 
@@ -62,12 +63,12 @@ rule all:
         expand("byLOC/{loc}.vcf.gz", loc=locations),
         expand("bySPC/{spc}.vcf.gz", spc=species),
         expand("byLOC/{loc}_ld_pruned_gtmat.traw", loc=locations),
-        expand("bySPC/{spc}_ld_pruned_gtmat.traw", spc=species),
+        expand("bySPC/{spc}_ld_pruned_gtmat.traw", spc=plink_species),
         "byALL/all.agg.ld_pruned_gtmat.traw",
         # Location mode outputs in byLOC/permanova_results/
         expand("byLOC/permanova_results/{dataset}.lm.pairwise.csv", dataset=locations),
         # Species mode outputs in bySPC/permanova_results/
-        expand("bySPC/permanova_results/{dataset}.sm.pairwise.csv", dataset=species),
+        expand("bySPC/permanova_results/{dataset}.sm.pairwise.csv", dataset=plink_species),
         "byALL/permanova_results/all.sm.pairwise.csv",
         "byALL/permanova_results/all.lm.pairwise.csv",
         # Figure outputs
