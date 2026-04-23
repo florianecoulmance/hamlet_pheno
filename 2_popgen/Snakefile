@@ -52,6 +52,7 @@ SPID_SCRIPT = os.path.join(SCRIPTS_DIR, "sh", "vcf2nh.spid")
 locations = ["arc","bar","bel","boc","flk","gun","hon","liz","pri","qui"]
 species = ["abe","aff","atl","chl","gem","gum","gut","ind","nig","pue","ran","tan","uni","may"]
 plink_species = [s for s in species if s != "may"]
+print(plink_species)
 datasets = locations + ["all"] #+ species
 PAIRS = [f"{a}_{b}" for i,a in enumerate(species) for b in species[i+1:]]
 
