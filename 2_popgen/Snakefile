@@ -303,13 +303,13 @@ rule pca_plot:
     input:
         gtmat = lambda wildcards: (
             [f"byLOC/{loc}_ld_pruned_gtmat.traw" for loc in locations] +
-            [f"bySPC/{spc}_ld_pruned_gtmat.traw" for spc in species] +
+            [f"bySPC/{spc}_ld_pruned_gtmat.traw" for spc in plink_species] +
             ["byALL/all.agg.ld_pruned_gtmat.traw"]
         ),
         # PERMANOVA results
         permanova = lambda wildcards: (
             [f"byLOC/permanova_results/{loc}.lm.pairwise.csv" for loc in locations] +
-            [f"bySPC/permanova_results/{spc}.sm.pairwise.csv" for spc in species] +
+            [f"bySPC/permanova_results/{spc}.sm.pairwise.csv" for spc in plink_species] +
             ["byALL/permanova_results/all.lm.pairwise.csv"] +
             ["byALL/permanova_results/all.sm.pairwise.csv"]
         )
