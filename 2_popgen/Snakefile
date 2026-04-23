@@ -15,44 +15,43 @@ R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig3-4_S11-S18.R")
 SPID_SCRIPT = os.path.join(SCRIPTS_DIR, "sh", "vcf2nh.spid")
 
 
-# List of datasets
-genotyping_params = [
-    # Per location, all species
-    {"dataset": "arc"},
-    {"dataset": "bar"},
-    {"dataset": "bel"},
-    {"dataset": "boc"},
-    {"dataset": "flk"},
-    {"dataset": "gun"},
-    {"dataset": "hon"},
-    {"dataset": "liz"},
-    {"dataset": "pri"},
-    {"dataset": "qui"},
-    # Overall location (all species combined)
-    {"dataset": "all"},
-    # Specific species (geo_name = all)
-    {"dataset": "abe"},
-    {"dataset": "aff"},
-    {"dataset": "atl"},
-    {"dataset": "chl"},
-    {"dataset": "gem"},
-    {"dataset": "gum"},
-    {"dataset": "gut"},
-    {"dataset": "ind"},
-    {"dataset": "nig"},
-    {"dataset": "pue"},
-    {"dataset": "ran"},
-    {"dataset": "tan"},
-    {"dataset": "uni"},
-    {"dataset": "may"},
+# # List of datasets
+# genotyping_params = [
+#     # Per location, all species
+#     {"dataset": "arc"},
+#     {"dataset": "bar"},
+#     {"dataset": "bel"},
+#     {"dataset": "boc"},
+#     {"dataset": "flk"},
+#     {"dataset": "gun"},
+#     {"dataset": "hon"},
+#     {"dataset": "liz"},
+#     {"dataset": "pri"},
+#     {"dataset": "qui"},
+#     # Overall location (all species combined)
+#     {"dataset": "all"},
+#     # Specific species (geo_name = all)
+#     {"dataset": "abe"},
+#     {"dataset": "aff"},
+#     {"dataset": "atl"},
+#     {"dataset": "chl"},
+#     {"dataset": "gem"},
+#     {"dataset": "gum"},
+#     {"dataset": "gut"},
+#     {"dataset": "ind"},
+#     {"dataset": "nig"},
+#     {"dataset": "pue"},
+#     {"dataset": "ran"},
+#     {"dataset": "tan"},
+#     {"dataset": "uni"},
+#     {"dataset": "may"},
 
-]
+# ]
 
 # Separate datasets into "location" and "species" groups
-locations = [p["dataset"] for p in genotyping_params if p["dataset"] in
-             ["arc","bar","bel","boc","flk","gun","hon","liz","pri","qui"]]
-species = [p["dataset"] for p in genotyping_params if p["dataset"] not in locations + ["all"]]
-datasets = locations + species
+locations = ["arc","bar","bel","boc","flk","gun","hon","liz","pri","qui"]
+species = ["abe","aff","atl","chl","gem","gum","gut","ind","nig","pue","ran","tan","uni","may"]
+datasets = locations + ["all"] #+ species
 PAIRS = [f"{a}_{b}" for i,a in enumerate(species) for b in species[i+1:]]
 
 # Rule to generate all dataset-specific files
