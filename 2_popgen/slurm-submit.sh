@@ -6,7 +6,7 @@
 #SBATCH --mem={resources.mem_mb}
 #SBATCH --cpus-per-task={threads}
 #SBATCH --partition=rosa.p
-
+#SBATCH --account=agfisheco
 
 # Execute job
 {exec_job}
