@@ -361,7 +361,7 @@ rule newhyb_from_pruned:
         sp1=lambda wc: wc.pair.split("_")[0],
         sp2=lambda wc: wc.pair.split("_")[1]
     resources:
-        mem_mb=8000,
+        mem_mb=10000,
         time="12:00:00"
     shell:
         """
