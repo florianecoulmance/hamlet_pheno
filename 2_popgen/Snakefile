@@ -467,11 +467,7 @@ rule newhyb_from_pruned:
         }}' $outdir/tmp.geno >> $outdir/nh_input/input.txt
 
 
-        bcftools query -l $outdir/data.subset.vcf.gz |\
-        awk '{{
-            split($1,a,"_");
-            print a[1];
-        }}' > $outdir/nh_input/individuals.txt
+        bcftools query -l $outdir/data.subset.vcf.gz > $outdir/nh_input/individuals.txt
 
 
         # run NewHybrids
