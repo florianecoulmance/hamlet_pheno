@@ -1843,7 +1843,7 @@ read_pofz <- function(path) {
   }
 
   # extract pair + location
-  pair_dir <- dirname(dirname(path))
+  pair_dir <- dirname(dirname(dirname(path)))
   print(pair_dir)
 
   runname <- basename(pair_dir)
@@ -1851,7 +1851,7 @@ read_pofz <- function(path) {
 
 
 
-  loc <- basename(dirname(dirname(dirname(path))))
+  loc <- basename(dirname(dirname(dirname(dirname(path)))))
   print(loc)
 
   pops <- str_split(runname, "_")[[1]]
