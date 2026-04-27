@@ -532,6 +532,9 @@ rule compute_ild:
         "ld/{dataset}_ILD.geno.ld"
     shell:
         r"""
+        module load hpc-env/13.1
+        module load VCFtools/0.1.16-GCC-13.1.0
+        
         vcftools --gzvcf {input.vcf} \
                  --bed {input.bed} \
                  --geno-r2 \
