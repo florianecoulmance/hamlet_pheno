@@ -1834,7 +1834,9 @@ get_nh_result_paths <- function(base_dir) {
 read_pofz <- function(path) {
 
   pofz_file <- list.files(path, pattern = "PofZ.txt", full.names = TRUE)
+  print(pofz_file)
   indiv_file <- list.files(path, pattern = "_individuals.txt", full.names = TRUE)
+  print(indiv_file)
 
   if (length(pofz_file) == 0 | length(indiv_file) == 0) {
     return(NULL)
@@ -1842,13 +1844,12 @@ read_pofz <- function(path) {
 
   # extract pair + location
   pair_dir <- dirname(dirname(path))
-  runname <- basename(pair_dir)
-
   print(pair_dir)
-  print(runname)
-  print(pofz_file)
-  print(indiv_file)
- 
+
+  runname <- basename(pair_dir)
+  print(runname) 
+
+
 
   loc <- basename(dirname(dirname(dirname(path))))
   print(loc)
@@ -1882,7 +1883,7 @@ read_pofz <- function(path) {
     )
 
   print(df)
-  
+
 }
 
 # ---------------------------------------------------------
