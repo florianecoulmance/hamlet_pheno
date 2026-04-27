@@ -511,6 +511,7 @@ rule make_ld_bed:
     shell:
         r"""
         awk -v flank={params.flank} 'BEGIN {{OFS="\t"}}
+        $1 == "CHROM" {{next}}   # skip header or dummy row
         {{
             start=$2-flank;
             if (start < 1) start=1;
@@ -534,7 +535,7 @@ rule compute_ild:
         r"""
         module load hpc-env/13.1
         module load VCFtools/0.1.16-GCC-13.1.0
-        
+
         vcftools --gzvcf {input.vcf} \
                  --bed {input.bed} \
                  --geno-r2 \
