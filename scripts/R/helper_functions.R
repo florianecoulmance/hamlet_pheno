@@ -1844,9 +1844,18 @@ read_pofz <- function(path) {
   pair_dir <- dirname(dirname(path))
   runname <- basename(pair_dir)
 
+  print(pair_dir)
+  print(runname)
+  print(pofz_file)
+  print(indiv_file)
+ 
+
   loc <- basename(dirname(dirname(dirname(path))))
+  print(loc)
 
   pops <- str_split(runname, "_")[[1]]
+  print(pops)
+
 
   df <- vroom::vroom(pofz_file,
                      delim = "\t",
@@ -1867,10 +1876,13 @@ read_pofz <- function(path) {
       run = runname,
       pop1 = pops[1],
       pop2 = pops[2],
-      loc = str_sub(runname, -3, -1),
+      loc = loc,
       ind_order = str_c(str_sub(IndivName, -6, -1), "_",
                         str_sub(IndivName, 1, -7))
     )
+
+  print(df)
+  
 }
 
 # ---------------------------------------------------------
