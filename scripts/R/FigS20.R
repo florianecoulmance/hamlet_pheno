@@ -50,4 +50,4 @@ plots <- data %>%
 # FINAL FIGURE
 # ---------------------------------------------------------
 
-combine_plots(plots, file.path(fig_dir, "hybrids.png"))
+combine_plots(plots, file.path(fig_dir, "FigS20_newhybrid.png"))
