@@ -35,7 +35,7 @@ print(species_meta)
 # ---------------------------------------------------------
 
 paths <- get_nh_result_paths(base_dir)
-print(path)
+print(paths)
 
 data <- map_dfr(paths, read_pofz)
 print(data)
