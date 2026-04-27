@@ -523,7 +523,7 @@ rule make_ld_bed:
 rule compute_ild:
     input:
         vcf=lambda wc: (
-            "phyps2e_m2.vcf.gz" if wc.dataset == "all"
+            VCF_FILE if wc.dataset == "all"
             else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
             else f"bySPC/{wc.dataset}.vcf.gz"
         ),
