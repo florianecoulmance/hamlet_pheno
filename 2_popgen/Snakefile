@@ -7,6 +7,8 @@ BASE_DIR="/fs/dss/work/doau0129/hamlet_pheno"  # hamlet_pheno/
 GENO_DIR=os.path.join(BASE_DIR, "2_popgen")
 SAMPLES_FILE=os.path.join(BASE_DIR, "metadata/geno_names.txt")
 VCF_FILE=os.path.join(BASE_DIR, "phyps2e_m2.vcf.gz")
+GXP_FILE=os.path.join(BASE_DIR, "metadata/color_gxp_peaks.txt")
+
 
 FIGURES_DIR = os.path.join(BASE_DIR, "figures")
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
@@ -55,6 +57,7 @@ plink_species = [s for s in species if s != "may"]
 print(plink_species)
 datasets = locations + ["all"] #+ species
 PAIRS = [f"{a}_{b}" for i,a in enumerate(species) for b in species[i+1:]]
+ld_datasets = ["all", "bel", "boc", "hon", "pri", "pue", "uni", "nig", "abe"]
 
 # Rule to generate all dataset-specific files
 rule all:
@@ -90,7 +93,10 @@ rule all:
             ]
         ),
         expand("newhyb/{dataset}/{pair}/done.txt", dataset=locations, pair=PAIRS),
-        f"{FIGURES_DIR}/FigS20_newhybrid.png"
+        f"{FIGURES_DIR}/FigS20_newhybrid.png",
+        "ld/LD.bed",
+        expand("ld/{dataset}_ILD.geno.ld", dataset=ld_datasets)
+
 
 
 # --- Create directories ---
@@ -493,3 +499,45 @@ rule plot_newhybrids:
         module load R/4.3.1-foss-2023a
         Rscript {SCRIPTS_DIR}/R/FigS20.R {params.base_dir} {params.fig_dir}
         """
+
+
+rule make_ld_bed:
+    input:
+        GXP_FILE
+    output:
+        "ld/LD.bed"
+    params:
+        flank=250000
+    shell:
+        r"""
+        awk -v flank={params.flank} 'BEGIN {{OFS="\t"}}
+        {{
+            start=$2-flank;
+            if (start < 1) start=1;
+            end=$2+flank;
+            print $1, start, end, $1"_"$2
+        }}' {input} > {output}
+        """
+
+
+rule compute_ild:
+    input:
+        vcf=lambda wc: (
+            "phyps2e_m2.vcf.gz" if wc.dataset == "all"
+            else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
+            else f"bySPC/{wc.dataset}.vcf.gz"
+        ),
+        bed="ld/LD.bed"
+    output:
+        "ld/{dataset}_ILD.geno.ld"
+    shell:
+        r"""
+        vcftools --gzvcf {input.vcf} \
+                 --bed {input.bed} \
+                 --geno-r2 \
+                 --out ld/{wildcards.dataset}_ILD
+        """
+
+rule ild_all:
+    input:
+        expand("ld/{dataset}_ILD.geno.ld", dataset=ld_datasets)

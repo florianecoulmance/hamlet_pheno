@@ -1865,9 +1865,13 @@ read_pofz <- function(path) {
                                    "P1", "P2", "F1", "F2",
                                    "P1_bc", "P2_bc"))
 
-  inds <- vroom::vroom(indiv_file, col_names = "IndivName") %>% pull()
+  inds <- readLines(indiv_file)
 
   df$IndivName <- inds
+  # if (length(inds) != nrow(df)) {
+  #   warning("Mismatch in individuals vs PofZ rows: ", indiv_file)
+  #   return(NULL)
+  #   }
 
   df %>%
     pivot_longer(cols = -c(indNR, IndivName),
@@ -1877,12 +1881,11 @@ read_pofz <- function(path) {
       run = runname,
       pop1 = pops[1],
       pop2 = pops[2],
-      loc = loc,
-      ind_order = str_c(str_sub(IndivName, -6, -1), "_",
-                        str_sub(IndivName, 1, -7))
+      loc = loc
     )
 
   print(df)
+  return(df)
 
 }
 
@@ -1907,16 +1910,15 @@ plot_location <- function(df, species_meta) {
 
   # detect hybrids
   hybrids <- df %>%
-    filter(!str_detect(class, "pure"),
-           prob > 0.99) %>%
-    pull(ind_order) %>%
+    filter(class %in% c("F1", "F2"), prob > 0.99) %>%
+    pull(IndivName) %>%
     unique()
 
   df <- df %>%
     mutate(
-      ind_label = ifelse(ind_order %in% hybrids,
-                         paste0("**", ind_order, "**"),
-                         ind_order)
+      ind_label = ifelse(IndivName %in% hybrids,
+                         paste0("**", IndivName, "**"),
+                         IndivName)
     )
 
   # species labels via metadata
@@ -1934,10 +1936,10 @@ plot_location <- function(df, species_meta) {
 
   colors <- get_hybrid_colors()
 
-  ggplot(df, aes(x = ind_order, y = prob, fill = class)) +
+  ggplot(df, aes(x = IndivName, y = prob, fill = class)) +
     geom_bar(stat = "identity", position = "stack") +
     scale_fill_manual(values = colors) +
-    scale_x_discrete(labels = unique(df$ind_label)) +
+    scale_x_discrete(labels = function(x) df$ind_label[match(x, df$IndivName)]) +
     facet_grid(run_label ~ .) +
     theme_minimal() +
     theme(
