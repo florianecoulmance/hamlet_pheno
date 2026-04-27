@@ -1835,7 +1835,7 @@ read_pofz <- function(path) {
 
   pofz_file <- list.files(path, pattern = "PofZ.txt", full.names = TRUE)
   print(pofz_file)
-  indiv_file <- list.files(path, pattern = "_individuals.txt", full.names = TRUE)
+  indiv_file <- list.files(path, pattern = "individuals.txt", full.names = TRUE)
   print(indiv_file)
 
   if (length(pofz_file) == 0 | length(indiv_file) == 0) {
