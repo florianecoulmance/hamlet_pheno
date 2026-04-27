@@ -28,14 +28,17 @@ dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
 # ---------------------------------------------------------
 
 species_meta <- read_tsv(file.path(base_dir, "metadata/species_colors.tsv"))
+print(species_meta)
 
 # ---------------------------------------------------------
 # LOAD RESULTS
 # ---------------------------------------------------------
 
 paths <- get_nh_result_paths(base_dir)
+print(path)
 
 data <- map_dfr(paths, read_pofz)
+print(data)
 
 
 # ---------------------------------------------------------
