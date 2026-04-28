@@ -580,10 +580,12 @@ rule ld_LG12_between:
         bcftools index {params.tmp_vcf}
 
         plink --vcf {params.tmp_vcf} \
+              --allow-extra-chr
               --make-bed \
               --out {params.tmp_prefix}
 
         plink --bfile {params.tmp_prefix} \
+              --allow-extra-chr
               --r2 \
               --ld-window-kb 5000 \
               --ld-window 99999 \
