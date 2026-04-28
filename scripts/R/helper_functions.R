@@ -1964,9 +1964,14 @@ plot_location <- function(df, species_meta) {
 
 combine_plots <- function(plot_list, output_path) {
 
-  p <- wrap_plots(plot_list, ncol = 1, guides = "keep") +
-    theme(legend.position = "bottom") +
-    plot_annotation(tag_levels = "a")
+  legend <- cowplot::get_legend(plot_list[[1]] + theme(legend.position = "bottom"))
+
+  p <- cowplot::plot_grid(
+    cowplot::plot_grid(plotlist = plot_list, ncol = 1),
+    legend,
+    ncol = 1,
+    rel_heights = c(1, 0.1)
+  )
 
   ggsave(
   filename = output_path,

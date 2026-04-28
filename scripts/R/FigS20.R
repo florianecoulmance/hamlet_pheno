@@ -16,6 +16,7 @@ library(ggtext)
 library(paletteer)
 library(prismatic)
 library(ggthemes)
+library(cowplot)
 
 args <- commandArgs(trailingOnly = TRUE)
 
