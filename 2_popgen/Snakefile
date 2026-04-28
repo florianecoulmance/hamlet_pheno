@@ -531,15 +531,28 @@ rule compute_ild:
         bed="ld/LD.bed"
     output:
         "ld/{dataset}_ILD.geno.ld"
+    params:
+        tmp_prefix="ld/{dataset}_plink"
     shell:
         r"""
         module load hpc-env/13.1
-        module load VCFtools/0.1.16-GCC-13.1.0
+        module load PLINK/1.9
 
-        vcftools --gzvcf {input.vcf} \
-                 --bed {input.bed} \
-                 --geno-r2 \
-                 --out ld/{wildcards.dataset}_ILD
+        # 1. Convert VCF → PLINK
+        plink --vcf {input.vcf} \
+              --double-id \
+              --allow-extra-chr \
+              --make-bed \
+              --out {params.tmp_prefix}
+
+        # 2. Compute LD only in regions of interest
+        plink --bfile {params.tmp_prefix} \
+              --extract range {input.bed} \
+              --r2 \
+              --ld-window-kb 1000 \
+              --ld-window 99999 \
+              --ld-window-r2 0 \
+              --out ld/{wildcards.dataset}_ILD
         """
 
 rule ild_all:
