@@ -1873,7 +1873,7 @@ read_pofz <- function(path) {
   #   return(NULL)
   #   }
 
-  df %>%
+  df <- df %>%
     pivot_longer(cols = -c(indNR, IndivName),
                  names_to = "class",
                  values_to = "prob") %>%
