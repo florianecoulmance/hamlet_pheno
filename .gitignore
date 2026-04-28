@@ -2,11 +2,17 @@ phyps2e_m2.vcf.gz
 phyps2e_m2.vcf.gz.csi
 2_popgen/newhyb/*
 2_popgen/ld/*
+2_popgen/byLOC/*.bed
+2_popgen/byLOC/*.bim
+2_popgen/byLOC/*.fam
 2_popgen/byLOC/*.txt
 2_popgen/byLOC/*.vcf.gz*
 2_popgen/byLOC/*.traw
 2_popgen/byLOC/*.log
 2_popgen/byLOC/*.nosex
+2_popgen/bySPC/*.bed
+2_popgen/bySPC/*.bim
+2_popgen/bySPC/*.fam
 2_popgen/bySPC/*.txt
 2_popgen/bySPC/*.vcf.gz*
 2_popgen/bySPC/*.traw
