@@ -1957,7 +1957,8 @@ plot_location <- function(df, species_meta) {
 
 combine_plots <- function(plot_list, output_path) {
 
-  p <- wrap_plots(plot_list, ncol = 1, guides = "collect") & theme(legend.position = "bottom") +
+  p <- wrap_plots(plot_list, ncol = 1, guides = "collect") +
+    theme(legend.position = "bottom") +
     plot_annotation(tag_levels = "a")
 
   ggsave(
