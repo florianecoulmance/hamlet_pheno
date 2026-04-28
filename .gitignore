@@ -1,5 +1,7 @@
 phyps2e_m2.vcf.gz
 phyps2e_m2.vcf.gz.csi
+2_popgen/newhyb/*
+2_popgen/ld/*
 2_popgen/byLOC/*.txt
 2_popgen/byLOC/*.vcf.gz*
 2_popgen/byLOC/*.traw
