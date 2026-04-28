@@ -608,12 +608,16 @@ rule ld_interchrom:
         prefix="ld/{dataset}_interchrom"
     shell:
         r"""
+        module load hpc-env/13.1
+        module load PLINK/v1.9b7.4-x86_64
+
         plink --vcf {input.vcf} \
               --make-bed \
               --allow-extra-chr \
               --out {params.prefix}
 
         plink --bfile {params.prefix} \
+              --allow-extra-chr \
               --r2 inter-chr \
               --ld-window-r2 0 \
               --out ld/{wildcards.dataset}_interchrom
