@@ -1933,26 +1933,27 @@ plot_location <- function(df, species_meta) {
                          sp_lookup$Species[match(pop2, sp_lookup$spec)],
                          "*")
     )
+  df$ind_label <- factor(df$ind_label, levels = unique(df$ind_label))
 
   colors <- get_hybrid_colors()
 
   df$class <- factor(df$class,
                    levels = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"))
 
-  ggplot(df, aes(x = IndivName, y = prob, fill = class)) +
+  ggplot(df, aes(x = ind_label, y = prob, fill = class)) +
     geom_bar(stat = "identity", position = "stack") +
     scale_fill_manual(
       values = colors,
       breaks = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"),
       drop = FALSE
       ) +
-    scale_x_discrete(labels = function(x) df$ind_label[match(x, df$IndivName)]) +
+    # scale_x_discrete(labels = function(x) df$ind_label[match(x, df$IndivName)]) +
     facet_grid(run_label ~ .) +
     theme_minimal() +
     theme(
-      legend.position = "none",
-      strip.text.y = element_markdown(),
-      axis.text.x = element_markdown(angle = 90),
+      legend.position = "left",
+      strip.text.y = element_markdown(size = 8),
+      axis.text.x = element_markdown(angle = 45, size = 5),
       axis.title.x = element_blank(),
       axis.title.y = element_text(vjust = 4)
     )
