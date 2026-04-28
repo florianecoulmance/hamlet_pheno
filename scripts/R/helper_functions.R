@@ -1968,7 +1968,7 @@ plot_location <- function(df, species_meta) {
       axis.title.x = element_blank(),
       axis.title.y = element_text(vjust = 4)
     ) +
-    labs(title = loc_title) +
+    labs(title = loc_title)
 }
 
 # ---------------------------------------------------------
