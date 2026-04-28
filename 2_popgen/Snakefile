@@ -556,6 +556,35 @@ rule compute_ild:
               --out ld/{wildcards.dataset}_ILD
         """
 
-rule ild_all:
+rule ld_LG12_between:
     input:
-        expand("ld/{dataset}_ILD.geno.ld", dataset=ld_datasets)
+        vcf=lambda wc: (
+            VCF_FILE if wc.dataset == "all"
+            else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
+            else f"bySPC/{wc.dataset}.vcf.gz"
+        )
+    output:
+        "ld/{dataset}_LG12_12.ld"
+    params:
+        tmp_vcf="ld/{dataset}_LG12.vcf.gz",
+        tmp_prefix="ld/{dataset}_LG12"
+    shell:
+        r"""
+        module load hpc-env/13.1
+        module load BCFtools/1.18-GCC-13.1.0
+        module load PLINK/v1.9b7.4-x86_64
+
+        bcftools view -r LG12:19982954-20482954,LG12:21977968-22477968 -Oz -o {params.tmp_vcf} {input.vcf}
+        bcftools index {params.tmp_vcf}
+
+        plink --vcf {params.tmp_vcf} \
+              --make-bed \
+              --out {params.tmp_prefix}
+
+        plink --bfile {params.tmp_prefix} \
+              --r2 \
+              --ld-window-kb 5000 \
+              --ld-window 99999 \
+              --ld-window-r2 0 \
+              --out ld/{wildcards.dataset}_LG12_12
+        """
