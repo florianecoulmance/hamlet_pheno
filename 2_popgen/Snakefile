@@ -601,7 +601,8 @@ rule ld_interchrom:
             VCF_FILE if wc.dataset == "all"
             else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
             else f"bySPC/{wc.dataset}.vcf.gz"
-        )
+        ),
+        bed="ld/LD.bed"
     output:
         "ld/{dataset}_interchrom.ld"
     params:
@@ -618,6 +619,7 @@ rule ld_interchrom:
 
         plink --bfile {params.prefix} \
               --allow-extra-chr \
+              --extract range {input.bed} \
               --r2 inter-chr \
               --ld-window-r2 0 \
               --out ld/{wildcards.dataset}_interchrom
