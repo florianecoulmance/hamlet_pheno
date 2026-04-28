@@ -96,7 +96,9 @@ rule all:
         f"{FIGURES_DIR}/FigS20_newhybrid.png",
         "ld/LD.bed",
         expand("ld/{dataset}_ILD.ld", dataset=ld_datasets),
-        expand("ld/{dataset}_LG12_12.ld", dataset=ld_datasets)
+        expand("ld/{dataset}_LG12_12.ld", dataset=ld_datasets),
+        expand("ld/{dataset}_interchrom.ld", dataset=ld_datasets)
+
 
 
 
