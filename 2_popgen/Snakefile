@@ -547,6 +547,7 @@ rule compute_ild:
 
         # 2. Compute LD only in regions of interest
         plink --bfile {params.tmp_prefix} \
+              --allow-extra-chr \
               --extract range {input.bed} \
               --r2 \
               --ld-window-kb 1000 \
