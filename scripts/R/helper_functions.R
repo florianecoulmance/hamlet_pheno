@@ -1917,9 +1917,10 @@ plot_location <- function(df, species_meta) {
   df <- df %>%
     mutate(
       ind_label = ifelse(IndivName %in% hybrids,
-                         paste0("**", IndivName, "**"),
+                         paste0("<b>", IndivName, "</b>"),
                          IndivName)
     )
+    df$ind_label <- as.character(df$ind_label)
 
   # species labels via metadata
   sp_lookup <- species_meta %>%
@@ -1933,7 +1934,6 @@ plot_location <- function(df, species_meta) {
                          sp_lookup$Species[match(pop2, sp_lookup$spec)],
                          "*")
     )
-  df$ind_label <- factor(df$ind_label, levels = unique(df$ind_label))
 
   colors <- get_hybrid_colors()
 
@@ -1952,8 +1952,8 @@ plot_location <- function(df, species_meta) {
     theme_minimal() +
     theme(
       legend.position = "left",
-      strip.text.y = element_markdown(size = 8),
-      axis.text.x = element_markdown(angle = 45, size = 5),
+      strip.text.y = element_markdown(size = 5),
+      axis.text.x = element_markdown(angle = 90, size = 5),
       axis.title.x = element_blank(),
       axis.title.y = element_text(vjust = 4)
     )
