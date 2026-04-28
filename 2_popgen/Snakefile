@@ -95,7 +95,9 @@ rule all:
         expand("newhyb/{dataset}/{pair}/done.txt", dataset=locations, pair=PAIRS),
         f"{FIGURES_DIR}/FigS20_newhybrid.png",
         "ld/LD.bed",
-        expand("ld/{dataset}_ILD.ld", dataset=ld_datasets)
+        expand("ld/{dataset}_ILD.ld", dataset=ld_datasets),
+        expand("ld/{dataset}_LG12_12.ld", dataset=ld_datasets)
+
 
 
 
