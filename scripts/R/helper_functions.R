@@ -1941,6 +1941,16 @@ plot_location <- function(df, species_meta) {
   df$class <- factor(df$class,
                    levels = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"))
 
+  loc_names <- c(
+    bel = "Belize",
+    boc = "Panama",
+    hon = "Honduras",
+    pri = "Puerto Rico",
+    flk = "Florida Keys"
+  )
+
+  loc_title <- loc_names[unique(df$loc)[1]]
+
   ggplot(df, aes(x = ind_label, y = prob, fill = class)) +
     geom_bar(stat = "identity", position = "stack") +
     scale_fill_manual(
@@ -1957,7 +1967,8 @@ plot_location <- function(df, species_meta) {
       axis.text.x = element_text(angle = 90, size = 5),
       axis.title.x = element_blank(),
       axis.title.y = element_text(vjust = 4)
-    )
+    ) +
+    labs(title = loc_title) +
 }
 
 # ---------------------------------------------------------
