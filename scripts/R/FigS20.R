@@ -65,8 +65,8 @@ purrr::iwalk(plots, function(p, loc) {
   ggsave(
     filename = file.path(fig_dir, paste0("hybrids_", loc, ".png")),
     plot = p,
-    height = 18,
-    width = 14,
+    height = 20,
+    width = 15,
     dpi = 600
   )
 })

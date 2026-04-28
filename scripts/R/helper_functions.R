@@ -1915,12 +1915,13 @@ plot_location <- function(df, species_meta) {
     unique()
 
   df <- df %>%
-    mutate(
-      ind_label = ifelse(IndivName %in% hybrids,
-                         paste0("<b>", IndivName, "</b>"),
-                         IndivName)
-    )
-    df$ind_label <- as.character(df$ind_label)
+      mutate(
+        ind_label = ifelse(
+          IndivName %in% hybrids,
+          paste0("bold('", IndivName, "')"),
+          paste0("'", IndivName, "'")
+        )
+      )
 
   # species labels via metadata
   sp_lookup <- species_meta %>%
@@ -1947,13 +1948,13 @@ plot_location <- function(df, species_meta) {
       breaks = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"),
       drop = FALSE
       ) +
-    # scale_x_discrete(labels = function(x) df$ind_label[match(x, df$IndivName)]) +
+    scale_x_discrete(labels = function(x) parse(text = x)) +
     facet_grid(run_label ~ .) +
     theme_minimal() +
     theme(
       legend.position = "left",
       strip.text.y = ggtext::element_markdown(size = 5),
-      axis.text.x = ggtext::element_markdown(angle = 90, size = 5),
+      axis.text.x = element_text(angle = 90, size = 5),
       axis.title.x = element_blank(),
       axis.title.y = element_text(vjust = 4)
     )
