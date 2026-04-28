@@ -15,6 +15,7 @@ library(patchwork)
 library(ggtext)
 library(paletteer)
 library(prismatic)
+library(ggthemes)
 
 args <- commandArgs(trailingOnly = TRUE)
 
