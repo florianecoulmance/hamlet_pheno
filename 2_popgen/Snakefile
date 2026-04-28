@@ -536,7 +536,7 @@ rule compute_ild:
     shell:
         r"""
         module load hpc-env/13.1
-        module load PLINK/1.9
+        module load PLINK/v1.9b7.4-x86_64
 
         # 1. Convert VCF → PLINK
         plink --vcf {input.vcf} \
