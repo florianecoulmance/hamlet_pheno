@@ -1936,14 +1936,21 @@ plot_location <- function(df, species_meta) {
 
   colors <- get_hybrid_colors()
 
+  df$class <- factor(df$class,
+                   levels = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"))
+
   ggplot(df, aes(x = IndivName, y = prob, fill = class)) +
     geom_bar(stat = "identity", position = "stack") +
-    scale_fill_manual(values = colors) +
+    scale_fill_manual(
+      values = colors,
+      breaks = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"),
+      drop = FALSE
+      ) +
     scale_x_discrete(labels = function(x) df$ind_label[match(x, df$IndivName)]) +
     facet_grid(run_label ~ .) +
     theme_minimal() +
     theme(
-      legend.position = "bottom",
+      legend.position = "none",
       strip.text.y = element_markdown(),
       axis.text.x = element_markdown(angle = 90),
       axis.title.x = element_blank(),
@@ -1957,7 +1964,7 @@ plot_location <- function(df, species_meta) {
 
 combine_plots <- function(plot_list, output_path) {
 
-  p <- wrap_plots(plot_list, ncol = 1, guides = "collect") +
+  p <- wrap_plots(plot_list, ncol = 1, guides = "keep") +
     theme(legend.position = "bottom") +
     plot_annotation(tag_levels = "a")
 

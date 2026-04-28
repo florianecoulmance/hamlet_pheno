@@ -48,7 +48,11 @@ print(data)
 
 plots <- data %>%
   split(.$loc) %>%
-  map(~ plot_location(.x, species_meta))
+  map(~ {
+    if (nrow(.x) == 0) return(NULL)
+    plot_location(.x, species_meta)
+  }) %>%
+  compact()   # removes NULLs
 
 # ---------------------------------------------------------
 # FINAL FIGURE
