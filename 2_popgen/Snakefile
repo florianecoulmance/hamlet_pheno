@@ -136,7 +136,9 @@ rule split_samples_species:
     output:
         "bySPC/{dataset}.txt"
     shell:
-        "grep -E '[0-9]{{5}}.*{wildcards.dataset}' {input} > {output} || true"
+        """
+        awk -v sp={wildcards.dataset} '$1 ~ sp {print $1}' {input} > {output}
+        """
 
 
 rule subset_vcf:
@@ -175,8 +177,8 @@ rule plink_processing:
     output:
         "{OUT_DIR}/{dataset}_ld_pruned_gtmat.traw",
         "{OUT_DIR}/{dataset}.ld.pruned.bed",
-        "{OUT_DIR}/{dataset}ld.pruned.bim",
-        "{OUT_DIR}/{dataset}ld.pruned.fam"
+        "{OUT_DIR}/{dataset}.ld.pruned.bim",
+        "{OUT_DIR}/{dataset}.ld.pruned.fam"
     shell:
         r"""
         module load hpc-env/13.1
