@@ -407,8 +407,8 @@ rule newhyb_from_pruned:
                  --weir-fst-pop $outdir/pop1.txt \
                  --weir-fst-pop $outdir/pop2.txt \
                  --out $outdir/fst
-        
-        sed '1d' $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt
+
+        tail -n 800 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt
 
         bcftools view -R $outdir/snps.txt $outdir/data.vcf.gz -Oz -o $outdir/data.subset.vcf.gz
         bcftools index $outdir/data.subset.vcf.gz
