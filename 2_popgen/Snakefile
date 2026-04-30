@@ -408,7 +408,7 @@ rule newhyb_from_pruned:
         awk -v s1=${{sp1}} -v s2=${{sp2}} -v loc={wildcards.dataset} \
             '($1 ~ s1 && $1 ~ loc) || ($1 ~ s2 && $1 ~ loc) {{print $1, $1}}' \
             {input.samples} > $outdir/keep.txt
-
+        
         # subset PLINK dataset
         plink \
             --bfile byLOC/{wildcards.dataset}.ld.pruned \
@@ -420,8 +420,27 @@ rule newhyb_from_pruned:
         # compress VCF
         bcftools index $outdir/data.vcf.gz
 
+        # create pop file for both species in the pair
+        awk -v s=${{sp1}} '$1 ~ s {{print $1}}' $outdir/keep.txt > $outdir/pop1.txt
+        awk -v s=${{sp2}} '$1 ~ s {{print $1}}' $outdir/keep.txt > $outdir/pop2.txt
+
+        # compute fsts/snps for the species pair
+        bcftools +weir-fst $outdir/data.vcf.gz \
+            -- -w 1 -p $outdir/pop1.txt -q $outdir/pop2.txt \
+            > $outdir/fst.tsv
+
+        # select 800 most differentiated snps for the species pair
+        grep -v "^#" $outdir/fst.tsv | \
+            awk 'NF>=5 {print $1, $2, $5}' | \
+            sort -k3,3nr | \
+            head -n 800 | \
+            cut -d' ' -f1,2 > $outdir/top800.snps
+        
+        # subsample 200/800 random SNPs
+        shuf -n 80 $outdir/top800.snps > $outdir/snps.txt
+
         # subsample SNPs (fast + simple)
-        bcftools view -H $outdir/data.vcf.gz | shuf -n 200 | cut -f1,2 > $outdir/snps.txt
+        # bcftools view -H $outdir/data.vcf.gz | shuf -n 200 | cut -f1,2 > $outdir/snps.txt
 
         bcftools view -R $outdir/snps.txt $outdir/data.vcf.gz -Oz -o $outdir/data.subset.vcf.gz
         bcftools index $outdir/data.subset.vcf.gz
@@ -505,97 +524,97 @@ rule plot_newhybrids:
         """
 
 
-rule make_ld_bed:
-    input:
-        GXP_FILE
-    output:
-        "ld/LD.bed"
-    params:
-        flank=250000
-    shell:
-        r"""
-        awk -v flank={params.flank} 'BEGIN {{OFS="\t"}}
-        $1 == "CHROM" {{next}}   # skip header or dummy row
-        {{
-            start=$2-flank;
-            if (start < 1) start=1;
-            end=$2+flank;
-            print $1, start, end, $1"_"$2
-        }}' {input} > {output}
-        """
+# rule make_ld_bed:
+#     input:
+#         GXP_FILE
+#     output:
+#         "ld/LD.bed"
+#     params:
+#         flank=250000
+#     shell:
+#         r"""
+#         awk -v flank={params.flank} 'BEGIN {{OFS="\t"}}
+#         $1 == "CHROM" {{next}}   # skip header or dummy row
+#         {{
+#             start=$2-flank;
+#             if (start < 1) start=1;
+#             end=$2+flank;
+#             print $1, start, end, $1"_"$2
+#         }}' {input} > {output}
+#         """
 
 
-rule compute_ild:
-    input:
-        vcf=lambda wc: (
-            VCF_FILE if wc.dataset == "all"
-            else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
-            else f"bySPC/{wc.dataset}.vcf.gz"
-        ),
-        bed="ld/LD.bed"
-    output:
-        "ld/{dataset}_ILD.ld"
-    params:
-        tmp_prefix="ld/{dataset}_plink"
-    shell:
-        r"""
-        module load hpc-env/13.1
-        module load PLINK/v1.9b7.4-x86_64
+# rule compute_ild:
+#     input:
+#         vcf=lambda wc: (
+#             VCF_FILE if wc.dataset == "all"
+#             else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
+#             else f"bySPC/{wc.dataset}.vcf.gz"
+#         ),
+#         bed="ld/LD.bed"
+#     output:
+#         "ld/{dataset}_ILD.ld"
+#     params:
+#         tmp_prefix="ld/{dataset}_plink"
+#     shell:
+#         r"""
+#         module load hpc-env/13.1
+#         module load PLINK/v1.9b7.4-x86_64
 
-        # 1. Convert VCF → PLINK
-        plink --vcf {input.vcf} \
-              --double-id \
-              --allow-extra-chr \
-              --make-bed \
-              --out {params.tmp_prefix}
+#         # 1. Convert VCF → PLINK
+#         plink --vcf {input.vcf} \
+#               --double-id \
+#               --allow-extra-chr \
+#               --make-bed \
+#               --out {params.tmp_prefix}
 
-        # 2. Compute LD only in regions of interest
-        plink --bfile {params.tmp_prefix} \
-              --allow-extra-chr \
-              --extract range {input.bed} \
-              --r2 \
-              --ld-window-kb 1000 \
-              --ld-window 99999 \
-              --ld-window-r2 0 \
-              --out ld/{wildcards.dataset}_ILD
-        """
+#         # 2. Compute LD only in regions of interest
+#         plink --bfile {params.tmp_prefix} \
+#               --allow-extra-chr \
+#               --extract range {input.bed} \
+#               --r2 \
+#               --ld-window-kb 1000 \
+#               --ld-window 99999 \
+#               --ld-window-r2 0 \
+#               --out ld/{wildcards.dataset}_ILD
+#         """
 
-rule ld_LG12_between:
-    input:
-        vcf=lambda wc: (
-            VCF_FILE if wc.dataset == "all"
-            else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
-            else f"bySPC/{wc.dataset}.vcf.gz"
-        )
-    output:
-        "ld/{dataset}_LG12_12.ld"
-    params:
-        tmp_vcf="ld/{dataset}_LG12.vcf.gz",
-        tmp_prefix="ld/{dataset}_LG12"
-    shell:
-        r"""
-        module load hpc-env/13.1
-        module load BCFtools/1.18-GCC-13.1.0
-        module load PLINK/v1.9b7.4-x86_64
+# rule ld_LG12_between:
+#     input:
+#         vcf=lambda wc: (
+#             VCF_FILE if wc.dataset == "all"
+#             else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
+#             else f"bySPC/{wc.dataset}.vcf.gz"
+#         )
+#     output:
+#         "ld/{dataset}_LG12_12.ld"
+#     params:
+#         tmp_vcf="ld/{dataset}_LG12.vcf.gz",
+#         tmp_prefix="ld/{dataset}_LG12"
+#     shell:
+#         r"""
+#         module load hpc-env/13.1
+#         module load BCFtools/1.18-GCC-13.1.0
+#         module load PLINK/v1.9b7.4-x86_64
 
-        bcftools view -r LG12:19982954-20482954,LG12:21977968-22477968 -Oz -o {params.tmp_vcf} {input.vcf}
-        bcftools index {params.tmp_vcf}
+#         bcftools view -r LG12:19982954-20482954,LG12:21977968-22477968 -Oz -o {params.tmp_vcf} {input.vcf}
+#         bcftools index {params.tmp_vcf}
 
-        plink --vcf {params.tmp_vcf} \
-              --allow-extra-chr \
-              --make-bed \
-              --out {params.tmp_prefix}
+#         plink --vcf {params.tmp_vcf} \
+#               --allow-extra-chr \
+#               --make-bed \
+#               --out {params.tmp_prefix}
 
-        plink --bfile {params.tmp_prefix} \
-              --allow-extra-chr \
-              --r2 \
-              --ld-window-kb 5000 \
-              --ld-window 99999 \
-              --ld-window-r2 0 \
-              --out ld/{wildcards.dataset}_LG12_12
-        """
+#         plink --bfile {params.tmp_prefix} \
+#               --allow-extra-chr \
+#               --r2 \
+#               --ld-window-kb 5000 \
+#               --ld-window 99999 \
+#               --ld-window-r2 0 \
+#               --out ld/{wildcards.dataset}_LG12_12
+#         """
 
-rule ld_interchrom:
+# rule ld_interchrom:
     input:
         vcf=lambda wc: (
             VCF_FILE if wc.dataset == "all"
