@@ -407,19 +407,8 @@ rule newhyb_from_pruned:
                  --weir-fst-pop $outdir/pop1.txt \
                  --weir-fst-pop $outdir/pop2.txt \
                  --out $outdir/fst
-
-        # select 800 most differentiated snps for the species pair
-        # awk 'NR>1 {{print $1, $2, $3}}' $outdir/fst.weir.fst | \
-        # sort -k3,3gr | \
-        # head -n 800 | \
-        # awk '{{print $1"\t"$2}}' > $outdir/top800.snps
-
-        tail -n +2 $outdir/fst.weir.fst | \
-            sort -k3,3gr | \
-            head -n 800 | \
-            cut -f1,2 | \
-            shuf -n 80 > $outdir/snps.txt
-
+        
+        tail -n +2 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt
 
         bcftools view -R $outdir/snps.txt $outdir/data.vcf.gz -Oz -o $outdir/data.subset.vcf.gz
         bcftools index $outdir/data.subset.vcf.gz
