@@ -615,31 +615,31 @@ rule plot_newhybrids:
 #         """
 
 # rule ld_interchrom:
-    input:
-        vcf=lambda wc: (
-            VCF_FILE if wc.dataset == "all"
-            else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
-            else f"bySPC/{wc.dataset}.vcf.gz"
-        ),
-        bed="ld/LD.bed"
-    output:
-        "ld/{dataset}_interchrom.ld"
-    params:
-        prefix="ld/{dataset}_interchrom"
-    shell:
-        r"""
-        module load hpc-env/13.1
-        module load PLINK/v1.9b7.4-x86_64
+    # input:
+    #     vcf=lambda wc: (
+    #         VCF_FILE if wc.dataset == "all"
+    #         else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
+    #         else f"bySPC/{wc.dataset}.vcf.gz"
+    #     ),
+    #     bed="ld/LD.bed"
+    # output:
+    #     "ld/{dataset}_interchrom.ld"
+    # params:
+    #     prefix="ld/{dataset}_interchrom"
+    # shell:
+    #     r"""
+    #     module load hpc-env/13.1
+    #     module load PLINK/v1.9b7.4-x86_64
 
-        plink --vcf {input.vcf} \
-              --make-bed \
-              --allow-extra-chr \
-              --out {params.prefix}
+    #     plink --vcf {input.vcf} \
+    #           --make-bed \
+    #           --allow-extra-chr \
+    #           --out {params.prefix}
 
-        plink --bfile {params.prefix} \
-              --allow-extra-chr \
-              --extract range {input.bed} \
-              --r2 inter-chr \
-              --ld-window-r2 0 \
-              --out ld/{wildcards.dataset}_interchrom
-        """
+    #     plink --bfile {params.prefix} \
+    #           --allow-extra-chr \
+    #           --extract range {input.bed} \
+    #           --r2 inter-chr \
+    #           --ld-window-r2 0 \
+    #           --out ld/{wildcards.dataset}_interchrom
+    #     """
