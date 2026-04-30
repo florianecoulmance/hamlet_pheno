@@ -68,6 +68,12 @@ rule all:
         expand("bySPC/{spc}.vcf.gz", spc=plink_species),
         expand("byLOC/{loc}_ld_pruned_gtmat.traw", loc=locations),
         expand("bySPC/{spc}_ld_pruned_gtmat.traw", spc=plink_species),
+        expand("byLOC/{loc}.ld.pruned.bed", loc=locations),
+        expand("bySPC/{spc}.ld.pruned.bed", spc=plink_species),
+        expand("byLOC/{loc}.ld.pruned.bim", loc=locations),
+        expand("bySPC/{spc}.ld.pruned.bim", spc=plink_species),
+        expand("byLOC/{loc}.ld.pruned.fam", loc=locations),
+        expand("bySPC/{spc}.ld.pruned.fam", spc=plink_species),
         "byALL/all.agg.ld_pruned_gtmat.traw",
         # Location mode outputs in byLOC/permanova_results/
         expand("byLOC/permanova_results/{dataset}.lm.pairwise.csv", dataset=locations),
@@ -167,7 +173,10 @@ rule plink_processing:
             "byLOC" if wildcards.dataset in locations else "bySPC"
         )
     output:
-        "{OUT_DIR}/{dataset}_ld_pruned_gtmat.traw"
+        "{OUT_DIR}/{dataset}_ld_pruned_gtmat.traw",
+        "{OUT_DIR}/{dataset}.ld.pruned.bed",
+        "{OUT_DIR}/{dataset}ld.pruned.bim",
+        "{OUT_DIR}/{dataset}ld.pruned.fam"
     shell:
         r"""
         module load hpc-env/13.1
