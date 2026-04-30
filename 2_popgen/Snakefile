@@ -415,12 +415,10 @@ rule newhyb_from_pruned:
         # awk '{{print $1"\t"$2}}' > $outdir/top800.snps
 
         tail -n +2 $outdir/fst.weir.fst | \
-        sort -k3,3gr | \
-        head -n 800 | \
-        cut -f1,2 > $outdir/top800.snps
-        
-        # subsample 200/800 random SNPs
-        shuf -n 80 $outdir/top800.snps > $outdir/snps.txt
+            sort -k3,3gr | \
+            head -n 800 | \
+            cut -f1,2 | \
+            shuf -n 80 > $outdir/snps.txt
 
 
         bcftools view -R $outdir/snps.txt $outdir/data.vcf.gz -Oz -o $outdir/data.subset.vcf.gz
