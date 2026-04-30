@@ -362,6 +362,9 @@ rule pca_plot:
 
 rule newhyb_from_pruned:
     input:
+        bed="byLOC/{dataset}.ld.pruned.bed",
+        bim="byLOC/{dataset}.ld.pruned.bim",
+        fam="byLOC/{dataset}.ld.pruned.fam",
         samples="byLOC/{dataset}.txt"
     output:
         "newhyb/{dataset}/{pair}/done.txt"
