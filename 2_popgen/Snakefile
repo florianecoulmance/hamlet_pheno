@@ -412,7 +412,7 @@ rule newhyb_from_pruned:
         awk 'NR>1 {{print $1, $2, $3}}' $outdir/fst.weir.fst | \
         sort -k3,3gr | \
         head -n 800 | \
-        cut -f1,2 > $outdir/top800.snps
+        awk '{{print $1"\t"$2}}' > $outdir/top800.snps
         
         # subsample 200/800 random SNPs
         shuf -n 80 $outdir/top800.snps > $outdir/snps.txt
