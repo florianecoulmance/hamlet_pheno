@@ -16,40 +16,6 @@ PYTHON_SCRIPT = os.path.join(SCRIPTS_DIR, "python", "permanova.py")
 R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig3-4_S11-S18.R")
 SPID_SCRIPT = os.path.join(SCRIPTS_DIR, "sh", "vcf2nh.spid")
 
-
-# # List of datasets
-# genotyping_params = [
-#     # Per location, all species
-#     {"dataset": "arc"},
-#     {"dataset": "bar"},
-#     {"dataset": "bel"},
-#     {"dataset": "boc"},
-#     {"dataset": "flk"},
-#     {"dataset": "gun"},
-#     {"dataset": "hon"},
-#     {"dataset": "liz"},
-#     {"dataset": "pri"},
-#     {"dataset": "qui"},
-#     # Overall location (all species combined)
-#     {"dataset": "all"},
-#     # Specific species (geo_name = all)
-#     {"dataset": "abe"},
-#     {"dataset": "aff"},
-#     {"dataset": "atl"},
-#     {"dataset": "chl"},
-#     {"dataset": "gem"},
-#     {"dataset": "gum"},
-#     {"dataset": "gut"},
-#     {"dataset": "ind"},
-#     {"dataset": "nig"},
-#     {"dataset": "pue"},
-#     {"dataset": "ran"},
-#     {"dataset": "tan"},
-#     {"dataset": "uni"},
-#     {"dataset": "may"},
-
-# ]
-
 # Separate datasets into "location" and "species" groups
 locations = ["arc","bar","bel","boc","flk","gun","hon","liz","pri","qui"]
 species = ["abe","aff","atl","chl","gem","gum","gut","ind","nig","pue","ran","tan","uni","may"]
@@ -436,12 +402,13 @@ rule newhyb_from_pruned:
         awk -v s=${{sp2}} '$1 ~ s {{print $1}}' $outdir/keep.txt > $outdir/pop2.txt
 
         # compute fsts/snps for the species pair
-        bcftools +weir-fst $outdir/data.vcf.gz \
-            -- -w 1 -p $outdir/pop1.txt -q $outdir/pop2.txt \
-            > $outdir/fst.tsv
+        vcftools --gzvcf $outdir/data.vcf.gz \
+                 --weir-fst-pop $outdir/pop1.txt \
+                 --weir-fst-pop $outdir/pop2.txt \
+                 --out $outdir/fst
 
         # select 800 most differentiated snps for the species pair
-        grep -v "^#" $outdir/fst.tsv | \
+        grep -v "^#" $outdir/fst.weir.fst | \
             awk 'NF>=5 {{print $1, $2, $5}}' | \
             sort -k3,3nr | \
             head -n 800 | \
