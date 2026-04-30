@@ -415,7 +415,7 @@ rule newhyb_from_pruned:
         awk '{{print $1"\t"$2}}' > $outdir/top800.snps
         
         # subsample 200/800 random SNPs
-        shuf -n 80 $outdir/top800.snps > $outdir/snps.txt
+        shuf $outdir/top800.snps | head -n 80 > $outdir/snps.txt
 
         # subsample SNPs (fast + simple)
         # bcftools view -H $outdir/data.vcf.gz | shuf -n 200 | cut -f1,2 > $outdir/snps.txt
