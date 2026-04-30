@@ -2,6 +2,10 @@ phyps2e_m2.vcf.gz
 phyps2e_m2.vcf.gz.csi
 2_popgen/newhyb/*
 2_popgen/ld/*
+2_popgen/byLOC/*.in
+2_popgen/byLOC/*.out
+2_popgen/bySPC/*.in
+2_popgen/bySPC/*.out
 2_popgen/byLOC/*.bed
 2_popgen/byLOC/*.bim
 2_popgen/byLOC/*.fam
