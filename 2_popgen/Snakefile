@@ -409,11 +409,10 @@ rule newhyb_from_pruned:
                  --out $outdir/fst
 
         # select 800 most differentiated snps for the species pair
-        grep -v "^#" $outdir/fst.weir.fst | \
-            awk 'NF>=5 {{print $1, $2, $3}}' | \
-            sort -k3,3nr | \
-            head -n 800 | \
-            cut -d' ' -f1,2 > $outdir/top800.snps
+        awk 'NR>1 {print $1"\t"$2"\t"$3}' $outdir/fst.weir.fst | \
+        sort -k3,3nr | \
+        head -n 800 | \
+        cut -f1,2 > $outdir/top800.snps
         
         # subsample 200/800 random SNPs
         shuf -n 80 $outdir/top800.snps > $outdir/snps.txt
