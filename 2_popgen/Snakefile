@@ -403,7 +403,7 @@ rule newhyb_from_fst:
             --geno 0.05 \
             --maf 0.01 \
             --allow-extra-chr \
-            --recode vcf bgz \
+            --recode vcf-iid bgz \
             --out $outdir/data
 
         # compress VCF
