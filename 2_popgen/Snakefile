@@ -392,36 +392,51 @@ rule newhyb_from_fst:
             {input.samples} > $outdir/keep.txt
         
         # subset for pairs from overall dataset
-        bcftools view --threads 4 -S $outdir/keep.txt -Oz -o $outdir/pair.vcf.gz {input.VCF_FILE}
+        # bcftools view --threads 4 -S $outdir/keep.txt -Oz -o $outdir/pair.vcf.gz {input.VCF_FILE}
 
         #convert to binary
-        plink --vcf $outdir/pair.vcf.gz --allow-extra-chr --double-id --make-bed --out $outdir/pair
+        # plink --vcf $outdir/pair.vcf.gz --allow-extra-chr --double-id --make-bed --out $outdir/pair
 
         # light filtering on the subset
-        plink \
-            --bfile $outdir/pair \
-            --geno 0.05 \
-            --maf 0.01 \
-            --allow-extra-chr \
-            --recode vcf-iid bgz \
-            --out $outdir/data
+        # plink \
+        #     --bfile $outdir/pair \
+        #     --geno 0.05 \
+        #     --maf 0.01 \
+        #     --allow-extra-chr \
+        #     --recode vcf-iid bgz \
+        #     --out $outdir/data
 
         # compress VCF
-        bcftools index $outdir/data.vcf.gz
+        # bcftools index $outdir/data.vcf.gz
 
         # create pop file for both species in the pair
         awk -v s=${{sp1}} '$1 ~ s {{print $1}}' $outdir/keep.txt > $outdir/pop1.txt
         awk -v s=${{sp2}} '$1 ~ s {{print $1}}' $outdir/keep.txt > $outdir/pop2.txt
 
         # compute fsts/snps for the species pair
-        vcftools --gzvcf $outdir/data.vcf.gz \
-                 --weir-fst-pop $outdir/pop1.txt \
-                 --weir-fst-pop $outdir/pop2.txt \
-                 --out $outdir/fst
+        # vcftools --gzvcf $outdir/data.vcf.gz \
+        #          --weir-fst-pop $outdir/pop1.txt \
+        #          --weir-fst-pop $outdir/pop2.txt \
+        #          --out $outdir/fst
 
-        tail -n +2 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt.tmp
+        # tail -n +2 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt.tmp
         
-        mv $outdir/snps.txt.tmp $outdir/snps.txt
+        # 1. Remove header
+        tail -n +2 $outdir/fst.weir.fst > $outdir/fst.noheader.txt
+
+        # 2. Sort by FST (column 3)
+        sort -k3,3gr $outdir/fst.noheader.txt > $outdir/fst.sorted.txt
+
+        # 3. Take top 800 SNPs
+        head -n 800 $outdir/fst.sorted.txt > $outdir/fst.top800.txt
+
+        # 4. Keep only CHROM and POS
+        cut -f1,2 $outdir/fst.top800.txt > $outdir/fst.top800.pos.txt
+
+        # 5. Randomly sample 80 SNPs
+        shuf $outdir/fst.top800.pos.txt | head -n 80 > $outdir/snps.txt
+        
+        # mv $outdir/snps.txt.tmp $outdir/snps.txt
         
         touch {output}
         """
