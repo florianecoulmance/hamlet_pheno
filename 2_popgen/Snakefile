@@ -544,7 +544,7 @@ rule newhyb_from_snps:
 
 rule plot_newhybrids:
     input:
-        expand("newhyb/{dataset}/{pair}/done.txt",
+        expand("newhyb/{dataset}/{pair}/done1.txt",
                dataset=locations,
                pair=PAIRS)
     output:
