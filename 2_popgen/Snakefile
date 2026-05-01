@@ -410,9 +410,10 @@ rule newhyb_from_pruned:
         #          --weir-fst-pop $outdir/pop2.txt \
         #          --out $outdir/fst
 
-        # tail -n +2 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt
-        awk 'NR>1' $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt
-        
+        tail -n +2 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt.tmp && mv $outdir/snps.txt.tmp $outdir/snps.txt
+
+        sync
+
         bcftools view -R $outdir/snps.txt $outdir/data.vcf.gz -Oz -o $outdir/data.80subset.vcf.gz
         bcftools index $outdir/data.80subset.vcf.gz
 
