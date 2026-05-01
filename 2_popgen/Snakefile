@@ -383,12 +383,10 @@ rule newhyb_from_pruned:
             {input.samples} > $outdir/keep.txt
         
         # subset for pairs from overall dataset
-        plink \
-            --bfile {input.VCF_FILE} \
-            --keep $outdir/keep.txt \
-            --allow-extra-chr \
-            --recode vcf-iid bgz \
-            --out $outdir/pair
+        bcftools view --threads 4 -S $outdir/keep.txt -Oz -o $outdir/pair.vcf.gz {input.VCF_FILE}
+
+        #convert to binary
+        plink --vcf $outdir/pair.vcf.gz --allow-extra-chr --make-bed --out $outdir/pair
 
         # light filtering on the subset
         plink \
