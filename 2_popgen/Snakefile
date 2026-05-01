@@ -395,7 +395,7 @@ rule newhyb_from_fst:
         bcftools view --threads 4 -S $outdir/keep.txt -Oz -o $outdir/pair.vcf.gz {input.VCF_FILE}
 
         #convert to binary
-        plink --vcf $outdir/pair.vcf.gz --allow-extra-chr --make-bed --out $outdir/pair
+        plink --vcf $outdir/pair.vcf.gz --allow-extra-chr --double-id --make-bed --out $outdir/pair
 
         # light filtering on the subset
         plink \
@@ -403,7 +403,7 @@ rule newhyb_from_fst:
             --geno 0.05 \
             --maf 0.01 \
             --allow-extra-chr \
-            --recode vcf-iid bgz \
+            --recode vcf bgz \
             --out $outdir/data
 
         # compress VCF
@@ -419,7 +419,9 @@ rule newhyb_from_fst:
                  --weir-fst-pop $outdir/pop2.txt \
                  --out $outdir/fst
 
-        tail -n +2 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt.tmp && mv $outdir/snps.txt.tmp $outdir/snps.txt
+        tail -n +2 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt.tmp
+        
+        mv $outdir/snps.txt.tmp $outdir/snps.txt
         
         touch {output}
         """
