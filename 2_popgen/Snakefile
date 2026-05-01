@@ -339,9 +339,7 @@ rule pca_plot:
 
 rule newhyb_from_pruned:
     input:
-        bed="byLOC/{dataset}.ld.pruned.bed",
-        bim="byLOC/{dataset}.ld.pruned.bim",
-        fam="byLOC/{dataset}.ld.pruned.fam",
+        VCF_FILE = VCF_FILE,
         samples="byLOC/{dataset}.txt"
     output:
         "newhyb/{dataset}/{pair}/done.txt"
@@ -368,9 +366,6 @@ rule newhyb_from_pruned:
         mkdir -p $outdir/nh_input
 
         # count individuals
-        # n1=$(grep ${{sp1}}{wildcards.dataset} {input.samples} | wc -l || true)
-        # n2=$(grep ${{sp2}}{wildcards.dataset} {input.samples} | wc -l || true)
-
         n1=$(awk -v sp=${{sp1}} -v loc={wildcards.dataset} '$1 ~ sp && $1 ~ loc {{c++}} END {{print c+0}}' byLOC/{wildcards.dataset}.txt)
         n2=$(awk -v sp=${{sp2}} -v loc={wildcards.dataset} '$1 ~ sp && $1 ~ loc {{c++}} END {{print c+0}}' byLOC/{wildcards.dataset}.txt)
 
@@ -387,10 +382,19 @@ rule newhyb_from_pruned:
             '($1 ~ s1 && $1 ~ loc) || ($1 ~ s2 && $1 ~ loc) {{print $1, $1}}' \
             {input.samples} > $outdir/keep.txt
         
-        # subset PLINK dataset
+        # subset for pairs from overall dataset
         plink \
-            --bfile byLOC/{wildcards.dataset}.ld.pruned \
+            --bfile {input.VCF_FILE} \
             --keep $outdir/keep.txt \
+            --allow-extra-chr \
+            --recode vcf-iid bgz \
+            --out $outdir/pair
+
+        # light filtering on the subset
+        plink \
+            --bfile $outdir/pair \
+            --geno 0.05 \
+            --maf 0.01 \
             --allow-extra-chr \
             --recode vcf-iid bgz \
             --out $outdir/data
@@ -410,10 +414,10 @@ rule newhyb_from_pruned:
 
         tail -n 800 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt
 
-        bcftools view -R $outdir/snps.txt $outdir/data.vcf.gz -Oz -o $outdir/data.subset.vcf.gz
-        bcftools index $outdir/data.subset.vcf.gz
+        bcftools view -R $outdir/snps.txt $outdir/data.vcf.gz -Oz -o $outdir/data.80subset.vcf.gz
+        bcftools index $outdir/data.80subset.vcf.gz
 
-        nind_vcf=$(bcftools query -l $outdir/data.subset.vcf.gz | wc -l)
+        nind_vcf=$(bcftools query -l $outdir/data.80subset.vcf.gz | wc -l)
 
         if [ "$nind_vcf" -eq 0 ]; then
             echo "No individuals left after filtering for ${{sp1}}-${{sp2}}"
@@ -421,12 +425,8 @@ rule newhyb_from_pruned:
             exit 0
         fi
 
-        # count SNPs: can comment since we thin the data
-        # nsnps=$(bcftools view -H $outdir/data.vcf.gz | wc -l)
-        # echo -e "{wildcards.dataset}\t${{sp1}}\t${{sp2}}\t${{nsnps}}" >> newhyb/snp_counts.tsv
-
         # genotype conversion
-        bcftools query -f '%CHROM:%POS[\\t%GT]\\n' $outdir/data.subset.vcf.gz > $outdir/tmp.geno
+        bcftools query -f '%CHROM:%POS[\\t%GT]\\n' $outdir/data.80subset.vcf.gz > $outdir/tmp.geno
 
         # count
         nloc=$(wc -l < $outdir/tmp.geno)
@@ -465,7 +465,7 @@ rule newhyb_from_pruned:
         }}' $outdir/tmp.geno >> $outdir/nh_input/input.txt
 
 
-        bcftools query -l $outdir/data.subset.vcf.gz > $outdir/nh_input/individuals.txt
+        bcftools query -l $outdir/data.80subset.vcf.gz > $outdir/nh_input/individuals.txt
 
 
         # run NewHybrids
