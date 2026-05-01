@@ -67,9 +67,17 @@ rule all:
         expand("newhyb/{dataset}/{pair}/done.txt", dataset=locations, pair=PAIRS),
         f"{FIGURES_DIR}/FigS20_newhybrid.png",
         "ld/LD.bed",
-        expand("ld/{dataset}_ILD.ld", dataset=ld_datasets),
-        expand("ld/{dataset}_LG12_12.ld", dataset=ld_datasets),
-        expand("ld/{dataset}_interchrom.ld", dataset=ld_datasets)
+        expand("ld/{dataset}.bed", dataset=ld_datasets),
+        expand("ld/{dataset}.bim", dataset=ld_datasets),
+        expand("ld/{dataset}.fam", dataset=ld_datasets),
+        expand("ld/{dataset}.filtered.bed", dataset=ld_datasets),
+        expand("ld/{dataset}.filtered.bim", dataset=ld_datasets),
+        expand("ld/{dataset}.filtered.fam", dataset=ld_datasets),
+
+
+        # expand("ld/{dataset}_ILD.ld", dataset=ld_datasets),
+        # expand("ld/{dataset}_LG12_12.ld", dataset=ld_datasets),
+        # expand("ld/{dataset}_interchrom.ld", dataset=ld_datasets)
 
 
 
@@ -383,36 +391,34 @@ rule newhyb_from_pruned:
             {input.samples} > $outdir/keep.txt
         
         # subset for pairs from overall dataset
-        # bcftools view --threads 4 -S $outdir/keep.txt -Oz -o $outdir/pair.vcf.gz {input.VCF_FILE}
+        bcftools view --threads 4 -S $outdir/keep.txt -Oz -o $outdir/pair.vcf.gz {input.VCF_FILE}
 
         #convert to binary
-        # plink --vcf $outdir/pair.vcf.gz --allow-extra-chr --make-bed --out $outdir/pair
+        plink --vcf $outdir/pair.vcf.gz --allow-extra-chr --make-bed --out $outdir/pair
 
         # light filtering on the subset
-        # plink \
-        #     --bfile $outdir/pair \
-        #     --geno 0.05 \
-        #     --maf 0.01 \
-        #     --allow-extra-chr \
-        #     --recode vcf-iid bgz \
-        #     --out $outdir/data
+        plink \
+            --bfile $outdir/pair \
+            --geno 0.05 \
+            --maf 0.01 \
+            --allow-extra-chr \
+            --recode vcf-iid bgz \
+            --out $outdir/data
 
         # compress VCF
-        # bcftools index $outdir/data.vcf.gz
+        bcftools index $outdir/data.vcf.gz
 
         # create pop file for both species in the pair
         awk -v s=${{sp1}} '$1 ~ s {{print $1}}' $outdir/keep.txt > $outdir/pop1.txt
         awk -v s=${{sp2}} '$1 ~ s {{print $1}}' $outdir/keep.txt > $outdir/pop2.txt
 
         # compute fsts/snps for the species pair
-        # vcftools --gzvcf $outdir/data.vcf.gz \
-        #          --weir-fst-pop $outdir/pop1.txt \
-        #          --weir-fst-pop $outdir/pop2.txt \
-        #          --out $outdir/fst
+        vcftools --gzvcf $outdir/data.vcf.gz \
+                 --weir-fst-pop $outdir/pop1.txt \
+                 --weir-fst-pop $outdir/pop2.txt \
+                 --out $outdir/fst
 
         tail -n +2 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt.tmp && mv $outdir/snps.txt.tmp $outdir/snps.txt
-
-        sync
 
         bcftools view -R $outdir/snps.txt $outdir/data.vcf.gz -Oz -o $outdir/data.80subset.vcf.gz
         bcftools index $outdir/data.80subset.vcf.gz
@@ -498,7 +504,7 @@ rule plot_newhybrids:
 #     output:
 #         "ld/LD.bed"
 #     params:
-#         flank=250000
+#         flank=100000
 #     shell:
 #         r"""
 #         awk -v flank={params.flank} 'BEGIN {{OFS="\t"}}
@@ -512,102 +518,203 @@ rule plot_newhybrids:
 #         """
 
 
-# rule compute_ild:
+# rule vcf_to_plink::
 #     input:
 #         vcf=lambda wc: (
 #             VCF_FILE if wc.dataset == "all"
 #             else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
 #             else f"bySPC/{wc.dataset}.vcf.gz"
 #         ),
-#         bed="ld/LD.bed"
 #     output:
-#         "ld/{dataset}_ILD.ld"
-#     params:
-#         tmp_prefix="ld/{dataset}_plink"
+#         bed="ld/{dataset}.bed",
+#         bim="ld/{dataset}.bim",
+#         fam="ld/{dataset}.fam"
 #     shell:
 #         r"""
 #         module load hpc-env/13.1
 #         module load PLINK/v1.9b7.4-x86_64
 
-#         # 1. Convert VCF → PLINK
 #         plink --vcf {input.vcf} \
 #               --double-id \
 #               --allow-extra-chr \
+#               --max-alleles 2 \
 #               --make-bed \
-#               --out {params.tmp_prefix}
-
-#         # 2. Compute LD only in regions of interest
-#         plink --bfile {params.tmp_prefix} \
-#               --allow-extra-chr \
-#               --extract range {input.bed} \
-#               --r2 \
-#               --ld-window-kb 1000 \
-#               --ld-window 99999 \
-#               --ld-window-r2 0 \
-#               --out ld/{wildcards.dataset}_ILD
+#               --out ld/{wildcards.dataset}
 #         """
 
-# rule ld_LG12_between:
+
+# rule ld_filter:
 #     input:
-#         vcf=lambda wc: (
-#             VCF_FILE if wc.dataset == "all"
-#             else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
-#             else f"bySPC/{wc.dataset}.vcf.gz"
-#         )
+#         bed="ld/{dataset}.bed",
+#         bim="ld/{dataset}.bim",
+#         fam="ld/{dataset}.fam"
 #     output:
-#         "ld/{dataset}_LG12_12.ld"
-#     params:
-#         tmp_vcf="ld/{dataset}_LG12.vcf.gz",
-#         tmp_prefix="ld/{dataset}_LG12"
+#         bed="ld/{dataset}.filtered.bed",
+#         bim="ld/{dataset}.filtered.bim",
+#         fam="ld/{dataset}.filtered.fam"
 #     shell:
 #         r"""
 #         module load hpc-env/13.1
-#         module load BCFtools/1.18-GCC-13.1.0
 #         module load PLINK/v1.9b7.4-x86_64
 
-#         bcftools view -r LG12:19982954-20482954,LG12:21977968-22477968 -Oz -o {params.tmp_vcf} {input.vcf}
-#         bcftools index {params.tmp_vcf}
-
-#         plink --vcf {params.tmp_vcf} \
-#               --allow-extra-chr \
+#         plink --bfile ld/{wildcards.dataset} \
+#               --maf 0.05 \
+#               --geno 0.05 \
 #               --make-bed \
-#               --out {params.tmp_prefix}
-
-#         plink --bfile {params.tmp_prefix} \
-#               --allow-extra-chr \
-#               --r2 \
-#               --ld-window-kb 5000 \
-#               --ld-window 99999 \
-#               --ld-window-r2 0 \
-#               --out ld/{wildcards.dataset}_LG12_12
+#               --out ld/{wildcards.dataset}.filtered
 #         """
 
-# rule ld_interchrom:
-    # input:
-    #     vcf=lambda wc: (
-    #         VCF_FILE if wc.dataset == "all"
-    #         else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
-    #         else f"bySPC/{wc.dataset}.vcf.gz"
-    #     ),
-    #     bed="ld/LD.bed"
-    # output:
-    #     "ld/{dataset}_interchrom.ld"
-    # params:
-    #     prefix="ld/{dataset}_interchrom"
-    # shell:
-    #     r"""
-    #     module load hpc-env/13.1
-    #     module load PLINK/v1.9b7.4-x86_64
+# rule ld_global:
+#     input:
+#         bed="ld/{dataset}.filtered.bed",
+#         bim="ld/{dataset}.filtered.bim",
+#         fam="ld/{dataset}.filtered.fam"
+#     output:
+#         "ld/{dataset}.global.ld"
+#     shell:
+#         r"""
+#         module load hpc-env/13.1
+#         module load PLINK/v1.9b7.4-x86_64
 
-    #     plink --vcf {input.vcf} \
-    #           --make-bed \
-    #           --allow-extra-chr \
-    #           --out {params.prefix}
+#         prefix=ld/{wildcards.dataset}
 
-    #     plink --bfile {params.prefix} \
-    #           --allow-extra-chr \
-    #           --extract range {input.bed} \
-    #           --r2 inter-chr \
-    #           --ld-window-r2 0 \
-    #           --out ld/{wildcards.dataset}_interchrom
-    #     """
+#         # enforce spacing
+#         plink --bfile $prefix.filtered \
+#               --bp-space 1000000 \
+#               --make-bed \
+#               --out $prefix.1Mb
+
+#         # sample 500 SNPs
+#         cut -f2 $prefix.1Mb.bim | shuf | head -n 500 > $prefix.global.snps.tmp && mv $prefix.global.snps.tmp $prefix.global.snps
+
+#         sync
+
+#         # compute LD
+#         plink --bfile $prefix.1Mb \
+#               --extract $prefix.global.snps \
+#               --r2 \
+#               --ld-window 99999 \
+#               --ld-window-kb 1000000 \
+#               --ld-window-r2 0 \
+#               --out $prefix.global
+#         """
+
+
+# rule region_snps:
+#     input:
+#         bim="ld/{dataset}.filtered.bim",
+#         bed="ld/LD.bed"
+#     output:
+#         LG04="ld/{dataset}.LG04.snps",
+#         LG12_1="ld/{dataset}.LG12_1.snps",
+#         LG12_2="ld/{dataset}.LG12_2.snps"
+#     shell:
+#         r"""
+#         awk '$1=="LG04" {{print $4}}' {input.bim} > {output.LG04}
+#         awk '$1=="LG12" && NR%2==1 {{print $4}}' {input.bim} > {output.LG12_1}
+#         awk '$1=="LG12" && NR%2==0 {{print $4}}' {input.bim} > {output.LG12_2}
+#         """
+
+
+# rule ld_region_pairs:
+#     input:
+#         bed="ld/{dataset}.filtered.bed",
+#         bim="ld/{dataset}.filtered.bim",
+#         fam="ld/{dataset}.filtered.fam",
+#         LG04="ld/{dataset}.LG04.snps",
+#         LG12_1="ld/{dataset}.LG12_1.snps",
+#         LG12_2="ld/{dataset}.LG12_2.snps"
+#     output:
+#         LG04_LG12_1="ld/{dataset}.LG04_LG12_1.ld",
+#         LG04_LG12_2="ld/{dataset}.LG04_LG12_2.ld",
+#         LG12_1_LG12_2="ld/{dataset}.LG12_1_LG12_2.ld"
+#     shell:
+#         r"""
+#         module load hpc-env/13.1
+#         module load PLINK/v1.9b7.4-x86_64
+
+#         prefix=ld/{wildcards.dataset}
+
+#         ############################
+#         # LG04 vs LG12_1
+#         ############################
+#         cat {input.LG04} {input.LG12_1} | sort -u > $prefix.LG04_LG12_1.tmp.snps
+
+#         plink --bfile $prefix.filtered \
+#               --extract $prefix.tmp.snps \
+#               --r2 \
+#               --ld-window 99999 \
+#               --ld-window-r2 0 \
+#               --out $prefix.LG04_LG12_1
+
+#         ############################
+#         # LG04 vs LG12_2
+#         ############################
+#         cat {input.LG04} {input.LG12_2} | sort -u > $prefix.LG04_LG12_2.tmp.snps
+
+#         plink --bfile $prefix.filtered \
+#               --extract $prefix.tmp.snps \
+#               --r2 \
+#               --ld-window 99999 \
+#               --ld-window-r2 0 \
+#               --out $prefix.LG04_LG12_2
+
+#         ############################
+#         # LG12_1 vs LG12_2
+#         ############################
+#         cat {input.LG12_1} {input.LG12_2} | sort -u > $prefix.LG12_1_LG12_2.tmp.snps
+
+#         plink --bfile $prefix.filtered \
+#               --extract $prefix.tmp.snps \
+#               --r2 \
+#               --ld-window 99999 \
+#               --ld-window-r2 0 \
+#               --out $prefix.LG12_1_LG12_2
+#         """
+
+# rule filter_between_region_ld:
+#     input:
+#         LG04_LG12_1="ld/{dataset}.LG04_LG12_1.ld",
+#         LG04_LG12_2="ld/{dataset}.LG04_LG12_2.ld",
+#         LG12_1_LG12_2="ld/{dataset}.LG12_1_LG12_2.ld",
+#         LG04="ld/{dataset}.LG04.snps",
+#         LG12_1="ld/{dataset}.LG12_1.snps",
+#         LG12_2="ld/{dataset}.LG12_2.snps"
+#     output:
+#         LG04_LG12_1="ld/{dataset}.LG04_LG12_1.between.ld",
+#         LG04_LG12_2="ld/{dataset}.LG04_LG12_2.between.ld",
+#         LG12_1_LG12_2="ld/{dataset}.LG12_1_LG12_2.between.ld"
+#     shell:
+#         r"""
+#         module load hpc-env/13.1
+
+#         ############################
+#         # LG04 vs LG12_1
+#         ############################
+#         awk '
+#         NR==FNR {a[$1]; next}
+#         NR==FNR+FNR {b[$1]; next}
+#         (($3 in a && $6 in b) || ($3 in b && $6 in a))
+#         ' {input.LG04} {input.LG12_1} {input.LG04_LG12_1} \
+#         > {output.LG04_LG12_1}
+
+#         ############################
+#         # LG04 vs LG12_2
+#         ############################
+#         awk '
+#         NR==FNR {a[$1]; next}
+#         NR==FNR+FNR {b[$1]; next}
+#         (($3 in a && $6 in b) || ($3 in b && $6 in a))
+#         ' {input.LG04} {input.LG12_2} {input.LG04_LG12_2} \
+#         > {output.LG04_LG12_2}
+
+#         ############################
+#         # LG12_1 vs LG12_2
+#         ############################
+#         awk '
+#         NR==FNR {a[$1]; next}
+#         NR==FNR+FNR {b[$1]; next}
+#         (($3 in a && $6 in b) || ($3 in b && $6 in a))
+#         ' {input.LG12_1} {input.LG12_2} {input.LG12_1_LG12_2} \
+#         > {output.LG12_1_LG12_2}
+#         """
