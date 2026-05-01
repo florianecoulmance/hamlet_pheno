@@ -427,7 +427,7 @@ rule newhyb_from_fst:
 rule newhyb_from_snps:
     input:
         VCF_FILE = VCF_FILE,
-        snps="newhyb/{dataset}/{pair}/snps.txt"
+        snps="newhyb/{dataset}/{pair}/done.txt"
     output:
         "newhyb/{dataset}/{pair}/done1.txt"
     params:
