@@ -65,6 +65,7 @@ rule all:
             ]
         ),
         expand("newhyb/{dataset}/{pair}/done.txt", dataset=locations, pair=PAIRS),
+        expand("newhyb/{dataset}/{pair}/done1.txt", dataset=locations, pair=PAIRS),
         f"{FIGURES_DIR}/FigS20_newhybrid.png",
         # "ld/LD.bed",
         # expand("ld/{dataset}.bed", dataset=ld_datasets),
@@ -345,7 +346,7 @@ rule pca_plot:
         """
 
 
-rule newhyb_from_pruned:
+rule newhyb_from_fst:
     input:
         VCF_FILE = VCF_FILE,
         samples="byLOC/{dataset}.txt"
@@ -419,7 +420,50 @@ rule newhyb_from_pruned:
                  --out $outdir/fst
 
         tail -n +2 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt.tmp && mv $outdir/snps.txt.tmp $outdir/snps.txt
+        
+        touch {output}
+        """
 
+rule newhyb_from_snps:
+    input:
+        VCF_FILE = VCF_FILE,
+        snps="newhyb/{dataset}/{pair}/snps.txt"
+    output:
+        "newhyb/{dataset}/{pair}/done1.txt"
+    params:
+        sp1=lambda wc: wc.pair.split("_")[0],
+        sp2=lambda wc: wc.pair.split("_")[1]
+    resources:
+        mem_mb=10000,
+        runtime=720
+    shell:
+        """
+        module load hpc-env/13.1
+        module load BCFtools/1.18-GCC-13.1.0
+        module load PLINK/v1.9b7.4-x86_64
+        module load VCFtools/0.1.16-GCC-13.1.0
+        module load R/4.3.1-foss-2023a
+
+        set -x
+
+        sp1={params.sp1}
+        sp2={params.sp2}
+
+        outdir=newhyb/{wildcards.dataset}/{wildcards.pair}
+        mkdir -p $outdir/nh_input
+
+        # count individuals
+        n1=$(awk -v sp=${{sp1}} -v loc={wildcards.dataset} '$1 ~ sp && $1 ~ loc {{c++}} END {{print c+0}}' byLOC/{wildcards.dataset}.txt)
+        n2=$(awk -v sp=${{sp2}} -v loc={wildcards.dataset} '$1 ~ sp && $1 ~ loc {{c++}} END {{print c+0}}' byLOC/{wildcards.dataset}.txt)
+
+        if [ ${{n1}} -lt 5 ] || [ ${{n2}} -lt 5 ]; then
+            echo "Skipping ${{sp1}}-${{sp2}} (low N)"
+            touch {output}
+            exit 0
+        fi
+
+        echo "Running ${{sp1}} vs ${{sp2}}"       
+        
         bcftools view -R $outdir/snps.txt $outdir/data.vcf.gz -Oz -o $outdir/data.80subset.vcf.gz
         bcftools index $outdir/data.80subset.vcf.gz
 
