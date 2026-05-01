@@ -383,34 +383,34 @@ rule newhyb_from_pruned:
             {input.samples} > $outdir/keep.txt
         
         # subset for pairs from overall dataset
-        bcftools view --threads 4 -S $outdir/keep.txt -Oz -o $outdir/pair.vcf.gz {input.VCF_FILE}
+        # bcftools view --threads 4 -S $outdir/keep.txt -Oz -o $outdir/pair.vcf.gz {input.VCF_FILE}
 
         #convert to binary
-        plink --vcf $outdir/pair.vcf.gz --allow-extra-chr --make-bed --out $outdir/pair
+        # plink --vcf $outdir/pair.vcf.gz --allow-extra-chr --make-bed --out $outdir/pair
 
         # light filtering on the subset
-        plink \
-            --bfile $outdir/pair \
-            --geno 0.05 \
-            --maf 0.01 \
-            --allow-extra-chr \
-            --recode vcf-iid bgz \
-            --out $outdir/data
+        # plink \
+        #     --bfile $outdir/pair \
+        #     --geno 0.05 \
+        #     --maf 0.01 \
+        #     --allow-extra-chr \
+        #     --recode vcf-iid bgz \
+        #     --out $outdir/data
 
         # compress VCF
-        bcftools index $outdir/data.vcf.gz
+        # bcftools index $outdir/data.vcf.gz
 
         # create pop file for both species in the pair
         awk -v s=${{sp1}} '$1 ~ s {{print $1}}' $outdir/keep.txt > $outdir/pop1.txt
         awk -v s=${{sp2}} '$1 ~ s {{print $1}}' $outdir/keep.txt > $outdir/pop2.txt
 
         # compute fsts/snps for the species pair
-        vcftools --gzvcf $outdir/data.vcf.gz \
-                 --weir-fst-pop $outdir/pop1.txt \
-                 --weir-fst-pop $outdir/pop2.txt \
-                 --out $outdir/fst
+        # vcftools --gzvcf $outdir/data.vcf.gz \
+        #          --weir-fst-pop $outdir/pop1.txt \
+        #          --weir-fst-pop $outdir/pop2.txt \
+        #          --out $outdir/fst
 
-        tail -n 800 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt
+        tail -n +2 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt
 
         bcftools view -R $outdir/snps.txt $outdir/data.vcf.gz -Oz -o $outdir/data.80subset.vcf.gz
         bcftools index $outdir/data.80subset.vcf.gz
