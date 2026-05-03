@@ -575,7 +575,7 @@ rule make_ld_bed:
         """
 
 
-rule vcf_to_plink::
+rule vcf_to_plink:
     input:
         vcf=lambda wc: (
             VCF_FILE if wc.dataset == "all"
@@ -585,7 +585,8 @@ rule vcf_to_plink::
     output:
         bed="ld/{dataset}.bed",
         bim="ld/{dataset}.bim",
-        fam="ld/{dataset}.fam",
+        fam="ld/{dataset}.fam"
+    params:
         prefix="ld/{dataset}"
     shell:
         r"""
@@ -597,7 +598,7 @@ rule vcf_to_plink::
               --allow-extra-chr \
               --max-alleles 2 \
               --make-bed \
-              --out {output.prefix}
+              --out {params.prefix}
         """
 
 
@@ -609,18 +610,19 @@ rule ld_filter:
     output:
         bed="ld/{dataset}.filtered.bed",
         bim="ld/{dataset}.filtered.bim",
-        fam="ld/{dataset}.filtered.fam",
+        fam="ld/{dataset}.filtered.fam"
+    params:    
         prefix="ld/{dataset}"
     shell:
         r"""
         module load hpc-env/13.1
         module load PLINK/v1.9b7.4-x86_64
 
-        plink --bfile {output.prefix} \
+        plink --bfile {params.prefix} \
               --maf 0.05 \
               --geno 0.05 \
               --make-bed \
-              --out {output.prefix}.filtered
+              --out {params.prefix}.filtered
         """
 
 rule ld_global:
@@ -629,32 +631,31 @@ rule ld_global:
         bim="ld/{dataset}.filtered.bim",
         fam="ld/{dataset}.filtered.fam"
     output:
+        ld="ld/{dataset}.global.ld"
+    params:
         prefix="ld/{dataset}"
-        ld="ld/{dataset}.global"
     shell:
         r"""
         module load hpc-env/13.1
         module load PLINK/v1.9b7.4-x86_64
 
         # enforce spacing
-        plink --bfile {output.prefix}.filtered \
+        plink --bfile {params.prefix}.filtered \
               --bp-space 1000000 \
               --make-bed \
-              --out {output.prefix}.1Mb
+              --out {params.prefix}.1Mb
 
         # sample 500 SNPs
-        cut -f2 {output.prefix}.1Mb.bim | shuf | head -n 500 > {output.prefix}.global.snps.tmp && mv {output.prefix}.global.snps.tmp {output.prefix}.global.snps
-
-        sync
+        cut -f2 {params.prefix}.1Mb.bim | shuf | head -n 500 > {params.prefix}.global.snps.tmp && mv {params.prefix}.global.snps.tmp {params.prefix}.global.snps
 
         # compute LD
-        plink --bfile {output.prefix}.1Mb \
-              --extract {output.prefix}.global.snps \
+        plink --bfile {params.prefix}.1Mb \
+              --extract {params.prefix}.global.snps \
               --r2 \
               --ld-window 99999 \
               --ld-window-kb 1000000 \
               --ld-window-r2 0 \
-              --out {output.ld}
+              --out {params.prefix}.global
         """
 
 
