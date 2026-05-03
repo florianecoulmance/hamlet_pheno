@@ -660,6 +660,7 @@ rule ld_global:
         plink --bfile {params.prefix}_1Mb \
               --extract {params.prefix}_global.snps \
               --allow-extra-chr \
+              --ld-window 99999 \
               --r2 \
               --out {params.prefix}_global
         """
