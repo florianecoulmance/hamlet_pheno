@@ -622,6 +622,7 @@ rule ld_filter:
         module load PLINK/v1.9b7.4-x86_64
 
         plink --bfile {params.prefix} \
+              --allow-extra-chr \
               --maf 0.05 \
               --geno 0.05 \
               --make-bed \
@@ -646,6 +647,7 @@ rule ld_global:
 
         # enforce spacing
         plink --bfile {params.prefix}_filtered \
+              --allow-extra-chr \
               --bp-space 1000000 \
               --make-bed \
               --out {params.prefix}_1Mb
@@ -656,6 +658,7 @@ rule ld_global:
         # compute LD
         plink --bfile {params.prefix}_1Mb \
               --extract {params.prefix}_global.snps \
+              --allow-extra-chr \
               --r2 \
               --ld-window 99999 \
               --ld-window-kb 1000000 \
