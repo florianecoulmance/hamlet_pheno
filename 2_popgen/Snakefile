@@ -598,7 +598,6 @@ rule vcf_to_plink:
         plink --vcf {input.vcf} \
               --double-id \
               --allow-extra-chr \
-              --max-alleles 2 \
               --make-bed \
               --out {params.prefix}
         """
