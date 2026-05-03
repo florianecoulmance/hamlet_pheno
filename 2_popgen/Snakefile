@@ -71,10 +71,10 @@ rule all:
         expand("ld/{dataset}.bed", dataset=ld_datasets),
         expand("ld/{dataset}.bim", dataset=ld_datasets),
         expand("ld/{dataset}.fam", dataset=ld_datasets),
-        expand("ld/{dataset}.filtered.bed", dataset=ld_datasets),
-        expand("ld/{dataset}.filtered.bim", dataset=ld_datasets),
-        expand("ld/{dataset}.filtered.fam", dataset=ld_datasets),
-        expand("ld/{dataset}.global.ld", dataset=ld_datasets)
+        expand("ld/{dataset}_filtered.bed", dataset=ld_datasets),
+        expand("ld/{dataset}_filtered.bim", dataset=ld_datasets),
+        expand("ld/{dataset}_filtered.fam", dataset=ld_datasets),
+        expand("ld/{dataset}_global.ld", dataset=ld_datasets)
         # expand("ld/{dataset}_LG12_12.ld", dataset=ld_datasets),
         # expand("ld/{dataset}_interchrom.ld", dataset=ld_datasets)
 
@@ -608,9 +608,9 @@ rule ld_filter:
         bim="ld/{dataset}.bim",
         fam="ld/{dataset}.fam"
     output:
-        bed="ld/{dataset}.filtered.bed",
-        bim="ld/{dataset}.filtered.bim",
-        fam="ld/{dataset}.filtered.fam"
+        bed="ld/{dataset}_filtered.bed",
+        bim="ld/{dataset}_filtered.bim",
+        fam="ld/{dataset}_filtered.fam"
     params:    
         prefix="ld/{dataset}"
     shell:
@@ -622,16 +622,16 @@ rule ld_filter:
               --maf 0.05 \
               --geno 0.05 \
               --make-bed \
-              --out {params.prefix}.filtered
+              --out {params.prefix}_filtered
         """
 
 rule ld_global:
     input:
-        bed="ld/{dataset}.filtered.bed",
-        bim="ld/{dataset}.filtered.bim",
-        fam="ld/{dataset}.filtered.fam"
+        bed="ld/{dataset}_filtered.bed",
+        bim="ld/{dataset}_filtered.bim",
+        fam="ld/{dataset}_filtered.fam"
     output:
-        ld="ld/{dataset}.global.ld"
+        ld="ld/{dataset}_global.ld"
     params:
         prefix="ld/{dataset}"
     shell:
@@ -640,22 +640,22 @@ rule ld_global:
         module load PLINK/v1.9b7.4-x86_64
 
         # enforce spacing
-        plink --bfile {params.prefix}.filtered \
+        plink --bfile {params.prefix}_filtered \
               --bp-space 1000000 \
               --make-bed \
-              --out {params.prefix}.1Mb
+              --out {params.prefix}_1Mb
 
         # sample 500 SNPs
-        cut -f2 {params.prefix}.1Mb.bim | shuf | head -n 500 > {params.prefix}.global.snps.tmp && mv {params.prefix}.global.snps.tmp {params.prefix}.global.snps
+        cut -f2 {params.prefix}_1Mb.bim | shuf | head -n 500 > {params.prefix}_global.snps.tmp && mv {params.prefix}_global.snps.tmp {params.prefix}_global.snps
 
         # compute LD
-        plink --bfile {params.prefix}.1Mb \
-              --extract {params.prefix}.global.snps \
+        plink --bfile {params.prefix}_1Mb \
+              --extract {params.prefix}_global.snps \
               --r2 \
               --ld-window 99999 \
               --ld-window-kb 1000000 \
               --ld-window-r2 0 \
-              --out {params.prefix}.global
+              --out {params.prefix}_global
         """
 
 
