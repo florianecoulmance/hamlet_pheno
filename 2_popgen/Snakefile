@@ -3,7 +3,7 @@
 
 import os
 
-BASE_DIR="/fs/dss/work/doau0129/hamlet_pheno"  # hamlet_pheno/
+BASE_DIR="/fs/dss/work/doau0129/hamlet_pheno/"  # hamlet_pheno/
 GENO_DIR=os.path.join(BASE_DIR, "2_popgen")
 SAMPLES_FILE=os.path.join(BASE_DIR, "metadata/geno_names.txt")
 VCF_FILE=os.path.join(BASE_DIR, "phyps2e_m2.vcf.gz")
@@ -392,32 +392,32 @@ rule newhyb_from_fst:
             {input.samples} > $outdir/keep.txt
         
         # subset for pairs from overall dataset
-        # bcftools view --threads 4 -S $outdir/keep.txt -Oz -o $outdir/pair.vcf.gz {input.VCF_FILE}
+        bcftools view --threads 4 -S $outdir/keep.txt -Oz -o $outdir/pair.vcf.gz {input.VCF_FILE}
 
         #convert to binary
-        # plink --vcf $outdir/pair.vcf.gz --allow-extra-chr --double-id --make-bed --out $outdir/pair
+        plink --vcf $outdir/pair.vcf.gz --allow-extra-chr --double-id --make-bed --out $outdir/pair
 
         # light filtering on the subset
-        # plink \
-        #     --bfile $outdir/pair \
-        #     --geno 0.05 \
-        #     --maf 0.01 \
-        #     --allow-extra-chr \
-        #     --recode vcf-iid bgz \
-        #     --out $outdir/data
+        plink \
+            --bfile $outdir/pair \
+            --geno 0.05 \
+            --maf 0.01 \
+            --allow-extra-chr \
+            --recode vcf-iid bgz \
+            --out $outdir/data
 
         # compress VCF
-        # bcftools index $outdir/data.vcf.gz
+        bcftools index $outdir/data.vcf.gz
 
         # create pop file for both species in the pair
         awk -v s=${{sp1}} '$1 ~ s {{print $1}}' $outdir/keep.txt > $outdir/pop1.txt
         awk -v s=${{sp2}} '$1 ~ s {{print $1}}' $outdir/keep.txt > $outdir/pop2.txt
 
         # compute fsts/snps for the species pair
-        # vcftools --gzvcf $outdir/data.vcf.gz \
-        #          --weir-fst-pop $outdir/pop1.txt \
-        #          --weir-fst-pop $outdir/pop2.txt \
-        #          --out $outdir/fst
+        vcftools --gzvcf $outdir/data.vcf.gz \
+                 --weir-fst-pop $outdir/pop1.txt \
+                 --weir-fst-pop $outdir/pop2.txt \
+                 --out $outdir/fst
 
         # tail -n +2 $outdir/fst.weir.fst | sort -k3,3gr | head -n 800 | cut -f1,2 | shuf -n 80 > $outdir/snps.txt.tmp
         
@@ -457,8 +457,6 @@ rule newhyb_from_snps:
         """
         module load hpc-env/13.1
         module load BCFtools/1.18-GCC-13.1.0
-        module load PLINK/v1.9b7.4-x86_64
-        module load VCFtools/0.1.16-GCC-13.1.0
         module load R/4.3.1-foss-2023a
 
         set -x
@@ -466,8 +464,8 @@ rule newhyb_from_snps:
         sp1={params.sp1}
         sp2={params.sp2}
 
-        outdir=newhyb/{wildcards.dataset}/{wildcards.pair}
-        mkdir -p $outdir/nh_input
+        outdir=newhyb/{wildcards.dataset}/{wildcards.pair}/
+        # mkdir -p $outdir/nh_input/
 
         # count individuals
         n1=$(awk -v sp=${{sp1}} -v loc={wildcards.dataset} '$1 ~ sp && $1 ~ loc {{c++}} END {{print c+0}}' byLOC/{wildcards.dataset}.txt)

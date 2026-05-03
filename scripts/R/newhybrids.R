@@ -24,7 +24,7 @@ args = args[6]
 print(args)
 
 folder_path <- as.character(args[1]) # Path to mean coverage data table
-
+print(folder_path)
 
 # -------------------------------------------------------------------------------------------------------------------
 # ANALYSIS
