@@ -610,17 +610,17 @@ rule ld_filter:
         bed="ld/{dataset}.filtered.bed",
         bim="ld/{dataset}.filtered.bim",
         fam="ld/{dataset}.filtered.fam",
-        prefix="ld/{dataset}.filtered"
+        prefix="ld/{dataset}"
     shell:
         r"""
         module load hpc-env/13.1
         module load PLINK/v1.9b7.4-x86_64
 
-        plink --bfile ld/{wildcards.dataset} \
+        plink --bfile {output.prefix} \
               --maf 0.05 \
               --geno 0.05 \
               --make-bed \
-              --out {output.prefix}
+              --out {output.prefix}.filtered
         """
 
 rule ld_global:
