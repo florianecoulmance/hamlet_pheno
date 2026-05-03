@@ -576,6 +576,8 @@ rule make_ld_bed:
 
 
 rule vcf_to_plink:
+    wildcard_constraints:
+        dataset="all|bel|boc|hon|pri|pue|uni|nig|abe"
     input:
         vcf=lambda wc: (
             VCF_FILE if wc.dataset == "all"
@@ -603,6 +605,8 @@ rule vcf_to_plink:
 
 
 rule ld_filter:
+    wildcard_constraints:
+        dataset="all|bel|boc|hon|pri|pue|uni|nig|abe"
     input:
         bed="ld/{dataset}.bed",
         bim="ld/{dataset}.bim",
@@ -626,6 +630,8 @@ rule ld_filter:
         """
 
 rule ld_global:
+    wildcard_constraints:
+        dataset="all|bel|boc|hon|pri|pue|uni|nig|abe"
     input:
         bed="ld/{dataset}_filtered.bed",
         bim="ld/{dataset}_filtered.bim",
