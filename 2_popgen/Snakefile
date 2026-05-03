@@ -66,15 +66,15 @@ rule all:
         ),
         expand("newhyb/{dataset}/{pair}/done.txt", dataset=locations, pair=PAIRS),
         expand("newhyb/{dataset}/{pair}/done1.txt", dataset=locations, pair=PAIRS),
-        f"{FIGURES_DIR}/FigS20_newhybrid.png"
-        # "ld/LD.bed",
-        # expand("ld/{dataset}.bed", dataset=ld_datasets),
-        # expand("ld/{dataset}.bim", dataset=ld_datasets),
-        # expand("ld/{dataset}.fam", dataset=ld_datasets),
-        # expand("ld/{dataset}.filtered.bed", dataset=ld_datasets),
-        # expand("ld/{dataset}.filtered.bim", dataset=ld_datasets),
-        # expand("ld/{dataset}.filtered.fam", dataset=ld_datasets),
-        # expand("ld/{dataset}_ILD.ld", dataset=ld_datasets),
+        f"{FIGURES_DIR}/FigS20_newhybrid.png",
+        "ld/LD.bed",
+        expand("ld/{dataset}.bed", dataset=ld_datasets),
+        expand("ld/{dataset}.bim", dataset=ld_datasets),
+        expand("ld/{dataset}.fam", dataset=ld_datasets),
+        expand("ld/{dataset}.filtered.bed", dataset=ld_datasets),
+        expand("ld/{dataset}.filtered.bim", dataset=ld_datasets),
+        expand("ld/{dataset}.filtered.fam", dataset=ld_datasets),
+        expand("ld/{dataset}.global.ld", dataset=ld_datasets)
         # expand("ld/{dataset}_LG12_12.ld", dataset=ld_datasets),
         # expand("ld/{dataset}_interchrom.ld", dataset=ld_datasets)
 
@@ -553,106 +553,108 @@ rule plot_newhybrids:
         """
 
 
-# rule make_ld_bed:
-#     input:
-#         GXP_FILE
-#     output:
-#         "ld/LD.bed"
-#     params:
-#         flank=100000
-#     shell:
-#         r"""
-#         awk -v flank={params.flank} 'BEGIN {{OFS="\t"}}
-#         $1 == "CHROM" {{next}}   # skip header or dummy row
-#         {{
-#             start=$2-flank;
-#             if (start < 1) start=1;
-#             end=$2+flank;
-#             print $1, start, end, $1"_"$2
-#         }}' {input} > {output}
-#         """
+rule make_ld_bed:
+    input:
+        GXP_FILE
+    output:
+        "ld/LD.bed"
+    params:
+        flank=100000
+    shell:
+        r"""
+        mkdir -p ld/
+
+        awk -v flank={params.flank} 'BEGIN {{OFS="\t"}}
+        $1 == "CHROM" {{next}}   # skip header or dummy row
+        {{
+            start=$2-flank;
+            if (start < 1) start=1;
+            end=$2+flank;
+            print $1, start, end, $1"_"$2
+        }}' {input} > {output}
+        """
 
 
-# rule vcf_to_plink::
-#     input:
-#         vcf=lambda wc: (
-#             VCF_FILE if wc.dataset == "all"
-#             else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
-#             else f"bySPC/{wc.dataset}.vcf.gz"
-#         ),
-#     output:
-#         bed="ld/{dataset}.bed",
-#         bim="ld/{dataset}.bim",
-#         fam="ld/{dataset}.fam"
-#     shell:
-#         r"""
-#         module load hpc-env/13.1
-#         module load PLINK/v1.9b7.4-x86_64
+rule vcf_to_plink::
+    input:
+        vcf=lambda wc: (
+            VCF_FILE if wc.dataset == "all"
+            else f"byLOC/{wc.dataset}.vcf.gz" if wc.dataset in locations
+            else f"bySPC/{wc.dataset}.vcf.gz"
+        ),
+    output:
+        bed="ld/{dataset}.bed",
+        bim="ld/{dataset}.bim",
+        fam="ld/{dataset}.fam"
+    shell:
+        r"""
+        module load hpc-env/13.1
+        module load PLINK/v1.9b7.4-x86_64
 
-#         plink --vcf {input.vcf} \
-#               --double-id \
-#               --allow-extra-chr \
-#               --max-alleles 2 \
-#               --make-bed \
-#               --out ld/{wildcards.dataset}
-#         """
+        plink --vcf {input.vcf} \
+              --double-id \
+              --allow-extra-chr \
+              --max-alleles 2 \
+              --make-bed \
+              --out ld/{wildcards.dataset}
+        """
 
 
-# rule ld_filter:
-#     input:
-#         bed="ld/{dataset}.bed",
-#         bim="ld/{dataset}.bim",
-#         fam="ld/{dataset}.fam"
-#     output:
-#         bed="ld/{dataset}.filtered.bed",
-#         bim="ld/{dataset}.filtered.bim",
-#         fam="ld/{dataset}.filtered.fam"
-#     shell:
-#         r"""
-#         module load hpc-env/13.1
-#         module load PLINK/v1.9b7.4-x86_64
+rule ld_filter:
+    input:
+        bed="ld/{dataset}.bed",
+        bim="ld/{dataset}.bim",
+        fam="ld/{dataset}.fam"
+    output:
+        bed="ld/{dataset}.filtered.bed",
+        bim="ld/{dataset}.filtered.bim",
+        fam="ld/{dataset}.filtered.fam"
+    shell:
+        r"""
+        module load hpc-env/13.1
+        module load PLINK/v1.9b7.4-x86_64
 
-#         plink --bfile ld/{wildcards.dataset} \
-#               --maf 0.05 \
-#               --geno 0.05 \
-#               --make-bed \
-#               --out ld/{wildcards.dataset}.filtered
-#         """
+        plink --bfile ld/{wildcards.dataset} \
+              --maf 0.05 \
+              --geno 0.05 \
+              --make-bed \
+              --out ld/{wildcards.dataset}.filtered
+        """
 
-# rule ld_global:
-#     input:
-#         bed="ld/{dataset}.filtered.bed",
-#         bim="ld/{dataset}.filtered.bim",
-#         fam="ld/{dataset}.filtered.fam"
-#     output:
-#         "ld/{dataset}.global.ld"
-#     shell:
-#         r"""
-#         module load hpc-env/13.1
-#         module load PLINK/v1.9b7.4-x86_64
+rule ld_global:
+    input:
+        bed="ld/{dataset}.filtered.bed",
+        bim="ld/{dataset}.filtered.bim",
+        fam="ld/{dataset}.filtered.fam"
+    output:
+        "ld/{dataset}.global.ld"
+    shell:
+        r"""
+        module load hpc-env/13.1
+        module load PLINK/v1.9b7.4-x86_64
 
-#         prefix=ld/{wildcards.dataset}
+        prefix=ld/{wildcards.dataset}
 
-#         # enforce spacing
-#         plink --bfile $prefix.filtered \
-#               --bp-space 1000000 \
-#               --make-bed \
-#               --out $prefix.1Mb
+        # enforce spacing
+        plink --bfile $prefix.filtered \
+              --bp-space 1000000 \
+              --make-bed \
+              --out $prefix.1Mb
 
-#         # sample 500 SNPs
-#         cut -f2 $prefix.1Mb.bim | shuf | head -n 500 > $prefix.global.snps.tmp && mv $prefix.global.snps.tmp $prefix.global.snps
+        # sample 500 SNPs
+        cut -f2 $prefix.1Mb.bim | shuf | head -n 500 > $prefix.global.snps.tmp && mv $prefix.global.snps.tmp $prefix.global.snps
 
-#         sync
+        sync
 
-#         # compute LD
-#         plink --bfile $prefix.1Mb \
-#               --extract $prefix.global.snps \
-#               --r2 \
-#               --ld-window 99999 \
-#               --ld-window-kb 1000000 \
-#               --ld-window-r2 0 \
-#               --out $prefix.global
-#         """
+        # compute LD
+        plink --bfile $prefix.1Mb \
+              --extract $prefix.global.snps \
+              --r2 \
+              --ld-window 99999 \
+              --ld-window-kb 1000000 \
+              --ld-window-r2 0 \
+              --out $prefix.global
+        """
 
 
 # rule region_snps:
