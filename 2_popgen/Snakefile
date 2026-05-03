@@ -585,7 +585,8 @@ rule vcf_to_plink::
     output:
         bed="ld/{dataset}.bed",
         bim="ld/{dataset}.bim",
-        fam="ld/{dataset}.fam"
+        fam="ld/{dataset}.fam",
+        prefix="ld/{dataset}"
     shell:
         r"""
         module load hpc-env/13.1
@@ -596,7 +597,7 @@ rule vcf_to_plink::
               --allow-extra-chr \
               --max-alleles 2 \
               --make-bed \
-              --out ld/{wildcards.dataset}
+              --out {output.prefix}
         """
 
 
@@ -608,7 +609,8 @@ rule ld_filter:
     output:
         bed="ld/{dataset}.filtered.bed",
         bim="ld/{dataset}.filtered.bim",
-        fam="ld/{dataset}.filtered.fam"
+        fam="ld/{dataset}.filtered.fam",
+        prefix="ld/{dataset}.filtered"
     shell:
         r"""
         module load hpc-env/13.1
@@ -618,7 +620,7 @@ rule ld_filter:
               --maf 0.05 \
               --geno 0.05 \
               --make-bed \
-              --out ld/{wildcards.dataset}.filtered
+              --out {output.prefix}
         """
 
 rule ld_global:
@@ -627,33 +629,32 @@ rule ld_global:
         bim="ld/{dataset}.filtered.bim",
         fam="ld/{dataset}.filtered.fam"
     output:
-        "ld/{dataset}.global.ld"
+        prefix="ld/{dataset}"
+        ld="ld/{dataset}.global"
     shell:
         r"""
         module load hpc-env/13.1
         module load PLINK/v1.9b7.4-x86_64
 
-        prefix=ld/{wildcards.dataset}
-
         # enforce spacing
-        plink --bfile $prefix.filtered \
+        plink --bfile {output.prefix}.filtered \
               --bp-space 1000000 \
               --make-bed \
-              --out $prefix.1Mb
+              --out {output.prefix}.1Mb
 
         # sample 500 SNPs
-        cut -f2 $prefix.1Mb.bim | shuf | head -n 500 > $prefix.global.snps.tmp && mv $prefix.global.snps.tmp $prefix.global.snps
+        cut -f2 {output.prefix}.1Mb.bim | shuf | head -n 500 > {output.prefix}.global.snps.tmp && mv {output.prefix}.global.snps.tmp {output.prefix}.global.snps
 
         sync
 
         # compute LD
-        plink --bfile $prefix.1Mb \
-              --extract $prefix.global.snps \
+        plink --bfile {output.prefix}.1Mb \
+              --extract {output.prefix}.global.snps \
               --r2 \
               --ld-window 99999 \
               --ld-window-kb 1000000 \
               --ld-window-r2 0 \
-              --out $prefix.global
+              --out {output.ld}
         """
 
 
