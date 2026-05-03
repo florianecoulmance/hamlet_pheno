@@ -66,7 +66,7 @@ rule all:
         ),
         expand("newhyb/{dataset}/{pair}/done.txt", dataset=locations, pair=PAIRS),
         expand("newhyb/{dataset}/{pair}/done1.txt", dataset=locations, pair=PAIRS),
-        f"{FIGURES_DIR}/FigS20_newhybrid.png",
+        f"{FIGURES_DIR}/FigS20_newhybrid.png"
         # "ld/LD.bed",
         # expand("ld/{dataset}.bed", dataset=ld_datasets),
         # expand("ld/{dataset}.bim", dataset=ld_datasets),
@@ -74,13 +74,9 @@ rule all:
         # expand("ld/{dataset}.filtered.bed", dataset=ld_datasets),
         # expand("ld/{dataset}.filtered.bim", dataset=ld_datasets),
         # expand("ld/{dataset}.filtered.fam", dataset=ld_datasets),
-
-
         # expand("ld/{dataset}_ILD.ld", dataset=ld_datasets),
         # expand("ld/{dataset}_LG12_12.ld", dataset=ld_datasets),
         # expand("ld/{dataset}_interchrom.ld", dataset=ld_datasets)
-
-
 
 
 
@@ -372,7 +368,7 @@ rule newhyb_from_fst:
         sp2={params.sp2}
 
         outdir=newhyb/{wildcards.dataset}/{wildcards.pair}
-        mkdir -p $outdir/nh_input
+        # mkdir -p $outdir/nh_input
 
         # count individuals
         n1=$(awk -v sp=${{sp1}} -v loc={wildcards.dataset} '$1 ~ sp && $1 ~ loc {{c++}} END {{print c+0}}' byLOC/{wildcards.dataset}.txt)
@@ -465,7 +461,7 @@ rule newhyb_from_snps:
         sp2={params.sp2}
 
         outdir=newhyb/{wildcards.dataset}/{wildcards.pair}/
-        # mkdir -p $outdir/nh_input/
+        mkdir -p $outdir/nh_input/
 
         # count individuals
         n1=$(awk -v sp=${{sp1}} -v loc={wildcards.dataset} '$1 ~ sp && $1 ~ loc {{c++}} END {{print c+0}}' byLOC/{wildcards.dataset}.txt)
