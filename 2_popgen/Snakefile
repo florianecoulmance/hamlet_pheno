@@ -75,8 +75,8 @@ rule all:
         expand("ld/{dataset}_filtered.bim", dataset=ld_datasets),
         expand("ld/{dataset}_filtered.fam", dataset=ld_datasets),
         expand("ld/{dataset}_global.ld", dataset=ld_datasets),
-        expand("ld/{dataset}.regions.snplist", dataset=ld_datasets)
-        # expand("ld/{dataset}_LG12_12.ld", dataset=ld_datasets),
+        expand("ld/{dataset}.regions.snplist", dataset=ld_datasets),
+        expand("ld/{dataset}.regions.ld", dataset=ld_datasets)
         # expand("ld/{dataset}_interchrom.ld", dataset=ld_datasets)
 
 
@@ -689,5 +689,36 @@ rule region_snps:
               --allow-extra-chr \
               --set-missing-var-ids @:# \
               --write-snplist \
+              --out {params.prefix}.regions
+        """
+
+
+rule ld_regions_all:
+    wildcard_constraints:
+        dataset="all|bel|boc|hon|pri|pue|uni|nig|abe"
+
+    input:
+        bed="ld/{dataset}_filtered.bed",
+        bim="ld/{dataset}_filtered.bim",
+        fam="ld/{dataset}_filtered.fam",
+        snps="ld/{dataset}.regions.snplist"
+
+    output:
+        ld="ld/{dataset}.regions.ld"
+
+    params:
+        prefix="ld/{dataset}"
+
+    shell:
+        r"""
+        module load hpc-env/13.1
+        module load PLINK/v1.9b7.4-x86_64
+
+        plink --bfile {params.prefix}_filtered \
+              --extract {input.snps} \
+              --allow-extra-chr \
+              --r2 \
+              --ld-window 99999 \
+              --ld-window-r2 0 \
               --out {params.prefix}.regions
         """
