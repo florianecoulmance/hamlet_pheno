@@ -1919,6 +1919,8 @@ plot_location <- function(df, species_meta) {
         ),
         spec = substr(IndivName,-6,-4)
       )
+  
+  print(df)
 
   # species labels ordered by species
   df <- df %>%
@@ -1965,13 +1967,17 @@ plot_location <- function(df, species_meta) {
 
   ggplot(df, aes(x = ind_label, y = prob, fill = class)) +
     geom_bar(stat = "identity", position = "stack") +
-    geom_tile(
-      aes(y = -0.02, fill = spec),
-      height = 0.02,
+    geom_segment(
+      aes(x = ind_label, xend = ind_label,
+          y = -0.02, yend = -0.04,
+          color = spec),
+      linewidth = 4,
+      lineend = "butt",
       inherit.aes = FALSE
     ) +
+    scale_color_manual(values = color_map) +
     scale_fill_manual(
-      values = c(colors,color_map),
+      values = colors,
       breaks = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"),
       drop = FALSE
       ) +
@@ -2073,11 +2079,9 @@ plot_ld_box <- function(df, title = NULL) {
     
     coord_cartesian(ylim = c(0, 0.1)) +
     
-    scale_y_continuous(expand = expansion(mult = c(-0.15, 0.15))) +
+    # scale_y_continuous(expand = expansion(mult = c(-0.15, 0.15))) +
     
-    theme_classic() +
-    theme(plot.margin = margin(10, 10, 10, 10)) +
-    
+    theme_classic() +    
     labs(
       x = NULL,
       y = expression(r^2),
