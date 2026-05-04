@@ -1966,27 +1966,21 @@ plot_location <- function(df, species_meta) {
   loc_title <- loc_names[unique(df$loc)[1]]
 
   # build strip data
-  strip_df <- df %>%
-    distinct(ind_label, spec)
+  strip_df <- strip_df %>%
+    mutate(ind_label = factor(ind_label, levels = levels(df$ind_label)))
 
   # plot
   ggplot(df, aes(x = ind_label, y = prob, fill = class)) +
     geom_bar(stat = "identity", position = "stack") +
-    geom_segment(
+    geom_tile(
       data = strip_df,
-      aes(
-        x = ind_label,
-        xend = ind_label,
-        y = -0.02,
-        yend = -0.04,
-        color = spec
-      ),
-      linewidth = 4,
-      lineend = "butt"
+      aes(x = ind_label, y = -0.05, fill = spec),
+      height = 0.05,
+      inherit.aes = FALSE
     ) +
-    scale_color_manual(values = color_map, drop = FALSE) +
+    # scale_color_manual(values = color_map, drop = FALSE) +
     scale_fill_manual(
-      values = colors,
+      values = c(colors, color_map),
       breaks = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"),
       drop = FALSE
       ) +
