@@ -2003,11 +2003,19 @@ plot_location <- function(df, species_meta) {
       legend.text = element_markdown(size = 7),
       axis.text.x = ggtext::element_markdown(angle = 90, size = 7),
       axis.title.x = element_blank(),
-      axis.title.y = element_text(vjust = 4),
-      panel.background = element_rect(fill = "white", colour = NA),
-      plot.background  = element_rect(fill = "white", colour = NA),
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank()
+      axis.title.y = element_text(vjust = 4)
+      line = element_blank(),
+      rect = element_blank(),
+      panel.background = element_blank(),
+      plot.background = element_blank(),
+      panel.border = element_blank(),
+      panel.grid.major = element_line(colour = "grey90", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      axis.line = element_blank(),
+      axis.ticks = element_blank(),
+      legend.background = element_blank(),
+      legend.key = element_blank(),
+      strip.background = element_blank()
     ) +
     labs(title = loc_title)
 }
