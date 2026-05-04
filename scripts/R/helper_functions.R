@@ -1981,11 +1981,13 @@ plot_location <- function(df, species_meta) {
 
     scale_x_discrete(
       labels = function(x) {
-        ifelse(
-          x %in% hybrids,
-          paste0("**", x, "**"),
-          x
-        )
+        lapply(x, function(xx) {
+          if (xx %in% hybrids) {
+            parse(text = paste0("bold('", xx, "')"))
+          } else {
+            xx
+          }
+        })
       }
     ) +
 
@@ -2001,7 +2003,7 @@ plot_location <- function(df, species_meta) {
       legend.position = "left",
       strip.text.y = ggtext::element_markdown(angle = 0, size = 7),
       legend.text = element_markdown(size = 7),
-      axis.text.x = ggtext::element_markdown(angle = 90, size = 7),
+      axis.text.x = element_text(angle = 90, size = 7),
       axis.title.x = element_blank(),
       axis.title.y = element_text(vjust = 4)
     ) +
