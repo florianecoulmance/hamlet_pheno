@@ -794,11 +794,13 @@ rule split_region_ld_full:
         """
 
 rule plot_ld:
+    wildcard_constraints:
+        dataset="all|bel|boc|hon|pri|pue|uni|nig|abe"
     input:
-        expand("ld/{dataset}_global.ld", dataset=ld_datasets),
-        expand("ld/{dataset}.LG04_LG12_1.ld", dataset=ld_datasets),
-        expand("ld/{dataset}.LG04_LG12_2.ld", dataset=ld_datasets),
-        expand("ld/{dataset}.LG12_1_LG12_2.ld", dataset=ld_datasets)
+        glob="ld/{dataset}_global.ld",
+        lg04_lg12_1="ld/{dataset}.LG04_LG12_1.ld",
+        lg04_lg12_2="ld/{dataset}.LG04_LG12_2.ld",
+        lg12_1_lg12_2="ld/{dataset}.LG12_1_LG12_2.ld"
     output:
         fig = f"{FIGURES_DIR}/FigS21_LDboxplots.png"
     params:
