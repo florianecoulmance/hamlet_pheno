@@ -687,6 +687,7 @@ rule region_snps:
         plink --bfile {params.prefix}_filtered \
               --extract range {input.regions} \
               --allow-extra-chr \
+              --set-missing-var-ids @:# \
               --write-snplist \
               --out {params.prefix}.regions
         """
