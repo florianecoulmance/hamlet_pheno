@@ -1982,8 +1982,8 @@ plot_location <- function(df, species_meta) {
     scale_x_discrete(labels = function(x) {
         ifelse(
           x %in% hybrids,
-          paste0("bold('", x, "')"),
-          paste0("'", x, "'")
+          parse(paste0("bold('", x, "')")),
+          parse(paste0("'", x, "'"))
         )
       }
     ) +
