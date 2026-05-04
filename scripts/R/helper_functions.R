@@ -1966,6 +1966,9 @@ plot_location <- function(df, species_meta) {
   loc_title <- loc_names[unique(df$loc)[1]]
 
   # build strip data
+  strip_df <- df %>%
+      distinct(ind_label, spec)
+      
   strip_df <- strip_df %>%
     mutate(ind_label = factor(ind_label, levels = levels(df$ind_label)))
 
