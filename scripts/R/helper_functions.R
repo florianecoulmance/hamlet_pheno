@@ -1983,7 +1983,7 @@ plot_location <- function(df, species_meta) {
       labels = function(x) {
         ifelse(
           x %in% hybrids,
-          bquote(bold(.(x))),
+          paste0("<b>", x, "</b>"),
           x
         )
       }
@@ -2001,7 +2001,7 @@ plot_location <- function(df, species_meta) {
       legend.position = "left",
       strip.text.y = ggtext::element_markdown(angle = 0, size = 7),
       legend.text = element_markdown(size = 7),
-      axis.text.x = element_text(angle = 90, size = 7),
+      axis.text.x = ggtext::element_markdown(angle = 90, size = 7),
       axis.title.x = element_blank(),
       axis.title.y = element_text(vjust = 4)
     ) +
