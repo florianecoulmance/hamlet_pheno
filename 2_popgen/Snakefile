@@ -76,9 +76,10 @@ rule all:
         expand("ld/{dataset}_filtered.fam", dataset=ld_datasets),
         expand("ld/{dataset}_global.ld", dataset=ld_datasets),
         expand("ld/{dataset}.regions.snplist", dataset=ld_datasets),
-        expand("ld/{dataset}.regions.ld", dataset=ld_datasets)
-        # expand("ld/{dataset}_interchrom.ld", dataset=ld_datasets)
-
+        expand("ld/{dataset}.regions.ld", dataset=ld_datasets),
+        expand("ld/{dataset}.LG04_LG12_1.ld", dataset=ld_datasets),
+        expand("ld/{dataset}.LG04_LG12_2.ld", dataset=ld_datasets),
+        expand("ld/{dataset}.LG12_1_LG12_2.ld", dataset=ld_datasets)
 
 
 # --- Create directories ---
@@ -721,4 +722,70 @@ rule ld_regions_all:
               --r2 inter-chr \
               --ld-window-r2 0 \
               --out {params.prefix}.regions
+        """
+
+
+rule split_region_ld_full:
+    input:
+        bed="ld/LD.bed",
+        ld="ld/{dataset}.regions.ld"
+    output:
+        lg04_lg12_1="ld/{dataset}.LG04_LG12_1.ld",
+        lg04_lg12_2="ld/{dataset}.LG04_LG12_2.ld",
+        lg12_1_lg12_2="ld/{dataset}.LG12_1_LG12_2.ld"
+    shell:
+        r"""
+        set -euo pipefail
+
+        ############################
+        # 1. build regions table
+        ############################
+        awk 'NR==FNR {{
+            chr[$4]=$1;
+            start[$4]=$2;
+            end[$4]=$3;
+            next
+        }}
+        {{
+            split($3,a,":"); chrA=a[1]; posA=a[2]
+            split($6,b,":"); chrB=b[1]; posB=b[2]
+
+            regA="NA"; regB="NA"
+
+            for (r in chr) {{
+                if (chrA==chr[r] && posA>=start[r] && posA<=end[r]) regA=r
+                if (chrB==chr[r] && posB>=start[r] && posB<=end[r]) regB=r
+            }}
+
+            if (regA!="NA" && regB!="NA")
+                print regA, regB, $0
+
+        }}' {input.bed} {input.ld} > tmp.annotated.ld
+
+        ############################
+        # 2. split comparisons
+        ############################
+
+        awk '
+        {{
+            a=$1; b=$2;
+
+            if (a > b) {{
+                tmp=a; a=b; b=tmp;
+            }}
+
+            if ((a ~ /^LG04/ && b=="LG12_20232954") ||
+                (a=="LG12_20232954" && b ~ /^LG04/))
+                print >> "{output.lg04_lg12_1}"
+
+            else if ((a ~ /^LG04/ && b=="LG12_22227968") ||
+                     (a=="LG12_22227968" && b ~ /^LG04/))
+                print >> "{output.lg04_lg12_2}"
+
+            else if ((a=="LG12_20232954" && b=="LG12_22227968") ||
+                     (a=="LG12_22227968" && b=="LG12_20232954"))
+                print >> "{output.lg12_1_lg12_2}"
+        }}' tmp.annotated.ld
+
+        rm -f tmp.annotated.ld
         """
