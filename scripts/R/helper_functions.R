@@ -2034,7 +2034,7 @@ plot_ld_box <- function(df, title = NULL) {
     c("LG04_LG12_2", "LG12_1_LG12_2")
   )
   
-  ggplot(df, aes(x = dataset, y = r2)) +
+  ggplot(df, aes(x = dataset, y = r2, group = dataset)) +
     geom_boxplot(outlier.size = 0.3) +
     
     # add p-values (Wilcoxon is safer for LD distributions)
