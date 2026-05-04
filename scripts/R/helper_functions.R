@@ -1925,6 +1925,7 @@ plot_location <- function(df, species_meta) {
   print(df)
 
   color_map <- setNames(species_meta$Color, species_meta$spec)
+  species_labels <- setNames(species_meta$Species, species_meta$spec)
 
   # labels with logos (like PCA)
   label_map <- setNames(
@@ -1982,7 +1983,7 @@ plot_location <- function(df, species_meta) {
       inherit.aes = FALSE
     ) +
     
-    scale_fill_manual(values = color_map, names = "Species", drop = FALSE) +
+    scale_fill_manual(values = color_map, labels = species_labels, name = "Species", drop = FALSE) +
 
     scale_x_discrete(labels = function(x) parse(text = x)) +
      # y axis fixed
