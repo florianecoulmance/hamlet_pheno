@@ -79,7 +79,8 @@ rule all:
         expand("ld/{dataset}.regions.ld", dataset=ld_datasets),
         expand("ld/{dataset}.LG04_LG12_1.ld", dataset=ld_datasets),
         expand("ld/{dataset}.LG04_LG12_2.ld", dataset=ld_datasets),
-        expand("ld/{dataset}.LG12_1_LG12_2.ld", dataset=ld_datasets)
+        expand("ld/{dataset}.LG12_1_LG12_2.ld", dataset=ld_datasets),
+        f"{FIGURES_DIR}/FigS21_LDboxplots"
 
 
 # --- Create directories ---
@@ -790,4 +791,21 @@ rule split_region_ld_full:
         }}' {params.prefix}.tmp.annotated.ld
 
         rm -f {params.prefix}.tmp.annotated.ld
+        """
+
+rule plot_ld:
+    input:
+        expand("ld/{dataset}_global.ld", dataset=ld_datasets),
+        expand("ld/{dataset}.LG04_LG12_1.ld", dataset=ld_datasets),
+        expand("ld/{dataset}.LG04_LG12_2.ld", dataset=ld_datasets),
+        expand("ld/{dataset}.LG12_1_LG12_2.ld", dataset=ld_datasets)
+    output:
+        fig = f"{FIGURES_DIR}/FigS21_LDboxplots.png"
+    params:
+        base_dir = BASE_DIR,
+        fig_dir = FIGURES_DIR
+    shell:
+        r"""
+        module load R/4.3.1-foss-2023a
+        Rscript {SCRIPTS_DIR}/R/FigS21.R {params.base_dir} {params.fig_dir}
         """

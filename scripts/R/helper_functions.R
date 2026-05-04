@@ -1821,7 +1821,6 @@ plot_species_geo_overview <- function(dat, species_info, geo_table) {
 # ---------------------------------------------------------
 # GET RESULT PATHS (NEW STRUCTURE)
 # ---------------------------------------------------------
-
 get_nh_result_paths <- function(base_dir) {
   list.dirs(base_dir, recursive = TRUE, full.names = TRUE) %>%
     keep(~ grepl("NH.Results/.+_Results$", .x))
@@ -1830,7 +1829,6 @@ get_nh_result_paths <- function(base_dir) {
 # ---------------------------------------------------------
 # EXTRACT PofZ
 # ---------------------------------------------------------
-
 read_pofz <- function(path) {
 
   pofz_file <- list.files(path, pattern = "PofZ.txt", full.names = TRUE)
@@ -1892,7 +1890,6 @@ read_pofz <- function(path) {
 # ---------------------------------------------------------
 # COLOR PALETTE (IDENTICAL TO OLD FIGURE)
 # ---------------------------------------------------------
-
 get_hybrid_colors <- function() {
   clr <- paletteer_c("ggthemes::Red-Green-Gold Diverging", 3) %>%
     c(., clr_lighten(.)) %>%
@@ -1905,7 +1902,6 @@ get_hybrid_colors <- function() {
 # ---------------------------------------------------------
 # PLOT ONE LOCATION
 # ---------------------------------------------------------
-
 plot_location <- function(df, species_meta) {
 
   # detect hybrids
@@ -1974,7 +1970,6 @@ plot_location <- function(df, species_meta) {
 # ---------------------------------------------------------
 # FINAL FIGURE
 # ---------------------------------------------------------
-
 combine_plots <- function(plot_list, output_path) {
 
   legend <- cowplot::get_legend(plot_list[[1]] + theme(legend.position = "bottom"))
@@ -1994,4 +1989,67 @@ combine_plots <- function(plot_list, output_path) {
   dpi = 600,
   bg = "white"
   )
+}
+
+# -----------------------------
+# Read pairwise LD file
+# -----------------------------
+read_ld_file <- function(file, label) {
+  dt <- fread(file)
+  
+  r2 <- dt[[ncol(dt)]]
+  
+  data.frame(
+    r2 = r2,
+    dataset = label
+  )
+}
+
+# -----------------------------
+# Read global LD matrix (upper triangle)
+# -----------------------------
+read_global_ld <- function(file, label = "global") {
+  mat <- as.matrix(fread(file))
+  
+  r2 <- mat[upper.tri(mat)]
+  
+  data.frame(
+    r2 = r2,
+    dataset = label
+  )
+}
+
+# -----------------------------
+# Make boxplot for one dataset
+# -----------------------------
+plot_ld_box <- function(df, title = NULL) {
+  ggplot(df, aes(x = dataset, y = r2)) +
+    geom_boxplot(outlier.size = 0.3) +
+    theme_classic() +
+    labs(x = NULL, y = expression(r^2), title = title)
+}
+
+# -----------------------------
+# Build one dataset plot
+# -----------------------------
+build_plot <- function(ds) {
+
+  message("Processing:    ", ds)
+  
+  files <- list(
+    global = file.path(base_dir, "/2_popgen/ld/", paste0(ds, "_global.ld")),
+    LG04_LG12_1 = file.path(base_dir, "/2_popgen/ld/", paste0(ds, ".LG04_LG12_1.ld")),
+    LG04_LG12_2 = file.path(base_dir, "/2_popgen/ld/", paste0(ds, ".LG04_LG12_2.ld")),
+    LG12_1_LG12_2 = file.path(base_dir, "/2_popgen/ld/", paste0(ds, ".LG12_1_LG12_2.ld"))
+  )
+  
+  # use YOUR existing functions
+  df_global <- read_global_ld(files$global, "global")
+  df_1      <- read_ld_file(files$LG04_LG12_1, "LG04_LG12_1")
+  df_2      <- read_ld_file(files$LG04_LG12_2, "LG04_LG12_2")
+  df_3      <- read_ld_file(files$LG12_1_LG12_2, "LG12_1_LG12_2")
+  
+  df_all <- rbind(df_global, df_1, df_2, df_3)
+  
+  plot_ld_box(df_all, title = ds)
 }
