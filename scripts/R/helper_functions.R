@@ -1914,8 +1914,9 @@ plot_location <- function(df, species_meta) {
       mutate(
         spec = stringr::str_extract(IndivName, "[a-z]{3}"),
       ) %>%
-      arrange(spec, IndivName) %>%
-      mutate(ind_label = factor(ind_label, levels = unique(ind_label)))
+      arrange(spec, IndivName)
+  
+  df$ind_label <- factor(df$IndivName, levels = unique(df$IndivName))
   
   print(df)
 
