@@ -74,7 +74,8 @@ rule all:
         expand("ld/{dataset}_filtered.bed", dataset=ld_datasets),
         expand("ld/{dataset}_filtered.bim", dataset=ld_datasets),
         expand("ld/{dataset}_filtered.fam", dataset=ld_datasets),
-        expand("ld/{dataset}_global.ld", dataset=ld_datasets)
+        expand("ld/{dataset}_global.ld", dataset=ld_datasets),
+        expand("ld/{dataset}.regions.snps", dataset=ld_datasets)
         # expand("ld/{dataset}_LG12_12.ld", dataset=ld_datasets),
         # expand("ld/{dataset}_interchrom.ld", dataset=ld_datasets)
 
@@ -665,121 +666,27 @@ rule ld_global:
         """
 
 
-# rule region_snps:
-#     input:
-#         bim="ld/{dataset}.filtered.bim",
-#         bed="ld/LD.bed"
-#     output:
-#         LG04="ld/{dataset}.LG04.snps",
-#         LG12_1="ld/{dataset}.LG12_1.snps",
-#         LG12_2="ld/{dataset}.LG12_2.snps"
-#     shell:
-#         r"""
-#         awk '$1=="LG04" {{print $4}}' {input.bim} > {output.LG04}
-#         awk '$1=="LG12" && NR%2==1 {{print $4}}' {input.bim} > {output.LG12_1}
-#         awk '$1=="LG12" && NR%2==0 {{print $4}}' {input.bim} > {output.LG12_2}
-#         """
+rule region_snps:
+    wildcard_constraints:
+        dataset="all|bel|boc|hon|pri|pue|uni|nig|abe"
 
+    input:
+        bed="ld/{dataset}_filtered.bed",
+        bim="ld/{dataset}_filtered.bim",
+        fam="ld/{dataset}_filtered.fam",
+        regions="ld/LD.bed"
+    output:
+        snps="ld/{dataset}.regions.snps"
+    params:
+        prefix="ld/{dataset}"
+    shell:
+        r"""
+        module load hpc-env/13.1
+        module load PLINK/v1.9b7.4-x86_64
 
-# rule ld_region_pairs:
-#     input:
-#         bed="ld/{dataset}.filtered.bed",
-#         bim="ld/{dataset}.filtered.bim",
-#         fam="ld/{dataset}.filtered.fam",
-#         LG04="ld/{dataset}.LG04.snps",
-#         LG12_1="ld/{dataset}.LG12_1.snps",
-#         LG12_2="ld/{dataset}.LG12_2.snps"
-#     output:
-#         LG04_LG12_1="ld/{dataset}.LG04_LG12_1.ld",
-#         LG04_LG12_2="ld/{dataset}.LG04_LG12_2.ld",
-#         LG12_1_LG12_2="ld/{dataset}.LG12_1_LG12_2.ld"
-#     shell:
-#         r"""
-#         module load hpc-env/13.1
-#         module load PLINK/v1.9b7.4-x86_64
-
-#         prefix=ld/{wildcards.dataset}
-
-#         ############################
-#         # LG04 vs LG12_1
-#         ############################
-#         cat {input.LG04} {input.LG12_1} | sort -u > $prefix.LG04_LG12_1.tmp.snps
-
-#         plink --bfile $prefix.filtered \
-#               --extract $prefix.tmp.snps \
-#               --r2 \
-#               --ld-window 99999 \
-#               --ld-window-r2 0 \
-#               --out $prefix.LG04_LG12_1
-
-#         ############################
-#         # LG04 vs LG12_2
-#         ############################
-#         cat {input.LG04} {input.LG12_2} | sort -u > $prefix.LG04_LG12_2.tmp.snps
-
-#         plink --bfile $prefix.filtered \
-#               --extract $prefix.tmp.snps \
-#               --r2 \
-#               --ld-window 99999 \
-#               --ld-window-r2 0 \
-#               --out $prefix.LG04_LG12_2
-
-#         ############################
-#         # LG12_1 vs LG12_2
-#         ############################
-#         cat {input.LG12_1} {input.LG12_2} | sort -u > $prefix.LG12_1_LG12_2.tmp.snps
-
-#         plink --bfile $prefix.filtered \
-#               --extract $prefix.tmp.snps \
-#               --r2 \
-#               --ld-window 99999 \
-#               --ld-window-r2 0 \
-#               --out $prefix.LG12_1_LG12_2
-#         """
-
-# rule filter_between_region_ld:
-#     input:
-#         LG04_LG12_1="ld/{dataset}.LG04_LG12_1.ld",
-#         LG04_LG12_2="ld/{dataset}.LG04_LG12_2.ld",
-#         LG12_1_LG12_2="ld/{dataset}.LG12_1_LG12_2.ld",
-#         LG04="ld/{dataset}.LG04.snps",
-#         LG12_1="ld/{dataset}.LG12_1.snps",
-#         LG12_2="ld/{dataset}.LG12_2.snps"
-#     output:
-#         LG04_LG12_1="ld/{dataset}.LG04_LG12_1.between.ld",
-#         LG04_LG12_2="ld/{dataset}.LG04_LG12_2.between.ld",
-#         LG12_1_LG12_2="ld/{dataset}.LG12_1_LG12_2.between.ld"
-#     shell:
-#         r"""
-#         module load hpc-env/13.1
-
-#         ############################
-#         # LG04 vs LG12_1
-#         ############################
-#         awk '
-#         NR==FNR {a[$1]; next}
-#         NR==FNR+FNR {b[$1]; next}
-#         (($3 in a && $6 in b) || ($3 in b && $6 in a))
-#         ' {input.LG04} {input.LG12_1} {input.LG04_LG12_1} \
-#         > {output.LG04_LG12_1}
-
-#         ############################
-#         # LG04 vs LG12_2
-#         ############################
-#         awk '
-#         NR==FNR {a[$1]; next}
-#         NR==FNR+FNR {b[$1]; next}
-#         (($3 in a && $6 in b) || ($3 in b && $6 in a))
-#         ' {input.LG04} {input.LG12_2} {input.LG04_LG12_2} \
-#         > {output.LG04_LG12_2}
-
-#         ############################
-#         # LG12_1 vs LG12_2
-#         ############################
-#         awk '
-#         NR==FNR {a[$1]; next}
-#         NR==FNR+FNR {b[$1]; next}
-#         (($3 in a && $6 in b) || ($3 in b && $6 in a))
-#         ' {input.LG12_1} {input.LG12_2} {input.LG12_1_LG12_2} \
-#         > {output.LG12_1_LG12_2}
-#         """
+        plink --bfile {params.prefix}_filtered \
+              --extract range {input.regions} \
+              --allow-extra-chr \
+              --write-snplist \
+              --out {params.prefix}.regions
+        """
