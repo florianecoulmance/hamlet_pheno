@@ -75,7 +75,7 @@ rule all:
         expand("ld/{dataset}_filtered.bim", dataset=ld_datasets),
         expand("ld/{dataset}_filtered.fam", dataset=ld_datasets),
         expand("ld/{dataset}_global.ld", dataset=ld_datasets),
-        expand("ld/{dataset}.regions.snps", dataset=ld_datasets)
+        expand("ld/{dataset}.regions.snplist", dataset=ld_datasets)
         # expand("ld/{dataset}_LG12_12.ld", dataset=ld_datasets),
         # expand("ld/{dataset}_interchrom.ld", dataset=ld_datasets)
 
@@ -676,7 +676,7 @@ rule region_snps:
         fam="ld/{dataset}_filtered.fam",
         regions="ld/LD.bed"
     output:
-        snps="ld/{dataset}.regions.snps"
+        snps="ld/{dataset}.regions.snplist"
     params:
         prefix="ld/{dataset}"
     shell:
