@@ -1965,10 +1965,16 @@ plot_location <- function(df, species_meta) {
 
   loc_title <- loc_names[unique(df$loc)[1]]
 
+  # build strip data
+  strip_df <- df %>%
+    distinct(IndivName, ind_label, spec) %>%
+    mutate(ind_label = factor(ind_label, levels = levels(df$ind_label)))
+
+  # plot
   ggplot(df, aes(x = ind_label, y = prob, fill = class)) +
     geom_bar(stat = "identity", position = "stack") +
     geom_segment(
-      data = df,
+      data = strip_df,
       aes(
         x = ind_label,
         xend = ind_label,
@@ -1977,7 +1983,8 @@ plot_location <- function(df, species_meta) {
         color = spec
       ),
       linewidth = 4,
-      lineend = "butt"
+      lineend = "butt",
+      inherit.aes = FALSE
     ) +
     scale_color_manual(values = color_map, drop = FALSE) +
     scale_fill_manual(
@@ -1997,7 +2004,7 @@ plot_location <- function(df, species_meta) {
     theme(
       legend.position = "left",
       strip.text.y = ggtext::element_markdown(angle = 0, size = 7),
-      axis.text.x = element_text(angle = 90, size = 5),
+      axis.text.x = element_text(angle = 90, size = 7),
       axis.title.x = element_blank(),
       axis.title.y = element_text(vjust = 4)
     ) +
@@ -2071,15 +2078,15 @@ plot_ld_box <- function(df, title = NULL) {
   ggplot(df, aes(x = dataset, y = r2, group = dataset)) +
     geom_boxplot(outlier.size = 0.3) +
     
-    stat_compare_means(
-      comparisons = comparisons,
-      method = "wilcox.test",
-      label = "p.signif",
+    # stat_compare_means(
+    #   comparisons = comparisons,
+    #   method = "wilcox.test",
+    #   label = "p.signif",
       
-      # keep everything inside 0–0.1
-      label.y = c(0.02, 0.22, 0.24),
-      step.increase = 0
-    )  +
+    #   # keep everything inside 0–0.1
+    #   label.y = c(0.02, 0.22, 0.24),
+    #   step.increase = 0
+    # )  +
     
     coord_cartesian(ylim = c(0, 0.1)) +
     

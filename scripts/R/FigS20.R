@@ -18,6 +18,8 @@ library(prismatic)
 library(ggthemes)
 library(cowplot)
 library(png)
+library(dplyr)
+library(ggplot2)
 
 
 args <- commandArgs(trailingOnly = TRUE)
