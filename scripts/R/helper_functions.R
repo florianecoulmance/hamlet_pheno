@@ -1979,14 +1979,16 @@ plot_location <- function(df, species_meta) {
     
     scale_fill_manual(values = color_map, labels = species_labels, name = "Species", drop = FALSE) +
 
-    scale_x_discrete(labels = function(x) {
+    scale_x_discrete(
+      labels = function(x) {
         ifelse(
           x %in% hybrids,
-          parse(paste0("bold('", x, "')")),
-          parse(paste0("'", x, "'"))
+          paste0("<b>", x, "</b>"),
+          x
         )
       }
     ) +
+
      # y axis fixed
     scale_y_continuous(
       breaks = c(0, 1),
@@ -1999,7 +2001,7 @@ plot_location <- function(df, species_meta) {
       legend.position = "left",
       strip.text.y = ggtext::element_markdown(angle = 0, size = 7),
       legend.text = element_markdown(size = 7),
-      axis.text.x = element_text(angle = 90, size = 7),
+      axis.text.x = element_markdown(angle = 90, size = 7),
       axis.title.x = element_blank(),
       axis.title.y = element_text(vjust = 4)
     ) +
