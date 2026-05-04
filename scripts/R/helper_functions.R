@@ -2028,10 +2028,7 @@ plot_ld_box <- function(df, title = NULL) {
   comparisons <- list(
     c("global", "LG04_LG12_1"),
     c("global", "LG04_LG12_2"),
-    c("global", "LG12_1_LG12_2"),
-    c("LG04_LG12_1", "LG04_LG12_2"),
-    c("LG04_LG12_1", "LG12_1_LG12_2"),
-    c("LG04_LG12_2", "LG12_1_LG12_2")
+    c("global", "LG12_1_LG12_2")
   )
   
   ggplot(df, aes(x = dataset, y = r2, group = dataset)) +
@@ -2041,11 +2038,13 @@ plot_ld_box <- function(df, title = NULL) {
     stat_compare_means(
       comparisons = comparisons,
       method = "wilcox.test",
-      label = "p.signif"
+      label = "p.signif",
+      label.y = seq(0.07, 0.095, length.out = length(comparisons)),
+      step.increase = 0
     ) +
     
     theme_classic() +
-    coord_cartesian(ylim = c(0, 0.1)) +
+    coord_cartesian(ylim = c(0, 0.1), clip = "off") +
     
     labs(
       x = NULL,
