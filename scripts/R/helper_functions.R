@@ -1996,7 +1996,7 @@ plot_location <- function(df, species_meta) {
       expand = c(0, 0)
     ) +
     facet_grid(run_label ~ .) +
-    theme_minimal() +
+    # theme_minimal() +
     theme(
       legend.position = "left",
       strip.text.y = ggtext::element_markdown(angle = 0, size = 7),
