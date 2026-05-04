@@ -2043,7 +2043,7 @@ plot_ld_box <- function(df, title = NULL) {
     ) +
     
     theme_classic() +
-    coord_cartesian(ylim = c(0, 0.1), clip = "off") +
+    coord_cartesian(ylim = c(0, 0.1)) +
     
     labs(
       x = NULL,
