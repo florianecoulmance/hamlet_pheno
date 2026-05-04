@@ -663,7 +663,7 @@ rule ld_global:
         plink --bfile {params.prefix}_1Mb \
               --extract {params.prefix}_global.snps \
               --allow-extra-chr \
-              --r2 square \
+              --r2 inter-chr \
               --out {params.prefix}_global
         """
 
@@ -733,6 +733,8 @@ rule split_region_ld_full:
         lg04_lg12_1="ld/{dataset}.LG04_LG12_1.ld",
         lg04_lg12_2="ld/{dataset}.LG04_LG12_2.ld",
         lg12_1_lg12_2="ld/{dataset}.LG12_1_LG12_2.ld"
+    params:
+        prefix="ld/{dataset}"
     shell:
         r"""
         set -euo pipefail
@@ -760,7 +762,7 @@ rule split_region_ld_full:
             if (regA!="NA" && regB!="NA")
                 print regA, regB, $0
 
-        }}' {input.bed} {input.ld} > tmp.annotated.ld
+        }}' {input.bed} {input.ld} > {params.prefix}.tmp.annotated.ld
 
         ############################
         # 2. split comparisons
@@ -785,7 +787,7 @@ rule split_region_ld_full:
             else if ((a=="LG12_20232954" && b=="LG12_22227968") ||
                      (a=="LG12_22227968" && b=="LG12_20232954"))
                 print >> "{output.lg12_1_lg12_2}"
-        }}' tmp.annotated.ld
+        }}' {params.prefix}.tmp.annotated.ld
 
-        rm -f tmp.annotated.ld
+        rm -f {params.prefix}.tmp.annotated.ld
         """
