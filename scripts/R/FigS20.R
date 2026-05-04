@@ -20,6 +20,7 @@ library(cowplot)
 library(png)
 library(dplyr)
 library(ggplot2)
+library(ggnewscale)
 
 
 args <- commandArgs(trailingOnly = TRUE)
