@@ -80,7 +80,7 @@ rule all:
         expand("ld/{dataset}.LG04_LG12_1.ld", dataset=ld_datasets),
         expand("ld/{dataset}.LG04_LG12_2.ld", dataset=ld_datasets),
         expand("ld/{dataset}.LG12_1_LG12_2.ld", dataset=ld_datasets),
-        f"{FIGURES_DIR}/FigS21_LDboxplots"
+        f"{FIGURES_DIR}/FigS21_LDboxplots.png"
 
 
 # --- Create directories ---
