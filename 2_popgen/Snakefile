@@ -719,7 +719,6 @@ rule ld_regions_all:
               --extract {input.snps} \
               --allow-extra-chr \
               --r2 inter-chr \
-              --ld-window 99999 \
               --ld-window-r2 0 \
               --out {params.prefix}.regions
         """
