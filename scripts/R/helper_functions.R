@@ -1912,12 +1912,7 @@ plot_location <- function(df, species_meta) {
 
   df <- df %>%
       mutate(
-      ind_label = ifelse(
-        IndivName %in% hybrids,
-        paste0("bold('", IndivName, "')"),
-        paste0("'", IndivName, "'")
-      ),
-      spec = stringr::str_extract(IndivName, "[a-z]{3}"),
+        spec = stringr::str_extract(IndivName, "[a-z]{3}"),
       ) %>%
       arrange(spec, IndivName) %>%
       mutate(ind_label = factor(ind_label, levels = unique(ind_label)))
@@ -1962,8 +1957,7 @@ plot_location <- function(df, species_meta) {
 
   # build strip data
   strip_df <- df %>%
-    distinct(IndivName, spec) %>%
-    mutate(ind_label = paste0("'", IndivName, "'"))
+    distinct(ind_label, spec)
 
   # plot
   ggplot(df, aes(x = ind_label, y = prob, fill = class)) +
@@ -1986,9 +1980,11 @@ plot_location <- function(df, species_meta) {
 
     scale_x_discrete(
       labels = function(x) {
-        out <- x
-        out[x %in% hybrids] <- paste0("bold('", out[x %in% hybrids], "')")
-        parse(text = out)
+        ifelse(
+          x %in% hybrids,
+          bquote(bold(.(x))),
+          x
+        )
       }
     ) +
 
