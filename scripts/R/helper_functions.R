@@ -1988,12 +1988,11 @@ plot_location <- function(df, species_meta) {
       limits = c(0, 1),
       expand = c(0, 0)
     ) +
-    facet_grid(run_label ~ ., switch = "y") +
+    facet_grid(run_label ~ .) +
     theme_minimal() +
     theme(
       legend.position = "left",
       strip.text.y = ggtext::element_markdown(size = 7),
-      strip.placement = "outside",
       axis.text.x = element_text(angle = 90, size = 5),
       axis.title.x = element_blank(),
       axis.title.y = element_text(vjust = 4)
@@ -2074,7 +2073,7 @@ plot_ld_box <- function(df, title = NULL) {
       label = "p.signif",
       
       # keep everything inside 0–0.1
-      label.y = c(0.06, 0.62, 0.64)
+      label.y = c(0.02, 0.22, 0.24)
     )  +
     
     coord_cartesian(ylim = c(0, 0.1)) +
