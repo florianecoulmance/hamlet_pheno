@@ -2034,13 +2034,16 @@ plot_ld_box <- function(df, title = NULL) {
   ggplot(df, aes(x = dataset, y = r2, group = dataset)) +
     geom_boxplot(outlier.size = 0.3) +
     
-    # add p-values (Wilcoxon is safer for LD distributions)
-    stat_compare_means(
+    geom_signif(
       comparisons = comparisons,
-      method = "wilcox.test",
-      label = "p.signif",
-      label.y = seq(0.07, 0.095, length.out = length(comparisons)),
-      step.increase = 0
+      test = "wilcox.test",
+      map_signif_level = TRUE,
+      
+      # 👇 force all brackets at ~0.05
+      y_position = c(0.08, 0.085, 0.09),
+      
+      tip_length = 0.01,
+      textsize = 3
     ) +
     
     theme_classic() +
