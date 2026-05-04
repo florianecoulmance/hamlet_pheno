@@ -660,7 +660,7 @@ rule ld_global:
         plink --bfile {params.prefix}_1Mb \
               --extract {params.prefix}_global.snps \
               --allow-extra-chr \
-              --r2 triangle \
+              --r2 square \
               --out {params.prefix}_global
         """
 
