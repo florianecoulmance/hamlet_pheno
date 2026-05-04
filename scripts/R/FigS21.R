@@ -13,6 +13,8 @@ source("../scripts/R/helper_functions.R")
 library(data.table)
 library(ggplot2)
 library(gridExtra)
+library(ggpubr)
+
 
 args <- commandArgs(trailingOnly = TRUE)
 
@@ -38,8 +40,8 @@ length(plots) <- 9
 # -----------------------------
 png(
   filename = file.path(fig_dir, "FigS21_LDboxplots.png"),
-  width = 12,
-  height = 12,
+  width = 16,
+  height = 16,
   units = "in",
   res = 600
 )

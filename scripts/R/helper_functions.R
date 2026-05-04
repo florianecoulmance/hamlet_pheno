@@ -2023,11 +2023,37 @@ read_global_ld <- function(file, label = "global") {
 # Make boxplot for one dataset
 # -----------------------------
 plot_ld_box <- function(df, title = NULL) {
+  
+  # define comparisons (all pairwise)
+  comparisons <- list(
+    c("global", "LG04_LG12_1"),
+    c("global", "LG04_LG12_2"),
+    c("global", "LG12_1_LG12_2"),
+    c("LG04_LG12_1", "LG04_LG12_2"),
+    c("LG04_LG12_1", "LG12_1_LG12_2"),
+    c("LG04_LG12_2", "LG12_1_LG12_2")
+  )
+  
   ggplot(df, aes(x = dataset, y = r2)) +
     geom_boxplot(outlier.size = 0.3) +
+    
+    # add p-values (Wilcoxon is safer for LD distributions)
+    stat_compare_means(
+      comparisons = comparisons,
+      method = "wilcox.test",
+      label = "p.signif"
+    ) +
+    
     theme_classic() +
-    labs(x = NULL, y = expression(r^2), title = title)
+    coord_cartesian(ylim = c(0, 0.1)) +
+    
+    labs(
+      x = NULL,
+      y = expression(r^2),
+      title = title
+    )
 }
+
 
 # -----------------------------
 # Build one dataset plot
