@@ -1982,8 +1982,7 @@ plot_location <- function(df, species_meta) {
         color = spec
       ),
       linewidth = 4,
-      lineend = "butt",
-      inherit.aes = FALSE
+      lineend = "butt"
     ) +
     scale_color_manual(values = color_map, drop = FALSE) +
     scale_fill_manual(
