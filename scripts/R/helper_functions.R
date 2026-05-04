@@ -1926,8 +1926,6 @@ plot_location <- function(df, species_meta) {
 
   color_map <- setNames(species_meta$Color, species_meta$spec)
 
-  colors <- get_hybrid_colors()
-
   # labels with logos (like PCA)
   label_map <- setNames(
     paste0(
@@ -1945,6 +1943,8 @@ plot_location <- function(df, species_meta) {
         label_map[pop2]
       )
     )
+
+  colors <- get_hybrid_colors()
 
   df$class <- factor(df$class,
                    levels = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"))
@@ -1969,18 +1969,21 @@ plot_location <- function(df, species_meta) {
   # plot
   ggplot(df, aes(x = ind_label, y = prob, fill = class)) +
     geom_bar(stat = "identity", position = "stack") +
+    scale_fill_manual(
+      values = colors,
+      breaks = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"),
+      drop = FALSE
+    ) +
+    new_scale_fill() +
     geom_tile(
       data = strip_df,
       aes(x = ind_label, y = -0.05, fill = spec),
       height = 0.05,
       inherit.aes = FALSE
     ) +
-    # scale_color_manual(values = color_map, drop = FALSE) +
-    scale_fill_manual(
-      values = c(colors, color_map),
-      breaks = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"),
-      drop = FALSE
-      ) +
+    
+    scale_fill_manual(values = color_map, names = "Species", drop = FALSE) +
+
     scale_x_discrete(labels = function(x) parse(text = x)) +
      # y axis fixed
     scale_y_continuous(
