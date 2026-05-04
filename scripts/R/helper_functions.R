@@ -2039,7 +2039,8 @@ plot_ld_box <- function(df, title = NULL) {
       comparisons = comparisons,
       method = "wilcox.test",
       label = "p.signif",
-      label.y = seq(0.07, 0.095, length.out = length(comparisons))
+      label.y = seq(0.07, 0.095, length.out = length(comparisons)),
+      step.increase = 0
     ) +
     
     theme_classic() +
