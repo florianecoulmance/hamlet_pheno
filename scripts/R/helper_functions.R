@@ -2074,7 +2074,7 @@ plot_ld_box <- function(df, title = NULL) {
       label = "p.signif",
       
       # keep everything inside 0–0.1
-      label.y = c(0.06, 0.07, 0.08)
+      label.y = c(0.06, 0.62, 0.64)
     )  +
     
     coord_cartesian(ylim = c(0, 0.1)) +
