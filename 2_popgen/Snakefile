@@ -718,7 +718,7 @@ rule ld_regions_all:
         plink --bfile {params.prefix}_filtered \
               --extract {input.snps} \
               --allow-extra-chr \
-              --r2 \
+              --r2 inter-chr \
               --ld-window 99999 \
               --ld-window-r2 0 \
               --out {params.prefix}.regions
