@@ -1912,12 +1912,8 @@ plot_location <- function(df, species_meta) {
 
   df <- df %>%
       mutate(
-        ind_label = ifelse(
-          IndivName %in% hybrids,
-          paste0("bold('", IndivName, "')"),
-          paste0("'", IndivName, "'")
-        ),
-        spec = stringr::str_extract(IndivName, "[a-z]{3}")
+        spec = stringr::str_extract(IndivName, "[a-z]{3}"),
+        ind_label = IndivName
       ) %>%
       arrange(spec, IndivName) %>%
       mutate(ind_label = factor(ind_label, levels = unique(ind_label)))
@@ -1961,11 +1957,8 @@ plot_location <- function(df, species_meta) {
   loc_title <- loc_names[unique(df$loc)[1]]
 
   # build strip data
-  strip_df <- data.frame(
-    ind_label = levels(df$ind_label)
-    )
-
-  strip_df$spec <- stringr::str_extract(strip_df$ind_label, "[a-z]{3}")
+  strip_df <- df %>%
+    distinct(ind_label, spec)
 
   # plot
   ggplot(df, aes(x = ind_label, y = prob, fill = class)) +
@@ -1973,6 +1966,7 @@ plot_location <- function(df, species_meta) {
     scale_fill_manual(
       values = colors,
       breaks = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"),
+      name = "Ancestry",
       drop = FALSE
     ) +
     new_scale_fill() +
@@ -1985,7 +1979,14 @@ plot_location <- function(df, species_meta) {
     
     scale_fill_manual(values = color_map, labels = species_labels, name = "Species", drop = FALSE) +
 
-    scale_x_discrete(labels = function(x) parse(text = x)) +
+    scale_x_discrete(labels = function(x) {
+        ifelse(
+          x %in% hybrids,
+          paste0("bold('", x, "')"),
+          paste0("'", x, "'")
+        )
+      }
+    ) +
      # y axis fixed
     scale_y_continuous(
       breaks = c(0, 1),
