@@ -1981,7 +1981,7 @@ plot_location <- function(df, species_meta) {
       breaks = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"),
       drop = FALSE
       ) +
-    scale_x_continuous(labels = function(x) parse(text = x)) +
+    scale_x_discrete(labels = function(x) parse(text = x)) +
      # y axis fixed
     scale_y_continuous(
       breaks = c(0, 1),
