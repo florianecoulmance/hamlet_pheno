@@ -72,7 +72,7 @@ purrr::iwalk(plots, function(p, loc) {
     filename = file.path(fig_dir, paste0("hybrids_", loc, ".png")),
     plot = p,
     height = 20,
-    width = 15,
+    width = 20,
     dpi = 600
   )
 })

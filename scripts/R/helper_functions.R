@@ -1968,14 +1968,18 @@ plot_location <- function(df, species_meta) {
   ggplot(df, aes(x = ind_label, y = prob, fill = class)) +
     geom_bar(stat = "identity", position = "stack") +
     geom_segment(
-      aes(x = ind_label, xend = ind_label,
-          y = -0.02, yend = -0.04,
-          color = spec),
+      data = df,
+      aes(
+        x = ind_label,
+        xend = ind_label,
+        y = -0.02,
+        yend = -0.04,
+        color = spec
+      ),
       linewidth = 4,
-      lineend = "butt",
-      inherit.aes = FALSE
+      lineend = "butt"
     ) +
-    scale_color_manual(values = color_map) +
+    scale_color_manual(values = color_map, drop = FALSE) +
     scale_fill_manual(
       values = colors,
       breaks = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"),
@@ -1985,14 +1989,14 @@ plot_location <- function(df, species_meta) {
      # y axis fixed
     scale_y_continuous(
       breaks = c(0, 1),
-      limits = c(0, 1),
+      limits = c(-0.1, 1),
       expand = c(0, 0)
     ) +
     facet_grid(run_label ~ .) +
     theme_minimal() +
     theme(
       legend.position = "left",
-      strip.text.y = ggtext::element_markdown(size = 7),
+      strip.text.y = ggtext::element_markdown(angle = 0, size = 7),
       axis.text.x = element_text(angle = 90, size = 5),
       axis.title.x = element_blank(),
       axis.title.y = element_text(vjust = 4)
@@ -2073,7 +2077,8 @@ plot_ld_box <- function(df, title = NULL) {
       label = "p.signif",
       
       # keep everything inside 0–0.1
-      label.y = c(0.02, 0.22, 0.24)
+      label.y = c(0.02, 0.22, 0.24),
+      step.increase = 0
     )  +
     
     coord_cartesian(ylim = c(0, 0.1)) +
