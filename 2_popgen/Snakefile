@@ -624,6 +624,7 @@ rule ld_filter:
 
         plink --bfile {params.prefix} \
               --allow-extra-chr \
+              --set-missing-var-ids @:# \
               --maf 0.05 \
               --geno 0.05 \
               --make-bed \
