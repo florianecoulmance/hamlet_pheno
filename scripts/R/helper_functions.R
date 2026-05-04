@@ -1917,7 +1917,7 @@ plot_location <- function(df, species_meta) {
           paste0("bold('", IndivName, "')"),
           paste0("'", IndivName, "'")
         ),
-        spec = substr(IndivName,-6,-4)
+        spec = stringr::str_extract(IndivName, "[a-z]{3}")
       )
   
   print(df)
@@ -1988,7 +1988,7 @@ plot_location <- function(df, species_meta) {
       limits = c(0, 1),
       expand = c(0, 0)
     ) +
-    facet_grid(. ~ run_label, switch = "y") +
+    facet_grid(run_label ~ ., switch = "y") +
     theme_minimal() +
     theme(
       legend.position = "left",
