@@ -1983,7 +1983,7 @@ plot_location <- function(df, species_meta) {
       labels = function(x) {
         ifelse(
           x %in% hybrids,
-          paste0("<b>", x, "</b>"),
+          paste0("**", x, "**"),
           x
         )
       }
