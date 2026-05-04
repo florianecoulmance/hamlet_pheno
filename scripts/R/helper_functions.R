@@ -2003,7 +2003,7 @@ plot_location <- function(df, species_meta) {
       legend.text = element_markdown(size = 7),
       axis.text.x = ggtext::element_markdown(angle = 90, size = 7),
       axis.title.x = element_blank(),
-      axis.title.y = element_text(vjust = 4)
+      axis.title.y = element_text(vjust = 4),
       line = element_blank(),
       rect = element_blank(),
       panel.background = element_blank(),
