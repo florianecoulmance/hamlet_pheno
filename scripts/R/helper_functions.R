@@ -1918,19 +1918,15 @@ plot_location <- function(df, species_meta) {
           paste0("'", IndivName, "'")
         ),
         spec = stringr::str_extract(IndivName, "[a-z]{3}")
-      )
+      ) %>%
+      arrange(spec, IndivName) %>%
+      mutate(ind_label = factor(ind_label, levels = unique(ind_label)))
   
   print(df)
 
-  # species labels ordered by species
-  df <- df %>%
-    arrange(spec, IndivName) %>%
-    mutate(ind_label = factor(ind_label, levels = unique(ind_label)))
-
-  species_meta <- species_meta %>%
-    rename(spec = spec)
-
   color_map <- setNames(species_meta$Color, species_meta$spec)
+
+  colors <- get_hybrid_colors()
 
   # labels with logos (like PCA)
   label_map <- setNames(
@@ -1950,8 +1946,6 @@ plot_location <- function(df, species_meta) {
       )
     )
 
-  colors <- get_hybrid_colors()
-
   df$class <- factor(df$class,
                    levels = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"))
 
@@ -1966,19 +1960,18 @@ plot_location <- function(df, species_meta) {
   loc_title <- loc_names[unique(df$loc)[1]]
 
   # build strip data
-  strip_df <- df %>%
-      distinct(ind_label, spec)
+  strip_df <- data.frame(
+    ind_label = levels(df$ind_label)
+    )
 
-  strip_df <- strip_df %>%
-    mutate(ind_label = factor(ind_label, levels = levels(df$ind_label)),
-           ind_x = ind_label)
+  strip_df$spec <- stringr::str_extract(strip_df$ind_label, "[a-z]{3}")
 
   # plot
   ggplot(df, aes(x = ind_label, y = prob, fill = class)) +
     geom_bar(stat = "identity", position = "stack") +
     geom_tile(
       data = strip_df,
-      aes(x = ind_x, y = -0.05, fill = spec),
+      aes(x = ind_label, y = -0.05, fill = spec),
       height = 0.05,
       inherit.aes = FALSE
     ) +
@@ -1988,7 +1981,7 @@ plot_location <- function(df, species_meta) {
       breaks = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"),
       drop = FALSE
       ) +
-    scale_x_discrete(labels = function(x) parse(text = x)) +
+    scale_x_continuous(labels = function(x) parse(text = x)) +
      # y axis fixed
     scale_y_continuous(
       breaks = c(0, 1),
