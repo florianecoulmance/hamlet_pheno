@@ -2071,9 +2071,9 @@ plot_ld_box <- function(df, title = NULL) {
       label.y = c(0.06, 0.07, 0.08)
     )  +
     
-    coord_cartesian(ylim = c(0, 0.1), clip = "off") +
+    coord_cartesian(ylim = c(0, 0.1)) +
     
-    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+    scale_y_continuous(expand = expansion(mult = c(-0.15, 0.15))) +
     
     theme_classic() +
     theme(plot.margin = margin(10, 10, 10, 10)) +
