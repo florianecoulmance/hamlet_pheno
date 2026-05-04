@@ -1925,7 +1925,7 @@ plot_location <- function(df, species_meta) {
   print(df)
 
   color_map <- setNames(species_meta$Color, species_meta$spec)
-  species_labels <- setNames(species_meta$Species, species_meta$spec)
+  species_labels <- setNames(paste0("*H. ", species_meta$Species, "*"), species_meta$spec)
 
   # labels with logos (like PCA)
   label_map <- setNames(
@@ -1997,6 +1997,7 @@ plot_location <- function(df, species_meta) {
     theme(
       legend.position = "left",
       strip.text.y = ggtext::element_markdown(angle = 0, size = 7),
+      legend.text = element_markdown(size = 7),
       axis.text.x = element_text(angle = 90, size = 7),
       axis.title.x = element_blank(),
       axis.title.y = element_text(vjust = 4)
