@@ -1967,8 +1967,7 @@ plot_location <- function(df, species_meta) {
 
   # build strip data
   strip_df <- df %>%
-    distinct(IndivName, ind_label, spec) %>%
-    mutate(ind_label = factor(ind_label, levels = levels(df$ind_label)))
+    distinct(ind_label, spec)
 
   # plot
   ggplot(df, aes(x = ind_label, y = prob, fill = class)) +
