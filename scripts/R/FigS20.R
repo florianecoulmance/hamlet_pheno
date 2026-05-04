@@ -28,8 +28,8 @@ dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
 # ---------------------------------------------------------
 # LOAD METADATA
 # ---------------------------------------------------------
-logos_path      <- get_arg("--logos_path", file.path(base_path, "metadata/logos_hamlet"))
-spec_colors     <- get_arg("--spec_colors", file.path(base_path, "metadata/species_colors.tsv"))
+logos_path      <- get_arg("--logos_path", file.path(base_dir, "metadata/logos_hamlet"))
+spec_colors     <- get_arg("--spec_colors", file.path(base_dir, "metadata/species_colors.tsv"))
 cat("logos_path:     ", logos_path, "\n")
 cat("spec_colors:    ", spec_colors, "\n")
 
