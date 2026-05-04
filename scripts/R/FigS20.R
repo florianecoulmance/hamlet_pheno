@@ -28,9 +28,13 @@ dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
 # ---------------------------------------------------------
 # LOAD METADATA
 # ---------------------------------------------------------
+logos_path      <- get_arg("--logos_path", file.path(base_path, "metadata/logos_hamlet"))
+spec_colors     <- get_arg("--spec_colors", file.path(base_path, "metadata/species_colors.tsv"))
+cat("logos_path:     ", logos_path, "\n")
+cat("spec_colors:    ", spec_colors, "\n")
 
-species_meta <- read_tsv(file.path(base_dir, "metadata/species_colors.tsv"))
-print(species_meta)
+species_info <- add_species_logos(spec_colors, logos_path)
+head(species_info)
 
 # ---------------------------------------------------------
 # LOAD RESULTS
@@ -51,7 +55,7 @@ plots <- data %>%
   split(.$loc) %>%
   map(~ {
     if (nrow(.x) == 0) return(NULL)
-    plot_location(.x, species_meta)
+    plot_location(.x, species_info)
   }) %>%
   compact()   # removes NULLs
 

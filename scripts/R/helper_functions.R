@@ -1916,20 +1916,36 @@ plot_location <- function(df, species_meta) {
           IndivName %in% hybrids,
           paste0("bold('", IndivName, "')"),
           paste0("'", IndivName, "'")
-        )
+        ),
+        spec = substr(IndivName,-6,-4)
       )
 
-  # species labels via metadata
-  sp_lookup <- species_meta %>%
-    select(spec, Species)
+  # species labels ordered by species
+  df <- df %>%
+    arrange(spec, IndivName) %>%
+    mutate(ind_label = factor(ind_label, levels = unique(ind_label)))
+
+  species_meta <- species_meta %>%
+    rename(spec = spec)
+
+  color_map <- setNames(species_meta$Color, species_meta$spec)
+
+  # labels with logos (like PCA)
+  label_map <- setNames(
+    paste0(
+      "<img src='", species_meta$link, "' width='60'/><br>*H. ",
+      species_meta$Species, "*"
+    ),
+    species_meta$spec
+  )
 
   df <- df %>%
     mutate(
-      run_label = paste0("*H. ",
-                         sp_lookup$Species[match(pop1, sp_lookup$spec)],
-                         "* - *H. ",
-                         sp_lookup$Species[match(pop2, sp_lookup$spec)],
-                         "*")
+      run_label = paste0(
+        label_map[pop1],
+        " - ",
+        label_map[pop2]
+      )
     )
 
   colors <- get_hybrid_colors()
@@ -1949,17 +1965,29 @@ plot_location <- function(df, species_meta) {
 
   ggplot(df, aes(x = ind_label, y = prob, fill = class)) +
     geom_bar(stat = "identity", position = "stack") +
+    geom_tile(
+      aes(y = -0.02, fill = spec),
+      height = 0.02,
+      inherit.aes = FALSE
+    ) +
     scale_fill_manual(
-      values = colors,
+      values = c(colors,color_map),
       breaks = c("P1", "P1_bc", "F1", "F2", "P2_bc", "P2"),
       drop = FALSE
       ) +
     scale_x_discrete(labels = function(x) parse(text = x)) +
-    facet_grid(run_label ~ .) +
+     # y axis fixed
+    scale_y_continuous(
+      breaks = c(0, 1),
+      limits = c(0, 1),
+      expand = c(0, 0)
+    ) +
+    facet_grid(. ~ run_label, switch = "y") +
     theme_minimal() +
     theme(
       legend.position = "left",
-      strip.text.y = ggtext::element_markdown(size = 5),
+      strip.text.y = ggtext::element_markdown(size = 7),
+      strip.placement = "outside",
       axis.text.x = element_text(angle = 90, size = 5),
       axis.title.x = element_blank(),
       axis.title.y = element_text(vjust = 4)
@@ -2034,20 +2062,21 @@ plot_ld_box <- function(df, title = NULL) {
   ggplot(df, aes(x = dataset, y = r2, group = dataset)) +
     geom_boxplot(outlier.size = 0.3) +
     
-    geom_signif(
+    stat_compare_means(
       comparisons = comparisons,
-      test = "wilcox.test",
-      map_signif_level = TRUE,
+      method = "wilcox.test",
+      label = "p.signif",
       
-      # 👇 force all brackets at ~0.05
-      y_position = c(0.08, 0.085, 0.09),
-      
-      tip_length = 0.01,
-      textsize = 3
-    ) +
+      # keep everything inside 0–0.1
+      label.y = c(0.06, 0.07, 0.08)
+    )  +
+    
+    coord_cartesian(ylim = c(0, 0.1), clip = "off") +
+    
+    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     
     theme_classic() +
-    coord_cartesian(ylim = c(0, 0.1)) +
+    theme(plot.margin = margin(10, 10, 10, 10)) +
     
     labs(
       x = NULL,
