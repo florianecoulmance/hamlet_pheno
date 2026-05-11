@@ -28,6 +28,8 @@ phyps2e_m2.vcf.gz.csi
 2_popgen/byALL/*.fam
 2_popgen/byALL/*.log  
 2_popgen/byALL/*.nosex
+2_popgen/byALL/*.in
+2_popgen/byALL/*.out
 2_popgen/.R*
 2_popgen/Rplots.pdf
 2_popgen/.snakemake/*
