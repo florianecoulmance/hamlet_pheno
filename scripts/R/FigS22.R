@@ -155,13 +155,17 @@ for(dat in names(dataset)) {
     # Remove species column
     pheno_mat <- pheno_avg %>%
         column_to_rownames("spec")
+    print(pheno_mat)
 
     geno_mat <- geno_avg %>%
         column_to_rownames("spec")
+    print(geno_mat)
 
     # Pairwise Euclidean distances
     pheno_dist <- dist(pheno_mat, method = "euclidean")
+    print(pheno_dist)
     geno_dist  <- dist(geno_mat, method = "euclidean")
+    print(geno_dist)
 
 
     #-----------------------------------
@@ -171,10 +175,12 @@ for(dat in names(dataset)) {
     pheno_dist_table <- as.data.frame(as.table(as.matrix(pheno_dist))) %>%
         setNames(c("species1", "species2", "distance")) %>%
         filter(species1 < species2)
+    print(pheno_dist_table)
 
     geno_dist_table <- as.data.frame(as.table(as.matrix(geno_dist))) %>%
         setNames(c("species1", "species2", "distance")) %>%
         filter(species1 < species2)
+    print(geno_dist_table)
 
     # Join tables
     phenoGeno_t <- pheno_dist_table %>%
@@ -183,6 +189,7 @@ for(dat in names(dataset)) {
             by = c("species1", "species2"),
             suffix = c("_pheno", "_geno")
         )
+    print(phenoGeno_t)
 
     
     #-----------------------------------
