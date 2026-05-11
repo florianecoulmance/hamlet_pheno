@@ -174,21 +174,21 @@ for(dat in names(dataset)) {
     # Transform to longer table
     pheno_dist_table <- as.data.frame(as.table(as.matrix(pheno_dist))) %>%
         setNames(c("species1", "species2", "distance")) %>%
-        filter(species1 < species2)
+        filter(species1 != species2)
     print(pheno_dist_table)
 
     geno_dist_table <- as.data.frame(as.table(as.matrix(geno_dist))) %>%
         setNames(c("species1", "species2", "distance")) %>%
-        filter(species1 < species2)
+        filter(species1 != species2)
     print(geno_dist_table)
 
     # Join tables
-    phenoGeno_t <- pheno_dist_table %>%
-        left_join(
-            geno_dist_table,
-            by = c("species1", "species2"),
-            suffix = c("_pheno", "_geno")
-        )
+    phenoGeno_t <- inner_join(
+        pheno_dist_table,
+        geno_dist_table,
+        by = c("species1", "species2")
+    )
+
     print(phenoGeno_t)
 
     
