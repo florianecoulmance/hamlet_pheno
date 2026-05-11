@@ -239,7 +239,7 @@ rule all_plink:
         module load PLINK/v1.9b7.4-x86_64
 
         # Create index for vcf file
-        bcftools index {input.VCF_FILE}
+        # bcftools index {input.VCF_FILE}
 
         # Create base prefix (remove folder and extensions)
         prefix="all"
