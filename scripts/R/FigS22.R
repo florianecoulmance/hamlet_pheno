@@ -154,10 +154,10 @@ for(dat in names(dataset)) {
     #-----------------------------------
     # Remove species column
     pheno_mat <- pheno_avg %>%
-        column_to_rownames("species")
+        column_to_rownames("spec")
 
     geno_mat <- geno_avg %>%
-        column_to_rownames("species")
+        column_to_rownames("spec")
 
     # Pairwise Euclidean distances
     pheno_dist <- dist(pheno_mat, method = "euclidean")
