@@ -164,7 +164,7 @@ rule plink_processing:
         prefix=$(basename {input.VCF} .vcf.gz)
 
         # Step 1: Convert to PLINK binary
-        plink --vcf {input.VCF} --allow-extra-chr --make-bed --out $(dirname {input.VCF})/{wildcards.dataset}
+        plink --vcf {input.VCF} --allow-extra-chr --const-fid 0 --make-bed --out $(dirname {input.VCF})/{wildcards.dataset}
 
         # Step 2: Filter for MAF and missingness
         plink --bfile $(dirname {input.VCF})/{wildcards.dataset} \
@@ -245,7 +245,7 @@ rule all_plink:
         prefix="all"
 
         # Step 1: Convert to PLINK binary
-        plink --vcf {input.VCF_FILE} --allow-extra-chr --make-bed --out byALL/${{prefix}}
+        plink --vcf {input.VCF_FILE} --allow-extra-chr --const-fid 0 --make-bed --out byALL/${{prefix}}
 
         # Step 2: Filter for MAF and missingness
         plink --bfile byALL/${{prefix}} \
