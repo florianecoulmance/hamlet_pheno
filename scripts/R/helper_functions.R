@@ -2139,7 +2139,7 @@ build_plot <- function(ds) {
 # average PC eigne vectors per species group for Mantel test
 # ============================================================
 average_pca_by_species <- function(df,
-                                   species_col = "species",
+                                   species_col = "spec",
                                    pc_prefix = "PC",
                                    min_n = 5) {
 

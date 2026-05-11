@@ -101,7 +101,7 @@ for(dat in names(dataset)) {
     # Average by species
     pheno_avg <- average_pca_by_species(
         pc_table,
-        species_col = "species",
+        species_col = "spec",
         pc_prefix = "PC",
         min_n = 5
     )
@@ -121,7 +121,7 @@ for(dat in names(dataset)) {
     # Average by species
     geno_avg <- average_pca_by_species(
         pca_eigen,
-        species_col = "species",
+        species_col = "spec",
         pc_prefix = "PC",
         min_n = 5
     )
