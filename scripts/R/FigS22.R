@@ -153,11 +153,11 @@ for(dat in names(dataset)) {
     # Build pairwise distance matrix
     #-----------------------------------
     # Remove species column
-    pheno_mat <- pheno_avg %>%
+    pheno_mat <- pheno_shared %>%
         column_to_rownames("spec")
     print(pheno_mat)
 
-    geno_mat <- geno_avg %>%
+    geno_mat <- geno_shared %>%
         column_to_rownames("spec")
     print(geno_mat)
 
@@ -173,21 +173,19 @@ for(dat in names(dataset)) {
     #-----------------------------------
     # Transform to longer table
     pheno_dist_table <- as.data.frame(as.table(as.matrix(pheno_dist))) %>%
-        setNames(c("species1", "species2", "distance")) %>%
+        setNames(c("species1", "species2", "distance_pheno")) %>%
         filter(species1 != species2)
     print(pheno_dist_table)
 
     geno_dist_table <- as.data.frame(as.table(as.matrix(geno_dist))) %>%
-        setNames(c("species1", "species2", "distance")) %>%
+        setNames(c("species1", "species2", "distance_geno")) %>%
         filter(species1 != species2)
     print(geno_dist_table)
 
     # Join tables
-    phenoGeno_t <- inner_join(
-        pheno_dist_table,
-        geno_dist_table,
-        by = c("species1", "species2")
-    )
+    phenoGeno_t <- pheno_dist_table %>%
+        inner_join(geno_dist_table,
+                   by = c("species1", "species2"))
 
     print(phenoGeno_t)
 
