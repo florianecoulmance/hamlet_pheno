@@ -113,7 +113,7 @@ for(dat in names(dataset)) {
     # Read genetic PCA and generate average distance matrix
     #-----------------------------------
     gtmat_file <- file.path(base_path, "2_popgen", dat_dir, if (dat %in% c("all_s", "all_l")) "all.agg.ld_pruned_gtmat.traw" else paste0(dat, "_ld_pruned_gtmat.traw"))
-    sample_file <- file.path(base_path, if (dat %in% c("all_s", "all_l")) "metadata/geno_names.txt" else paste0("2_popgen/", dat_dir, "/", dat, ".txt"))
+    sample_file <- file.path(base_path, if (dat %in% "all") "metadata/geno_names.txt" else paste0("2_popgen/", dat_dir, "/", dat, ".txt"))
  
     pca_res <- pca_analysis(gtmat_file, sample_file, color_by = color)
     pca_eigen <- pca_res$eigen
@@ -174,12 +174,12 @@ for(dat in names(dataset)) {
     # Transform to longer table
     pheno_dist_table <- as.data.frame(as.table(as.matrix(pheno_dist))) %>%
         setNames(c("species1", "species2", "distance_pheno")) %>%
-        filter(species1 != species2)
+        filter(species1 < species2)
     print(pheno_dist_table)
 
     geno_dist_table <- as.data.frame(as.table(as.matrix(geno_dist))) %>%
         setNames(c("species1", "species2", "distance_geno")) %>%
-        filter(species1 != species2)
+        filter(species1 < species2)
     print(geno_dist_table)
 
     # Join tables
