@@ -9,6 +9,7 @@ rm(list = ls())
 
 # new libraries
 source("../scripts/R/helper_functions.R")
+library(smartsnp)
 library(ggplot2)
 library(ggimage)
 library(scales)
@@ -132,19 +133,19 @@ for(dat in names(dataset)) {
     # Filter for species pairs present in both pheno and geno datasets
     #-----------------------------------
     shared_species <- intersect(
-        pheno_avg$species,
-        geno_avg$species
+        pheno_avg$spec,
+        geno_avg$spec
     )
     print(shared_species)
 
     pheno_shared <- pheno_avg %>%
-        filter(species %in% shared_species) %>%
-        arrange(species)
+        filter(spec %in% shared_species) %>%
+        arrange(spec)
     print(pheno_shared)
 
     geno_shared <- geno_avg %>%
-        filter(species %in% shared_species) %>%
-        arrange(species)
+        filter(spec %in% shared_species) %>%
+        arrange(spec)
     print(geno_shared)
 
 
