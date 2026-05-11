@@ -963,6 +963,7 @@ pca_analysis <- function(gtfile, samplefile, color_by) {
 
     geo  <- substr(allsamples, nchar(allsamples) - 2, nchar(allsamples))
     spec <- substr(allsamples, nchar(allsamples) - 5, nchar(allsamples) - 3)
+    print(spec)
 
     # Extract spec and geo depending on mode
     if (speciesMODE) {

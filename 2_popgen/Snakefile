@@ -364,7 +364,7 @@ rule corr_plot:
         geo_colors = f"{BASE_DIR}/metadata/locations_colors.tsv"
     threads: 1
     resources:
-        mem_mb=2000,
+        mem_mb=12000,
         time="2:00:00"
     shell:
         """
