@@ -164,26 +164,26 @@ rule plink_processing:
         prefix=$(basename {input.VCF} .vcf.gz)
 
         # Step 1: Convert to PLINK binary
-        plink --vcf {input.VCF} --allow-extra-chr --const-fid 0 --make-bed --out $(dirname {input.VCF})/{wildcards.dataset}
+        plink --vcf {input.VCF} --allow-extra-chr --double-id --make-bed --out $(dirname {input.VCF})/{wildcards.dataset}
 
         # Step 2: Filter for MAF and missingness
         plink --bfile $(dirname {input.VCF})/{wildcards.dataset} \
-              --maf 0.05 --geno 0.05 --allow-extra-chr --make-bed \
+              --maf 0.05 --geno 0.05 --allow-extra-chr --double-id --make-bed \
               --out $(dirname {input.VCF})/{wildcards.dataset}.flt
 
         # Step 3: LD pruning
         plink --bfile $(dirname {input.VCF})/{wildcards.dataset}.flt \
-              --indep-pairwise 50 10 0.2 --allow-extra-chr \
+              --indep-pairwise 50 10 0.2 --allow-extra-chr --double-id \
               --out $(dirname {input.VCF})/{wildcards.dataset}.ld
 
         plink --bfile $(dirname {input.VCF})/{wildcards.dataset}.flt \
               --extract $(dirname {input.VCF})/{wildcards.dataset}.ld.prune.in \
-              --allow-extra-chr --make-bed \
+              --allow-extra-chr --double-id --make-bed \
               --out $(dirname {input.VCF})/{wildcards.dataset}.ld.pruned
 
         # Step 4: Export genotype matrix (transposed)
         plink --bfile $(dirname {input.VCF})/{wildcards.dataset}.ld.pruned \
-              --recode A-transpose --allow-extra-chr \
+              --recode A-transpose --allow-extra-chr --double-id \
               --out $(dirname {input.VCF})/{wildcards.dataset}_ld_pruned_gtmat
         """
 
@@ -245,26 +245,26 @@ rule all_plink:
         prefix="all"
 
         # Step 1: Convert to PLINK binary
-        plink --vcf {input.VCF_FILE} --allow-extra-chr --const-fid 0 --make-bed --out byALL/${{prefix}}
+        plink --vcf {input.VCF_FILE} --allow-extra-chr --double-id --make-bed --out byALL/${{prefix}}
 
         # Step 2: Filter for MAF and missingness
         plink --bfile byALL/${{prefix}} \
-              --maf 0.05 --geno 0.05 --allow-extra-chr --make-bed \
+              --maf 0.05 --geno 0.05 --allow-extra-chr --double-id --make-bed \
               --out byALL/${{prefix}}.flt
 
         # Step 3: LD pruning
         plink --bfile byALL/${{prefix}}.flt \
-              --indep-pairwise 50 5 0.1 --allow-extra-chr \
+              --indep-pairwise 50 5 0.1 --double-id --allow-extra-chr \
               --out byALL/${{prefix}}.ld
 
         plink --bfile byALL/${{prefix}}.flt \
               --extract byALL/${{prefix}}.ld.prune.in \
-              --allow-extra-chr --make-bed \
+              --allow-extra-chr --double-id --make-bed \
               --out byALL/${{prefix}}.ld.pruned
 
         # Step 4: Export genotype matrix (transposed)
         plink --bfile byALL/${{prefix}}.ld.pruned \
-              --recode A-transpose --allow-extra-chr \
+              --recode A-transpose --double-id --allow-extra-chr \
               --out byALL/${{prefix}}.agg.ld_pruned_gtmat
         """
 
