@@ -2134,3 +2134,90 @@ build_plot <- function(ds) {
   
   plot_ld_box(df_all, title = ds)
 }
+
+# ============================================================
+# average PC eigne vectors per species group for Mantel test
+# ============================================================
+average_pca_by_species <- function(df,
+                                   species_col = "species",
+                                   pc_prefix = "PC",
+                                   min_n = 5) {
+
+    # Count individuals per species
+    keep_species <- df %>%
+        group_by(.data[[species_col]]) %>%
+        summarise(n = n(), .groups = "drop") %>%
+        filter(n >= min_n)
+
+    # Keep only eligible species
+    df_filt <- df %>%
+        filter(.data[[species_col]] %in% keep_species[[species_col]])
+
+    # Identify PCA columns
+    pc_cols <- grep(paste0("^", pc_prefix), colnames(df_filt), value = TRUE)
+
+    # Average PCs by species
+    df_avg <- df_filt %>%
+        group_by(.data[[species_col]]) %>%
+        summarise(across(all_of(pc_cols), mean, na.rm = TRUE),
+                  .groups = "drop")
+
+    return(df_avg)
+}
+
+# ============================================================
+# Plot Mantel test and correlation 
+# ============================================================
+plot_distance_correlation <- function(df,
+                                      x_col,
+                                      y_col,
+                                      x_lab,
+                                      y_lab,
+                                      title = NULL,
+                                      pearson_res = NULL,
+                                      spearman_res = NULL) {
+
+    p <- ggplot(df,
+                aes(x = .data[[x_col]],
+                    y = .data[[y_col]])) +
+
+        geom_point(size = 3, alpha = 0.8) +
+
+        geom_smooth(method = "lm",
+                    se = TRUE,
+                    linewidth = 1) +
+
+        labs(
+            x = x_lab,
+            y = y_lab,
+            title = title
+        ) +
+
+        theme_classic()
+
+    # Add Mantel statistics if provided
+    if (!is.null(pearson_res) & !is.null(spearman_res)) {
+
+        p <- p +
+            annotate(
+                "text",
+                x = Inf,
+                y = Inf,
+                hjust = 1.1,
+                vjust = 1.5,
+                size = 5,
+                label = paste0(
+                    "Pearson r = ",
+                    round(pearson_res$statistic, 3),
+                    "\nP = ",
+                    signif(pearson_res$signif, 3),
+                    "\n\nSpearman r = ",
+                    round(spearman_res$statistic, 3),
+                    "\nP = ",
+                    signif(spearman_res$signif, 3)
+                )
+            )
+    }
+
+    return(p)
+}

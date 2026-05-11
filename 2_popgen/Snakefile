@@ -5,6 +5,7 @@ import os
 
 BASE_DIR="/fs/dss/work/doau0129/hamlet_pheno/"  # hamlet_pheno/
 GENO_DIR=os.path.join(BASE_DIR, "2_popgen")
+PHENO_DIR = os.path.join(BASE_DIR, "1_phenotyping/pca")
 SAMPLES_FILE=os.path.join(BASE_DIR, "metadata/geno_names.txt")
 VCF_FILE=os.path.join(BASE_DIR, "phyps2e_m2.vcf.gz")
 GXP_FILE=os.path.join(BASE_DIR, "metadata/color_gxp_peaks.txt")
@@ -64,6 +65,7 @@ rule all:
                 "FigS19_gSpeFST.png"
             ]
         ),
+        f"{FIGURES_DIR}/FigS22_corr.png",
         expand("newhyb/{dataset}/{pair}/done.txt", dataset=locations, pair=PAIRS),
         expand("newhyb/{dataset}/{pair}/done1.txt", dataset=locations, pair=PAIRS),
         f"{FIGURES_DIR}/FigS20_newhybrid.png",
@@ -339,6 +341,40 @@ rule pca_plot:
         Rscript {R_SCRIPT} \
             --base_path {params.base_path} \
             --figure_path {params.figure_path} \
+            --logos_path {params.logos_path} \
+            --spec_colors {params.spec_colors} \
+            --geo_colors {params.geo_colors}
+        """
+
+rule corr_plot:
+    input:
+        gtmat = lambda wildcards: (
+            [f"byLOC/{loc}_ld_pruned_gtmat.traw" for loc in locations] +
+            ["byALL/all.agg.ld_pruned_gtmat.traw"]
+        )
+    output:
+        f"{FIGURES_DIR}/FigS22_corr.png"
+    params:
+        R_code = os.path.join(SCRIPTS_DIR, "R", "FigS22.R")
+        base_path = BASE_DIR,
+        figure_path = FIGURES_DIR,
+        path_phenotypes = PHENO_DIR,
+        logos_path = f"{BASE_DIR}/metadata/logos_hamlet",
+        spec_colors = f"{BASE_DIR}/metadata/species_colors.tsv",
+        geo_colors = f"{BASE_DIR}/metadata/locations_colors.tsv"
+    threads: 1
+    resources:
+        mem_mb=2000,
+        time="2:00:00"
+    shell:
+        """
+        module load hpc-env/13.1
+        module load R/4.3.1-foss-2023a
+
+        Rscript {params.R_code} \
+            --base_path {params.base_path} \
+            --figure_path {params.figure_path} \
+            --path_phenotypes {params.path_phenotypes} \
             --logos_path {params.logos_path} \
             --spec_colors {params.spec_colors} \
             --geo_colors {params.geo_colors}
