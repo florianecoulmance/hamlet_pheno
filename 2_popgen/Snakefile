@@ -355,7 +355,7 @@ rule corr_plot:
     output:
         f"{FIGURES_DIR}/FigS22_corr.png"
     params:
-        R_code = os.path.join(SCRIPTS_DIR, "R", "FigS22.R")
+        R_code = os.path.join(SCRIPTS_DIR, "R", "FigS22.R"),
         base_path = BASE_DIR,
         figure_path = FIGURES_DIR,
         path_phenotypes = PHENO_DIR,
