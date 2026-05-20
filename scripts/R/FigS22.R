@@ -231,7 +231,10 @@ for(dat in names(dataset)) {
     # Store outputs
     #-----------------------------------
     results[[dat]] <- list(
-      phenoGeno_Mantel =  phenoGeno_p
+        pheno_D = pheno_dist,
+        geno_D = geno_dist,
+        phenoGeno_table = phenoGeno_t,
+        phenoGeno_Mantel =  phenoGeno_p
     )
 }
 
@@ -239,20 +242,104 @@ for(dat in names(dataset)) {
 # FINAL PLOTS
 # ############################
 
-all_mantel <- lapply(results, `[[`, "phenoGeno_Mantel")
-all_mantel <- all_mantel[c("all", "boc", "bel", "flk")]
 
-mantel_grid <- plot_grid(
-    plotlist = all_mantel,
+
+#-----------------------------------
+# Plot all sympatric species pairs together
+#-----------------------------------
+selected <- c("bel", "boc", "flk")
+
+phenoD_combined <- bind_rows(
+    lapply(selected, function(x) {
+
+        as.data.frame(
+            as.table(as.matrix(results[[x]]$pheno_D))
+        ) %>%
+            setNames(c("species1", "species2", "distance_pheno")) %>%
+            mutate(
+                species1 = as.character(species1),
+                species2 = as.character(species2),
+                dataset = x
+            ) %>%
+            filter(species1 < species2)
+
+    })
+)
+print(phenoD_combined)
+
+
+genoD_combined <- bind_rows(
+    lapply(selected, function(x) {
+
+        as.data.frame(
+            as.table(as.matrix(results[[x]]$geno_D))
+        ) %>%
+            setNames(c("species1", "species2", "distance_geno")) %>%
+            mutate(
+                species1 = as.character(species1),
+                species2 = as.character(species2),
+                dataset = x
+            ) %>%
+            filter(species1 < species2)
+
+    })
+)
+print(genoD_combined)
+
+
+phenoGeno_combined <- bind_rows(
+    lapply(selected, function(x) {
+        results[[x]]$phenoGeno_table %>%
+            mutate(dataset = x)
+    })
+)
+print(phenoGeno_combined)
+
+pearsonMantel <- mantel(
+    phenoD_combined,
+    genoD_combined,
+    method = "pearson",
+    permutations = 9999
+)
+
+spearmanMantel <- mantel(
+    phenoD_combined,
+    genoD_combined,
+    method = "spearman",
+    permutations = 9999
+)
+
+
+phenoGeno_p_combined <- plot_distance_correlation(
+    df = phenoGeno_combined,
+    x_col = "distance_pheno",
+    y_col = "distance_geno",
+    x_lab = "Phenotypic distance",
+    y_lab = "Genetic distance",
+    title = paste0(dat, " phenotype vs genotype distances"),
+    pearson_res = pearsonMantel,
+    spearman_res = spearmanMantel
+)
+
+#-----------------------------------
+# Retrieve over all location plots
+#-----------------------------------
+all_p <- results[["all"]][["phenoGeno_Mantel"]]
+
+#-----------------------------------
+# Plot sympatric vs all locations correlations
+#-----------------------------------
+mantel_p <- plot_grid(
+    plotlist = c(all_p, phenoGeno_p_combined),
     ncol = 1,
-    labels = c("(a)", "(b)", "(c)", "(d)"),
+    labels = c("(a)", "(b)"),
     label_size = 14,
     align = "v"
 )
 
 ggsave(
   filename = file.path(figure_path, "FigS22_corr.png"),
-  plot = mantel_grid,
+  plot = mantel_p,
   width = 6,
   height = 12,
   units = "in",
