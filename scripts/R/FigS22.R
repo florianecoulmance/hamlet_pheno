@@ -271,7 +271,7 @@ combined_phenoMat <- matrix(
     dimnames = list(all_ids, all_ids)
 )
 
-invisible(lapply(dist_list, function(mat) {
+invisible(lapply(combined_phenoMat, function(mat) {
 
     combined_phenoMat[
         rownames(mat),
