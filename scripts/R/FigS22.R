@@ -231,8 +231,8 @@ for(dat in names(dataset)) {
     # Store outputs
     #-----------------------------------
     results[[dat]] <- list(
-        pheno_m = pheno_mat,
-        geno_m = geno_mat,
+        pheno_D = pheno_dist,
+        geno_D = geno_dist,
         phenoGeno_table = phenoGeno_t,
         phenoGeno_Mantel =  phenoGeno_p
     )
@@ -249,35 +249,43 @@ for(dat in names(dataset)) {
 #-----------------------------------
 selected <- c("bel", "boc", "flk")
 
-dist(pheno_mat, method = "euclidean")
+phenoD_combined <- lapply(selected, function(x) {
 
+    mat <- as.matrix(results[[x]]$pheno_D)
 
-phenoM_combined <- bind_rows(
-    lapply(selected, function(x) {
+    rownames(mat) <- paste0(rownames(mat), "_", x)
+    colnames(mat) <- paste0(colnames(mat), "_", x)
 
-        as.data.frame(
-            as.table(as.matrix(results[[x]]$pheno_m))
-        ) %>%
-            rownames_to_column("spec") %>%
-                mutate(
-                    dataset = x,
-                    dataset_species = paste(dataset, spec, sep = "_")
-                ) %>%
-                    column_to_rownames("dataset_species")
+    mat
+})
 
-    })
-)
-print(phenoM_combined)
-
-phenoD_combined <- dist(phenoM_combined, method = "euclidean")
 print(phenoD_combined)
+names(phenoD_combined) <- selected
+
+all_ids <- unlist(lapply(phenoD_combined, rownames))
+
+combined_phenoMat <- matrix(
+    NA,
+    nrow = length(all_ids),
+    ncol = length(all_ids),
+    dimnames = list(all_ids, all_ids)
+)
+
+invisible(lapply(dist_list, function(mat) {
+
+    combined_phenoMat[
+        rownames(mat),
+        colnames(mat)
+    ] <<- mat
+}))
+
+combined_phenoDist <- as.dist(combined_phenoMat)
+print(combined_phenoDist)
 
 genoM_combined <- bind_rows(
     lapply(selected, function(x) {
-
-        as.data.frame(
-            as.table(as.matrix(results[[x]]$geno_m))
-        ) %>%
+        
+        results[[x]]$geno_m %>%
             rownames_to_column("spec") %>%
                 mutate(
                     dataset = x,
