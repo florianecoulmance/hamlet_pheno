@@ -275,13 +275,13 @@ print(combined_phenoMat)
 
 for (nm in names(phenoD_combined)) {
 
-    mat <- as.data.frame(phenoD_combined[[nm]])
+    mat <- phenoD_combined[[nm]]
 
     combined_phenoMat[rownames(mat), rownames(mat)] <- mat
 }
 print(combined_phenoMat)
 
-combined_phenoDist <- as.dist(combined_phenoMat)
+combined_phenoDist <- as.dist(as.data.frame(combined_phenoMat))
 print(combined_phenoDist)
 
 
