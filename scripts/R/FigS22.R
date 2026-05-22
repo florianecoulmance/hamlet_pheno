@@ -252,6 +252,7 @@ selected <- c("bel", "boc", "flk")
 phenoD_combined <- lapply(selected, function(x) {
 
     mat <- as.matrix(results[[x]]$pheno_D)
+    mat <- as.matrix(mat)
 
     rownames(mat) <- paste0(rownames(mat), "_", x)
     colnames(mat) <- paste0(colnames(mat), "_", x)
@@ -262,7 +263,7 @@ phenoD_combined <- lapply(selected, function(x) {
 print(phenoD_combined)
 names(phenoD_combined) <- selected
 
-all_ids <- unlist(lapply(phenoD_combined, rownames))
+all_ids <- unique(unlist(lapply(phenoD_combined, rownames)))
 
 combined_phenoMat <- matrix(
     NA,
@@ -270,14 +271,15 @@ combined_phenoMat <- matrix(
     ncol = length(all_ids),
     dimnames = list(all_ids, all_ids)
 )
+print(combined_phenoMat)
 
-invisible(lapply(combined_phenoMat, function(mat) {
+for (mat in phenoD_combined) {
 
-    combined_phenoMat[
-        rownames(mat),
-        colnames(mat)
-    ] <<- mat
-}))
+    idx <- intersect(rownames(mat), all_ids)
+
+    combined_phenoMat[idx, idx] <- mat[idx, idx]
+}
+print(combined_phenoMat)
 
 combined_phenoDist <- as.dist(combined_phenoMat)
 print(combined_phenoDist)
