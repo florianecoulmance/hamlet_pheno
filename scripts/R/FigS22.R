@@ -273,16 +273,18 @@ combined_phenoMat <- matrix(
 )
 print(combined_phenoMat)
 
-for (mat in phenoD_combined) {
+for (nm in names(phenoD_combined)) {
 
-    idx <- intersect(rownames(mat), all_ids)
+    mat <- phenoD_combined[[nm]]
 
-    combined_phenoMat[idx, idx] <- mat[idx, idx]
+    combined_phenoMat[rownames(mat), rownames(mat)] <- mat
 }
 print(combined_phenoMat)
 
 combined_phenoDist <- as.dist(combined_phenoMat)
 print(combined_phenoDist)
+
+
 
 genoM_combined <- bind_rows(
     lapply(selected, function(x) {
