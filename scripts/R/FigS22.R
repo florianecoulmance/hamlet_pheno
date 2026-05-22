@@ -277,7 +277,7 @@ for (nm in names(phenoD_combined)) {
 
     mat <- phenoD_combined[[nm]]
 
-    combined_phenoMat[rownames(mat), rownames(mat)] <- mat
+    combined_phenoMat[rownames(as.matrix(mat)), rownames(as.matrix(mat))] <- as.matrix(mat)
 }
 print(combined_phenoMat)
 
