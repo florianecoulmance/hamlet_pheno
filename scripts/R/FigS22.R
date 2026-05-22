@@ -231,8 +231,8 @@ for(dat in names(dataset)) {
     # Store outputs
     #-----------------------------------
     results[[dat]] <- list(
-        pheno_D = pheno_dist,
-        geno_D = geno_dist,
+        pheno_m = pheno_mat,
+        geno_m = geno_mat,
         phenoGeno_table = phenoGeno_t,
         phenoGeno_Mantel =  phenoGeno_p
     )
@@ -249,43 +249,48 @@ for(dat in names(dataset)) {
 #-----------------------------------
 selected <- c("bel", "boc", "flk")
 
-phenoD_combined <- bind_rows(
+dist(pheno_mat, method = "euclidean")
+
+
+phenoM_combined <- bind_rows(
     lapply(selected, function(x) {
 
         as.data.frame(
-            as.table(as.matrix(results[[x]]$pheno_D))
+            as.table(as.matrix(results[[x]]$pheno_m))
         ) %>%
-            setNames(c("species1", "species2", "distance_pheno")) %>%
-            mutate(
-                species1 = as.character(species1),
-                species2 = as.character(species2),
-                dataset = x
-            ) %>%
-            filter(species1 < species2)
+            rownames_to_column("spec") %>%
+                mutate(
+                    dataset = x,
+                    dataset_species = paste(dataset, spec, sep = "_")
+                ) %>%
+                    column_to_rownames("dataset_species")
 
     })
 )
+print(phenoM_combined)
+
+phenoD_combined <- dist(phenoM_combined, method = "euclidean")
 print(phenoD_combined)
 
-
-genoD_combined <- bind_rows(
+genoM_combined <- bind_rows(
     lapply(selected, function(x) {
 
         as.data.frame(
-            as.table(as.matrix(results[[x]]$geno_D))
+            as.table(as.matrix(results[[x]]$geno_m))
         ) %>%
-            setNames(c("species1", "species2", "distance_geno")) %>%
-            mutate(
-                species1 = as.character(species1),
-                species2 = as.character(species2),
-                dataset = x
-            ) %>%
-            filter(species1 < species2)
+            rownames_to_column("spec") %>%
+                mutate(
+                    dataset = x,
+                    dataset_species = paste(dataset, spec, sep = "_")
+                ) %>%
+                    column_to_rownames("dataset_species")
 
     })
 )
-print(genoD_combined)
+print(genoM_combined)
 
+genoD_combined <- dist(genoM_combined, method = "euclidean")
+print(genoD_combined)
 
 phenoGeno_combined <- bind_rows(
     lapply(selected, function(x) {
