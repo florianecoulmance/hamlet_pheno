@@ -275,7 +275,7 @@ print(combined_phenoMat)
 
 for (nm in names(phenoD_combined)) {
 
-    mat <- phenoD_combined[[nm]]
+    mat <- as.data.frame(phenoD_combined[[nm]])
 
     combined_phenoMat[rownames(mat), rownames(mat)] <- mat
 }
