@@ -286,23 +286,41 @@ print(combined_phenoDist)
 
 
 
-genoM_combined <- bind_rows(
-    lapply(selected, function(x) {
-        
-        results[[x]]$geno_m %>%
-            rownames_to_column("spec") %>%
-                mutate(
-                    dataset = x,
-                    dataset_species = paste(dataset, spec, sep = "_")
-                ) %>%
-                    column_to_rownames("dataset_species")
+genoD_combined <- lapply(selected, function(x) {
 
-    })
-)
-print(genoM_combined)
+    mat <- as.matrix(results[[x]]$geno_D)
+    mat <- as.matrix(mat)
 
-genoD_combined <- dist(genoM_combined, method = "euclidean")
+    rownames(mat) <- paste0(rownames(mat), "_", x)
+    colnames(mat) <- paste0(colnames(mat), "_", x)
+
+    mat
+})
+
 print(genoD_combined)
+names(genoD_combined) <- selected
+
+all_ids <- unique(unlist(lapply(genoD_combined, rownames)))
+
+combined_genoMat <- matrix(
+    NA,
+    nrow = length(all_ids),
+    ncol = length(all_ids),
+    dimnames = list(all_ids, all_ids)
+)
+print(combined_genoMat)
+
+for (nm in names(genoD_combined)) {
+
+    mat <- genoD_combined[[nm]]
+
+    combined_genoMat[rownames(as.matrix(mat)), rownames(as.matrix(mat))] <- as.matrix(mat)
+}
+print(combined_genoMat)
+
+combined_genoDist <- as.dist(as.data.frame(combined_genoMat))
+print(combined_genoDist)
+
 
 phenoGeno_combined <- bind_rows(
     lapply(selected, function(x) {
