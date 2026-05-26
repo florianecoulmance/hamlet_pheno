@@ -2196,8 +2196,40 @@ plot_distance_correlation <- function(df,
 
         theme_classic()
 
-    # Add Mantel statistics if provided
+    # Add statistics if provided
     if (!is.null(pearson_res) & !is.null(spearman_res)) {
+
+        # ---------------------------
+        # Pearson extraction
+        # ---------------------------
+        if ("signif" %in% names(pearson_res)) {
+
+            # mantel object
+            pearson_r <- pearson_res$statistic
+            pearson_p <- pearson_res$signif
+
+        } else {
+
+            # cor.test object
+            pearson_r <- pearson_res$estimate
+            pearson_p <- pearson_res$p.value
+        }
+
+        # ---------------------------
+        # Spearman extraction
+        # ---------------------------
+        if ("signif" %in% names(spearman_res)) {
+
+            # mantel object
+            spearman_r <- spearman_res$statistic
+            spearman_p <- spearman_res$signif
+
+        } else {
+
+            # cor.test object
+            spearman_r <- spearman_res$estimate
+            spearman_p <- spearman_res$p.value
+        }
 
         p <- p +
             annotate(
@@ -2209,13 +2241,13 @@ plot_distance_correlation <- function(df,
                 size = 5,
                 label = paste0(
                     "Pearson r = ",
-                    round(pearson_res$statistic, 3),
+                    round(pearson_r, 3),
                     "\nP = ",
-                    signif(pearson_res$signif, 3),
+                    signif(pearson_p, 3),
                     "\n\nSpearman r = ",
-                    round(spearman_res$statistic, 3),
+                    round(spearman_r, 3),
                     "\nP = ",
-                    signif(spearman_res$signif, 3)
+                    signif(spearman_p, 3)
                 )
             )
     }
