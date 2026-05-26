@@ -330,20 +330,31 @@ phenoGeno_combined <- bind_rows(
 )
 print(phenoGeno_combined)
 
-pearsonMantel <- mantel(
-    combined_phenoDist,
-    combined_genoDist,
-    method = "pearson",
-    permutations = 9999
+# pearsonMantel <- mantel(
+#     combined_phenoDist,
+#     combined_genoDist,
+#     method = "pearson",
+#     permutations = 9999
+# )
+
+# spearmanMantel <- mantel(
+#     combined_phenoDist,
+#     combined_genoDist,
+#     method = "spearman",
+#     permutations = 9999
+# )
+
+pearsonCorr <- cor.test(
+    phenoGeno_combined$distance_pheno,
+    phenoGeno_combined$distance_geno,
+    method = "pearson"
 )
 
-spearmanMantel <- mantel(
-    combined_phenoDist,
-    combined_genoDist,
-    method = "spearman",
-    permutations = 9999
+spearmanCorr <- cor.test(
+    phenoGeno_combined$distance_pheno,
+    phenoGeno_combined$distance_geno,
+    method = "spearman"
 )
-
 
 phenoGeno_p_combined <- plot_distance_correlation(
     df = phenoGeno_combined,
@@ -352,8 +363,8 @@ phenoGeno_p_combined <- plot_distance_correlation(
     x_lab = "Phenotypic distance",
     y_lab = "Genetic distance",
     title = "Sympatric phenotype vs genotype distances",
-    pearson_res = pearsonMantel,
-    spearman_res = spearmanMantel
+    pearson_res = pearsonCorr,
+    spearman_res = spearmanCorr
 )
 
 #-----------------------------------
