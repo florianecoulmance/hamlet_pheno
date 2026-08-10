@@ -13,7 +13,7 @@ FIGURES_DIR = os.path.join(BASE_DIR, "figures")
 
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 PYTHON_SCRIPT = os.path.join(SCRIPTS_DIR, "python", "phenotyping.py")
-R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig1-2_S3-S10.R")
+R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig1_S3-S10.R")
 
 # Parameter sets for phenotyping.py
 phenotyping_params = [

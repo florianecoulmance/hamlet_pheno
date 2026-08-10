@@ -14,7 +14,7 @@ GXP_FILE=os.path.join(BASE_DIR, "metadata/color_gxp_peaks.txt")
 FIGURES_DIR = os.path.join(BASE_DIR, "figures")
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 PYTHON_SCRIPT = os.path.join(SCRIPTS_DIR, "python", "permanova.py")
-R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig3-4_S11-S18.R")
+R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig2_S11-S21.R")
 SPID_SCRIPT = os.path.join(SCRIPTS_DIR, "sh", "vcf2nh.spid")
 
 # Separate datasets into "location" and "species" groups
@@ -408,7 +408,7 @@ rule corr_plot:
     output:
         f"{FIGURES_DIR}/Fig3_correlations.png"
     params:
-        R_code = os.path.join(SCRIPTS_DIR, "R", "FigS22.R"),
+        R_code = os.path.join(SCRIPTS_DIR, "R", "Fig3.R"),
         base_path = BASE_DIR,
         figure_path = FIGURES_DIR,
         path_phenotypes = PHENO_DIR,
@@ -645,7 +645,7 @@ rule plot_newhybrids:
     shell:
         r"""
         module load R/4.3.1-foss-2023a
-        Rscript {SCRIPTS_DIR}/R/FigS20.R {params.base_dir} {params.fig_dir}
+        Rscript {SCRIPTS_DIR}/R/FigS22-26.R {params.base_dir} {params.fig_dir}
         """
 
 
@@ -900,5 +900,5 @@ rule plot_ld:
     shell:
         r"""
         module load R/4.3.1-foss-2023a
-        Rscript {SCRIPTS_DIR}/R/FigS21.R {params.base_dir} {params.fig_dir}
+        Rscript {SCRIPTS_DIR}/R/FigS27.R {params.base_dir} {params.fig_dir}
         """
