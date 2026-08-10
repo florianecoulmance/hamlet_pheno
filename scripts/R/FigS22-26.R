@@ -68,12 +68,28 @@ plots <- data %>%
 # FINAL FIGURE
 # ---------------------------------------------------------
 
-combine_plots(plots, file.path(fig_dir, "FigS20_newhybrid.png"))
+# combine_plots(plots, file.path(fig_dir, "FigS20_newhybrid.png"))
 
-purrr::iwalk(plots, function(p, loc) {
+# purrr::iwalk(plots, function(p, loc) {
+#   ggsave(
+#     filename = file.path(fig_dir, paste0("newHybrids_", loc, ".png")),
+#     plot = p,
+#     height = 20,
+#     width = 20,
+#     dpi = 600
+#   )
+# })
+
+purrr::iwalk(seq_along(plots), function(i, ...) {
+
+  loc <- names(plots)[i]
+
   ggsave(
-    filename = file.path(fig_dir, paste0("hybrids_", loc, ".png")),
-    plot = p,
+    filename = file.path(
+      fig_dir,
+      paste0("FigS", 21 + i, "_newHybrids_", loc, ".png")
+    ),
+    plot = plots[[i]],
     height = 20,
     width = 20,
     dpi = 600

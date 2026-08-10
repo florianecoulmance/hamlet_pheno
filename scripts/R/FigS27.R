@@ -38,7 +38,7 @@ length(plots) <- 9
 # plot grid (600 dpi PNG)
 # -----------------------------
 png(
-  filename = file.path(fig_dir, "FigS21_LDboxplots.png"),
+  filename = file.path(fig_dir, "FigS27_LDboxplots.png"),
   width = 16,
   height = 16,
   units = "in",

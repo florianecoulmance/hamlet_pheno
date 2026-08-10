@@ -50,15 +50,14 @@ rule all:
         expand(
             f"{FIGURES_DIR}/{{fig_name}}",
             fig_name=[
-                "Fig1_pAllPCA.png",
-                "Fig2_pLocPCA.png",
+                "Fig1_pPCA.png",
                 "FigS3_pAllVAR.png",
-                "FigS4_pLocSUP.png",
-                "FigS5_pLocPERM.png",
-                "FigS6_pLocHCLUST.png",
-                "FigS7_pLocHEAT.png",
-                "FigS8_pAll.png",
-                "FigS9_pAllSUP.png",
+                "FigS4_pPCA_sup.png",
+                "FigS5_pPCA_loc.png",
+                "FigS6_pAll.png",
+                "FigS7_pLocPERM.png",
+                "FigS8_pLocHCLUST.png",
+                "FigS9_pLocHEAT.png",
                 "FigS10_pSpe.png"
             ]
         )
@@ -106,15 +105,14 @@ rule plot_figures:
         pca=lambda wildcards: [f"{PCA_DIR}/{p['dataset']}_PCs.csv" for p in phenotyping_params],
         var=lambda wildcards: [f"{PCA_DIR}/{p['dataset']}_var.csv" for p in phenotyping_params]
     output:
-        f"{FIGURES_DIR}/Fig1_pAllPCA.png",
-        f"{FIGURES_DIR}/Fig2_pLocPCA.png",
+        f"{FIGURES_DIR}/Fig1_pPCA.png",
         f"{FIGURES_DIR}/FigS3_pAllVAR.png",
-        f"{FIGURES_DIR}/FigS4_pLocSUP.png",
-        f"{FIGURES_DIR}/FigS5_pLocPERM.png",
-        f"{FIGURES_DIR}/FigS6_pLocHCLUST.png",
-        f"{FIGURES_DIR}/FigS7_pLocHEAT.png",
-        f"{FIGURES_DIR}/FigS8_pAll.png",
-        f"{FIGURES_DIR}/FigS9_pAllSUP.png",
+        f"{FIGURES_DIR}/FigS4_pPCA_sup.png",
+        f"{FIGURES_DIR}/FigS5_pPCA_loc.png",
+        f"{FIGURES_DIR}/FigS6_pAll.png",
+        f"{FIGURES_DIR}/FigS7_pLocPERM.png",
+        f"{FIGURES_DIR}/FigS8_pLocHCLUST.png",
+        f"{FIGURES_DIR}/FigS9_pLocHEAT.png",
         f"{FIGURES_DIR}/FigS10_pSpe.png"
     params:
         base_path = BASE_DIR,

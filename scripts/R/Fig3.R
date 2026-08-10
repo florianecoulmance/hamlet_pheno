@@ -384,7 +384,7 @@ mantel_p <- plot_grid(
 )
 
 ggsave(
-  filename = file.path(figure_path, "FigS22_corr.png"),
+  filename = file.path(figure_path, "Fig3_correlations.png"),
   plot = mantel_p,
   width = 6,
   height = 12,

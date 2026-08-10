@@ -52,24 +52,33 @@ rule all:
         expand(
             f"{FIGURES_DIR}/{{fig_name}}",
             fig_name=[
-                "Fig3_gAllPCA.png",
-                "Fig4_gLocPCA.png",
-                "FigS11_gAllVAR.png",
-                "FigS12_gLocSUP.png",
-                "FigS13_gLocPERM.png",
-                "FigS14_gAllPERM.png",
-                "FigS15_gSpe.png",
-                "FigS16_gFSTviolin.png",
-                "FigS17_gLocFST.png",
-                "FigS18_gAllsFST.png",
-                "FigS19_gSpeFST.png"
+                "Fig2_pairFST.png",
+                "FigS11_gFSTviolin.png",
+                "FigS12_gLocFST.png",
+                "FigS13_gAllsFST.png",
+                "FigS14_gSpeFST.png",
+                "FigS15_gAllPCA.png",
+                "FigS16_gAllVAR.png",
+                "FigS17_gLocPCA.png",
+                "FigS18_gLocSUP.png",
+                "FigS19_gAllPERM.png",
+                "FigS20_gLocPERM.png",
+                "FigS21_gSpe.png"
             ]
         ),
-        f"{FIGURES_DIR}/FigS22_corr.png",
+        f"{FIGURES_DIR}/Fig3_correlations.png",
         expand("newhyb/{dataset}/{pair}/done.txt", dataset=locations, pair=PAIRS),
         expand("newhyb/{dataset}/{pair}/done1.txt", dataset=locations, pair=PAIRS),
-        f"{FIGURES_DIR}/FigS20_newhybrid.png",
-        "ld/LD.bed",
+        expand(
+            f"{FIGURES_DIR}/{{fig_name}}",
+            fig_name=[
+                "FigS22_newhybrid_bel.png",
+                "FigS23_newhybrid_boc.png",
+                "FigS24_newhybrid_flk.png",
+                "FigS25_newhybrid_hon.png",
+                "FigS26_newhybrid_pri.png"
+            ]
+        ),        "ld/LD.bed",
         expand("ld/{dataset}.bed", dataset=ld_datasets),
         expand("ld/{dataset}.bim", dataset=ld_datasets),
         expand("ld/{dataset}.fam", dataset=ld_datasets),
@@ -82,7 +91,7 @@ rule all:
         expand("ld/{dataset}.LG04_LG12_1.ld", dataset=ld_datasets),
         expand("ld/{dataset}.LG04_LG12_2.ld", dataset=ld_datasets),
         expand("ld/{dataset}.LG12_1_LG12_2.ld", dataset=ld_datasets),
-        f"{FIGURES_DIR}/FigS21_LDboxplots.png"
+        f"{FIGURES_DIR}/FigS27_LDboxplots.png"
 
 
 # --- Create directories ---
@@ -312,17 +321,18 @@ rule pca_plot:
             ["byALL/permanova_results/all.sm.pairwise.csv"]
         )
     output:
-        f"{FIGURES_DIR}/Fig3_gAllPCA.png",
-        f"{FIGURES_DIR}/Fig4_gLocPCA.png",
-        f"{FIGURES_DIR}/FigS11_gAllVAR.png",
-        f"{FIGURES_DIR}/FigS12_gLocSUP.png",
-        f"{FIGURES_DIR}/FigS13_gLocPERM.png",
-        f"{FIGURES_DIR}/FigS14_gAllPERM.png",
-        f"{FIGURES_DIR}/FigS15_gSpe.png",
-        f"{FIGURES_DIR}/FigS16_gFSTviolin.png",
-        f"{FIGURES_DIR}/FigS17_gLocFST.png",
-        f"{FIGURES_DIR}/FigS18_gAllsFST.png",
-        f"{FIGURES_DIR}/FigS19_gSpeFST.png"
+        f"{FIGURES_DIR}/Fig2_pairFST.png",
+        f"{FIGURES_DIR}/FigS11_gFSTviolin.png",
+        f"{FIGURES_DIR}/FigS12_gLocFST.png",
+        f"{FIGURES_DIR}/FigS13_gAllsFST.png",
+        f"{FIGURES_DIR}/FigS14_gSpeFST.png",
+        f"{FIGURES_DIR}/FigS15_gAllPCA.png",
+        f"{FIGURES_DIR}/FigS16_gAllVAR.png",
+        f"{FIGURES_DIR}/FigS17_gLocPCA.png",
+        f"{FIGURES_DIR}/FigS18_gLocSUP.png",
+        f"{FIGURES_DIR}/FigS19_gAllPERM.png",
+        f"{FIGURES_DIR}/FigS20_gLocPERM.png",
+        f"{FIGURES_DIR}/FigS21_gSpe.png"
     params:
         base_path = BASE_DIR,
         figure_path = FIGURES_DIR,
@@ -346,6 +356,49 @@ rule pca_plot:
             --geo_colors {params.geo_colors}
         """
 
+
+rule multi_fst_windowed_filtered:
+    input:
+        bed = "byALL/all.flt.bed",
+        bim = "byALL/all.flt.bim",
+        fam = "byALL/all.flt.fam",
+        pop = "byALL/all.pop"
+    output:
+        fst = "byALL/all.flt.fst.50kb.tsv.gz"
+        vcf = "byALL/all.flt.vcf.gz"
+    params:
+        prefix = "byALL/all.flt",
+        window = 50000,
+        step = 5000
+    shell:
+        r"""
+        module load PLINK/v1.9b7.4-x86_64
+        module load VCFtools/0.1.16-GCC-13.1.0
+        module load BCFtools/1.18-GCC-13.1.0
+
+        # ------------------------------------------------------------
+        # 1. convert PLINK filtered dataset back to VCF
+        # ------------------------------------------------------------
+        plink --bfile {params.prefix} \
+              --recode vcf bgz \
+              --allow-extra-chr \
+              --double-id \
+              --out {params.prefix}
+
+        bcftools index {params.prefix}.vcf.gz
+
+        # ------------------------------------------------------------
+        # 2. multi-pop windowed FST (vcftools = mean pairwise FST)
+        # ------------------------------------------------------------
+        pixy \
+            --vcf {params.prefix}.vcf.gz \
+            --populations {input.pop} \
+            --window_size {params.window} \
+            --n_cores 16 \
+            --stats fst dxy \
+            --output_prefix {params.prefix}
+        """
+
 rule corr_plot:
     input:
         gtmat = lambda wildcards: (
@@ -353,7 +406,7 @@ rule corr_plot:
             ["byALL/all.agg.ld_pruned_gtmat.traw"]
         )
     output:
-        f"{FIGURES_DIR}/FigS22_corr.png"
+        f"{FIGURES_DIR}/Fig3_correlations.png"
     params:
         R_code = os.path.join(SCRIPTS_DIR, "R", "FigS22.R"),
         base_path = BASE_DIR,
@@ -581,7 +634,11 @@ rule plot_newhybrids:
                dataset=locations,
                pair=PAIRS)
     output:
-        fig = f"{FIGURES_DIR}/FigS20_newhybrid.png"
+        f"{FIGURES_DIR}/FigS22_newhybrid_bel.png",
+        f"{FIGURES_DIR}/FigS23_newhybrid_boc.png",
+        f"{FIGURES_DIR}/FigS24_newhybrid_flk.png",
+        f"{FIGURES_DIR}/FigS25_newhybrid_hon.png",
+        f"{FIGURES_DIR}/FigS26_newhybrid_pri.png"
     params:
         base_dir = BASE_DIR,
         fig_dir = FIGURES_DIR
@@ -836,7 +893,7 @@ rule plot_ld:
         expand("ld/{dataset}.LG04_LG12_2.ld", dataset=ld_datasets),
         expand("ld/{dataset}.LG12_1_LG12_2.ld", dataset=ld_datasets)
     output:
-        fig = f"{FIGURES_DIR}/FigS21_LDboxplots.png"
+        f"{FIGURES_DIR}/FigS27_LDboxplots.png"
     params:
         base_dir = BASE_DIR,
         fig_dir = FIGURES_DIR
