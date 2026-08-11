@@ -178,18 +178,21 @@ print(keep_names)
 Fig1_pcas <- lapply(resFig1, `[[`, "pca") # extract per location pcas
 pca_grid <- plot_grid(plotlist = Fig1_pcas, ncol = 1, rel_widths = c(1, 1, 1), scale = 0.95) # bundle location pcas in one plot
 
+figure1_top <- plot_grid(
+  results[["all"]][["pca"]],
+  pca_grid,
+  ncol =2,
+  rel_widths = c(1, 1)
+)
+
 figure1 <- ggarrange(
-  ggarrange(
-    results[["all"]][["pca"]],
-    pca_grid,
-    ncol =2
-  ),
+  figure1_top,
   NULL,
   leg,
   NULL,
-  nrow = 3,
+  nrow = 4,
   heights = c(8, 0.3, 1, 0.05)
-  )
+)
   
 ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
@@ -250,19 +253,21 @@ print(keep_names)
 FigS4_pcas <- lapply(resFigS4, `[[`, "pca") # extract per location pcas
 pca_grid <- plot_grid(plotlist = FigS4_pcas, ncol = 1, rel_widths = c(1, 1, 1), scale = 0.95) # bundle location pcas in one plot
 
+figureS4_top <- plot_grid(
+  results[["all"]][["sup_pca"]],
+  pca_grid,
+  ncol = 2,
+  rel_widths = c(1, 1)
+)
+
 figureS4 <- ggarrange(
-  ggarrange(
-    results[["all"]][["sup_pca"]],
-    pca_grid,
-    ncol =2
-  ),
+  figureS4_top,
   NULL,
   leg,
   NULL,
-  nrow = 3,
+  nrow = 4,
   heights = c(8, 0.3, 1, 0.05)
-  )
-
+)
 
 # Save as PNG (A4 size)
 ggsave(
