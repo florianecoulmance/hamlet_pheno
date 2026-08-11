@@ -362,7 +362,7 @@ rule multi_fst_windowed_filtered:
         bed = "byALL/all.flt.bed",
         bim = "byALL/all.flt.bim",
         fam = "byALL/all.flt.fam",
-        pop = "byALL/all.pop"
+        popu = "byALL/all.pop"
     output:
         fst = "byALL/all.flt.fst.50kb.tsv.gz",
         vcf = "byALL/all.flt.vcf.gz"
@@ -392,7 +392,7 @@ rule multi_fst_windowed_filtered:
         # ------------------------------------------------------------
         pixy \
             --vcf {params.prefix}.vcf.gz \
-            --populations {input.pop} \
+            --populations {input.popu} \
             --window_size {params.window} \
             --n_cores 16 \
             --stats fst dxy \
