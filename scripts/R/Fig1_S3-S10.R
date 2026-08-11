@@ -182,7 +182,7 @@ figure1_top <- plot_grid(
   results[["all"]][["pca"]],
   pca_grid,
   ncol =2,
-  rel_widths = c(1, 1)
+  rel_widths = c(2, 1)
 )
 
 figure1 <- ggarrange(
@@ -257,7 +257,7 @@ figureS4_top <- plot_grid(
   results[["all"]][["sup_pca"]],
   pca_grid,
   ncol = 2,
-  rel_widths = c(1, 1)
+  rel_widths = c(2, 1)
 )
 
 figureS4 <- ggarrange(
