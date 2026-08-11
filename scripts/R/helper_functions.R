@@ -989,8 +989,8 @@ pca_analysis <- function(gtfile, samplefile, color_by) {
     # Extract PCA outputs
     pca_coords <- sm.pca$pca.sample_coordinates
     var_explained <- sm.pca$pca.eigenvalues
-    # print(head(pca_coords))
-    # print(head(var_explained))
+    print(head(pca_coords))
+    print(head(var_explained))
 
     # Ensure the PCA coordinates rows are in the same order as the original samples
     #pca_coords <- pca_coords[match(allsamples, rownames(pca_coords)), ]
@@ -1000,11 +1000,11 @@ pca_analysis <- function(gtfile, samplefile, color_by) {
     pca_coords$spec   <- spec
     pca_coords$geo    <- geo
     pca_coords$sample <- allsamples
-    # print(head(pca_coords))    
+    print(head(pca_coords))    
 
     # Extract the "variance explained" row as numeric
     var_explained <- as.numeric(var_explained["variance explained", ])
-    # print(var_explained)
+    print(var_explained)
 
     # If currently in percentages, convert to fractions
     var_explained <- var_explained / 100  # remove if already in 0-1 range
@@ -1014,7 +1014,7 @@ pca_analysis <- function(gtfile, samplefile, color_by) {
     # print(table)
     # Add row numbers starting from 0 if needed
     rownames(table) <- 0:(length(var_explained)-1)
-    # print(table)
+    print(table)
 
     # Access the values like
     # (print(table$X0))
