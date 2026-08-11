@@ -225,51 +225,70 @@ fst_sympDF <- fst_symp_df %>%
   distinct(dataset, pair, .keep_all = TRUE)
 print(fst_sympDF)
 
-# order
+# Define desired location order
+location_levels <- c( "hon", "bel", "boc", "pri", "arc", "bar", "flk", "gun", "qui" )
+
 fst_sympDF <- fst_sympDF %>%
+  mutate(
+    dataset = factor(dataset, levels = location_levels)
+  ) %>%
   arrange(dataset, pair)
 
-fst_sympDF$pair <- factor(fst_sympDF$pair, levels = unique(fst_sympDF$pair))
+# Create unique identifier for every location/pair combination
+fst_sympDF <- fst_sympDF %>% mutate( pair_location = paste(dataset, pair, sep = "___") )
+
+y_levels <- fst_sympDF$pair_location
+
+fst_sympDF <- fst_sympDF %>% mutate( pair_location = factor( pair_location, levels = rev(y_levels) ) )
+
+# fst_sympDF$pair <- factor(fst_sympDF$pair, levels = unique(fst_sympDF$pair))
 
 # numeric x positions (needed for annotations)
-fst_sympDF$x <- as.numeric(fst_sympDF$pair)
+# fst_sympDF$x <- as.numeric(fst_sympDF$pair)
 print(fst_sympDF)
 
 # build location boundaries for "second axis"
 loc_bounds <- fst_sympDF %>%
+  mutate(y = as.numeric(pair_location)) %>%
   group_by(dataset) %>%
   summarise(
-    xmin = min(x),
-    xmax = max(x),
-    xmid = mean(x),
+    ymin = min(y),
+    ymax = max(y),
+    ymid = mean(y),
     .groups = "drop"
   )
 
-figure2 <- ggplot(fst_sympDF, aes(x = x, y = Fst, colour = dataset)) +
+print(loc_bounds)
+
+figure2 <- ggplot(fst_sympDF, aes(x = Fst, y = pair_location, colour = dataset)) +
   geom_point(size = 3, alpha = 0.85) +
 
   # species pair axis
-  scale_x_continuous(
-    breaks = fst_sympDF$x,
-    labels = fst_sympDF$pair
+  scale_y_discrete(
+    # breaks = fst_sympDF$x,
+    labels = function(x) { sub("^[^_]+___", "", x) }
   ) +
 
   # add "second axis" as text above/below plot
   annotate(
     "text",
-    x = loc_bounds$xmid,
-    y = max(fst_sympDF$Fst, na.rm = TRUE) * 1.05,
+    x = max(fst_sympDF$Fst, na.rm = TRUE) * 1.08,
+    y = loc_bounds$ymid,
     label = loc_bounds$dataset,
-    fontface = "bold"
+    fontface = "bold",
+    hjust = 0
   ) +
 
+  # Horizontal separators between locations
+  geom_hline( data = loc_bounds, aes(yintercept = ymin - 0.5), colour = "grey70", linewidth = 0.4, inherit.aes = FALSE ) +
+  scale_x_continuous( expand = expansion(mult = c(0.02, 0.18)) ) + 
+  labs( x = "Pairwise FST", y = "Species pair" ) +
+  
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    axis.text.y = element_text(size = 8),
     legend.position = "none"
-  ) +
-  expand_limits(y = max(fst_symp_df$Fst, na.rm = TRUE) * 1.15) +
-  labs(x = "", y = "Pairwise FST")
+  )
 
 
 ggsave(
