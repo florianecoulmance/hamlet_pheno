@@ -197,7 +197,7 @@ figure1 <- ggarrange(
 ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
   plot = figure1,
-  width = 12, 
+  width = 16, 
   height = 13, 
   units = "in",      # inches
   dpi = 150,         # moderate dpi to reduce file size but keep quality
@@ -273,7 +273,7 @@ figureS4 <- ggarrange(
 ggsave(
   filename = file.path(figure_path, "FigS4_pPCA_sup.png"),
   plot = figureS4,
-  width = 12,    # A4 width in inches
+  width = 16,    # A4 width in inches
   height = 13,  # A4 height in inches
   units = "in",
   dpi = 150,
