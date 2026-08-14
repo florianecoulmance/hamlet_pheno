@@ -313,7 +313,7 @@ rule multi_fst_windowed_filtered:
         fam = "byALL/all.flt.fam",
         popu = "byALL/all.pop"
     output:
-        fst = "byALL/all.flt.fst.50kb.tsv.gz",
+        # fst = "byALL/all.flt.fst.50kb.tsv.gz",
         vcf = "byALL/all.flt.vcf.gz"
     params:
         prefix = "byALL/all.flt",
@@ -339,15 +339,15 @@ rule multi_fst_windowed_filtered:
         # ------------------------------------------------------------
         # 2. multi-pop windowed FST (vcftools = mean pairwise FST)
         # ------------------------------------------------------------
-        pixy \
-            --vcf {params.prefix}.vcf.gz \
-            --populations {input.popu} \
-            --window_size {params.window} \
-            --n_cores 16 \
-            --stats fst dxy \
-            --output_folder byALL \
-            --output_prefix all.flt \
-            --bypass_invariant_check
+        # pixy \
+        #     --vcf {params.prefix}.vcf.gz \
+        #     --populations {input.popu} \
+        #     --window_size {params.window} \
+        #     --n_cores 16 \
+        #     --stats fst dxy \
+        #     --output_folder byALL \
+        #     --output_prefix all.flt \
+        #     --bypass_invariant_check
         """
 
 
