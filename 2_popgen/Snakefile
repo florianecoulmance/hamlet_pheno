@@ -347,7 +347,7 @@ rule multi_fst_windowed_filtered:
             --stats fst dxy \
             --output_folder byALL \
             --output_prefix all.flt \
-            --bypass_invariant_check yes
+            --bypass_invariant_check
         """
 
 
