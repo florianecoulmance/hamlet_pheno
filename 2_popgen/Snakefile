@@ -346,7 +346,8 @@ rule multi_fst_windowed_filtered:
             --n_cores 16 \
             --stats fst dxy \
             --output_folder byALL \
-            --output_prefix all.flt
+            --output_prefix all.flt \
+            --bypass_invariant_check yes
         """
 
 
