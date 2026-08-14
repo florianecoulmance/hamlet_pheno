@@ -100,7 +100,7 @@ for(dat in names(dataset)) {
     print(pc_table)
 
     # Average by species
-    pheno_avg <- average_pca_by_species(
+    pheno_avg <-    (
         pc_table,
         species_col = "spec",
         pc_prefix = "PC",
