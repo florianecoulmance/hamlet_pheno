@@ -329,7 +329,7 @@ rule multi_fst_windowed_filtered:
         # 1. convert PLINK filtered dataset back to VCF
         # ------------------------------------------------------------
         plink --bfile {params.prefix} \
-              --recode vcf bgz \
+              --recode vcf-iid bgz \
               --allow-extra-chr \
               --out {params.prefix}
 
