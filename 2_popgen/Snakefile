@@ -331,7 +331,6 @@ rule multi_fst_windowed_filtered:
         plink --bfile {params.prefix} \
               --recode vcf bgz \
               --allow-extra-chr \
-              --double-id \
               --out {params.prefix}
 
         bcftools index {params.prefix}.vcf.gz
