@@ -320,9 +320,9 @@ rule multi_fst_windowed_filtered:
         window = 50000,
         step = 5000
     resources:
-        mem_mb=32000,
+        mem_mb=68000,
         runtime=720
-    threads: 4
+    threads: 16
     shell:
         r"""
         module load PLINK/v1.9b7.4-x86_64
