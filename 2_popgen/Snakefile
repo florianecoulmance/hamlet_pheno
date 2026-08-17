@@ -321,7 +321,7 @@ rule multi_fst_windowed_filtered:
         step = 5000
     resources:
         mem_mb=32000,
-        runtime="10:00:00"
+        runtime=720
     threads: 16
     shell:
         r"""
