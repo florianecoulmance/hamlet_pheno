@@ -321,7 +321,8 @@ rule multi_fst_windowed_filtered:
         step = 5000
     resources:
         mem_mb=32000,
-        time="10:00:00"
+        runtime="10:00:00"
+    threads: 16
     shell:
         r"""
         module load PLINK/v1.9b7.4-x86_64
@@ -345,7 +346,7 @@ rule multi_fst_windowed_filtered:
             --vcf {params.prefix}.vcf.gz \
             --populations {input.popu} \
             --window_size {params.window} \
-            --n_cores 16 \
+            --n_cores {threads} \
             --stats fst dxy \
             --output_folder byALL \
             --output_prefix all.flt \
