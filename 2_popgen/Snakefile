@@ -319,6 +319,9 @@ rule multi_fst_windowed_filtered:
         prefix = "byALL/all.flt",
         window = 50000,
         step = 5000
+    resources:
+        mem_mb=32000,
+        time="10:00:00"
     shell:
         r"""
         module load PLINK/v1.9b7.4-x86_64
