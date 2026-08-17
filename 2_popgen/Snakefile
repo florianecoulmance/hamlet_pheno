@@ -322,7 +322,7 @@ rule multi_fst_windowed_filtered:
     resources:
         mem_mb=32000,
         runtime=720
-    threads: 16
+    threads: 4
     shell:
         r"""
         module load PLINK/v1.9b7.4-x86_64
