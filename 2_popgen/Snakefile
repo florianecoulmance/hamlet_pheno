@@ -350,6 +350,7 @@ rule multi_fst_windowed_filtered:
             --window_size {params.window} \
             --n_cores {threads} \
             --stats fst dxy \
+            --fst_components \
             --output_folder byALL \
             --output_prefix all.flt \
             --bypass_invariant_check

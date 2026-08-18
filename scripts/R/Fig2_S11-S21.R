@@ -37,6 +37,7 @@ library(SNPRelate)
 library(genoscapeRtools)
 library(gridExtra)
 library(purrr)
+library(forcats)
 
 # ############################
 # CONFIG
