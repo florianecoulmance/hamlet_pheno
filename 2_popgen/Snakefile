@@ -414,7 +414,7 @@ rule pca_plot:
         dxy = "byALL/all.flt_dxy.min3.txt",
         fst = "byALL/all.flt_fst.min3.txt"
     output:
-        f"{FIGURES_DIR}/Fig2_pairFST.png"
+        f"{FIGURES_DIR}/Fig2_pairFST.png",
         # f"{FIGURES_DIR}/FigS11_gFSTviolin.png",
         # f"{FIGURES_DIR}/FigS12_gLocFST.png",
         # f"{FIGURES_DIR}/FigS13_gAllsFST.png",
