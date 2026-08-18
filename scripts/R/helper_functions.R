@@ -2430,7 +2430,7 @@ plot_pairwise_metric <- function(df,
                                    "hon", "bel", "boc", "pri", "arc",
                                    "bar", "flk", "gun", "qui"
                                  )) {
-  
+  head(df)
   df <- df %>%
     filter(pop1 != pop2) %>%
     
@@ -2450,4 +2450,113 @@ plot_pairwise_metric <- function(df,
         levels = location_levels
       )
     )
+
+
+  head(df)
+
+  # Keep only requested locations
+  df <- df %>%
+    filter(!is.na(location))
+
+  head(df)
+  
+  # Order pairs within locations
+  pair_order <- df %>%
+    distinct(location, pair) %>%
+    arrange(location, pair)
+
+  print(pair_order)
+
+  # Unique identifier so the same pair can occur at multiple locations
+  df <- df %>%
+    mutate(
+      pair_location = paste(location, pair, sep = "___")
+    )
+
+  head(df)
+  
+  y_levels <- pair_order %>%
+    mutate(
+      pair_location = paste(location, pair, sep = "___")
+    ) %>%
+    pull(pair_location)
+  print(y_levels)
+
+
+  df <- df %>%
+    mutate(
+      pair_location = factor(
+        pair_location,
+        levels = rev(y_levels)
+      )
+    )
+  head(df)
+
+  # Location boundaries
+  loc_bounds <- df %>%
+    mutate(y = as.numeric(pair_location)) %>%
+    group_by(location) %>%
+    summarise(
+      ymin = min(y),
+      ymax = max(y),
+      ymid = mean(y),
+      .groups = "drop"
+    )
+  print(loc_bounds)
+  
+  # Plot
+  ggplot(
+    df,
+    aes(
+      x = .data[[metric]],
+      y = pair_location
+    )
+  ) +
+    geom_boxplot(
+      width = 0.65,
+      outlier.size = 0.5
+    ) +
+    
+    scale_y_discrete(
+      labels = function(x) {
+        sub("^[^_]+___", "", x)
+      }
+    ) +
+    
+    # Location labels on the right
+    annotate(
+      "text",
+      x = max(df[[metric]], na.rm = TRUE) * 1.08,
+      y = loc_bounds$ymid,
+      label = loc_bounds$location,
+      fontface = "bold",
+      hjust = 0
+    ) +
+    
+    # Separators between locations
+    geom_hline(
+      data = loc_bounds,
+      aes(
+        yintercept = ymin - 0.5
+      ),
+      colour = "grey70",
+      linewidth = 0.4,
+      inherit.aes = FALSE
+    ) +
+    
+    scale_x_continuous(
+      expand = expansion(mult = c(0.02, 0.18))
+    ) +
+    
+    labs(
+      x = xlab,
+      y = "Species pair"
+    ) +
+    
+    theme_minimal() +
+    theme(
+      axis.text.y = element_text(size = 8),
+      legend.position = "none"
+    )
+ 
 }
