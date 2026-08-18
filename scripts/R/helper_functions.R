@@ -2439,7 +2439,7 @@ plot_pairwise_metric <- function(df,
       pair = paste(sort(c(pop1, pop2)), collapse = " - "),
       
       # location = first 3 characters
-      location = substr(pop1, 1, 3)
+      location = substr(pop1, 4, 6)
     ) %>%
     
     ungroup() %>%
@@ -2503,7 +2503,7 @@ plot_pairwise_metric <- function(df,
       .groups = "drop"
     )
   print(loc_bounds)
-  
+
   # Plot
   ggplot(
     df,
