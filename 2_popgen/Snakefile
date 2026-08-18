@@ -48,6 +48,8 @@ rule all:
         expand("bySPC/permanova_results/{dataset}.sm.pairwise.csv", dataset=plink_species),
         "byALL/permanova_results/all.sm.pairwise.csv",
         "byALL/permanova_results/all.lm.pairwise.csv",
+        "byALL/all.flt_dxy.min3.txt",
+        "byALL/all.flt_fst.min3.txt",
         # Figure outputs
         expand(
             f"{FIGURES_DIR}/{{fig_name}}",
@@ -351,6 +353,46 @@ rule multi_fst_windowed_filtered:
             --output_folder byALL \
             --output_prefix all.flt \
             --bypass_invariant_check
+        """
+
+
+rule filter_dxy_min3:
+    input:
+        dxy = "byALL/all.flt_dxy.txt",
+        fst = "byALL/all.flt_fst.txt",
+        pop = "byALL/all.pop"
+    output:
+        dxy = "byALL/all.flt_dxy.min3.txt",
+        fst = "byALL/all.flt_fst.min3.txt"
+    shell:
+        r"""
+        awk '
+        NR==FNR {{
+            n[$2]++
+            next
+        }}
+        NR==1 {{
+            print
+            next
+        }}
+        ($1 in n) && ($2 in n) && n[$1] >= 3 && n[$2] >= 3 {{
+            print
+        }}
+        ' {input.pop} {input.dxy} > {output.dxy}
+
+                awk '
+        NR==FNR {{
+            n[$2]++
+            next
+        }}
+        NR==1 {{
+            print
+            next
+        }}
+        ($1 in n) && ($2 in n) && n[$1] >= 3 && n[$2] >= 3 {{
+            print
+        }}
+        ' {input.pop} {input.fst} > {output.fst}
         """
 
 
