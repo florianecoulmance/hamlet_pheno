@@ -54,18 +54,18 @@ rule all:
         expand(
             f"{FIGURES_DIR}/{{fig_name}}",
             fig_name=[
-                "Fig2_pairFST.png",
-                "FigS11_gFSTviolin.png",
-                "FigS12_gLocFST.png",
-                "FigS13_gAllsFST.png",
-                "FigS14_gSpeFST.png",
-                "FigS15_gAllPCA.png",
-                "FigS16_gAllVAR.png",
-                "FigS17_gLocPCA.png",
-                "FigS18_gLocSUP.png",
-                "FigS19_gAllPERM.png",
-                "FigS20_gLocPERM.png",
-                "FigS21_gSpe.png"
+                "Fig2_pairFST.png"
+                # "FigS11_gFSTviolin.png",
+                # "FigS12_gLocFST.png",
+                # "FigS13_gAllsFST.png",
+                # "FigS14_gSpeFST.png",
+                # "FigS15_gAllPCA.png",
+                # "FigS16_gAllVAR.png",
+                # "FigS17_gLocPCA.png",
+                # "FigS18_gLocSUP.png",
+                # "FigS19_gAllPERM.png",
+                # "FigS20_gLocPERM.png",
+                # "FigS21_gSpe.png"
             ]
         ),
         f"{FIGURES_DIR}/Fig3_correlations.png",
@@ -410,20 +410,22 @@ rule pca_plot:
             [f"bySPC/permanova_results/{spc}.sm.pairwise.csv" for spc in plink_species] +
             ["byALL/permanova_results/all.lm.pairwise.csv"] +
             ["byALL/permanova_results/all.sm.pairwise.csv"]
-        )
+        ),
+        dxy = "byALL/all.flt_dxy.min3.txt",
+        fst = "byALL/all.flt_fst.min3.txt"
     output:
-        f"{FIGURES_DIR}/Fig2_pairFST.png",
-        f"{FIGURES_DIR}/FigS11_gFSTviolin.png",
-        f"{FIGURES_DIR}/FigS12_gLocFST.png",
-        f"{FIGURES_DIR}/FigS13_gAllsFST.png",
-        f"{FIGURES_DIR}/FigS14_gSpeFST.png",
-        f"{FIGURES_DIR}/FigS15_gAllPCA.png",
-        f"{FIGURES_DIR}/FigS16_gAllVAR.png",
-        f"{FIGURES_DIR}/FigS17_gLocPCA.png",
-        f"{FIGURES_DIR}/FigS18_gLocSUP.png",
-        f"{FIGURES_DIR}/FigS19_gAllPERM.png",
-        f"{FIGURES_DIR}/FigS20_gLocPERM.png",
-        f"{FIGURES_DIR}/FigS21_gSpe.png"
+        f"{FIGURES_DIR}/Fig2_pairFST.png"
+        # f"{FIGURES_DIR}/FigS11_gFSTviolin.png",
+        # f"{FIGURES_DIR}/FigS12_gLocFST.png",
+        # f"{FIGURES_DIR}/FigS13_gAllsFST.png",
+        # f"{FIGURES_DIR}/FigS14_gSpeFST.png",
+        # f"{FIGURES_DIR}/FigS15_gAllPCA.png",
+        # f"{FIGURES_DIR}/FigS16_gAllVAR.png",
+        # f"{FIGURES_DIR}/FigS17_gLocPCA.png",
+        # f"{FIGURES_DIR}/FigS18_gLocSUP.png",
+        # f"{FIGURES_DIR}/FigS19_gAllPERM.png",
+        # f"{FIGURES_DIR}/FigS20_gLocPERM.png",
+        # f"{FIGURES_DIR}/FigS21_gSpe.png"
     params:
         base_path = BASE_DIR,
         figure_path = FIGURES_DIR,

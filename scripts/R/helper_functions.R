@@ -2254,3 +2254,199 @@ plot_distance_correlation <- function(df,
 
     return(p)
 }
+
+# ============================================================
+# FST aggregation across all population pairs from pixy output
+# ============================================================
+aggregate_fst_by_window <- function(fst) {
+
+  fst %>%
+    group_by(
+      chromosome,
+      window_pos_1,
+      window_pos_2
+    ) %>%
+    summarise(
+
+      # Correct WC84 aggregation
+      fst = sum(wc_fst_a, na.rm = TRUE) /
+        (
+          sum(wc_fst_a, na.rm = TRUE) +
+          sum(wc_fst_b, na.rm = TRUE) +
+          sum(wc_fst_c, na.rm = TRUE)
+        ),
+
+      no_snps = sum(no_snps, na.rm = TRUE),
+
+      .groups = "drop"
+    )
+}
+
+
+# ============================================================
+# genome wide fst plots
+# ============================================================
+plot_genome_fst <- function(fst, chromosome_info) {
+
+  ggplot(
+    fst,
+    aes(
+      x = genome_pos,
+      y = fst
+    )
+  ) +
+
+    geom_point(
+      size = 0.3,
+      alpha = 0.5
+    ) +
+
+    geom_vline(
+      data = chromosome_info,
+      aes(xintercept = offset),
+      linewidth = 0.3,
+      colour = "grey70"
+    ) +
+
+    scale_x_continuous(
+      breaks = chromosome_info$centre,
+      labels = levels(chromosome_info$chromosome),
+      expand = expansion(mult = c(0.01, 0.01))
+    ) +
+
+    theme_classic() +
+
+    labs(
+      x = "Linkage group",
+      y = "FST"
+    )
+}
+
+
+# ============================================================
+# DXY aggregation across all population pairs from pixy output
+# ============================================================
+aggregate_dxy_by_window <- function(dxy) {
+
+  dxy %>%
+    group_by(
+      chromosome,
+      window_pos_1,
+      window_pos_2
+    ) %>%
+    summarise(
+
+      dxy = sum(count_diffs, na.rm = TRUE) /
+        sum(count_comparisons, na.rm = TRUE),
+
+      no_sites = sum(no_sites, na.rm = TRUE),
+
+      .groups = "drop"
+    )
+}
+
+
+# ============================================================
+# genome wide dxy plots
+# ============================================================
+plot_genome_dxy <- function(dxy, chromosome_info) {
+
+  ggplot(
+    dxy,
+    aes(
+      x = genome_pos,
+      y = dxy
+    )
+  ) +
+
+    geom_point(
+      size = 0.3,
+      alpha = 0.5
+    ) +
+
+    geom_vline(
+      data = chromosome_info,
+      aes(xintercept = offset),
+      linewidth = 0.3,
+      colour = "grey70"
+    ) +
+
+    scale_x_continuous(
+      breaks = chromosome_info$centre,
+      labels = levels(chromosome_info$chromosome),
+      expand = expansion(mult = c(0.01, 0.01))
+    ) +
+
+    theme_classic() +
+
+    labs(
+      x = "Linkage group",
+      y = "dXY"
+    )
+}
+
+
+# ============================================================
+# genome wide chromosome positions
+# ============================================================
+add_genome_position <- function(df) {
+  
+  chromosome_info <- df %>%
+    group_by(chromosome) %>%
+    summarise(
+      chr_length = max(window_pos_2, na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    arrange(chromosome) %>%
+    mutate(
+      offset = lag(cumsum(chr_length), default = 0),
+      centre = offset + chr_length / 2
+    )
+  
+  df <- df %>%
+    left_join(
+      chromosome_info %>%
+        select(chromosome, offset),
+      by = "chromosome"
+    ) %>%
+    mutate(
+      genome_pos = window_pos_1 + offset
+    )
+  
+  list(
+    data = df,
+    chromosomes = chromosome_info
+  )
+}
+
+
+# ============================================================
+# pairwise population fst and dxy boxplots
+# ============================================================
+plot_pairwise_metric <- function(df,
+                                 metric,
+                                 xlab,
+                                 location_levels = c(
+                                   "hon", "bel", "boc", "pri", "arc",
+                                   "bar", "flk", "gun", "qui"
+                                 )) {
+  
+  df <- df %>%
+    filter(pop1 != pop2) %>%
+    
+    rowwise() %>%
+    mutate(
+      pair = paste(sort(c(pop1, pop2)), collapse = " - "),
+      
+      # location = first 3 characters
+      location = substr(pop1, 1, 3)
+    ) %>%
+    
+    ungroup() %>%
+    
+    mutate(
+      location = factor(
+        location,
+        levels = location_levels
+      )
+    )
