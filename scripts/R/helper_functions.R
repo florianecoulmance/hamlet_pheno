@@ -2433,53 +2433,42 @@ plot_pairwise_metric <- function(df,
   head(df)
   df <- df %>%
     filter(pop1 != pop2) %>%
-    
-    rowwise() %>%
     mutate(
-      pair = paste(sort(c(pop1, pop2)), collapse = " - "),
-      
-      # location = first 3 characters
-      location = substr(pop1, 4, 6)
-    ) %>%
-    
-    ungroup() %>%
-    
+      location = substr(pop1, 4, 6),
+      species1 = substr(pop1, 1, 3),
+      species2 = substr(pop2, 1, 3),
+      pair = paste(
+        sort(c(species1, species2)),
+        collapse = " - "
+      )
+    ) %>%    
     mutate(
       location = factor(
         location,
         levels = location_levels
       )
-    )
+    ) %>%
+    filter(!is.na(location))
 
 
   head(df)
 
-  # Keep only requested locations
+  # Unique identifier so the same pair can occur at multiple locations
   df <- df %>%
-    filter(!is.na(location))
+    mutate(
+      pair_location = paste(location, pair, sep = "_")
+    )
 
   head(df)
   
   # Order pairs within locations
   pair_order <- df %>%
-    distinct(location, pair) %>%
+    distinct(location, pair, pair_location) %>%
     arrange(location, pair)
 
   print(pair_order)
 
-  # Unique identifier so the same pair can occur at multiple locations
-  df <- df %>%
-    mutate(
-      pair_location = paste(location, pair, sep = "___")
-    )
-
-  head(df)
-  
-  y_levels <- pair_order %>%
-    mutate(
-      pair_location = paste(location, pair, sep = "___")
-    ) %>%
-    pull(pair_location)
+  y_levels <- pair_order$pair_location
   print(y_levels)
 
 
@@ -2519,18 +2508,21 @@ plot_pairwise_metric <- function(df,
     
     scale_y_discrete(
       labels = function(x) {
-        sub("^[^_]+___", "", x)
+        sub("^[^_]+_", "", x)
       }
     ) +
     
-    # Location labels on the right
-    annotate(
-      "text",
-      x = max(df[[metric]], na.rm = TRUE) * 1.08,
-      y = loc_bounds$ymid,
-      label = loc_bounds$location,
+    # Location labels
+    geom_text(
+      data = loc_bounds,
+      aes(
+        x = Inf,
+        y = ymid,
+        label = location
+      ),
+      hjust = -0.2,
       fontface = "bold",
-      hjust = 0
+      inherit.aes = FALSE
     ) +
     
     # Separators between locations
