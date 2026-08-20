@@ -154,7 +154,8 @@ for(dat in names(dataset)) {
     pcs = paste0("PC", 1:15),
     group_col = if (color == "species") "spec" else "geo"
   )
-
+  print(da)
+  
   # LDA plot
   p_lda <- lda_plot(
     da = da,
