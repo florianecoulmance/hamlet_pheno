@@ -55,7 +55,7 @@ rule all:
             f"{FIGURES_DIR}/{{fig_name}}",
             fig_name=[
                 "Fig2_pairFST.png"
-                # "FigS11_gFSTviolin.png",
+                # "FigS14_gFSTviolin.png",
                 # "FigS12_gLocFST.png",
                 # "FigS13_gAllsFST.png",
                 # "FigS14_gSpeFST.png",
@@ -415,7 +415,7 @@ rule pca_plot:
         fst = "byALL/all.flt_fst.min3.txt"
     output:
         f"{FIGURES_DIR}/Fig2_pairFST.png",
-        # f"{FIGURES_DIR}/FigS11_gFSTviolin.png",
+        # f"{FIGURES_DIR}/FigS14_gFSTviolin.png",
         # f"{FIGURES_DIR}/FigS12_gLocFST.png",
         # f"{FIGURES_DIR}/FigS13_gAllsFST.png",
         # f"{FIGURES_DIR}/FigS14_gSpeFST.png",

@@ -344,17 +344,17 @@ dxy_window <- dxy_genome$data
 head(dxy_window)
 
 
-# 4. PLOT A — FST
-pA <- plot_genome_fst(
-  fst_window,
-  chromosome_info
-)
+# # 4. PLOT A — FST
+# pA <- plot_genome_fst(
+#   fst_window,
+#   chromosome_info
+# )
 
-# 5. PLOT B — DXY
-pB <- plot_genome_dxy(
-  dxy_window,
-  chromosome_info
-)
+# # 5. PLOT B — DXY
+# pB <- plot_genome_dxy(
+#   dxy_window,
+#   chromosome_info
+# )
 
 # 6. PLOT C — FST boxplots
 pC <- plot_pairwise_metric(
@@ -371,15 +371,25 @@ pD <- plot_pairwise_metric(
 )
 
 # figure2 <- (pA | pB) #/ (pC | pD) +   plot_annotation(tag_levels = "a")
-figure2 <- ggarrange(
-  pA,
-  pB,
-  ggarrange(pC, pD, ncol =2, nrow = 1),
-  ncol = 1,
-  nrow = 3,
-  align = "hv",
-  heights = c (1, 1, 9)
-)
+# figure2 <- ggarrange(
+#   pA,
+#   pB,
+#   ggarrange(pC, pD, ncol =2, nrow = 1),
+#   ncol = 1,
+#   nrow = 3,
+#   align = "hv",
+#   heights = c (1, 1, 9)
+# )
+
+figure2 <-
+  ggarrange(
+    pC, 
+    pD,
+    ncol =2,
+    nrow = 1,
+    align = "hv",
+    heights = c (1, 1, 9)
+  )
 
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
@@ -391,7 +401,8 @@ ggsave(
   type = "cairo-png"
 )
 
-# ########## FIGURE S11 ###################
+
+# ########## FIGURE S14 ###################
 # fst_species_df <- map_df(
 #   names(fst_species),
 #   ~ fst_species[[.x]] %>% mutate(dataset = .x)
@@ -433,7 +444,7 @@ ggsave(
 
 # print(fst_all_df)
 
-# figureS11 <- ggplot(fst_all_df, aes(x = group, y = Fst, fill = group)) +
+# figureS14 <- ggplot(fst_all_df, aes(x = group, y = Fst, fill = group)) +
 #   geom_violin(trim = FALSE) +
 #   geom_jitter(aes(color = group), width = 0.05, alpha = 0.6, size = 1) +
 #   geom_boxplot(width = 0.05, outlier.shape = NA, fill = "white") +
@@ -457,8 +468,8 @@ ggsave(
 
 # # Save as PNG (A4 size)
 # ggsave(
-#   filename = file.path(figure_path, "FigS11_gFSTviolin.png"),
-#   plot = figureS11,
+#   filename = file.path(figure_path, "FigS14_gFSTviolin.png"),
+#   plot = figureS14,
 #   width = 7,    # A4 width in inches
 #   height = 7,  # A4 height in inches
 #   units = "in",
