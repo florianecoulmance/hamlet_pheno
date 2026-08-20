@@ -4011,7 +4011,7 @@ lda_plot <- function(
       p,
       top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
     )
-  } else if (color_by == "location" && pc_first=="PC1") {
+  } else if (color_by == "location") {
       p_annot <- annotate_figure(
       p,
       top = text_grob(title_val, color = "black", face = "bold.italic", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
