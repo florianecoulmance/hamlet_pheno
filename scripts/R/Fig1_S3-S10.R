@@ -27,7 +27,9 @@ library(png)
 library(grid)
 library(ggtree)
 library(glue)
-
+library(MASS)
+library(tidyr)
+library(purrr)
 
 
 
@@ -142,7 +144,28 @@ for(dat in names(dataset)) {
   # HEATMAPS fish body for PC combination
   #-----------------------------------
   p_heat <- heat_plots(heatmap_path, dat_name, c(pcs[1], pcs[2]), species_info, geo_table, color_by = color)
-    
+  
+  #-----------------------------------
+  # Discriminant analysis
+  #-----------------------------------
+  if (dat %in% "all") {
+    pairs <- list(
+      c("abe", "pue"),
+      c("abe", "nig"),
+      c("abe", "uni"),
+      c("pue", "nig"),
+      c("pue", "uni"),
+      c("nig", "uni")
+    )
+
+    pheno_lda <- pairwise_phenotypic_divergence(pc_table, pairs=pairs)
+    pheno_div <- pheno_lda$summary
+  } else {
+    pheno_div <- NULL
+  }
+  
+  print(pheno_div)
+
   #-----------------------------------
   # Store outputs
   #-----------------------------------
@@ -154,7 +177,8 @@ for(dat in names(dataset)) {
     variance_plot = p_var,
     permanova = p_perm,
     hclust = p_hclust,
-    heatmap = p_heat
+    heatmap = p_heat,
+    phenoDiv = pheno_div
   )
 }
 
