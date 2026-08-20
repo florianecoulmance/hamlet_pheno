@@ -162,6 +162,7 @@ for(dat in names(dataset)) {
     species_info = species_info,
     geo_info = geo_table,
     color_by = color,
+    dataset = dat_name,
     extract_legend = FALSE
   )
 

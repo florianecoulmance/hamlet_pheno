@@ -3442,6 +3442,7 @@ lda_plot <- function(
     species_info,
     geo_info,
     color_by = "species",
+    dataset = dat_name,
     extract_legend = FALSE,
     legend_rows = 2,
     n_pcs = 3) {
@@ -3906,33 +3907,28 @@ lda_plot <- function(
   # -----------------------------
   # 8. Determine title
   # -----------------------------
-  title_val <- ""
+  title_val <- NULL
+  code <- sub("^lab_([a-z]+).*", "\\1", dat_name)
 
   if (color_by == "species") {
 
-    geo_val <- unique(scores$geo)
-
-    if (length(geo_val) == 1) {
-
-      title_val <- geo_info$Locations[
-        geo_info$geo == geo_val
-      ]
-
-      if (title_val == "Panama") {
+    if (!(dat_name %in% "all")) {
+      title_val <- geo_info$Locations[geo_info$geo == code]
+      if (title_val=="Panama") {
         title_val <- "(b) Panama"
-      } else if (title_val == "USVI") {
+      } else if (title_val=="USVI") {
         title_val <- "(f) USVI"
-      } else if (title_val == "Belize") {
+      } else if (title_val=="Belize") {
         title_val <- "(a) Belize"
-      } else if (title_val == "Florida Keys") {
+      } else if (title_val=="Florida Keys") {
         title_val <- "(c) Florida Keys"
-      } else if (title_val == "Tobago") {
+      } else if (title_val=="Tobago") {
         title_val <- "(b) Tobago"
-      } else if (title_val == "Mexico") {
+      } else if (title_val=="Mexico") {
         title_val <- "(a) Mexico"
-      } else if (title_val == "Honduras") {
+      } else if (title_val=="Honduras") { 
         title_val <- "(c) Honduras"
-      } else if (title_val == "Puerto Rico") {
+      } else if (title_val=="Puerto Rico") { 
         title_val <- "(d) Puerto Rico"
       } else {
         title_val <- ""
@@ -3940,62 +3936,50 @@ lda_plot <- function(
     } else {
       title_val <- ""
     }
-
-  } else {
-
-    spec_val <- unique(scores$spec)
-
-    if (length(spec_val) == 1) {
-
-      title_val <- paste0(
-        "H. ",
-        species_info$Species[
-          species_info$spec == spec_val
-        ]
-      )
-
-      if (title_val == "H. puella") {
+  } else if (color_by == "location") {
+    # if coloring by location, title is the species name
+    if (!(dat_name %in% "all")) {
+      title_val <- paste0("H. ", species_info$Species[species_info$spec == code])
+      if (title_val=="H. puella") {
         title_val <- "(a) H. puella"
-      } else if (title_val == "H. nigricans") {
+      } else if (title_val=="H. nigricans") {
         title_val <- "(b) H. nigricans"
-      } else if (title_val == "H. unicolor") {
+      } else if (title_val=="H. unicolor") {
         title_val <- "(c) H. unicolor"
-      } else if (title_val == "H. chlorurus") {
+      } else if (title_val=="H. chlorurus") {
         title_val <- "(d) H. chlorurus"
-      } else if (title_val == "H. aberrans") {
+      } else if (title_val=="H. aberrans") {
         title_val <- "(e) H. aberrans"
-      } else if (title_val == "H. indigo") {
+      } else if (title_val=="H. indigo") {
         title_val <- "(f) H. indigo"
       } else {
         title_val <- ""
       }
-    } else {
-      title_val <- ""
     }
+  } else {
+    title_val <- ""
   }
-
+  print(title_val)
 
   # -----------------------------
-  # 9. Annotate figure
+  # 7. Return plot
   # -----------------------------
-
-  p_annot <- annotate_figure(
-    p,
-    top = text_grob(
-      title_val,
-      color = "black",
-      face = if (color_by == "species") {
-        "bold"
-      } else {
-        "bold.italic"
-      },
-      size = 20,
-      x = unit(0, "lines"),
-      vjust = 0,
-      hjust = 0
+  if (color_by == "species") {
+    p_annot <- annotate_figure(
+      p,
+      top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
     )
-  )
-
-
+  } else if (color_by == "location" && pc_first=="PC1") {
+      p_annot <- annotate_figure(
+      p,
+      top = text_grob(title_val, color = "black", face = "bold.italic", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
+    )
+  } else {
+    p_annot <- annotate_figure(
+      p,
+      top = text_grob("   ",color = "black", face = "bold.italic", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)
+    )
+  }
+    
   return(p_annot)
 }
