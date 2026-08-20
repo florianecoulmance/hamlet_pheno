@@ -370,7 +370,13 @@ pB <- plot_genome_dxy(
 #   xlab = "Pairwise DXY"
 # )
 
-figure2 <- (pA | pB) #/ (pC | pD) +   plot_annotation(tag_levels = "a")
+# figure2 <- (pA | pB) #/ (pC | pD) +   plot_annotation(tag_levels = "a")
+figure2 <- ggarrange(
+  pA, pB,
+  ncol = 1,
+  nrow = 2,
+  align = "hv"
+)
 
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
