@@ -338,7 +338,16 @@ ggsave(filename = file.path(figure_path, "FigS5_pPCA_loc.png"),
 
 ########## FIGURE S6 ###################
 # Combined phenotypic space: LDA
-figureS6 <- results[["all"]][["lda"]]
+all_lda <- results[["all"]][["lda"]]
+figureS6 <- ggarrange(
+  all_lda,
+  NULL,
+  leg,
+  NULL,
+  nrow = 4,
+  heights = c(9, 0.3, 1, 0.05)
+)
+
 ggsave(
   filename = file.path(figure_path, "FigS6_pAllLDA.png"),
   plot = figureS6,

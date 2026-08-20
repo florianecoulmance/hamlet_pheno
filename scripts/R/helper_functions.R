@@ -3443,7 +3443,8 @@ lda_plot <- function(
     geo_info,
     color_by = "species",
     extract_legend = FALSE,
-    legend_rows = 2) {
+    legend_rows = 2,
+    n_pcs = 3) {
 
   # -----------------------------
   # 1. Choose color/grouping mode
