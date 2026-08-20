@@ -3558,6 +3558,12 @@ lda_plot <- function(
       row.names = NULL
     )
 
+    # Overall contribution to the LD1-LD2 plane
+    arrows$contribution <- sqrt(
+      arrows$LD1^2 +
+      arrows$LD2^2
+    )
+
   } else {
 
     cor_matrix <- cor(
@@ -3571,23 +3577,19 @@ lda_plot <- function(
       LD1 = cor_matrix[, "LD1"],
       row.names = NULL
     )
+
+    # With only two groups there is only LD1
+    arrows$contribution <- abs(
+      arrows$LD1
+    )
   }
-
-
+  
   # -----------------------------
-  # 6. Plot ranges
+  # 6. Keep only top 3 PCs
   # -----------------------------
-
-  x_range <- range(
-    scores$LD1,
-    na.rm = TRUE
-  )
-
-  x_width <- diff(x_range)
-
-  if (x_width == 0) {
-    x_width <- 1
-  }
+  arrows <- arrows %>%
+    arrange(desc(contribution)) %>%
+    slice_head(n = n_pcs)
 
 
   # ============================================================
@@ -3605,6 +3607,17 @@ lda_plot <- function(
           amount = 0.08
         )
       )
+    
+    x_range <- range(
+      scores$LD1,
+      na.rm = TRUE
+    )
+
+    x_width <- diff(x_range)
+
+    if (x_width == 0) {
+      x_width <- 1
+    }
 
     # Scale PC arrows along LD1
     arrow_scale <- x_width * 0.30
@@ -3744,13 +3757,20 @@ lda_plot <- function(
 
   } else {
 
+    x_range <- range(
+      scores$LD1,
+      na.rm = TRUE
+    )
+    
     y_range <- range(
       scores$LD2,
       na.rm = TRUE
     )
 
+    x_width <- diff(x_range)
     y_width <- diff(y_range)
 
+    if (x_width == 0) x_width <- 1
     if (y_width == 0) {
       y_width <- 1
     }
@@ -3885,9 +3905,6 @@ lda_plot <- function(
   # -----------------------------
   # 8. Determine title
   # -----------------------------
-
-  title_val <- ""
-
   if (color_by == "species") {
 
     geo_val <- unique(scores$geo)
