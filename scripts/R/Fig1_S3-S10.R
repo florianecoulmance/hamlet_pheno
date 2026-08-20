@@ -338,7 +338,7 @@ ggsave(filename = file.path(figure_path, "FigS5_pPCA_loc.png"),
 
 ########## FIGURE S6 ###################
 # Combined phenotypic space: LDA
-figureS6 <- results[["all"]][["p_lda"]]
+figureS6 <- results[["all"]][["lda"]]
 ggsave(
   filename = file.path(figure_path, "FigS6_pAllLDA.png"),
   plot = figureS6,
@@ -356,7 +356,7 @@ results_no_overall <- results[!names(results) %in% c("all", "pue", "nig", "uni",
 keep_names <- names(results_no_overall)
 print(keep_names)
 
-all_lda <- lapply(results_no_overall, `[[`, "p_lda") # extract per location supplementary pcas
+all_lda <- lapply(results_no_overall, `[[`, "lda") # extract per location supplementary pcas
 lda_grid <- plot_grid(plotlist = all_lda, ncol = 2, rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
 # Combine supplementary PCA grid with legend at the bottom
 figureS7 <- ggarrange(
