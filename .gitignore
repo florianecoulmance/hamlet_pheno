@@ -31,6 +31,10 @@ phyps2e_m2.vcf.gz.csi
 2_popgen/byALL/*.in
 2_popgen/byALL/*.out
 2_popgen/byALL/*.vcf.gz*
+2_popgen/byALL/all.flt_fst.txt
+2_popgen/byALL/all.flt_fst.min3.txt
+2_popgen/byALL/all.flt_dxy.txt
+2_popgen/byALL/all.flt_dxy.min3.txt
 2_popgen/.R*
 2_popgen/Rplots.pdf
 2_popgen/.snakemake/*
