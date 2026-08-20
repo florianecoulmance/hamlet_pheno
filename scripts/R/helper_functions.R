@@ -3906,6 +3906,8 @@ lda_plot <- function(
   # -----------------------------
   # 8. Determine title
   # -----------------------------
+  title_val <- ""
+
   if (color_by == "species") {
 
     geo_val <- unique(scores$geo)
@@ -3935,6 +3937,8 @@ lda_plot <- function(
       } else {
         title_val <- ""
       }
+    } else {
+      title_val <- ""
     }
 
   } else {
@@ -3965,6 +3969,8 @@ lda_plot <- function(
       } else {
         title_val <- ""
       }
+    } else {
+      title_val <- ""
     }
   }
 
