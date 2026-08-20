@@ -152,7 +152,7 @@ for(dat in names(dataset)) {
   da <- discriminant_analysis(
     pc_table = pc_table,
     pcs = paste0("PC", 1:15),
-    group_col = color
+    group_col = if (color == "species") "spec" else "geo"
   )
 
   # LDA plot
