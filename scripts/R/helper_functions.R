@@ -2961,583 +2961,582 @@ global_RI_permutation <- function(
 #   9. converts this to a 0-1 phenotypic divergence
 #  10. returns both a long table and a symmetric matrix
 ############################################################
-pairwise_phenotypic_divergence <- function(
-    pc_table,
-    pairs,
-    pcs = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7", "PC8", "PC9", "PC10", "PC11", "PC12", "PC13", "PC14", "PC15"),
-    spec = "spec",
-    nfolds = 10,
-    seed = 123) {
-
-  ##########################################################
-  # 1. CHECK INPUT
-  ##########################################################
-
-  if (!is.data.frame(pc_table)) {
-    stop("pc_table must be a data.frame.")
-  }
-
-  if (!is.character(spec) || length(spec) != 1) {
-    stop("spec must be the name of the species column.")
-  }
-
-  if (!spec %in% colnames(pc_table)) {
-    stop(
-      "Species column '", spec,
-      "' was not found in pc_table."
-    )
-  }
-
-  if (!all(pcs %in% colnames(pc_table))) {
-    missing_pcs <- pcs[!pcs %in% colnames(pc_table)]
-
-    stop(
-      "The following PCs are missing from pc_table: ",
-      paste(missing_pcs, collapse = ", ")
-    )
-  }
-
-  if (!is.numeric(nfolds) ||
-      length(nfolds) != 1 ||
-      nfolds < 2) {
-
-    stop("nfolds must be a single number >= 2.")
-  }
-
-  ##########################################################
-  # 2. SPECIES DEFINITIONS
-  ##########################################################
-
-  species_codes <- c(
-    abe = "aberrans",
-    pue = "puella",
-    nig = "nigricans",
-    uni = "unicolor",
-    ind = "indigo",
-    gem = "gemma"
-  )
-
-  allowed_species <- names(species_codes)
-
-  ##########################################################
-  # 3. CHECK PAIRS
-  ##########################################################
-
-  if (missing(pairs) || is.null(pairs)) {
-    stop(
-      "You must provide the species pairs to analyse."
-    )
-  }
-
-  # Accept either:
-  #
-  # pairs = list(
-  #   c("abe", "pue"),
-  #   c("abe", "nig")
-  # )
-  #
-
-    pairs <- split(
-      as.character(pairs),
-      rep(seq_len(nrow(pairs)), each = 2)
-    )
-
-  }
-
-  if (!is.list(pairs)) {
-    stop(
-      "pairs must be a list of species pairs or a ",
-      "two-column matrix/data.frame."
-    )
-  }
-
-  # Check every pair
-  pair_check <- vapply(
-    pairs,
-    function(x) {
-
-      length(x) == 2 &&
-        all(x %in% allowed_species) &&
-        x[1] != x[2]
-
-    },
-    logical(1)
-  )
-
-  if (!all(pair_check)) {
-
-    stop(
-      "Invalid species pair(s). Species must be among: ",
-      paste(allowed_species, collapse = ", "),
-      ". Each pair must contain two different species."
-    )
-  }
-
-  # Remove duplicated pairs regardless of order
-  pairs <- lapply(
-    pairs,
-    function(x) sort(x)
-  )
-
-  pair_names <- vapply(
-    pairs,
-    function(x) paste(x, collapse = "_"),
-    character(1)
-  )
-
-  duplicated_pairs <- duplicated(pair_names)
-
-  if (any(duplicated_pairs)) {
-
-    warning(
-      "Duplicated species pairs were found and removed: ",
-      paste(
-        pair_names[duplicated_pairs],
-        collapse = ", "
-      )
-    )
-
-    pairs <- pairs[!duplicated_pairs]
-    pair_names <- pair_names[!duplicated_pairs]
-  }
-
-  ##########################################################
-  # 4. PREPARE DATA
-  ##########################################################
-
-  dat <- pc_table %>%
-    dplyr::select(
-      dplyr::all_of(c(spec, pcs))
-    ) %>%
-    dplyr::mutate(
-      .species = as.character(.data[[spec]])
-    ) %>%
-    dplyr::filter(
-      .species %in% allowed_species
-    )
-
-  ##########################################################
-  # 7. CHECK SPECIES SAMPLE SIZES
-  ##########################################################
-
-  species_counts <- table(dat$.species)
-
-  print(
-    "Number of individuals per species:"
-  )
-
-  print(species_counts)
-
-  ##########################################################
-  # 8. FUNCTION FOR ONE PAIR
-  ##########################################################
-
-  analyse_pair <- function(pair) {
-
-    sp1 <- pair[1]
-    sp2 <- pair[2]
-
-    message(
-      "Analysing: ",
-      sp1,
-      " vs ",
-      sp2
-    )
-
-    d <- dat %>%
-      dplyr::filter(
-        .species %in% c(sp1, sp2)
-      ) %>%
-      droplevels()
-
-    n1 <- sum(d$.species == sp1)
-    n2 <- sum(d$.species == sp2)
-
-    ########################################################
-    # Check sample sizes
-    ########################################################
-
-    if (n1 < 2 || n2 < 2) {
-
-      warning(
-        "Skipping ",
-        sp1,
-        " vs ",
-        sp2,
-        ": fewer than 2 individuals in one species."
-      )
-
-      return(NULL)
-    }
-
-    ########################################################
-    # Number of folds
-    #
-    # Cannot have more folds than individuals in the
-    # smallest species.
-    ########################################################
-
-    folds_used <- min(
-      nfolds,
-      n1,
-      n2
-    )
-
-    if (folds_used < 2) {
-
-      warning(
-        "Skipping ",
-        sp1,
-        " vs ",
-        sp2,
-        ": insufficient individuals for cross-validation."
-      )
-
-      return(NULL)
-    }
-
-    ########################################################
-    # Create stratified folds
-    ########################################################
-
-    set.seed(seed)
-
-    d <- d %>%
-      dplyr::group_by(.species) %>%
-      dplyr::mutate(
-        fold = sample(
-          rep(
-            seq_len(folds_used),
-            length.out = dplyr::n()
-          )
-        )
-      ) %>%
-      dplyr::ungroup()
-
-    ########################################################
-    # Storage
-    ########################################################
-
-    predicted <- rep(
-      NA_character_,
-      nrow(d)
-    )
-
-    p_correct <- rep(
-      NA_real_,
-      nrow(d)
-    )
-
-    ########################################################
-    # Cross-validation
-    ########################################################
-
-    for (fold_i in seq_len(folds_used)) {
-
-      train <- d %>%
-        dplyr::filter(
-          fold != fold_i
-        )
-
-      test <- d %>%
-        dplyr::filter(
-          fold == fold_i
-        )
-
-      ######################################################
-      # LDA formula
-      ######################################################
-
-      lda_formula <- as.formula(
-        paste(
-          ".species ~",
-          paste(pcs, collapse = " + ")
-        )
-      )
-
-      ######################################################
-      # Fit LDA
-      ######################################################
-
-      lda_fit <- tryCatch(
-
-        MASS::lda(
-          lda_formula,
-          data = train
-        ),
-
-        error = function(e) {
-
-          warning(
-            "LDA failed for ",
-            sp1,
-            " vs ",
-            sp2,
-            ", fold ",
-            fold_i,
-            ": ",
-            e$message
-          )
-
-          NULL
-        }
-      )
-
-      if (is.null(lda_fit)) {
-        next
-      }
-
-      ######################################################
-      # Predict held-out individuals
-      ######################################################
-
-      prediction <- predict(
-        lda_fit,
-        newdata = test
-      )
-
-      ######################################################
-      # Identify rows in original dataset
-      ######################################################
-
-      test_rows <- which(
-        d$fold == fold_i
-      )
-
-      predicted[test_rows] <-
-        as.character(
-          prediction$class
-        )
-
-      ######################################################
-      # Probability assigned to the TRUE species
-      ######################################################
-
-      posterior <- prediction$posterior
-
-      true_species <- test$.species
-
-      true_probability <- posterior[
-        cbind(
-          seq_len(nrow(test)),
-          match(
-            true_species,
-            colnames(posterior)
-          )
-        )
-      ]
-
-      p_correct[test_rows] <-
-        true_probability
-    }
-
-    ########################################################
-    # Keep successfully classified individuals
-    ########################################################
-
-    valid <- !is.na(predicted)
-
-    if (!any(valid)) {
-
-      warning(
-        "No successful cross-validation predictions for ",
-        sp1,
-        " vs ",
-        sp2
-      )
-
-      return(NULL)
-    }
-
-    ########################################################
-    # Classification accuracy
-    ########################################################
-
-    accuracy <- mean(
-      predicted[valid] ==
-        d$.species[valid]
-    )
-
-    ########################################################
-    # Mean probability of correct assignment
-    ########################################################
-
-    mean_p_correct <- mean(
-      p_correct[valid],
-      na.rm = TRUE
-    )
-
-    ########################################################
-    # Convert to 0-1 phenotypic divergence
-    #
-    # Random classification = 0.5
-    # Perfect classification = 1
-    #
-    # D = 2 * P(correct) - 1
-    ########################################################
-
-    phenotypic_divergence <- max(
-      0,
-      min(
-        1,
-        2 * mean_p_correct - 1
-      )
-    )
-
-    ########################################################
-    # Return pair result
-    ########################################################
-
-    list(
-
-      species_1 = sp1,
-      species_2 = sp2,
-
-      species_1_name =
-        species_codes[sp1],
-
-      species_2_name =
-        species_codes[sp2],
-
-      n_1 = n1,
-      n_2 = n2,
-
-      n_classified =
-        sum(valid),
-
-      nfolds =
-        folds_used,
-
-      accuracy =
-        accuracy,
-
-      mean_p_correct =
-        mean_p_correct,
-
-      phenotypic_divergence =
-        phenotypic_divergence,
-
-      actual =
-        d$.species[valid],
-
-      predicted =
-        predicted[valid],
-
-      p_correct =
-        p_correct[valid],
-
-      confusion =
-        table(
-          Actual =
-            d$.species[valid],
-          Predicted =
-            predicted[valid]
-        )
-    )
-  }
-
-
-  ##########################################################
-  # 9. RUN ALL REQUESTED PAIRS
-  ##########################################################
-
-  results <- lapply(
-    pairs,
-    analyse_pair
-  )
-
-  # Remove failed analyses
-  results <- results[
-    !vapply(
-      results,
-      is.null,
-      logical(1)
-    )
-  ]
-
-  if (length(results) == 0) {
-
-    stop(
-      "No species pairs could be successfully analysed."
-    )
-  }
-
-
-  ##########################################################
-  # 10. SUMMARY TABLE
-  ##########################################################
-
-  summary <- dplyr::bind_rows(
-    lapply(
-      results,
-      function(x) {
-
-        tibble::tibble(
-
-          species_1 =
-            x$species_1,
-
-          species_2 =
-            x$species_2,
-
-          species_1_name =
-            x$species_1_name,
-
-          species_2_name =
-            x$species_2_name,
-
-          n_1 =
-            x$n_1,
-
-          n_2 =
-            x$n_2,
-
-          n_classified =
-            x$n_classified,
-
-          nfolds =
-            x$nfolds,
-
-          accuracy =
-            x$accuracy,
-
-          mean_p_correct =
-            x$mean_p_correct,
-
-          phenotypic_divergence =
-            x$phenotypic_divergence
-        )
-      }
-    )
-  )
-
-
-  ##########################################################
-  # 12. RETURN EVERYTHING
-  ##########################################################
-
-  return(
-    list(
-
-      # Summary table
-      summary =
-        summary,
-
-      # Individual-level results
-      pairwise =
-        results,
-
-      # Species names
-      species =
-        species_codes,
-
-      # PCs used
-      pcs =
-        pcs,
-
-      # Input sample sizes
-      sample_sizes =
-        species_counts
-    )
-  ) 
-}
+# pairwise_phenotypic_divergence <- function(
+#     pc_table,
+#     pairs,
+#     pcs = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7", "PC8", "PC9", "PC10", "PC11", "PC12", "PC13", "PC14", "PC15"),
+#     spec = "spec",
+#     nfolds = 10,
+#     seed = 123) {
+
+#   ##########################################################
+#   # 1. CHECK INPUT
+#   ##########################################################
+
+#   if (!is.data.frame(pc_table)) {
+#     stop("pc_table must be a data.frame.")
+#   }
+
+#   if (!is.character(spec) || length(spec) != 1) {
+#     stop("spec must be the name of the species column.")
+#   }
+
+#   if (!spec %in% colnames(pc_table)) {
+#     stop(
+#       "Species column '", spec,
+#       "' was not found in pc_table."
+#     )
+#   }
+
+#   if (!all(pcs %in% colnames(pc_table))) {
+#     missing_pcs <- pcs[!pcs %in% colnames(pc_table)]
+
+#     stop(
+#       "The following PCs are missing from pc_table: ",
+#       paste(missing_pcs, collapse = ", ")
+#     )
+#   }
+
+#   if (!is.numeric(nfolds) ||
+#       length(nfolds) != 1 ||
+#       nfolds < 2) {
+
+#     stop("nfolds must be a single number >= 2.")
+#   }
+
+#   ##########################################################
+#   # 2. SPECIES DEFINITIONS
+#   ##########################################################
+
+#   species_codes <- c(
+#     abe = "aberrans",
+#     pue = "puella",
+#     nig = "nigricans",
+#     uni = "unicolor",
+#     ind = "indigo",
+#     gem = "gemma"
+#   )
+
+#   allowed_species <- names(species_codes)
+
+#   ##########################################################
+#   # 3. CHECK PAIRS
+#   ##########################################################
+
+#   if (missing(pairs) || is.null(pairs)) {
+#     stop(
+#       "You must provide the species pairs to analyse."
+#     )
+#   }
+
+#   # Accept either:
+#   #
+#   # pairs = list(
+#   #   c("abe", "pue"),
+#   #   c("abe", "nig")
+#   # )
+#   #
+
+#     pairs <- split(
+#       as.character(pairs),
+#       rep(seq_len(nrow(pairs)), each = 2)
+#     )
+
+#   }
+
+#   if (!is.list(pairs)) {
+#     stop(
+#       "pairs must be a list of species pairs or a ",
+#       "two-column matrix/data.frame."
+#     )
+#   }
+
+#   # Check every pair
+#   pair_check <- vapply(
+#     pairs,
+#     function(x) {
+
+#       length(x) == 2 &&
+#         all(x %in% allowed_species) &&
+#         x[1] != x[2]
+
+#     },
+#     logical(1)
+#   )
+
+#   if (!all(pair_check)) {
+
+#     stop(
+#       "Invalid species pair(s). Species must be among: ",
+#       paste(allowed_species, collapse = ", "),
+#       ". Each pair must contain two different species."
+#     )
+#   }
+
+#   # Remove duplicated pairs regardless of order
+#   pairs <- lapply(
+#     pairs,
+#     function(x) sort(x)
+#   )
+
+#   pair_names <- vapply(
+#     pairs,
+#     function(x) paste(x, collapse = "_"),
+#     character(1)
+#   )
+
+#   duplicated_pairs <- duplicated(pair_names)
+
+#   if (any(duplicated_pairs)) {
+
+#     warning(
+#       "Duplicated species pairs were found and removed: ",
+#       paste(
+#         pair_names[duplicated_pairs],
+#         collapse = ", "
+#       )
+#     )
+
+#     pairs <- pairs[!duplicated_pairs]
+#     pair_names <- pair_names[!duplicated_pairs]
+#   }
+
+#   ##########################################################
+#   # 4. PREPARE DATA
+#   ##########################################################
+
+#   dat <- pc_table %>%
+#     dplyr::select(
+#       dplyr::all_of(c(spec, pcs))
+#     ) %>%
+#     dplyr::mutate(
+#       .species = as.character(.data[[spec]])
+#     ) %>%
+#     dplyr::filter(
+#       .species %in% allowed_species
+#     )
+
+#   ##########################################################
+#   # 7. CHECK SPECIES SAMPLE SIZES
+#   ##########################################################
+
+#   species_counts <- table(dat$.species)
+
+#   print(
+#     "Number of individuals per species:"
+#   )
+
+#   print(species_counts)
+
+#   ##########################################################
+#   # 8. FUNCTION FOR ONE PAIR
+#   ##########################################################
+
+#   analyse_pair <- function(pair) {
+
+#     sp1 <- pair[1]
+#     sp2 <- pair[2]
+
+#     message(
+#       "Analysing: ",
+#       sp1,
+#       " vs ",
+#       sp2
+#     )
+
+#     d <- dat %>%
+#       dplyr::filter(
+#         .species %in% c(sp1, sp2)
+#       ) %>%
+#       droplevels()
+
+#     n1 <- sum(d$.species == sp1)
+#     n2 <- sum(d$.species == sp2)
+
+#     ########################################################
+#     # Check sample sizes
+#     ########################################################
+
+#     if (n1 < 2 || n2 < 2) {
+
+#       warning(
+#         "Skipping ",
+#         sp1,
+#         " vs ",
+#         sp2,
+#         ": fewer than 2 individuals in one species."
+#       )
+
+#       return(NULL)
+#     }
+
+#     ########################################################
+#     # Number of folds
+#     #
+#     # Cannot have more folds than individuals in the
+#     # smallest species.
+#     ########################################################
+
+#     folds_used <- min(
+#       nfolds,
+#       n1,
+#       n2
+#     )
+
+#     if (folds_used < 2) {
+
+#       warning(
+#         "Skipping ",
+#         sp1,
+#         " vs ",
+#         sp2,
+#         ": insufficient individuals for cross-validation."
+#       )
+
+#       return(NULL)
+#     }
+
+#     ########################################################
+#     # Create stratified folds
+#     ########################################################
+
+#     set.seed(seed)
+
+#     d <- d %>%
+#       dplyr::group_by(.species) %>%
+#       dplyr::mutate(
+#         fold = sample(
+#           rep(
+#             seq_len(folds_used),
+#             length.out = dplyr::n()
+#           )
+#         )
+#       ) %>%
+#       dplyr::ungroup()
+
+#     ########################################################
+#     # Storage
+#     ########################################################
+
+#     predicted <- rep(
+#       NA_character_,
+#       nrow(d)
+#     )
+
+#     p_correct <- rep(
+#       NA_real_,
+#       nrow(d)
+#     )
+
+#     ########################################################
+#     # Cross-validation
+#     ########################################################
+
+#     for (fold_i in seq_len(folds_used)) {
+
+#       train <- d %>%
+#         dplyr::filter(
+#           fold != fold_i
+#         )
+
+#       test <- d %>%
+#         dplyr::filter(
+#           fold == fold_i
+#         )
+
+#       ######################################################
+#       # LDA formula
+#       ######################################################
+
+#       lda_formula <- as.formula(
+#         paste(
+#           ".species ~",
+#           paste(pcs, collapse = " + ")
+#         )
+#       )
+
+#       ######################################################
+#       # Fit LDA
+#       ######################################################
+
+#       lda_fit <- tryCatch(
+
+#         MASS::lda(
+#           lda_formula,
+#           data = train
+#         ),
+
+#         error = function(e) {
+
+#           warning(
+#             "LDA failed for ",
+#             sp1,
+#             " vs ",
+#             sp2,
+#             ", fold ",
+#             fold_i,
+#             ": ",
+#             e$message
+#           )
+
+#           NULL
+#         }
+#       )
+
+#       if (is.null(lda_fit)) {
+#         next
+#       }
+
+#       ######################################################
+#       # Predict held-out individuals
+#       ######################################################
+
+#       prediction <- predict(
+#         lda_fit,
+#         newdata = test
+#       )
+
+#       ######################################################
+#       # Identify rows in original dataset
+#       ######################################################
+
+#       test_rows <- which(
+#         d$fold == fold_i
+#       )
+
+#       predicted[test_rows] <-
+#         as.character(
+#           prediction$class
+#         )
+
+#       ######################################################
+#       # Probability assigned to the TRUE species
+#       ######################################################
+
+#       posterior <- prediction$posterior
+
+#       true_species <- test$.species
+
+#       true_probability <- posterior[
+#         cbind(
+#           seq_len(nrow(test)),
+#           match(
+#             true_species,
+#             colnames(posterior)
+#           )
+#         )
+#       ]
+
+#       p_correct[test_rows] <-
+#         true_probability
+#     }
+
+#     ########################################################
+#     # Keep successfully classified individuals
+#     ########################################################
+
+#     valid <- !is.na(predicted)
+
+#     if (!any(valid)) {
+
+#       warning(
+#         "No successful cross-validation predictions for ",
+#         sp1,
+#         " vs ",
+#         sp2
+#       )
+
+#       return(NULL)
+#     }
+
+#     ########################################################
+#     # Classification accuracy
+#     ########################################################
+
+#     accuracy <- mean(
+#       predicted[valid] ==
+#         d$.species[valid]
+#     )
+
+#     ########################################################
+#     # Mean probability of correct assignment
+#     ########################################################
+
+#     mean_p_correct <- mean(
+#       p_correct[valid],
+#       na.rm = TRUE
+#     )
+
+#     ########################################################
+#     # Convert to 0-1 phenotypic divergence
+#     #
+#     # Random classification = 0.5
+#     # Perfect classification = 1
+#     #
+#     # D = 2 * P(correct) - 1
+#     ########################################################
+
+#     phenotypic_divergence <- max(
+#       0,
+#       min(
+#         1,
+#         2 * mean_p_correct - 1
+#       )
+#     )
+
+#     ########################################################
+#     # Return pair result
+#     ########################################################
+
+#     list(
+
+#       species_1 = sp1,
+#       species_2 = sp2,
+
+#       species_1_name =
+#         species_codes[sp1],
+
+#       species_2_name =
+#         species_codes[sp2],
+
+#       n_1 = n1,
+#       n_2 = n2,
+
+#       n_classified =
+#         sum(valid),
+
+#       nfolds =
+#         folds_used,
+
+#       accuracy =
+#         accuracy,
+
+#       mean_p_correct =
+#         mean_p_correct,
+
+#       phenotypic_divergence =
+#         phenotypic_divergence,
+
+#       actual =
+#         d$.species[valid],
+
+#       predicted =
+#         predicted[valid],
+
+#       p_correct =
+#         p_correct[valid],
+
+#       confusion =
+#         table(
+#           Actual =
+#             d$.species[valid],
+#           Predicted =
+#             predicted[valid]
+#         )
+#     )
+#   }
+
+
+#   ##########################################################
+#   # 9. RUN ALL REQUESTED PAIRS
+#   ##########################################################
+
+#   results <- lapply(
+#     pairs,
+#     analyse_pair
+#   )
+
+#   # Remove failed analyses
+#   results <- results[
+#     !vapply(
+#       results,
+#       is.null,
+#       logical(1)
+#     )
+#   ]
+
+#   if (length(results) == 0) {
+
+#     stop(
+#       "No species pairs could be successfully analysed."
+#     )
+#   }
+
+
+#   ##########################################################
+#   # 10. SUMMARY TABLE
+#   ##########################################################
+
+#   summary <- dplyr::bind_rows(
+#     lapply(
+#       results,
+#       function(x) {
+
+#         tibble::tibble(
+
+#           species_1 =
+#             x$species_1,
+
+#           species_2 =
+#             x$species_2,
+
+#           species_1_name =
+#             x$species_1_name,
+
+#           species_2_name =
+#             x$species_2_name,
+
+#           n_1 =
+#             x$n_1,
+
+#           n_2 =
+#             x$n_2,
+
+#           n_classified =
+#             x$n_classified,
+
+#           nfolds =
+#             x$nfolds,
+
+#           accuracy =
+#             x$accuracy,
+
+#           mean_p_correct =
+#             x$mean_p_correct,
+
+#           phenotypic_divergence =
+#             x$phenotypic_divergence
+#         )
+#       }
+#     )
+#   )
+
+
+#   ##########################################################
+#   # 12. RETURN EVERYTHING
+#   ##########################################################
+
+#   return(
+#     list(
+
+#       # Summary table
+#       summary =
+#         summary,
+
+#       # Individual-level results
+#       pairwise =
+#         results,
+
+#       # Species names
+#       species =
+#         species_codes,
+
+#       # PCs used
+#       pcs =
+#         pcs,
+
+#       # Input sample sizes
+#       sample_sizes =
+#         species_counts
+#     )
+#   ) }
