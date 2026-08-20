@@ -2934,609 +2934,872 @@ global_RI_permutation <- function(
   )
 }
 
-############################################################
+# ============================================================
 # Pairwise phenotypic divergence from PCA scores
-#
-# Input:
-#   pc_table : data.frame containing individual PCA scores
-#   spec     : column containing species names
-#
-# Species codes:
-#   abe = aberrans
-#   pue = puella
-#   nig = nigricans
-#   uni = unicolor
-#   ind = indigo
-#   gem = gemma
-#
-# The function:
-#   1. checks the input
-#   2. checks species names
-#   3. checks requested species pairs
-#   4. checks missing data
-#   5. performs pairwise LDA
-#   6. uses cross-validation
-#   7. calculates classification accuracy
-#   8. calculates mean probability of correct assignment
-#   9. converts this to a 0-1 phenotypic divergence
-#  10. returns both a long table and a symmetric matrix
-############################################################
-# pairwise_phenotypic_divergence <- function(
-#     pc_table,
-#     pairs,
-#     pcs = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7", "PC8", "PC9", "PC10", "PC11", "PC12", "PC13", "PC14", "PC15"),
-#     spec = "spec",
-#     nfolds = 10,
-#     seed = 123) {
-
-#   ##########################################################
-#   # 1. CHECK INPUT
-#   ##########################################################
-
-#   if (!is.data.frame(pc_table)) {
-#     stop("pc_table must be a data.frame.")
-#   }
-
-#   if (!is.character(spec) || length(spec) != 1) {
-#     stop("spec must be the name of the species column.")
-#   }
-
-#   if (!spec %in% colnames(pc_table)) {
-#     stop(
-#       "Species column '", spec,
-#       "' was not found in pc_table."
-#     )
-#   }
-
-#   if (!all(pcs %in% colnames(pc_table))) {
-#     missing_pcs <- pcs[!pcs %in% colnames(pc_table)]
-
-#     stop(
-#       "The following PCs are missing from pc_table: ",
-#       paste(missing_pcs, collapse = ", ")
-#     )
-#   }
-
-#   if (!is.numeric(nfolds) ||
-#       length(nfolds) != 1 ||
-#       nfolds < 2) {
-
-#     stop("nfolds must be a single number >= 2.")
-#   }
-
-#   ##########################################################
-#   # 2. SPECIES DEFINITIONS
-#   ##########################################################
-
-#   species_codes <- c(
-#     abe = "aberrans",
-#     pue = "puella",
-#     nig = "nigricans",
-#     uni = "unicolor",
-#     ind = "indigo",
-#     gem = "gemma"
-#   )
-
-#   allowed_species <- names(species_codes)
-
-#   ##########################################################
-#   # 3. CHECK PAIRS
-#   ##########################################################
-
-#   if (missing(pairs) || is.null(pairs)) {
-#     stop(
-#       "You must provide the species pairs to analyse."
-#     )
-#   }
-
-#   # Accept either:
-#   #
-#   # pairs = list(
-#   #   c("abe", "pue"),
-#   #   c("abe", "nig")
-#   # )
-#   #
-
-#     pairs <- split(
-#       as.character(pairs),
-#       rep(seq_len(nrow(pairs)), each = 2)
-#     )
-
-#   }
-
-#   if (!is.list(pairs)) {
-#     stop(
-#       "pairs must be a list of species pairs or a ",
-#       "two-column matrix/data.frame."
-#     )
-#   }
-
-#   # Check every pair
-#   pair_check <- vapply(
-#     pairs,
-#     function(x) {
-
-#       length(x) == 2 &&
-#         all(x %in% allowed_species) &&
-#         x[1] != x[2]
-
-#     },
-#     logical(1)
-#   )
-
-#   if (!all(pair_check)) {
-
-#     stop(
-#       "Invalid species pair(s). Species must be among: ",
-#       paste(allowed_species, collapse = ", "),
-#       ". Each pair must contain two different species."
-#     )
-#   }
-
-#   # Remove duplicated pairs regardless of order
-#   pairs <- lapply(
-#     pairs,
-#     function(x) sort(x)
-#   )
-
-#   pair_names <- vapply(
-#     pairs,
-#     function(x) paste(x, collapse = "_"),
-#     character(1)
-#   )
-
-#   duplicated_pairs <- duplicated(pair_names)
-
-#   if (any(duplicated_pairs)) {
-
-#     warning(
-#       "Duplicated species pairs were found and removed: ",
-#       paste(
-#         pair_names[duplicated_pairs],
-#         collapse = ", "
-#       )
-#     )
-
-#     pairs <- pairs[!duplicated_pairs]
-#     pair_names <- pair_names[!duplicated_pairs]
-#   }
-
-#   ##########################################################
-#   # 4. PREPARE DATA
-#   ##########################################################
-
-#   dat <- pc_table %>%
-#     dplyr::select(
-#       dplyr::all_of(c(spec, pcs))
-#     ) %>%
-#     dplyr::mutate(
-#       .species = as.character(.data[[spec]])
-#     ) %>%
-#     dplyr::filter(
-#       .species %in% allowed_species
-#     )
-
-#   ##########################################################
-#   # 7. CHECK SPECIES SAMPLE SIZES
-#   ##########################################################
-
-#   species_counts <- table(dat$.species)
-
-#   print(
-#     "Number of individuals per species:"
-#   )
-
-#   print(species_counts)
-
-#   ##########################################################
-#   # 8. FUNCTION FOR ONE PAIR
-#   ##########################################################
-
-#   analyse_pair <- function(pair) {
-
-#     sp1 <- pair[1]
-#     sp2 <- pair[2]
-
-#     message(
-#       "Analysing: ",
-#       sp1,
-#       " vs ",
-#       sp2
-#     )
-
-#     d <- dat %>%
-#       dplyr::filter(
-#         .species %in% c(sp1, sp2)
-#       ) %>%
-#       droplevels()
-
-#     n1 <- sum(d$.species == sp1)
-#     n2 <- sum(d$.species == sp2)
-
-#     ########################################################
-#     # Check sample sizes
-#     ########################################################
-
-#     if (n1 < 2 || n2 < 2) {
-
-#       warning(
-#         "Skipping ",
-#         sp1,
-#         " vs ",
-#         sp2,
-#         ": fewer than 2 individuals in one species."
-#       )
-
-#       return(NULL)
-#     }
-
-#     ########################################################
-#     # Number of folds
-#     #
-#     # Cannot have more folds than individuals in the
-#     # smallest species.
-#     ########################################################
-
-#     folds_used <- min(
-#       nfolds,
-#       n1,
-#       n2
-#     )
-
-#     if (folds_used < 2) {
-
-#       warning(
-#         "Skipping ",
-#         sp1,
-#         " vs ",
-#         sp2,
-#         ": insufficient individuals for cross-validation."
-#       )
-
-#       return(NULL)
-#     }
-
-#     ########################################################
-#     # Create stratified folds
-#     ########################################################
-
-#     set.seed(seed)
-
-#     d <- d %>%
-#       dplyr::group_by(.species) %>%
-#       dplyr::mutate(
-#         fold = sample(
-#           rep(
-#             seq_len(folds_used),
-#             length.out = dplyr::n()
-#           )
-#         )
-#       ) %>%
-#       dplyr::ungroup()
-
-#     ########################################################
-#     # Storage
-#     ########################################################
-
-#     predicted <- rep(
-#       NA_character_,
-#       nrow(d)
-#     )
-
-#     p_correct <- rep(
-#       NA_real_,
-#       nrow(d)
-#     )
-
-#     ########################################################
-#     # Cross-validation
-#     ########################################################
-
-#     for (fold_i in seq_len(folds_used)) {
-
-#       train <- d %>%
-#         dplyr::filter(
-#           fold != fold_i
-#         )
-
-#       test <- d %>%
-#         dplyr::filter(
-#           fold == fold_i
-#         )
-
-#       ######################################################
-#       # LDA formula
-#       ######################################################
-
-#       lda_formula <- as.formula(
-#         paste(
-#           ".species ~",
-#           paste(pcs, collapse = " + ")
-#         )
-#       )
-
-#       ######################################################
-#       # Fit LDA
-#       ######################################################
-
-#       lda_fit <- tryCatch(
-
-#         MASS::lda(
-#           lda_formula,
-#           data = train
-#         ),
-
-#         error = function(e) {
-
-#           warning(
-#             "LDA failed for ",
-#             sp1,
-#             " vs ",
-#             sp2,
-#             ", fold ",
-#             fold_i,
-#             ": ",
-#             e$message
-#           )
-
-#           NULL
-#         }
-#       )
-
-#       if (is.null(lda_fit)) {
-#         next
-#       }
-
-#       ######################################################
-#       # Predict held-out individuals
-#       ######################################################
-
-#       prediction <- predict(
-#         lda_fit,
-#         newdata = test
-#       )
-
-#       ######################################################
-#       # Identify rows in original dataset
-#       ######################################################
-
-#       test_rows <- which(
-#         d$fold == fold_i
-#       )
-
-#       predicted[test_rows] <-
-#         as.character(
-#           prediction$class
-#         )
-
-#       ######################################################
-#       # Probability assigned to the TRUE species
-#       ######################################################
-
-#       posterior <- prediction$posterior
-
-#       true_species <- test$.species
-
-#       true_probability <- posterior[
-#         cbind(
-#           seq_len(nrow(test)),
-#           match(
-#             true_species,
-#             colnames(posterior)
-#           )
-#         )
-#       ]
-
-#       p_correct[test_rows] <-
-#         true_probability
-#     }
-
-#     ########################################################
-#     # Keep successfully classified individuals
-#     ########################################################
-
-#     valid <- !is.na(predicted)
-
-#     if (!any(valid)) {
-
-#       warning(
-#         "No successful cross-validation predictions for ",
-#         sp1,
-#         " vs ",
-#         sp2
-#       )
-
-#       return(NULL)
-#     }
-
-#     ########################################################
-#     # Classification accuracy
-#     ########################################################
-
-#     accuracy <- mean(
-#       predicted[valid] ==
-#         d$.species[valid]
-#     )
-
-#     ########################################################
-#     # Mean probability of correct assignment
-#     ########################################################
-
-#     mean_p_correct <- mean(
-#       p_correct[valid],
-#       na.rm = TRUE
-#     )
-
-#     ########################################################
-#     # Convert to 0-1 phenotypic divergence
-#     #
-#     # Random classification = 0.5
-#     # Perfect classification = 1
-#     #
-#     # D = 2 * P(correct) - 1
-#     ########################################################
-
-#     phenotypic_divergence <- max(
-#       0,
-#       min(
-#         1,
-#         2 * mean_p_correct - 1
-#       )
-#     )
-
-#     ########################################################
-#     # Return pair result
-#     ########################################################
-
-#     list(
-
-#       species_1 = sp1,
-#       species_2 = sp2,
-
-#       species_1_name =
-#         species_codes[sp1],
-
-#       species_2_name =
-#         species_codes[sp2],
-
-#       n_1 = n1,
-#       n_2 = n2,
-
-#       n_classified =
-#         sum(valid),
-
-#       nfolds =
-#         folds_used,
-
-#       accuracy =
-#         accuracy,
-
-#       mean_p_correct =
-#         mean_p_correct,
-
-#       phenotypic_divergence =
-#         phenotypic_divergence,
-
-#       actual =
-#         d$.species[valid],
-
-#       predicted =
-#         predicted[valid],
-
-#       p_correct =
-#         p_correct[valid],
-
-#       confusion =
-#         table(
-#           Actual =
-#             d$.species[valid],
-#           Predicted =
-#             predicted[valid]
-#         )
-#     )
-#   }
-
-
-#   ##########################################################
-#   # 9. RUN ALL REQUESTED PAIRS
-#   ##########################################################
-
-#   results <- lapply(
-#     pairs,
-#     analyse_pair
-#   )
-
-#   # Remove failed analyses
-#   results <- results[
-#     !vapply(
-#       results,
-#       is.null,
-#       logical(1)
-#     )
-#   ]
-
-#   if (length(results) == 0) {
-
-#     stop(
-#       "No species pairs could be successfully analysed."
-#     )
-#   }
-
-
-#   ##########################################################
-#   # 10. SUMMARY TABLE
-#   ##########################################################
-
-#   summary <- dplyr::bind_rows(
-#     lapply(
-#       results,
-#       function(x) {
-
-#         tibble::tibble(
-
-#           species_1 =
-#             x$species_1,
-
-#           species_2 =
-#             x$species_2,
-
-#           species_1_name =
-#             x$species_1_name,
-
-#           species_2_name =
-#             x$species_2_name,
-
-#           n_1 =
-#             x$n_1,
-
-#           n_2 =
-#             x$n_2,
-
-#           n_classified =
-#             x$n_classified,
-
-#           nfolds =
-#             x$nfolds,
-
-#           accuracy =
-#             x$accuracy,
-
-#           mean_p_correct =
-#             x$mean_p_correct,
-
-#           phenotypic_divergence =
-#             x$phenotypic_divergence
-#         )
-#       }
-#     )
-#   )
-
-
-#   ##########################################################
-#   # 12. RETURN EVERYTHING
-#   ##########################################################
-
-#   return(
-#     list(
-
-#       # Summary table
-#       summary =
-#         summary,
-
-#       # Individual-level results
-#       pairwise =
-#         results,
-
-#       # Species names
-#       species =
-#         species_codes,
-
-#       # PCs used
-#       pcs =
-#         pcs,
-
-#       # Input sample sizes
-#       sample_sizes =
-#         species_counts
-#     )
-#   ) }
+# ============================================================
+pairwise_phenotypic_divergence <- function(
+    pc_table,
+    pairs,
+    pcs = paste0("PC", 1:15),
+    spec = "spec",
+    nfolds = 10,
+    seed = 123) {
+
+  species_codes <- c(
+    abe = "aberrans",
+    pue = "puella",
+    nig = "nigricans",
+    uni = "unicolor",
+    ind = "indigo",
+    gem = "gemma"
+  )
+
+  allowed_species <- names(species_codes)
+
+  if (missing(pairs) || is.null(pairs)) {
+    stop("You must provide the species pairs to analyse.")
+  }
+
+  # Make sure pairs are character vectors
+  pairs <- lapply(pairs, as.character)
+
+  # Prepare data
+  dat <- pc_table %>%
+    dplyr::select(dplyr::all_of(c(spec, pcs))) %>%
+    dplyr::mutate(
+      .species = as.character(.data[[spec]])
+    ) %>%
+    dplyr::filter(
+      .species %in% allowed_species
+    )
+  print(dat)
+
+  # Sample sizes
+  species_counts <- table(dat$.species)
+  print(species_counts)
+
+  # Analyse every pair
+  results <- lapply(
+    pairs,
+    analyse_single_pair,
+    dat = dat,
+    pcs = pcs,
+    nfolds = nfolds,
+    seed = seed,
+    species_codes = species_codes
+  )
+  print(results[[3]])
+  # Remove failed analyses
+  results <- results[
+    !vapply(results, is.null, logical(1))
+  ]
+  print(results[[3]])
+
+
+  if (length(results) == 0) {
+    stop("No species pairs could be successfully analysed.")
+  }
+
+  # Create summary table
+  summary <- dplyr::bind_rows(
+    lapply(
+      results,
+      function(x) {
+
+        tibble::tibble(
+          species_1 = x$species_1,
+          species_2 = x$species_2,
+
+          species_1_name = x$species_1_name,
+          species_2_name = x$species_2_name,
+
+          n_1 = x$n_1,
+          n_2 = x$n_2,
+
+          n_classified = x$n_classified,
+          nfolds = x$nfolds,
+
+          accuracy = x$accuracy,
+          mean_p_correct = x$mean_p_correct,
+
+          phenotypic_divergence =
+            x$phenotypic_divergence
+        )
+      }
+    )
+  )
+
+  # Return everything
+  list(
+    summary = summary,
+    pairwise = results,
+    species = species_codes,
+    pcs = pcs,
+    sample_sizes = species_counts
+  )
+}
+
+# ============================================================
+# Pairwise LDA analysis for phenotypes
+# ============================================================
+analyse_single_pair <- function(
+    dat,
+    pair,
+    pcs,
+    nfolds = 10,
+    seed = 123,
+    species_codes) {
+
+  sp1 <- pair[1]
+  sp2 <- pair[2]
+
+  message("Analysing: ", sp1, " vs ", sp2)
+
+  # Keep only the two species
+  d <- dat %>%
+    dplyr::filter(.species %in% c(sp1, sp2))
+
+  n1 <- sum(d$.species == sp1)
+  n2 <- sum(d$.species == sp2)
+
+  message("Counts: ", n1, " vs ", n2)
+
+  # Need at least two individuals per species
+  if (n1 < 2 || n2 < 2) {
+    warning(
+      "Skipping ", sp1, " vs ", sp2,
+      ": fewer than 2 individuals in one species."
+    )
+    return(NULL)
+  }
+
+  # Cannot use more folds than the smallest sample
+  folds_used <- min(nfolds, n1, n2)
+  message("Fold used: ", folds_used)
+
+  # Create stratified folds
+  set.seed(seed)
+
+  d <- d %>%
+    dplyr::group_by(.species) %>%
+    dplyr::mutate(
+      fold = sample(
+        rep(seq_len(folds_used), length.out = dplyr::n())
+      )
+    ) %>%
+    dplyr::ungroup()
+
+  print(d)
+
+  # Storage
+  predicted <- rep(NA_character_, nrow(d))
+  print(predicted)
+  p_correct <- rep(NA_real_, nrow(d))
+  print(p_correct)
+
+
+  # Cross-validation
+  for (fold_i in seq_len(folds_used)) {
+
+    print(fold_i)
+
+    train <- d %>%
+      dplyr::filter(fold != fold_i)
+    print(train)
+
+    test <- d %>%
+      dplyr::filter(fold == fold_i)
+    print(test)
+
+    # Fit LDA
+    lda_formula <- as.formula(
+      paste(".species ~", paste(pcs, collapse = " + "))
+    )
+    print(lda_formula)
+
+    lda_fit <- tryCatch(
+      MASS::lda(lda_formula, data = train),
+      error = function(e) {
+        warning(
+          "LDA failed for ", sp1, " vs ", sp2,
+          ", fold ", fold_i, ": ", e$message
+        )
+        NULL
+      }
+    )
+    print(lda_fit)
+
+
+    if (is.null(lda_fit)) {
+      next
+    }
+
+
+    # Predict test individuals
+    prediction <- predict(lda_fit, newdata = test)
+    print(prediction)
+
+    # Find their rows
+    test_rows <- which(d$fold == fold_i)
+    print(test_rows)
+
+    predicted[test_rows] <- as.character(prediction$class)
+    print(predicted)
+
+    # Probability assigned to the true species
+    posterior <- prediction$posterior
+    print(posterior)
+
+    true_probability <- posterior[
+      cbind(
+        seq_len(nrow(test)),
+        match(test$.species, colnames(posterior))
+      )
+    ]
+    print(true_probability)
+
+    p_correct[test_rows] <- true_probability
+    print(p_correct)
+  }
+
+  # Keep successful predictions
+  valid <- !is.na(predicted)
+  print(valid)
+
+  if (!any(valid)) {
+    warning(
+      "No successful cross-validation predictions for ",
+      sp1, " vs ", sp2
+    )
+    return(NULL)
+  }
+
+  # Classification accuracy
+  accuracy <- mean(
+    predicted[valid] == d$.species[valid]
+  )
+  print(accuracy)
+
+  # Mean probability assigned to the correct species
+  mean_p_correct <- mean(
+    p_correct[valid],
+    na.rm = TRUE
+  )
+  print(mean_p_correct)
+
+  # Convert to 0-1 phenotypic divergence
+  phenotypic_divergence <- max(
+    0,
+    min(
+      1,
+      2 * mean_p_correct - 1
+    )
+  )
+  print(phenotypic_divergence)
+
+  # Fit final LDA using all individuals
+  lda_formula <- as.formula(
+    paste(".species ~", paste(pcs, collapse = " + "))
+  )
+
+  final_lda <- MASS::lda(
+    lda_formula,
+    data = d
+  )
+
+  # LDA scores
+  lda_scores <- predict(final_lda, newdata = d)$x
+
+  # LDA loadings
+  lda_loadings <- final_lda$scaling[, 1]
+
+  # Return results
+  list(
+    species_1 = sp1,
+    species_2 = sp2,
+
+    species_1_name = species_codes[sp1],
+    species_2_name = species_codes[sp2],
+
+    n_1 = n1,
+    n_2 = n2,
+
+    n_classified = sum(valid),
+    nfolds = folds_used,
+
+    accuracy = accuracy,
+    mean_p_correct = mean_p_correct,
+    phenotypic_divergence = phenotypic_divergence,
+
+    actual = d$.species[valid],
+    predicted = predicted[valid],
+    p_correct = p_correct[valid],
+
+    confusion = table(
+      Actual = d$.species[valid],
+      Predicted = predicted[valid]
+    ),
+
+    lda_scores = lda_scores,
+    lda_loadings = lda_loadings
+  )
+}
+
+# ============================================================
+# Pairs LDA plot with loadings
+# ============================================================
+plot_single_pair <- function(result, top_n = 5) {
+
+  # LDA scores
+  scores <- as.data.frame(result$lda_scores)
+
+  scores$.species <- result$actual
+
+  # Top PCs contributing to LD1
+  loadings <- result$lda_loadings
+
+  top_pcs <- names(
+    sort(abs(loadings), decreasing = TRUE)
+  )[seq_len(min(top_n, length(loadings)))]
+
+  # Scale arrows so they fit the plot
+  arrow_scale <- max(abs(scores$LD1)) /
+    max(abs(loadings[top_pcs])) * 0.7
+
+  arrows <- data.frame(
+    PC = top_pcs,
+    x = 0,
+    xend = loadings[top_pcs] * arrow_scale,
+    y = 0,
+    yend = 0
+  )
+
+  ggplot2::ggplot(
+    scores,
+    ggplot2::aes(
+      x = LD1,
+      y = 0,
+      colour = .species
+    )
+  ) +
+
+    ggplot2::geom_jitter(
+      height = 0.05,
+      width = 0,
+      size = 3,
+      alpha = 0.7
+    ) +
+
+    ggplot2::geom_segment(
+      data = arrows,
+      ggplot2::aes(
+        x = x,
+        y = y,
+        xend = xend,
+        yend = yend
+      ),
+      inherit.aes = FALSE,
+      arrow = grid::arrow(
+        length = grid::unit(0.2, "cm")
+      ),
+      colour = "black"
+    ) +
+
+    ggplot2::geom_text(
+      data = arrows,
+      ggplot2::aes(
+        x = xend,
+        y = yend,
+        label = PC
+      ),
+      inherit.aes = FALSE,
+      colour = "black",
+      vjust = -0.5
+    ) +
+
+    ggplot2::labs(
+      x = "LD1",
+      y = NULL,
+      colour = "Species",
+      title = paste(
+        result$species_1_name,
+        "vs",
+        result$species_2_name
+      )
+    ) +
+
+    ggplot2::theme_classic() +
+
+    ggplot2::theme(
+      axis.text.y = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_blank()
+    )
+}
+
+
+# ============================================================
+# Linear discriminant analysis using PCA scores
+# ============================================================
+discriminant_analysis <- function(
+    pc_table,
+    pcs = paste0("PC", 1:15),
+    group_col = "species",
+    min_n = 2) {
+
+  #-----------------------------------
+  # Check columns
+  #-----------------------------------
+  req <- c(pcs, group_col)
+
+  missing_cols <- setdiff(req, colnames(pc_table))
+
+  if (length(missing_cols) > 0) {
+    stop(
+      "Missing columns in pc_table: ",
+      paste(missing_cols, collapse = ", ")
+    )
+  }
+
+  #-----------------------------------
+  # Keep relevant columns
+  #-----------------------------------
+  dat <- pc_table[, req, drop = FALSE]
+
+  # Remove incomplete observations
+  dat <- dat[complete.cases(dat), , drop = FALSE]
+
+  # Grouping variable as factor
+  dat[[group_col]] <- factor(dat[[group_col]])
+
+  #-----------------------------------
+  # Remove groups with too few individuals
+  #-----------------------------------
+  group_counts <- table(dat[[group_col]])
+
+  keep_groups <- names(
+    group_counts[group_counts >= min_n]
+  )
+
+  dat <- dat[
+    dat[[group_col]] %in% keep_groups,
+    ,
+    drop = FALSE
+  ]
+
+  dat[[group_col]] <- droplevels(dat[[group_col]])
+
+  if (nlevels(dat[[group_col]]) < 2) {
+    stop("Fewer than two groups remain after filtering.")
+  }
+
+  #-----------------------------------
+  # LDA formula
+  #-----------------------------------
+  lda_formula <- as.formula(
+    paste(
+      group_col,
+      "~",
+      paste(pcs, collapse = " + ")
+    )
+  )
+
+  #-----------------------------------
+  # Fit LDA
+  #-----------------------------------
+  lda_fit <- MASS::lda(
+    formula = lda_formula,
+    data = dat
+  )
+
+  #-----------------------------------
+  # Calculate discriminant scores
+  #-----------------------------------
+  lda_pred <- predict(lda_fit)
+
+  scores <- as.data.frame(lda_pred$x)
+
+  scores[[group_col]] <- dat[[group_col]]
+
+  #-----------------------------------
+  # Return results
+  #-----------------------------------
+  list(
+    data = dat,
+    fit = lda_fit,
+    scores = scores
+  )
+}
+
+
+# ============================================================
+# Function: lda_plot
+# Purpose : Create LDA scatter plot using the same aesthetics
+#           as the PCA plots, with arrows showing the
+#           contribution of the original PCs to the LD axes.
+# ============================================================
+lda_plot <- function(
+    da,
+    species_info,
+    geo_info,
+    color_by = "species",
+    extract_legend = FALSE,
+    legend_rows = 2) {
+
+  # -----------------------------
+  # 1. Choose color/grouping mode
+  # -----------------------------
+
+  color_by <- match.arg(
+    color_by,
+    c("species", "location")
+  )
+
+  if (color_by == "species") {
+
+    group_col <- "spec"
+    info_table <- species_info
+
+    color_map <- setNames(
+      info_table$Color,
+      info_table$spec
+    )
+
+    label_map <- setNames(
+      paste0(
+        "<img src='",
+        info_table$link,
+        "' width='90' /><br>*H. ",
+        info_table$Species,
+        "*"
+      ),
+      info_table$spec
+    )
+
+  } else {
+
+    group_col <- "geo"
+    info_table <- geo_info
+
+    color_map <- setNames(
+      info_table$Color,
+      info_table$geo
+    )
+
+    label_map <- setNames(
+      info_table$Locations,
+      info_table$geo
+    )
+  }
+
+
+  # -----------------------------
+  # 2. Extract LDA scores
+  # -----------------------------
+
+  scores <- da$scores
+
+  if (!all(c("LD1", "LD2") %in% colnames(scores))) {
+    stop("LDA must contain at least LD1 and LD2.")
+  }
+
+  # Add metadata
+  scores <- scores %>%
+    left_join(
+      info_table,
+      by = group_col
+    )
+
+
+  # -----------------------------
+  # 3. Calculate PC contributions
+  # -----------------------------
+  #
+  # Correlation between each original
+  # PC and each discriminant axis.
+  #
+  # These are useful as directional
+  # arrows on the LD plot.
+  # -----------------------------
+
+  pc_vars <- colnames(da$data)[
+    colnames(da$data) %in% paste0("PC", 1:15)
+  ]
+
+  if (length(pc_vars) == 0) {
+    stop("No PC variables found in the LDA data.")
+  }
+
+  cor_matrix <- cor(
+    da$data[, pc_vars, drop = FALSE],
+    da$scores[, c("LD1", "LD2"), drop = FALSE]
+  )
+
+  arrows <- data.frame(
+    PC = rownames(cor_matrix),
+    LD1 = cor_matrix[, "LD1"],
+    LD2 = cor_matrix[, "LD2"],
+    row.names = NULL
+  )
+
+
+  # -----------------------------
+  # 4. Scale arrows
+  # -----------------------------
+
+  # Determine ranges of LD axes
+  x_range <- range(
+    scores$LD1,
+    na.rm = TRUE
+  )
+
+  y_range <- range(
+    scores$LD2,
+    na.rm = TRUE
+  )
+
+  # Arrow scaling factor
+  arrow_scale <- min(
+    diff(x_range),
+    diff(y_range)
+  ) * 0.35
+
+  arrows <- arrows %>%
+    mutate(
+      xend = LD1 * arrow_scale,
+      yend = LD2 * arrow_scale,
+      x = 0,
+      y = 0
+    )
+
+
+  # -----------------------------
+  # 5. Build LDA plot
+  # -----------------------------
+
+  p <- ggplot(
+    scores,
+    aes(
+      x = LD1,
+      y = LD2,
+      color = .data[[group_col]]
+    )
+  ) +
+
+    # Individuals
+    geom_point(
+      size = 4,
+      alpha = 1
+    ) +
+
+    # # Group ellipses
+    # stat_ellipse(
+    #   aes(
+    #     color = .data[[group_col]]
+    #   ),
+    #   linetype = 5,
+    #   linewidth = 1.5
+    # ) +
+
+    # ---------------------------
+    # PC arrows
+    # ---------------------------
+
+    geom_segment(
+      data = arrows,
+      aes(
+        x = x,
+        y = y,
+        xend = xend,
+        yend = yend
+      ),
+      inherit.aes = FALSE,
+      arrow = arrow(
+        length = unit(
+          0.25,
+          "cm"
+        )
+      ),
+      color = "black",
+      linewidth = 0.8
+    ) +
+
+    geom_text(
+      data = arrows,
+      aes(
+        x = xend,
+        y = yend,
+        label = PC
+      ),
+      inherit.aes = FALSE,
+      color = "black",
+      size = 5,
+      fontface = "bold",
+      nudge_x = 0.02 * diff(x_range),
+      nudge_y = 0.02 * diff(y_range)
+    ) +
+
+    scale_color_manual(
+      values = color_map,
+      labels = label_map
+    ) +
+
+    theme(
+      legend.position =
+        if (extract_legend) "bottom" else "none",
+
+      legend.box = "horizontal",
+
+      legend.title = element_blank(),
+
+      legend.text = element_markdown(
+        size = 15
+      ),
+
+      panel.background = element_blank(),
+
+      panel.border = element_rect(
+        color = "black",
+        fill = NA,
+        linewidth = 1
+      ),
+
+      axis.text = element_text(
+        size = 12
+      ),
+
+      axis.title = element_text(
+        size = 18
+      ),
+
+      plot.margin = margin(
+        3, 3, 0, 0
+      )
+    ) +
+
+    scale_x_continuous(
+      position = "bottom",
+      labels = unit_format(
+        unit = "k",
+        scale = 1e-3
+      )
+    ) +
+
+    scale_y_continuous(
+      labels = unit_format(
+        unit = "k",
+        scale = 1e-3
+      )
+    ) +
+
+    labs(
+      x = "LD1",
+      y = "LD2"
+    ) +
+
+    guides(
+      color = guide_legend(
+        nrow = legend_rows
+      )
+    )
+
+
+  # -----------------------------
+  # 6. Add title
+  # -----------------------------
+
+  title_val <- NULL
+
+  if (color_by == "species") {
+
+    geo_val <- unique(scores$geo)
+
+    if (length(geo_val) == 1) {
+
+      title_val <- geo_info$Locations[
+        geo_info$geo == geo_val
+      ]
+
+      if (title_val == "Panama") {
+        title_val <- "(b) Panama"
+      } else if (title_val == "USVI") {
+        title_val <- "(f) USVI"
+      } else if (title_val == "Belize") {
+        title_val <- "(a) Belize"
+      } else if (title_val == "Florida Keys") {
+        title_val <- "(c) Florida Keys"
+      } else if (title_val == "Tobago") {
+        title_val <- "(b) Tobago"
+      } else if (title_val == "Mexico") {
+        title_val <- "(a) Mexico"
+      } else if (title_val == "Honduras") {
+        title_val <- "(c) Honduras"
+      } else if (title_val == "Puerto Rico") {
+        title_val <- "(d) Puerto Rico"
+      } else {
+        title_val <- ""
+      }
+
+    } else {
+
+      title_val <- ""
+
+    }
+
+  } else {
+
+    spec_val <- unique(scores$spec)
+
+    if (length(spec_val) == 1) {
+
+      title_val <- paste0(
+        "H. ",
+        species_info$Species[
+          species_info$spec == spec_val
+        ]
+      )
+
+      if (title_val == "H. puella") {
+        title_val <- "(a) H. puella"
+      } else if (title_val == "H. nigricans") {
+        title_val <- "(b) H. nigricans"
+      } else if (title_val == "H. unicolor") {
+        title_val <- "(c) H. unicolor"
+      } else if (title_val == "H. chlorurus") {
+        title_val <- "(d) H. chlorurus"
+      } else if (title_val == "H. aberrans") {
+        title_val <- "(e) H. aberrans"
+      } else if (title_val == "H. indigo") {
+        title_val <- "(f) H. indigo"
+      } else {
+        title_val <- ""
+      }
+    }
+  }
+
+
+  # -----------------------------
+  # 7. Annotate figure
+  # -----------------------------
+
+  p_annot <- annotate_figure(
+    p,
+    top = text_grob(
+      title_val,
+      color = "black",
+      face = if (
+        color_by == "species"
+      ) {
+        "bold"
+      } else {
+        "bold.italic"
+      },
+      size = 20,
+      x = unit(0, "lines"),
+      vjust = 0,
+      hjust = 0
+    )
+  )
+
+
+  return(p_annot)
+}

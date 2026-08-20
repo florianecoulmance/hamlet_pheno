@@ -54,11 +54,13 @@ rule all:
                 "FigS3_pAllVAR.png",
                 "FigS4_pPCA_sup.png",
                 "FigS5_pPCA_loc.png",
-                "FigS6_pAll.png",
-                "FigS7_pLocPERM.png",
-                "FigS8_pLocHCLUST.png",
-                "FigS9_pLocHEAT.png",
-                "FigS10_pSpe.png"
+                "FigS6_pAllLDA.png",
+                "FigS7_pLocLDA.png",
+                "FigS8_pAll.png",
+                "FigS9_pLocPERM.png",
+                "FigS10_pLocHCLUST.png",
+                "FigS11_pLocHEAT.png",
+                "FigS12_pSpe.png"
             ]
         )
 
@@ -109,11 +111,13 @@ rule plot_figures:
         f"{FIGURES_DIR}/FigS3_pAllVAR.png",
         f"{FIGURES_DIR}/FigS4_pPCA_sup.png",
         f"{FIGURES_DIR}/FigS5_pPCA_loc.png",
-        f"{FIGURES_DIR}/FigS6_pAll.png",
-        f"{FIGURES_DIR}/FigS7_pLocPERM.png",
-        f"{FIGURES_DIR}/FigS8_pLocHCLUST.png",
-        f"{FIGURES_DIR}/FigS9_pLocHEAT.png",
-        f"{FIGURES_DIR}/FigS10_pSpe.png"
+        f"{FIGURES_DIR}/FigS6_pAllLDA.png",
+        f"{FIGURES_DIR}/FigS7_pLocLDA.png",
+        f"{FIGURES_DIR}/FigS8_pAll.png",
+        f"{FIGURES_DIR}/FigS9_pLocPERM.png",
+        f"{FIGURES_DIR}/FigS10_pLocHCLUST.png",
+        f"{FIGURES_DIR}/FigS11_pLocHEAT.png",
+        f"{FIGURES_DIR}/FigS12_pSpe.png"
     params:
         base_path = BASE_DIR,
         path_phenotypes = PCA_DIR,
