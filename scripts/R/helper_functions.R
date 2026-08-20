@@ -3343,7 +3343,7 @@ plot_single_pair <- function(result, top_n = 5) {
 discriminant_analysis <- function(
     pc_table,
     pcs = paste0("PC", 1:15),
-    group_col = "species",
+    group_col = "spec",
     min_n = 2) {
 
   #-----------------------------------
