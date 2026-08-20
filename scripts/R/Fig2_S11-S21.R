@@ -356,26 +356,29 @@ pB <- plot_genome_dxy(
   chromosome_info
 )
 
-# # 6. PLOT C — FST boxplots
-# pC <- plot_pairwise_metric(
-#   fst,
-#   metric = "avg_wc_fst",
-#   xlab = "Pairwise FST"
-# )
+# 6. PLOT C — FST boxplots
+pC <- plot_pairwise_metric(
+  fst,
+  metric = "avg_wc_fst",
+  xlab = "Pairwise FST"
+)
 
-# # 7. PLOT D — DXY boxplots
-# pD <- plot_pairwise_metric(
-#   dxy,
-#   metric = "avg_dxy",
-#   xlab = "Pairwise DXY"
-# )
+# 7. PLOT D — DXY boxplots
+pD <- plot_pairwise_metric(
+  dxy,
+  metric = "avg_dxy",
+  xlab = "Pairwise DXY"
+)
 
 # figure2 <- (pA | pB) #/ (pC | pD) +   plot_annotation(tag_levels = "a")
 figure2 <- ggarrange(
-  pA, pB,
+  pA,
+  pB,
+  ggarrange(pC, pD, ncol =2, nrow = 1),
   ncol = 1,
-  nrow = 2,
-  align = "hv"
+  nrow = 3,
+  align = "hv",
+  heights = c (1, 1, 9)
 )
 
 ggsave(
