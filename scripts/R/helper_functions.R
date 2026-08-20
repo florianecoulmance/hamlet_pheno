@@ -2432,10 +2432,7 @@ add_genome_position <- function(df) {
 plot_pairwise_metric <- function(df,
                                  metric,
                                  xlab,
-                                 location_levels = c(
-                                   "hon", "bel", "boc", "pri", "arc",
-                                   "bar", "flk", "gun", "qui"
-                                 )) {
+                                 location_levels = c("hon", "bel", "boc", "pri", "arc", "bar", "flk", "gun", "qui")) {
   head(df)
   df <- df %>%
     filter(pop1 != pop2) %>%

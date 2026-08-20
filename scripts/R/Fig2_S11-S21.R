@@ -356,19 +356,28 @@ head(dxy_window)
 #   chromosome_info
 # )
 
+print(plot_pairwise_metric)
+typeof(plot_pairwise_metric)
+class(plot_pairwise_metric)
+
+print("BEFORE pC")
 # 6. PLOT C — FST boxplots
 pC <- plot_pairwise_metric(
   fst,
   metric = "avg_wc_fst",
   xlab = "Pairwise FST"
 )
+print("AFTER pC")
 
 # 7. PLOT D — DXY boxplots
+print("BEFORE pD")
 pD <- plot_pairwise_metric(
   dxy,
   metric = "avg_dxy",
   xlab = "Pairwise DXY"
 )
+print("AFTER pD")
+
 
 # figure2 <- (pA | pB) #/ (pC | pD) +   plot_annotation(tag_levels = "a")
 # figure2 <- ggarrange(
