@@ -3927,11 +3927,11 @@ lda_plot <- function(
         title_val <- geo_info$Locations[geo_match]
 
         if (title_val == "Panama") {
-          title_val <- "(b) Panama"
+          title_val <- "(e) Panama"
         } else if (title_val == "USVI") {
           title_val <- "(f) USVI"
         } else if (title_val == "Belize") {
-          title_val <- "(a) Belize"
+          title_val <- "(d) Belize"
         } else if (title_val == "Florida Keys") {
           title_val <- "(c) Florida Keys"
         } else if (title_val == "Tobago") {
