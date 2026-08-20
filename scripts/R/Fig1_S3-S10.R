@@ -155,11 +155,10 @@ for(dat in names(dataset)) {
     group_col = if (color == "species") "spec" else "geo"
   )
   print(da)
-  
+
   # LDA plot
   p_lda <- lda_plot(
     da = da,
-    lda_data = pc_table,
     species_info = species_info,
     geo_info = geo_table,
     color_by = color,

@@ -3439,7 +3439,6 @@ discriminant_analysis <- function(
 # ============================================================
 lda_plot <- function(
     da,
-    lda_data,
     species_info,
     geo_info,
     color_by = "species",
@@ -3497,75 +3496,86 @@ lda_plot <- function(
   # 2. Extract LDA scores
   # -----------------------------
 
-  # MASS::lda stores discriminant scores
-  # in predict(da)$x
+  scores <- as.data.frame(da$scores)
 
-  scores <- as.data.frame(
-    predict(da)$x
-  )
-
-  # Make sure LD1 and LD2 exist
-  if (!all(c("LD1", "LD2") %in% colnames(scores))) {
-    stop(
-      "The LDA model must contain at least two discriminant axes (LD1 and LD2)."
-    )
+  if (!"LD1" %in% colnames(scores)) {
+    stop("LDA scores must contain LD1.")
   }
+
+  has_LD2 <- "LD2" %in% colnames(scores)
 
 
   # -----------------------------
   # 3. Add metadata
   # -----------------------------
 
-  # Check that rows correspond
-  if (nrow(scores) != nrow(lda_data)) {
+  if (nrow(scores) != nrow(da$data)) {
     stop(
-      "Number of rows in LDA scores does not match lda_data."
+      "Number of rows in da$scores does not match da$data."
     )
   }
 
   scores <- scores %>%
     mutate(
-      spec = lda_data$spec,
-      geo = lda_data$geo
+      spec = da$data$spec,
+      geo = da$data$geo
     )
 
-  # Add sample if available
-  if ("sample" %in% colnames(lda_data)) {
-    scores$sample <- lda_data$sample
+  if ("sample" %in% colnames(da$data)) {
+    scores$sample <- da$data$sample
   }
 
 
   # -----------------------------
-  # 4. Calculate PC contributions
+  # 4. Identify PC variables
   # -----------------------------
 
-  pc_vars <- colnames(lda_data)[
-    colnames(lda_data) %in% paste0("PC", 1:15)
+  pc_vars <- colnames(da$data)[
+    colnames(da$data) %in% paste0("PC", 1:15)
   ]
 
   if (length(pc_vars) == 0) {
-    stop("No PC variables found in lda_data.")
+    stop("No PC variables found in da$data.")
   }
-
-  # Correlation between each original PC
-  # and the discriminant axes
-
-  cor_matrix <- cor(
-    lda_data[, pc_vars, drop = FALSE],
-    scores[, c("LD1", "LD2"), drop = FALSE],
-    use = "pairwise.complete.obs"
-  )
-
-  arrows <- data.frame(
-    PC = rownames(cor_matrix),
-    LD1 = cor_matrix[, "LD1"],
-    LD2 = cor_matrix[, "LD2"],
-    row.names = NULL
-  )
 
 
   # -----------------------------
-  # 5. Scale arrows
+  # 5. Calculate PC correlations
+  # -----------------------------
+
+  if (has_LD2) {
+
+    cor_matrix <- cor(
+      da$data[, pc_vars, drop = FALSE],
+      scores[, c("LD1", "LD2"), drop = FALSE],
+      use = "pairwise.complete.obs"
+    )
+
+    arrows <- data.frame(
+      PC = rownames(cor_matrix),
+      LD1 = cor_matrix[, "LD1"],
+      LD2 = cor_matrix[, "LD2"],
+      row.names = NULL
+    )
+
+  } else {
+
+    cor_matrix <- cor(
+      da$data[, pc_vars, drop = FALSE],
+      scores[, "LD1", drop = FALSE],
+      use = "pairwise.complete.obs"
+    )
+
+    arrows <- data.frame(
+      PC = rownames(cor_matrix),
+      LD1 = cor_matrix[, "LD1"],
+      row.names = NULL
+    )
+  }
+
+
+  # -----------------------------
+  # 6. Plot ranges
   # -----------------------------
 
   x_range <- range(
@@ -3573,154 +3583,307 @@ lda_plot <- function(
     na.rm = TRUE
   )
 
-  y_range <- range(
-    scores$LD2,
-    na.rm = TRUE
-  )
+  x_width <- diff(x_range)
 
-  arrow_scale <- min(
-    diff(x_range),
-    diff(y_range)
-  ) * 0.35
+  if (x_width == 0) {
+    x_width <- 1
+  }
 
-  arrows <- arrows %>%
-    mutate(
-      x = 0,
-      y = 0,
-      xend = LD1 * arrow_scale,
-      yend = LD2 * arrow_scale
+
+  # ============================================================
+  # 7A. TWO GROUPS: LD1 ONLY
+  # ============================================================
+
+  if (!has_LD2) {
+
+    # Add a small amount of vertical jitter purely for
+    # visual separation of overlapping individuals.
+    scores <- scores %>%
+      mutate(
+        plot_y = jitter(
+          rep(0, nrow(.)),
+          amount = 0.08
+        )
+      )
+
+    # Scale PC arrows along LD1
+    arrow_scale <- x_width * 0.30
+
+    arrows <- arrows %>%
+      mutate(
+        x = 0,
+        y = 0,
+        xend = LD1 * arrow_scale,
+        yend = 0
+      )
+
+    y_lim <- max(
+      0.25,
+      max(abs(scores$plot_y), na.rm = TRUE) * 2
     )
 
-
-  # -----------------------------
-  # 6. Build LDA plot
-  # -----------------------------
-
-  p <- ggplot(
-    scores,
-    aes(
-      x = LD1,
-      y = LD2,
-      color = .data[[group_col]]
-    )
-  ) +
-
-    # Individuals
-    geom_point(
-      size = 4,
-      alpha = 1
-    ) +
-
-    # ---------------------------
-    # PC arrows
-    # ---------------------------
-
-    geom_segment(
-      data = arrows,
+    p <- ggplot(
+      scores,
       aes(
-        x = x,
-        y = y,
-        xend = xend,
-        yend = yend
-      ),
-      inherit.aes = FALSE,
-      arrow = arrow(
-        length = unit(0.25, "cm")
-      ),
-      color = "black",
-      linewidth = 0.8
+        x = LD1,
+        y = plot_y,
+        color = .data[[group_col]]
+      )
     ) +
 
-    geom_text(
-      data = arrows,
-      aes(
-        x = xend,
-        y = yend,
-        label = PC
-      ),
-      inherit.aes = FALSE,
-      color = "black",
-      size = 5,
-      fontface = "bold",
-      nudge_x = 0.02 * diff(x_range),
-      nudge_y = 0.02 * diff(y_range)
-    ) +
+      # Individuals
+      geom_point(
+        size = 4,
+        alpha = 1
+      ) +
 
-    # ---------------------------
-    # Colours
-    # ---------------------------
-
-    scale_color_manual(
-      values = color_map,
-      labels = label_map
-    ) +
-
-    # ---------------------------
-    # Theme
-    # ---------------------------
-
-    theme(
-      legend.position =
-        if (extract_legend) "bottom" else "none",
-
-      legend.box = "horizontal",
-
-      legend.title = element_blank(),
-
-      legend.text = element_markdown(
-        size = 15
-      ),
-
-      panel.background = element_blank(),
-
-      panel.border = element_rect(
+      # PC arrows
+      geom_segment(
+        data = arrows,
+        aes(
+          x = x,
+          y = y,
+          xend = xend,
+          yend = yend
+        ),
+        inherit.aes = FALSE,
+        arrow = arrow(
+          length = unit(0.25, "cm")
+        ),
         color = "black",
-        fill = NA,
-        linewidth = 1
-      ),
+        linewidth = 0.8
+      ) +
 
-      axis.text = element_text(
-        size = 12
-      ),
+      geom_text(
+        data = arrows,
+        aes(
+          x = xend,
+          y = yend,
+          label = PC
+        ),
+        inherit.aes = FALSE,
+        color = "black",
+        size = 5,
+        fontface = "bold",
+        nudge_x = 0.02 * x_width,
+        nudge_y = 0.03
+      ) +
 
-      axis.title = element_text(
-        size = 18
-      ),
+      scale_color_manual(
+        values = color_map,
+        labels = label_map
+      ) +
 
-      plot.margin = margin(
-        3, 3, 0, 0
+      scale_x_continuous(
+        position = "bottom",
+        labels = scales::unit_format(
+          unit = "k",
+          scale = 1e-3
+        )
+      ) +
+
+      scale_y_continuous(
+        limits = c(-y_lim, y_lim),
+        breaks = NULL
+      ) +
+
+      labs(
+        x = "LD1",
+        y = NULL
+      ) +
+
+      theme(
+        legend.position =
+          if (extract_legend) "bottom" else "none",
+
+        legend.box = "horizontal",
+
+        legend.title = element_blank(),
+
+        legend.text = element_markdown(
+          size = 15
+        ),
+
+        panel.background = element_blank(),
+
+        panel.border = element_rect(
+          color = "black",
+          fill = NA,
+          linewidth = 1
+        ),
+
+        axis.text.x = element_text(
+          size = 12
+        ),
+
+        axis.text.y = element_blank(),
+
+        axis.title.x = element_text(
+          size = 18
+        ),
+
+        axis.title.y = element_blank(),
+
+        axis.ticks.y = element_blank(),
+
+        plot.margin = margin(
+          3, 3, 0, 0
+        )
+      ) +
+
+      guides(
+        color = guide_legend(
+          nrow = legend_rows
+        )
       )
-    ) +
 
-    scale_x_continuous(
-      position = "bottom",
-      labels = scales::unit_format(
-        unit = "k",
-        scale = 1e-3
-      )
-    ) +
 
-    scale_y_continuous(
-      labels = scales::unit_format(
-        unit = "k",
-        scale = 1e-3
-      )
-    ) +
+  # ============================================================
+  # 7B. THREE OR MORE GROUPS: LD1 × LD2
+  # ============================================================
 
-    labs(
-      x = "LD1",
-      y = "LD2"
-    ) +
+  } else {
 
-    guides(
-      color = guide_legend(
-        nrow = legend_rows
-      )
+    y_range <- range(
+      scores$LD2,
+      na.rm = TRUE
     )
+
+    y_width <- diff(y_range)
+
+    if (y_width == 0) {
+      y_width <- 1
+    }
+
+    # Scale arrows
+    arrow_scale <- min(
+      x_width,
+      y_width
+    ) * 0.35
+
+    arrows <- arrows %>%
+      mutate(
+        x = 0,
+        y = 0,
+        xend = LD1 * arrow_scale,
+        yend = LD2 * arrow_scale
+      )
+
+    p <- ggplot(
+      scores,
+      aes(
+        x = LD1,
+        y = LD2,
+        color = .data[[group_col]]
+      )
+    ) +
+
+      # Individuals
+      geom_point(
+        size = 4,
+        alpha = 1
+      ) +
+
+      # PC arrows
+      geom_segment(
+        data = arrows,
+        aes(
+          x = x,
+          y = y,
+          xend = xend,
+          yend = yend
+        ),
+        inherit.aes = FALSE,
+        arrow = arrow(
+          length = unit(0.25, "cm")
+        ),
+        color = "black",
+        linewidth = 0.8
+      ) +
+
+      geom_text(
+        data = arrows,
+        aes(
+          x = xend,
+          y = yend,
+          label = PC
+        ),
+        inherit.aes = FALSE,
+        color = "black",
+        size = 5,
+        fontface = "bold",
+        nudge_x = 0.02 * x_width,
+        nudge_y = 0.02 * y_width
+      ) +
+
+      scale_color_manual(
+        values = color_map,
+        labels = label_map
+      ) +
+
+      scale_x_continuous(
+        position = "bottom",
+        labels = scales::unit_format(
+          unit = "k",
+          scale = 1e-3
+        )
+      ) +
+
+      scale_y_continuous(
+        labels = scales::unit_format(
+          unit = "k",
+          scale = 1e-3
+        )
+      ) +
+
+      labs(
+        x = "LD1",
+        y = "LD2"
+      ) +
+
+      theme(
+        legend.position =
+          if (extract_legend) "bottom" else "none",
+
+        legend.box = "horizontal",
+
+        legend.title = element_blank(),
+
+        legend.text = element_markdown(
+          size = 15
+        ),
+
+        panel.background = element_blank(),
+
+        panel.border = element_rect(
+          color = "black",
+          fill = NA,
+          linewidth = 1
+        ),
+
+        axis.text = element_text(
+          size = 12
+        ),
+
+        axis.title = element_text(
+          size = 18
+        ),
+
+        plot.margin = margin(
+          3, 3, 0, 0
+        )
+      ) +
+
+      guides(
+        color = guide_legend(
+          nrow = legend_rows
+        )
+      )
+  }
 
 
   # -----------------------------
-  # 7. Determine title
+  # 8. Determine title
   # -----------------------------
 
   title_val <- ""
@@ -3789,7 +3952,7 @@ lda_plot <- function(
 
 
   # -----------------------------
-  # 8. Annotate figure
+  # 9. Annotate figure
   # -----------------------------
 
   p_annot <- annotate_figure(
@@ -3809,10 +3972,6 @@ lda_plot <- function(
     )
   )
 
-
-  # -----------------------------
-  # 9. Return
-  # -----------------------------
 
   return(p_annot)
 }
