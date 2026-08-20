@@ -3439,6 +3439,7 @@ discriminant_analysis <- function(
 # ============================================================
 lda_plot <- function(
     da,
+    lda_data,
     species_info,
     geo_info,
     color_by = "species",
@@ -3496,42 +3497,63 @@ lda_plot <- function(
   # 2. Extract LDA scores
   # -----------------------------
 
-  scores <- da$scores
+  # MASS::lda stores discriminant scores
+  # in predict(da)$x
 
+  scores <- as.data.frame(
+    predict(da)$x
+  )
+
+  # Make sure LD1 and LD2 exist
   if (!all(c("LD1", "LD2") %in% colnames(scores))) {
-    stop("LDA must contain at least LD1 and LD2.")
+    stop(
+      "The LDA model must contain at least two discriminant axes (LD1 and LD2)."
+    )
   }
 
-  # Add metadata
+
+  # -----------------------------
+  # 3. Add metadata
+  # -----------------------------
+
+  # Check that rows correspond
+  if (nrow(scores) != nrow(lda_data)) {
+    stop(
+      "Number of rows in LDA scores does not match lda_data."
+    )
+  }
+
   scores <- scores %>%
-    left_join(
-      info_table,
-      by = group_col
+    mutate(
+      spec = lda_data$spec,
+      geo = lda_data$geo
     )
 
+  # Add sample if available
+  if ("sample" %in% colnames(lda_data)) {
+    scores$sample <- lda_data$sample
+  }
+
 
   # -----------------------------
-  # 3. Calculate PC contributions
-  # -----------------------------
-  #
-  # Correlation between each original
-  # PC and each discriminant axis.
-  #
-  # These are useful as directional
-  # arrows on the LD plot.
+  # 4. Calculate PC contributions
   # -----------------------------
 
-  pc_vars <- colnames(da$data)[
-    colnames(da$data) %in% paste0("PC", 1:15)
+  pc_vars <- colnames(lda_data)[
+    colnames(lda_data) %in% paste0("PC", 1:15)
   ]
 
   if (length(pc_vars) == 0) {
-    stop("No PC variables found in the LDA data.")
+    stop("No PC variables found in lda_data.")
   }
 
+  # Correlation between each original PC
+  # and the discriminant axes
+
   cor_matrix <- cor(
-    da$data[, pc_vars, drop = FALSE],
-    da$scores[, c("LD1", "LD2"), drop = FALSE]
+    lda_data[, pc_vars, drop = FALSE],
+    scores[, c("LD1", "LD2"), drop = FALSE],
+    use = "pairwise.complete.obs"
   )
 
   arrows <- data.frame(
@@ -3543,10 +3565,9 @@ lda_plot <- function(
 
 
   # -----------------------------
-  # 4. Scale arrows
+  # 5. Scale arrows
   # -----------------------------
 
-  # Determine ranges of LD axes
   x_range <- range(
     scores$LD1,
     na.rm = TRUE
@@ -3557,7 +3578,6 @@ lda_plot <- function(
     na.rm = TRUE
   )
 
-  # Arrow scaling factor
   arrow_scale <- min(
     diff(x_range),
     diff(y_range)
@@ -3565,15 +3585,15 @@ lda_plot <- function(
 
   arrows <- arrows %>%
     mutate(
-      xend = LD1 * arrow_scale,
-      yend = LD2 * arrow_scale,
       x = 0,
-      y = 0
+      y = 0,
+      xend = LD1 * arrow_scale,
+      yend = LD2 * arrow_scale
     )
 
 
   # -----------------------------
-  # 5. Build LDA plot
+  # 6. Build LDA plot
   # -----------------------------
 
   p <- ggplot(
@@ -3591,15 +3611,6 @@ lda_plot <- function(
       alpha = 1
     ) +
 
-    # # Group ellipses
-    # stat_ellipse(
-    #   aes(
-    #     color = .data[[group_col]]
-    #   ),
-    #   linetype = 5,
-    #   linewidth = 1.5
-    # ) +
-
     # ---------------------------
     # PC arrows
     # ---------------------------
@@ -3614,10 +3625,7 @@ lda_plot <- function(
       ),
       inherit.aes = FALSE,
       arrow = arrow(
-        length = unit(
-          0.25,
-          "cm"
-        )
+        length = unit(0.25, "cm")
       ),
       color = "black",
       linewidth = 0.8
@@ -3638,10 +3646,18 @@ lda_plot <- function(
       nudge_y = 0.02 * diff(y_range)
     ) +
 
+    # ---------------------------
+    # Colours
+    # ---------------------------
+
     scale_color_manual(
       values = color_map,
       labels = label_map
     ) +
+
+    # ---------------------------
+    # Theme
+    # ---------------------------
 
     theme(
       legend.position =
@@ -3678,14 +3694,14 @@ lda_plot <- function(
 
     scale_x_continuous(
       position = "bottom",
-      labels = unit_format(
+      labels = scales::unit_format(
         unit = "k",
         scale = 1e-3
       )
     ) +
 
     scale_y_continuous(
-      labels = unit_format(
+      labels = scales::unit_format(
         unit = "k",
         scale = 1e-3
       )
@@ -3704,10 +3720,10 @@ lda_plot <- function(
 
 
   # -----------------------------
-  # 6. Add title
+  # 7. Determine title
   # -----------------------------
 
-  title_val <- NULL
+  title_val <- ""
 
   if (color_by == "species") {
 
@@ -3738,11 +3754,6 @@ lda_plot <- function(
       } else {
         title_val <- ""
       }
-
-    } else {
-
-      title_val <- ""
-
     }
 
   } else {
@@ -3778,7 +3789,7 @@ lda_plot <- function(
 
 
   # -----------------------------
-  # 7. Annotate figure
+  # 8. Annotate figure
   # -----------------------------
 
   p_annot <- annotate_figure(
@@ -3786,9 +3797,7 @@ lda_plot <- function(
     top = text_grob(
       title_val,
       color = "black",
-      face = if (
-        color_by == "species"
-      ) {
+      face = if (color_by == "species") {
         "bold"
       } else {
         "bold.italic"
@@ -3800,6 +3809,10 @@ lda_plot <- function(
     )
   )
 
+
+  # -----------------------------
+  # 9. Return
+  # -----------------------------
 
   return(p_annot)
 }
