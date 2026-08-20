@@ -2288,6 +2288,9 @@ aggregate_fst_by_window <- function(fst) {
 # ============================================================
 plot_genome_fst <- function(fst, chromosome_info) {
 
+  print(fst)
+  print(chromosome_info)
+
   ggplot(
     fst,
     aes(
@@ -2350,6 +2353,9 @@ aggregate_dxy_by_window <- function(dxy) {
 # genome wide dxy plots
 # ============================================================
 plot_genome_dxy <- function(dxy, chromosome_info) {
+
+  print(dxy)
+  print(chromosome_info)
 
   ggplot(
     dxy,
