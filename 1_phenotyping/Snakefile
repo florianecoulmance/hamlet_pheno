@@ -60,7 +60,8 @@ rule all:
                 "FigS9_pLocPERM.png",
                 "FigS10_pLocHCLUST.png",
                 "FigS11_pLocHEAT.png",
-                "FigS12_pSpe.png"
+                "FigS12_pSpe.png",
+                "FigS13_pSpeLDA.png"
             ]
         )
 
@@ -117,7 +118,8 @@ rule plot_figures:
         f"{FIGURES_DIR}/FigS9_pLocPERM.png",
         f"{FIGURES_DIR}/FigS10_pLocHCLUST.png",
         f"{FIGURES_DIR}/FigS11_pLocHEAT.png",
-        f"{FIGURES_DIR}/FigS12_pSpe.png"
+        f"{FIGURES_DIR}/FigS12_pSpe.png",
+        f"{FIGURES_DIR}/FigS13_pSpeLDA.png"
     params:
         base_path = BASE_DIR,
         path_phenotypes = PCA_DIR,

@@ -542,3 +542,30 @@ ggsave(
   dpi = 150,
   type = "cairo-png"
 )
+
+########## FIGURE S13 ###################
+# Per species phenotypic space: LDA
+# Remove the overall entry before extracting plots
+results_spec <- results[!names(results) %in% c("all", "ver", "tob", "flo", "bel", "boc", "uvi")]
+keep_names <- names(results_spec)
+print(results_spec)
+
+spe_lda <- lapply(results_spec, `[[`, "lda") # extract per location supplementary pcas
+speLda_grid <- plot_grid(plotlist = spe_lda, ncol = 2, rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
+# Combine supplementary PCA grid with legend at the bottom
+figureS13 <- ggarrange(
+  speLda_grid,
+  leg_g,
+  nrow = 2,
+  heights = c(10, 0.5)
+  )
+
+# Save Figure S5 as A4 PNG, optimized for small file size
+ggsave(filename = file.path(figure_path, "FigS13_pSpeLDA.png"),
+  plot = figureS13,
+  width = 12,    # A4 width in inches
+  height = 17,  # A4 height in inches
+  units = "in",
+  dpi = 150,       # good quality but light (~1 MB)
+  type = "cairo-png" # smoother text rendering, smaller file
+)
