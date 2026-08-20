@@ -157,7 +157,7 @@ for(dat in names(dataset)) {
 
   # LDA plot
   p_lda <- lda_plot(
-    lda_data = da,
+    da = da,
     species_info = species_info,
     geo_info = geo_table,
     color_by = color,
