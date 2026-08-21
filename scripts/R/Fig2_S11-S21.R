@@ -367,12 +367,18 @@ print(plot_pairwise_metric)
 typeof(plot_pairwise_metric)
 class(plot_pairwise_metric)
 
+location_colors <- setNames(
+  geo_table$Color,
+  geo_table$geo
+)
+
 print("BEFORE pC")
 # 6. PLOT C — FST boxplots
 pC <- plot_pairwise_metric(
   fst_plot,
   metric = "avg_wc_fst",
-  xlab = "Pairwise FST"
+  xlab = "Pairwise FST",
+  location_colors = location_colors
 )
 print("AFTER pC")
 
@@ -381,7 +387,8 @@ print("BEFORE pD")
 pD <- plot_pairwise_metric(
   dxy_plot,
   metric = "avg_dxy",
-  xlab = "Pairwise DXY"
+  xlab = "Pairwise DXY",
+  location_colors = location_colors
 )
 print("AFTER pD")
 

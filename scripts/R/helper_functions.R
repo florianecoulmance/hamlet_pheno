@@ -2433,7 +2433,8 @@ plot_pairwise_metric <- function(
   df,
   metric,
   xlab,
-  location_levels = c("hon", "bel", "boc", "pri", "arc", "bar", "flk", "gun", "qui")) {
+  location_levels = c("hon", "bel", "boc", "pri", "arc", "bar", "flk", "gun", "qui"),
+  location_colors) {
   
   print("ENTERED plot_pairwise_metric")
   print("Rows:")
@@ -2515,12 +2516,18 @@ plot_pairwise_metric <- function(
     df,
     aes(
       x = .data[[metric]],
-      y = pair_location
+      y = pair_location,
+      colour = location
     )
   ) +
     geom_boxplot(
       width = 0.65,
       outlier.size = 0.5
+    ) +
+
+    scale_colour_manual(
+      values = location_colors,
+      drop = FALSE
     ) +
     
     scale_y_discrete(
