@@ -2436,7 +2436,8 @@ plot_pairwise_metric <- function(
   location_levels = c("hon", "bel", "boc", "pri", "arc", "bar", "flk", "gun", "qui")) {
   
   print("ENTERED plot_pairwise_metric")
-  print("Rows:", nrow(df))
+  print("Rows:")
+  print(nrow(df))
 
   df <- df %>%
     filter(pop1 != pop2) %>%
@@ -2458,7 +2459,8 @@ plot_pairwise_metric <- function(
     ) %>%
     filter(!is.na(location))
 
-  print("After filtering:", nrow(df))
+  print("After filtering:")
+  print(nrow(df))
   print(head(df))
 
 
