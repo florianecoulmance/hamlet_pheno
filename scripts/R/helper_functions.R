@@ -2448,7 +2448,7 @@ plot_pairwise_metric <- function(
       pair = ifelse (
         species1 < species2,
         paste(species1, species2, sep = " - "),
-        paste(species2, species1, sep = " - "),
+        paste(species2, species1, sep = " - ")
       )
     ) %>%
     filter(location %in% location_levels) 
