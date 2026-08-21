@@ -2450,19 +2450,21 @@ plot_pairwise_metric <- function(
         paste(species1, species2, sep = " - "),
         paste(species2, species1, sep = " - "),
       )
-    ) %>%    
-    mutate(
-      location = factor(
-        location,
-        levels = location_levels
-      )
     ) %>%
-    filter(!is.na(location))
+    filter(location %in% location_levels) 
 
   print("After filtering:")
   print(nrow(df))
   print(head(df))
 
+  # Factor location
+  df <- df %>%
+    mutate(
+      location = factor(
+        location,
+        levels = location_levels
+      )
+    )
 
   # Unique identifier so the same pair can occur at multiple locations
   df <- df %>%
