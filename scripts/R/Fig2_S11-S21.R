@@ -351,17 +351,17 @@ dxy_plot <- dxy %>%
 head(dxy_plot)
 
 
-# # 4. PLOT A — FST
-# pA <- plot_genome_fst(
-#   fst_window,
-#   chromosome_info
-# )
+# 4. PLOT A — FST
+pA <- plot_genome_fst(
+  fst_window,
+  chromosome_info
+)
 
-# # 5. PLOT B — DXY
-# pB <- plot_genome_dxy(
-#   dxy_window,
-#   chromosome_info
-# )
+# 5. PLOT B — DXY
+pB <- plot_genome_dxy(
+  dxy_window,
+  chromosome_info
+)
 
 print(plot_pairwise_metric)
 typeof(plot_pairwise_metric)
@@ -387,25 +387,25 @@ print("AFTER pD")
 
 
 # figure2 <- (pA | pB) #/ (pC | pD) +   plot_annotation(tag_levels = "a")
-# figure2 <- ggarrange(
-#   pA,
-#   pB,
-#   ggarrange(pC, pD, ncol =2, nrow = 1),
-#   ncol = 1,
-#   nrow = 3,
-#   align = "hv",
-#   heights = c (1, 1, 9)
-# )
+figure2 <- ggarrange(
+  pA,
+  pB,
+  ggarrange(pC, pD, ncol =2, nrow = 1),
+  ncol = 1,
+  nrow = 3,
+  align = "hv",
+  heights = c (1, 1, 9)
+)
 
-figure2 <-
-  ggarrange(
-    pC, 
-    pD,
-    ncol =2,
-    nrow = 1,
-    align = "hv",
-    heights = c (1, 1, 9)
-  )
+# figure2 <-
+#   ggarrange(
+#     pC, 
+#     pD,
+#     ncol =2,
+#     nrow = 1,
+#     align = "hv",
+#     heights = c (1, 1, 9)
+#   )
 
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
