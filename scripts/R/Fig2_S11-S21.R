@@ -343,6 +343,13 @@ head(dxy_genome)
 dxy_window <- dxy_genome$data
 head(dxy_window)
 
+fst_plot <- fst %>%
+  select(pop1, pop2, avg_wc_fst)
+head(fst_plot)
+dxy_plot <- dxy %>%
+  select(pop1, pop2, avg_dxy)
+head(dxy_plot)
+
 
 # # 4. PLOT A — FST
 # pA <- plot_genome_fst(
@@ -363,7 +370,7 @@ class(plot_pairwise_metric)
 print("BEFORE pC")
 # 6. PLOT C — FST boxplots
 pC <- plot_pairwise_metric(
-  fst,
+  fst_plot,
   metric = "avg_wc_fst",
   xlab = "Pairwise FST"
 )
@@ -372,7 +379,7 @@ print("AFTER pC")
 # 7. PLOT D — DXY boxplots
 print("BEFORE pD")
 pD <- plot_pairwise_metric(
-  dxy,
+  dxy_plot,
   metric = "avg_dxy",
   xlab = "Pairwise DXY"
 )

@@ -2429,20 +2429,25 @@ add_genome_position <- function(df) {
 # ============================================================
 # pairwise population fst and dxy boxplots
 # ============================================================
-plot_pairwise_metric <- function(df,
-                                 metric,
-                                 xlab,
-                                 location_levels = c("hon", "bel", "boc", "pri", "arc", "bar", "flk", "gun", "qui")) {
-  head(df)
+plot_pairwise_metric <- function(
+  df,
+  metric,
+  xlab,
+  location_levels = c("hon", "bel", "boc", "pri", "arc", "bar", "flk", "gun", "qui")) {
+  
+  print("ENTERED plot_pairwise_metric")
+  print("Rows:", nrow(df))
+
   df <- df %>%
     filter(pop1 != pop2) %>%
     mutate(
       location = substr(pop1, 4, 6),
       species1 = substr(pop1, 1, 3),
       species2 = substr(pop2, 1, 3),
-      pair = paste(
-        sort(c(species1, species2)),
-        collapse = " - "
+      pair = ifelse (
+        species1 < species2,
+        paste(species1, species2, sep = " - "),
+        paste(species2, species1, sep = " - "),
       )
     ) %>%    
     mutate(
@@ -2453,16 +2458,18 @@ plot_pairwise_metric <- function(df,
     ) %>%
     filter(!is.na(location))
 
+  print("After filtering:", nrow(df))
+  print(head(df))
 
-  head(df)
 
   # Unique identifier so the same pair can occur at multiple locations
   df <- df %>%
     mutate(
       pair_location = paste(location, pair, sep = "_")
     )
+  print(head(df))
 
-  head(df)
+
   
   # Order pairs within locations
   pair_order <- df %>%
@@ -2482,7 +2489,7 @@ plot_pairwise_metric <- function(df,
         levels = rev(y_levels)
       )
     )
-  head(df)
+  print(head(df))
 
   # Location boundaries
   loc_bounds <- df %>%
