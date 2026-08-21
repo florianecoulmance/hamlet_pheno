@@ -2441,14 +2441,18 @@ plot_pairwise_metric <- function(
   print(nrow(df))
 
   df <- df %>%
-    filter(pop1 != pop2) %>%
     mutate(
-      location = substr(pop1, 4, 6),
+      location1 = substr(pop1, 4, 6),
+      location2 = substr(pop2, 4, 6),
       species1 = substr(pop1, 1, 3),
       species2 = substr(pop2, 1, 3)
     ) %>%
-      filter(species1 != species2) %>%
+    filter(
+      location1 == location2,
+      species1 != species2
+    ) %>%
     mutate(
+      location = location1,
       pair = ifelse (
         species1 < species2,
         paste(species1, species2, sep = " - "),
