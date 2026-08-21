@@ -2457,7 +2457,10 @@ plot_pairwise_metric <- function(
         species1 < species2,
         paste(species1, species2, sep = " - "),
         paste(species2, species1, sep = " - ")
-      )
+      ),
+      location_name = geo_table$Locations[
+        match(as.character(location), geo_table$geo)
+      ]
     ) %>%
     filter(location %in% location_levels) 
 
@@ -2471,6 +2474,12 @@ plot_pairwise_metric <- function(
       location = factor(
         location,
         levels = location_levels
+      ),
+      location_name = factor(
+        location_name,
+        levels = geo_table$Locations[
+          match(location_levels, geo_table$geo)
+        ]
       )
     )
 
@@ -2520,18 +2529,24 @@ plot_pairwise_metric <- function(
     df,
     aes(
       x = .data[[metric]],
-      y = pair_location,
+      y = pair,
       colour = location
     )
   ) +
     geom_boxplot(
       width = 0.65,
-      outlier.size = 0.5
+      outlier.shape = NA
     ) +
 
     scale_colour_manual(
       values = location_colors,
       drop = FALSE
+    ) +
+
+    facet_grid(
+      location_name ~ .,
+      scales = "free_y",
+      space = "free_y"
     ) +
     
     scale_y_discrete(
@@ -2540,33 +2555,33 @@ plot_pairwise_metric <- function(
       }
     ) +
     
-    # Location labels
-    geom_text(
-      data = loc_bounds,
-      aes(
-        x = Inf,
-        y = ymid,
-        label = location
-      ),
-      hjust = -0.2,
-      fontface = "bold",
-      inherit.aes = FALSE
-    ) +
+    # # Location labels
+    # geom_text(
+    #   data = loc_bounds,
+    #   aes(
+    #     x = Inf,
+    #     y = ymid,
+    #     label = location
+    #   ),
+    #   hjust = -0.2,
+    #   fontface = "bold",
+    #   inherit.aes = FALSE
+    # ) +
     
-    # Separators between locations
-    geom_hline(
-      data = loc_bounds,
-      aes(
-        yintercept = ymin - 0.5
-      ),
-      colour = "grey70",
-      linewidth = 0.4,
-      inherit.aes = FALSE
-    ) +
+    # # Separators between locations
+    # geom_hline(
+    #   data = loc_bounds,
+    #   aes(
+    #     yintercept = ymin - 0.5
+    #   ),
+    #   colour = "grey70",
+    #   linewidth = 0.4,
+    #   inherit.aes = FALSE
+    # ) +
     
-    scale_x_continuous(
-      expand = expansion(mult = c(0.02, 0.18))
-    ) +
+    # scale_x_continuous(
+    #   expand = expansion(mult = c(0.02, 0.18))
+    # ) +
     
     labs(
       x = xlab,
