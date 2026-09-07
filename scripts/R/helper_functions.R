@@ -2582,6 +2582,13 @@ plot_pairwise_metric <- function(
     ) +
 
     scale_y_reordered() +
+    coord_cartesian(
+      xlim = c(0, 0.5)
+    ) +
+
+    scale_x_continuous(
+      breaks = seq(0, 0.5, 0.1)
+    ) +
     
     # # Location labels
     # geom_text(
@@ -2656,7 +2663,7 @@ plot_fst_categories <- function(
   #    FST =
   #    sum(A) / (sum(A) + sum(B) + sum(C))
   # ------------------------------------------------------------
-  fst_pairwise <- df %>%
+  fst_population <- df %>%
     group_by(
       pop1,
       pop2,
@@ -2669,86 +2676,93 @@ plot_fst_categories <- function(
       sum_a = sum(wc_fst_a, na.rm = TRUE),
       sum_b = sum(wc_fst_b, na.rm = TRUE),
       sum_c = sum(wc_fst_c, na.rm = TRUE),
-
-      fst = sum_a / (sum_a + sum_b + sum_c),
-
-      n_windows = n(),
-
       .groups = "drop"
     )
 
-
-  # ------------------------------------------------------------
-  # 3. Define the three comparison categories
-  # ------------------------------------------------------------
-  fst_pairwise <- fst_pairwise %>%
-    mutate(
-      comparison = case_when(
-
-        # Same species, different locations
-        species1 == species2 &
-          location1 != location2 ~
-          "Same species\nDifferent locations",
-
-        # Different species, same location
-        species1 != species2 &
-          location1 == location2 ~
-          "Different species\nSame location",
-
-        # Different species, different locations
-        species1 != species2 &
-          location1 != location2 ~
-          "Different species\nDifferent locations"
+  fst_same_species <- fst_population %>%
+      filter(
+        species1 == species2,
+        location1 != location2
+      ) %>%
+      mutate(
+        comparison = "Within-species"
       )
+
+
+  fst_same_location <- fst_population %>%
+    filter(
+      species1 != species2,
+      location1 == location2
+    ) %>%
+    mutate(
+      comparison = "Between sympatric species"
     )
 
 
-  # ------------------------------------------------------------
-  # 4. Set category order
-  # ------------------------------------------------------------
-  fst_pairwise <- fst_pairwise %>%
+  fst_species <- fst_population %>%
+    filter(
+      species1 != species2,
+      location1 != location2
+    ) %>%
     mutate(
-      comparison = factor(
-        comparison,
-        levels = c(
-          "Same species\nDifferent locations",
-          "Different species\nSame location",
-          "Different species\nDifferent locations"
+      species_pair = ifelse(
+        species1 < species2,
+        paste(species1, species2, sep = " - "),
+        paste(species2, species1, sep = " - ")
+      )
+    ) %>%
+    group_by(species_pair) %>%
+    summarise(
+      sum_a = sum(sum_a, na.rm = TRUE),
+      sum_b = sum(sum_b, na.rm = TRUE),
+      sum_c = sum(sum_c, na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    mutate(
+      comparison = "Between-species"
+    )
+
+  fst_same_species <- fst_same_species %>%
+    mutate(
+      Fst = sum_a / (sum_a + sum_b + sum_c)
+    )
+
+  fst_same_location <- fst_same_location %>%
+    mutate(
+      Fst = sum_a / (sum_a + sum_b + sum_c)
+    )
+
+  fst_species <- fst_species %>%
+    mutate(
+      Fst = sum_a / (sum_a + sum_b + sum_c)
+    )
+
+  fst_plot <- bind_rows(
+      fst_same_species %>%
+        select(comparison, Fst),
+
+      fst_same_location %>%
+        select(comparison, Fst),
+
+      fst_species %>%
+        select(comparison, Fst)
+    ) %>%
+      mutate(
+        comparison = factor(
+          comparison,
+          levels = c(
+            "Within-species",
+            "Between sympatric species",
+            "Between-species"
+          )
         )
       )
-    )
-
-
-  # ------------------------------------------------------------
-  # 5. Inspect aggregated values
-  # ------------------------------------------------------------
-  print("Aggregated pairwise FST:")
-  print(
-    fst_pairwise %>%
-      select(
-        pop1,
-        pop2,
-        location1,
-        location2,
-        comparison,
-        fst,
-        n_windows
-      )
-  )
-
-
-  print("Number of pairwise comparisons:")
-  print(
-    fst_pairwise %>%
-      count(comparison)
-  )
-
 
   # ------------------------------------------------------------
   # 6. Plot
   # ------------------------------------------------------------
   ggplot(
-    fst_pairwise,
+    fst_plot,
     aes(
       x = comparison,
       y = fst,
@@ -2762,8 +2776,15 @@ plot_fst_categories <- function(
       colour = "black"
     ) +
 
+    geom_boxplot(
+      width = 0.2,
+      outlier.shape = NA,
+      linewidth = 0.3
+    ) +
+
     # Individual pairwise comparisons
     geom_jitter(
+      aes(fill=comparison),
       width = 0.08,
       size = 2,
       alpha = 0.6
@@ -2779,9 +2800,17 @@ plot_fst_categories <- function(
       colour = "black"
     ) +
 
+    scale_fill_manual(
+      values = c(
+        "#64CAD0",
+        "#D06495",
+        "#D09F64"
+      )
+    ) +
+
     labs(
       x = NULL,
-      y = "Genome-wide FST"
+      y = "Pairwise FST"
     ) +
 
     theme_minimal() +
