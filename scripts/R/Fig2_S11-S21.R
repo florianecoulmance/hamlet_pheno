@@ -395,7 +395,7 @@ print("AFTER pC")
 
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
-  plot = pc,
+  plot = pC,
   width = 8,
   height = 14,
   units = "in",
@@ -405,6 +405,17 @@ ggsave(
 
 
 # ########## FIGURE S14 ###################
+figureS14 <- plot_fst_categories(
+  df = fst
+)
+
+ggsave(
+  filename = filename = file.path(figure_path, "FigS14_gFSTviolin.png"),
+  plot = figureS14,
+  width = 8,
+  height = 8
+)
+
 # fst_species_df <- map_df(
 #   names(fst_species),
 #   ~ fst_species[[.x]] %>% mutate(dataset = .x)

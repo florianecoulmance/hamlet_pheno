@@ -2620,6 +2620,186 @@ plot_pairwise_metric <- function(
 }
 
 # ============================================================
+# Aggregate FST components and plot pairwise FST distributions
+# ============================================================
+plot_fst_categories <- function(
+  df,
+  location_levels = c(
+    "hon", "bel", "boc", "pri", "arc",
+    "bar", "flk", "gun", "qui")) {
+
+  print("ENTERED plot_fst_categories")
+  print("Rows:")
+  print(nrow(df))
+
+
+  # ------------------------------------------------------------
+  # 1. Extract species and location
+  # ------------------------------------------------------------
+  df <- df %>%
+    mutate(
+      species1  = substr(pop1, 1, 3),
+      species2  = substr(pop2, 1, 3),
+      location1 = substr(pop1, 4, 6),
+      location2 = substr(pop2, 4, 6)
+    ) %>%
+    filter(
+      location1 %in% location_levels,
+      location2 %in% location_levels,
+      !(species1 == species2 & location1 == location2)
+    )
+
+
+  # ------------------------------------------------------------
+  # 2. Aggregate WC-FST components across genomic windows
+  #
+  #    FST =
+  #    sum(A) / (sum(A) + sum(B) + sum(C))
+  # ------------------------------------------------------------
+  fst_pairwise <- df %>%
+    group_by(
+      pop1,
+      pop2,
+      species1,
+      species2,
+      location1,
+      location2
+    ) %>%
+    summarise(
+      sum_a = sum(wc_fst_a, na.rm = TRUE),
+      sum_b = sum(wc_fst_b, na.rm = TRUE),
+      sum_c = sum(wc_fst_c, na.rm = TRUE),
+
+      fst = sum_a / (sum_a + sum_b + sum_c),
+
+      n_windows = n(),
+
+      .groups = "drop"
+    )
+
+
+  # ------------------------------------------------------------
+  # 3. Define the three comparison categories
+  # ------------------------------------------------------------
+  fst_pairwise <- fst_pairwise %>%
+    mutate(
+      comparison = case_when(
+
+        # Same species, different locations
+        species1 == species2 &
+          location1 != location2 ~
+          "Same species\nDifferent locations",
+
+        # Different species, same location
+        species1 != species2 &
+          location1 == location2 ~
+          "Different species\nSame location",
+
+        # Different species, different locations
+        species1 != species2 &
+          location1 != location2 ~
+          "Different species\nDifferent locations"
+      )
+    )
+
+
+  # ------------------------------------------------------------
+  # 4. Set category order
+  # ------------------------------------------------------------
+  fst_pairwise <- fst_pairwise %>%
+    mutate(
+      comparison = factor(
+        comparison,
+        levels = c(
+          "Same species\nDifferent locations",
+          "Different species\nSame location",
+          "Different species\nDifferent locations"
+        )
+      )
+    )
+
+
+  # ------------------------------------------------------------
+  # 5. Inspect aggregated values
+  # ------------------------------------------------------------
+  print("Aggregated pairwise FST:")
+  print(
+    fst_pairwise %>%
+      select(
+        pop1,
+        pop2,
+        location1,
+        location2,
+        comparison,
+        fst,
+        n_windows
+      )
+  )
+
+
+  print("Number of pairwise comparisons:")
+  print(
+    fst_pairwise %>%
+      count(comparison)
+  )
+
+
+  # ------------------------------------------------------------
+  # 6. Plot
+  # ------------------------------------------------------------
+  ggplot(
+    fst_pairwise,
+    aes(
+      x = comparison,
+      y = fst,
+      fill = comparison
+    )
+  ) +
+
+    geom_violin(
+      trim = FALSE,
+      alpha = 0.7,
+      colour = "black"
+    ) +
+
+    # Individual pairwise comparisons
+    geom_jitter(
+      width = 0.08,
+      size = 2,
+      alpha = 0.6
+    ) +
+
+    # Mean FST
+    stat_summary(
+      fun = mean,
+      geom = "point",
+      shape = 23,
+      size = 3,
+      fill = "white",
+      colour = "black"
+    ) +
+
+    labs(
+      x = NULL,
+      y = "Genome-wide FST"
+    ) +
+
+    theme_minimal() +
+
+    theme(
+      legend.position = "none",
+
+      axis.text.x = element_text(
+        size = 10
+      ),
+
+      axis.title.y = element_text(
+        size = 11
+      )
+    )
+}
+
+# ============================================================
 # assortative mating for speciacion hypercube
 # ============================================================
 global_RI_permutation <- function(
