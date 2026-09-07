@@ -2433,7 +2433,7 @@ plot_pairwise_metric <- function(
   df,
   metric,
   xlab,
-  location_levels = c("hon", "bel", "boc", "pri", "arc", "bar", "flk", "gun", "qui"),
+  location_levels = c("bel", "boc", "hon", "pri", "arc", "gun", "flk", "qui", "bar"),
   location_colors) {
   
   print("ENTERED plot_pairwise_metric")
@@ -2770,6 +2770,14 @@ plot_fst_categories <- function(
     )
   ) +
 
+    # Individual pairwise comparisons
+    geom_jitter(
+      aes(colour=comparison),
+      width = 0.08,
+      size = 2,
+      alpha = 0.6
+    ) +
+
     geom_violin(
       trim = FALSE,
       alpha = 0.7,
@@ -2792,13 +2800,7 @@ plot_fst_categories <- function(
       colour = "black"
     ) +
 
-    # Individual pairwise comparisons
-    geom_jitter(
-      aes(colour=comparison),
-      width = 0.08,
-      size = 2,
-      alpha = 0.6
-    ) +
+
 
     scale_fill_manual(
       values = c(
