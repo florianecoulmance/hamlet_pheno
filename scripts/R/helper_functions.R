@@ -2429,201 +2429,537 @@ add_genome_position <- function(df) {
 # ============================================================
 # pairwise population fst and dxy boxplots
 # ============================================================
+# plot_pairwise_metric <- function(
+#   df,
+#   metric,
+#   xlab,
+#   location_levels = c("hon", "bel", "boc", "pri", "arc", "bar", "flk", "gun", "qui"),
+#   location_colors) {
+  
+#   print("ENTERED plot_pairwise_metric")
+#   print("Rows:")
+#   print(nrow(df))
+
+#   df <- df %>%
+#     mutate(
+#       location1 = substr(pop1, 4, 6),
+#       location2 = substr(pop2, 4, 6),
+#       species1 = substr(pop1, 1, 3),
+#       species2 = substr(pop2, 1, 3)
+#     ) %>%
+#     filter(
+#       location1 == location2,
+#       species1 != species2
+#     ) %>%
+#     mutate(
+#       location = location1,
+#       pair = ifelse (
+#         species1 < species2,
+#         paste(species1, species2, sep = " - "),
+#         paste(species2, species1, sep = " - ")
+#       ),
+#       location_name = geo_table$Locations[
+#         match(as.character(location), geo_table$geo)
+#       ]
+#     ) %>%
+#     filter(location %in% location_levels) 
+
+#   print("After filtering:")
+#   print(nrow(df))
+#   print(head(df))
+
+#   # Factor location
+#   df <- df %>%
+#     mutate(
+#       location = factor(
+#         location,
+#         levels = location_levels
+#       ),
+#       location_name = factor(
+#         location_name,
+#         levels = geo_table$Locations[
+#           match(location_levels, geo_table$geo)
+#         ]
+#       )
+#     )
+
+#   # Unique identifier so the same pair can occur at multiple locations
+#   df <- df %>%
+#     mutate(
+#       pair_location = paste(location, pair, sep = "_")
+#     )
+#   print(head(df))
+
+
+  
+#   # Order pairs within locations
+#   pair_order <- df %>%
+#     distinct(location, pair, pair_location) %>%
+#     arrange(location, pair)
+
+#   print(pair_order)
+
+#   y_levels <- pair_order$pair_location
+#   print(y_levels)
+
+
+#   df <- df %>%
+#     mutate(
+#       pair_location = factor(
+#         pair_location,
+#         levels = rev(y_levels)
+#       )
+#     )
+#   print(head(df))
+
+#   df <- df %>%
+#   group_by(location, pair) %>%
+#   mutate(
+#     mean_metric = mean(
+#       .data[[metric]],
+#       na.rm = TRUE
+#     )
+#   ) %>%
+#   ungroup() %>%
+#   mutate(
+#     pair = reorder_within(
+#       pair,
+#       mean_metric,
+#       location
+#     )
+#   )
+
+#   # Location boundaries
+#   loc_bounds <- df %>%
+#     mutate(y = as.numeric(pair_location)) %>%
+#     group_by(location) %>%
+#     summarise(
+#       ymin = min(y),
+#       ymax = max(y),
+#       ymid = mean(y),
+#       .groups = "drop"
+#     )
+#   print(loc_bounds)
+
+#   # Plot
+#   ggplot(
+#     df,
+#     aes(
+#       x = .data[[metric]],
+#       y = pair,
+#       fill = location
+#     )
+#   ) +
+#     geom_boxplot(
+#       width = 0.65,
+#       outlier.shape = NA,
+#       colour = "black"
+#     ) +
+#     stat_summary(
+#       fun = mean,
+#       geom = "point",
+#       shape = 23,
+#       size = 3,
+#       fill = "white",
+#       colour = "black"
+#     ) +
+
+#     scale_fill_manual(
+#       values = location_colors,
+#       drop = FALSE
+#     ) +
+
+#     facet_wrap(
+#       ~ location_name,
+#       ncol = 2,
+#       scales = "free_y"
+#     ) +
+    
+#     scale_y_discrete(
+#       labels = function(x) {
+#         sub("^[^_]+_", "", x)
+#       }
+#     ) +
+
+#     scale_y_reordered() +
+#     coord_cartesian(
+#       xlim = c(0, 0.5)
+#     ) +
+
+#     scale_x_continuous(
+#       breaks = seq(0, 0.5, 0.1)
+#     ) +
+    
+#     # # Location labels
+#     # geom_text(
+#     #   data = loc_bounds,
+#     #   aes(
+#     #     x = Inf,
+#     #     y = ymid,
+#     #     label = location
+#     #   ),
+#     #   hjust = -0.2,
+#     #   fontface = "bold",
+#     #   inherit.aes = FALSE
+#     # ) +
+    
+#     # scale_x_continuous(
+#     #   expand = expansion(mult = c(0.02, 0.18))
+#     # ) +
+    
+#     labs(
+#       x = xlab,
+#       y = NA
+#     ) +
+    
+#     theme_minimal() +
+#     theme(
+#       axis.text.y = element_text(size = 8),
+#       legend.position = "none",
+#       strip.text = element_text(
+#         angle = 0,
+#         face = "bold",
+#         size = 11
+#       ),
+#       panel.spacing = unit(1.2, "lines")
+#     )
+ 
+# }
+
 plot_pairwise_metric <- function(
   df,
   metric,
   xlab,
-  location_levels = c("hon", "bel", "boc", "pri", "arc", "bar", "flk", "gun", "qui"),
+  location_levels = c(
+    "hon", "bel", "boc", "pri", "arc",
+    "bar", "flk", "gun", "qui"
+  ),
   location_colors) {
-  
+
   print("ENTERED plot_pairwise_metric")
   print("Rows:")
   print(nrow(df))
+
+
+  # ============================================================
+  # 1. Extract species and location information
+  # ============================================================
 
   df <- df %>%
     mutate(
       location1 = substr(pop1, 4, 6),
       location2 = substr(pop2, 4, 6),
-      species1 = substr(pop1, 1, 3),
-      species2 = substr(pop2, 1, 3)
+      species1  = substr(pop1, 1, 3),
+      species2  = substr(pop2, 1, 3)
     ) %>%
+
+    # Keep only comparisons between different species
+    # within the same location
     filter(
       location1 == location2,
       species1 != species2
     ) %>%
+
     mutate(
       location = location1,
-      pair = ifelse (
+
+      pair = ifelse(
         species1 < species2,
         paste(species1, species2, sep = " - "),
         paste(species2, species1, sep = " - ")
       ),
+
       location_name = geo_table$Locations[
-        match(as.character(location), geo_table$geo)
+        match(
+          as.character(location),
+          geo_table$geo
+        )
       ]
     ) %>%
-    filter(location %in% location_levels) 
+
+    filter(
+      location %in% location_levels
+    )
+
 
   print("After filtering:")
   print(nrow(df))
   print(head(df))
 
-  # Factor location
+
+  # ============================================================
+  # 2. Set location order
+  # ============================================================
+
   df <- df %>%
     mutate(
       location = factor(
         location,
         levels = location_levels
-      ),
-      location_name = factor(
-        location_name,
-        levels = geo_table$Locations[
-          match(location_levels, geo_table$geo)
-        ]
       )
     )
 
-  # Unique identifier so the same pair can occur at multiple locations
-  df <- df %>%
-    mutate(
-      pair_location = paste(location, pair, sep = "_")
-    )
-  print(head(df))
 
-
-  
-  # Order pairs within locations
-  pair_order <- df %>%
-    distinct(location, pair, pair_location) %>%
-    arrange(location, pair)
-
-  print(pair_order)
-
-  y_levels <- pair_order$pair_location
-  print(y_levels)
-
+  # ============================================================
+  # 3. Calculate mean metric for ordering pairs
+  # ============================================================
 
   df <- df %>%
+    group_by(location, pair) %>%
     mutate(
-      pair_location = factor(
-        pair_location,
-        levels = rev(y_levels)
+      mean_metric = mean(
+        .data[[metric]],
+        na.rm = TRUE
       )
-    )
-  print(head(df))
+    ) %>%
+    ungroup()
 
-  df <- df %>%
-  group_by(location, pair) %>%
-  mutate(
-    mean_metric = mean(
-      .data[[metric]],
-      na.rm = TRUE
-    )
-  ) %>%
-  ungroup() %>%
-  mutate(
-    pair = reorder_within(
-      pair,
-      mean_metric,
-      location
+
+  # ============================================================
+  # 4. Create one plot per location
+  # ============================================================
+
+  locations_present <- df %>%
+    distinct(location) %>%
+    arrange(location) %>%
+    pull(location) %>%
+    as.character()
+
+
+  location_plots <- lapply(
+    locations_present,
+    function(loc) {
+
+      dat_loc <- df %>%
+        filter(
+          as.character(location) == loc
+        ) %>%
+        arrange(mean_metric) %>%
+        mutate(
+          pair = factor(
+            pair,
+            levels = unique(pair)
+          )
+        )
+
+
+      # Full location name
+      location_title <- unique(
+        as.character(dat_loc$location_name)
+      )
+
+
+      # --------------------------------------------------------
+      # Plot
+      # --------------------------------------------------------
+
+      ggplot(
+        dat_loc,
+        aes(
+          x = .data[[metric]],
+          y = pair,
+          fill = location
+        )
+      ) +
+
+        # Boxplots
+        geom_boxplot(
+          width = 0.65,
+          outlier.shape = NA,
+          colour = "black"
+        ) +
+
+        # Mean
+        stat_summary(
+          fun = mean,
+          geom = "point",
+          shape = 23,
+          size = 3,
+          fill = "white",
+          colour = "black"
+        ) +
+
+        # Location colours
+        scale_fill_manual(
+          values = location_colors,
+          drop = FALSE
+        ) +
+
+        # FST axis
+        coord_cartesian(
+          xlim = c(0, 0.5)
+        ) +
+
+        scale_x_continuous(
+          breaks = seq(0, 0.5, 0.1)
+        ) +
+
+        # Labels
+        labs(
+          x = xlab,
+          y = NULL,
+          title = location_title
+        ) +
+
+        # Theme
+        theme_minimal() +
+
+        theme(
+          axis.text.y = element_text(
+            size = 8
+          ),
+
+          axis.text.x = element_text(
+            size = 9
+          ),
+
+          axis.title.x = element_text(
+            size = 10
+          ),
+
+          legend.position = "none",
+
+          plot.title = element_text(
+            face = "bold",
+            size = 11,
+            hjust = 0
+          ),
+
+          panel.spacing = unit(
+            0.5,
+            "lines"
+          ),
+
+          plot.margin = margin(
+            5, 5, 5, 5
+          )
+        )
+    }
+  )
+
+
+  # ============================================================
+  # 5. Calculate how many boxplots each location contains
+  # ============================================================
+
+  loc_sizes <- df %>%
+    group_by(location) %>%
+    summarise(
+      n_pairs = n_distinct(pair),
+      .groups = "drop"
+    ) %>%
+    mutate(
+      location = as.character(location)
+    ) %>%
+    arrange(desc(n_pairs))
+
+
+  print("Number of pairs per location:")
+  print(loc_sizes)
+
+
+  # ============================================================
+  # 6. Automatically distribute locations between columns
+  # ============================================================
+  #
+  # We assign each new location to whichever column currently
+  # contains fewer total boxplots.
+  #
+  # This makes the total vertical content of the two columns
+  # as similar as possible.
+  # ============================================================
+
+  left_locs  <- character(0)
+  right_locs <- character(0)
+
+  left_total  <- 0
+  right_total <- 0
+
+
+  for (i in seq_len(nrow(loc_sizes))) {
+
+    loc  <- loc_sizes$location[i]
+    size <- loc_sizes$n_pairs[i]
+
+
+    if (left_total <= right_total) {
+
+      left_locs <- c(
+        left_locs,
+        loc
+      )
+
+      left_total <- left_total + size
+
+    } else {
+
+      right_locs <- c(
+        right_locs,
+        loc
+      )
+
+      right_total <- right_total + size
+    }
+  }
+
+
+  print("Left column:")
+  print(left_locs)
+
+  print("Right column:")
+  print(right_locs)
+
+  print(
+    paste(
+      "Total pairs - left:",
+      left_total,
+      "| right:",
+      right_total
     )
   )
 
-  # Location boundaries
-  loc_bounds <- df %>%
-    mutate(y = as.numeric(pair_location)) %>%
-    group_by(location) %>%
-    summarise(
-      ymin = min(y),
-      ymax = max(y),
-      ymid = mean(y),
-      .groups = "drop"
-    )
-  print(loc_bounds)
 
-  # Plot
-  ggplot(
-    df,
-    aes(
-      x = .data[[metric]],
-      y = pair,
-      fill = location
-    )
-  ) +
-    geom_boxplot(
-      width = 0.65,
-      outlier.shape = NA,
-      colour = "black"
-    ) +
-    stat_summary(
-      fun = mean,
-      geom = "point",
-      shape = 23,
-      size = 3,
-      fill = "white",
-      colour = "black"
-    ) +
+  # ============================================================
+  # 7. Match plots to their locations
+  # ============================================================
 
-    scale_fill_manual(
-      values = location_colors,
-      drop = FALSE
-    ) +
+  plot_names <- locations_present
 
-    facet_wrap(
-      ~ location_name,
-      ncol = 2,
-      scales = "free_y"
-    ) +
-    
-    scale_y_discrete(
-      labels = function(x) {
-        sub("^[^_]+_", "", x)
-      }
-    ) +
+  names(location_plots) <- plot_names
 
-    scale_y_reordered() +
-    coord_cartesian(
-      xlim = c(0, 0.5)
-    ) +
 
-    scale_x_continuous(
-      breaks = seq(0, 0.5, 0.1)
-    ) +
-    
-    # # Location labels
-    # geom_text(
-    #   data = loc_bounds,
-    #   aes(
-    #     x = Inf,
-    #     y = ymid,
-    #     label = location
-    #   ),
-    #   hjust = -0.2,
-    #   fontface = "bold",
-    #   inherit.aes = FALSE
-    # ) +
-    
-    # scale_x_continuous(
-    #   expand = expansion(mult = c(0.02, 0.18))
-    # ) +
-    
-    labs(
-      x = xlab,
-      y = NA
-    ) +
-    
-    theme_minimal() +
-    theme(
-      axis.text.y = element_text(size = 8),
-      legend.position = "none",
-      strip.text = element_text(
-        angle = 0,
-        face = "bold",
-        size = 11
-      ),
-      panel.spacing = unit(1.2, "lines")
-    )
- 
+  left_plots <- location_plots[
+    left_locs
+  ]
+
+  right_plots <- location_plots[
+    right_locs
+  ]
+
+
+  # ============================================================
+  # 8. Stack each column vertically
+  # ============================================================
+
+  left_column <- wrap_plots(
+    left_plots,
+    ncol = 1
+  )
+
+  right_column <- wrap_plots(
+    right_plots,
+    ncol = 1
+  )
+
+
+  # ============================================================
+  # 9. Combine the two columns
+  # ============================================================
+
+  final_plot <- left_column | right_column
+
+
+  return(final_plot)
 }
 
 # ============================================================
@@ -2765,7 +3101,7 @@ plot_fst_categories <- function(
     fst_plot,
     aes(
       x = comparison,
-      y = fst,
+      y = Fst,
       fill = comparison
     )
   ) +
