@@ -3167,7 +3167,7 @@ plot_fst_categories <- function(
         "Between sympatric species" = "#5b2a40ff",
         "Between-species" = "#4e3a21ff"
       )
-    )
+    ) +
 
     labs(
       x = NULL,
