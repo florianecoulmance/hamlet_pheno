@@ -2956,8 +2956,12 @@ plot_pairwise_metric <- function(
   # 9. Combine the two columns
   # ============================================================
 
-  final_plot <- left_column | right_column
-
+  final_plot <- wrap_plots(
+    left_column,
+    right_column,
+    ncol = 2,
+    guides = "keep"
+  )
 
   return(final_plot)
 }
@@ -3120,7 +3124,7 @@ plot_fst_categories <- function(
 
     # Individual pairwise comparisons
     geom_jitter(
-      aes(fill=comparison),
+      aes(colour=comparison),
       width = 0.08,
       size = 2,
       alpha = 0.6
@@ -3138,11 +3142,19 @@ plot_fst_categories <- function(
 
     scale_fill_manual(
       values = c(
-        "#64CAD0",
-        "#D06495",
-        "#D09F64"
+        "Within-species" = "#64CAD0",
+        "Between sympatric species" = "#D06495",
+        "Between-species" = "#D09F64"
       )
     ) +
+
+    scale_colour_manual(
+      values = c(
+        "Within-species" = "#1b4042ff",
+        "Between sympatric species" = "#5b2a40ff",
+        "Between-species" = "#4e3a21ff"
+      )
+    )
 
     labs(
       x = NULL,
