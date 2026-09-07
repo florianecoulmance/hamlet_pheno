@@ -410,7 +410,7 @@ figureS14 <- plot_fst_categories(
 )
 
 ggsave(
-  filename = filename = file.path(figure_path, "FigS14_gFSTviolin.png"),
+  filename = file.path(figure_path, "FigS14_gFSTviolin.png"),
   plot = figureS14,
   width = 8,
   height = 8
