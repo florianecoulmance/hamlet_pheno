@@ -393,26 +393,6 @@ print("AFTER pC")
 # )
 # print("AFTER pD")
 
-figure2 <- ggarrange(
-  pA,
-  pB,
-  ggarrange(pC, pD, ncol =2, nrow = 1),
-  ncol = 1,
-  nrow = 3,
-  align = "v",
-  heights = c (1, 1, 9)
-)
-
-# figure2 <-
-#   ggarrange(
-#     pC, 
-#     pD,
-#     ncol =2,
-#     nrow = 1,
-#     align = "hv",
-#     heights = c (1, 1, 9)
-#   )
-
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
   plot = pc,
