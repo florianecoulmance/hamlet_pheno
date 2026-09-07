@@ -314,55 +314,55 @@ fst <- read.table(
 )
 head(fst)
 
-dxy <- read.table(
-  file.path(base_path, "2_popgen", "byALL", "all.flt_dxy.min3.txt"),
-  header = TRUE,
-  sep = "\t",
-  stringsAsFactors = FALSE
-)
-head(dxy)
+# dxy <- read.table(
+#   file.path(base_path, "2_popgen", "byALL", "all.flt_dxy.min3.txt"),
+#   header = TRUE,
+#   sep = "\t",
+#   stringsAsFactors = FALSE
+# )
+# head(dxy)
 
-# 2. AGGREGATE FST AND DXY BY WINDOW
-fst_window <- aggregate_fst_by_window(fst)
-head(fst_window)
-dxy_window <- aggregate_dxy_by_window(dxy)
-head(dxy_window)
-
-
-# 3. CREATE GENOMIC COORDINATES
-fst_genome <- add_genome_position(fst_window)
-head(fst_genome)
-fst_window <- fst_genome$data
-head(fst_window)
+# # 2. AGGREGATE FST AND DXY BY WINDOW
+# fst_window <- aggregate_fst_by_window(fst)
+# head(fst_window)
+# dxy_window <- aggregate_dxy_by_window(dxy)
+# head(dxy_window)
 
 
-chromosome_info <- fst_genome$chromosomes
-head(chromosome_info)
+# # 3. CREATE GENOMIC COORDINATES
+# fst_genome <- add_genome_position(fst_window)
+# head(fst_genome)
+# fst_window <- fst_genome$data
+# head(fst_window)
 
-dxy_genome <- add_genome_position(dxy_window)
-head(dxy_genome)
-dxy_window <- dxy_genome$data
-head(dxy_window)
+
+# chromosome_info <- fst_genome$chromosomes
+# head(chromosome_info)
+
+# dxy_genome <- add_genome_position(dxy_window)
+# head(dxy_genome)
+# dxy_window <- dxy_genome$data
+# head(dxy_window)
 
 fst_plot <- fst %>%
   select(pop1, pop2, avg_wc_fst)
 head(fst_plot)
-dxy_plot <- dxy %>%
-  select(pop1, pop2, avg_dxy)
-head(dxy_plot)
+# dxy_plot <- dxy %>%
+#   select(pop1, pop2, avg_dxy)
+# head(dxy_plot)
 
 
-# 4. PLOT A — FST
-pA <- plot_genome_fst(
-  fst_window,
-  chromosome_info
-)
+# # 4. PLOT A — FST
+# pA <- plot_genome_fst(
+#   fst_window,
+#   chromosome_info
+# )
 
-# 5. PLOT B — DXY
-pB <- plot_genome_dxy(
-  dxy_window,
-  chromosome_info
-)
+# # 5. PLOT B — DXY
+# pB <- plot_genome_dxy(
+#   dxy_window,
+#   chromosome_info
+# )
 
 print(plot_pairwise_metric)
 typeof(plot_pairwise_metric)
@@ -383,18 +383,16 @@ pC <- plot_pairwise_metric(
 )
 print("AFTER pC")
 
-# 7. PLOT D — DXY boxplots
-print("BEFORE pD")
-pD <- plot_pairwise_metric(
-  dxy_plot,
-  metric = "avg_dxy",
-  xlab = "Pairwise DXY",
-  location_colors = location_colors
-)
-print("AFTER pD")
+# # 7. PLOT D — DXY boxplots
+# print("BEFORE pD")
+# pD <- plot_pairwise_metric(
+#   dxy_plot,
+#   metric = "avg_dxy",
+#   xlab = "Pairwise DXY",
+#   location_colors = location_colors
+# )
+# print("AFTER pD")
 
-
-# figure2 <- (pA | pB) #/ (pC | pD) +   plot_annotation(tag_levels = "a")
 figure2 <- ggarrange(
   pA,
   pB,
@@ -417,9 +415,9 @@ figure2 <- ggarrange(
 
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
-  plot = figure2,
+  plot = pc,
   width = 8,
-  height = 20,
+  height = 14,
   units = "in",
   dpi = 150,
   type = "cairo-png"
