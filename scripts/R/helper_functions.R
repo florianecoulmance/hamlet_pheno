@@ -2764,7 +2764,7 @@ plot_pairwise_metric <- function(
 
         # Boxplots
         geom_boxplot(
-          width = 0.65,
+          width = 0.85,
           outlier.shape = NA,
           colour = "black"
         ) +
@@ -2774,7 +2774,7 @@ plot_pairwise_metric <- function(
           fun = mean,
           geom = "point",
           shape = 23,
-          size = 3,
+          size = 1,
           fill = "white",
           colour = "black"
         ) +
@@ -2787,11 +2787,11 @@ plot_pairwise_metric <- function(
 
         # FST axis
         coord_cartesian(
-          xlim = c(0, 0.5)
+          xlim = c(-0.20, 0.5)
         ) +
 
         scale_x_continuous(
-          breaks = seq(0, 0.5, 0.1)
+          breaks = seq(-0.2, 0.5, 0.1)
         ) +
 
         # Labels
@@ -2936,6 +2936,14 @@ plot_pairwise_metric <- function(
     right_locs
   ]
 
+  left_heights <- loc_sizes$n_pairs[
+    match(left_locs, loc_sizes$location)
+  ]
+
+  right_heights <- loc_sizes$n_pairs[
+    match(right_locs, loc_sizes$location)
+  ]
+
 
   # ============================================================
   # 8. Stack each column vertically
@@ -2944,13 +2952,15 @@ plot_pairwise_metric <- function(
   left_column <- cowplot::plot_grid(
     plotlist = left_plots,
     ncol = 1,
-    align = "v"
+    align = "v",
+    rel_heights = left_heights
   )
 
   right_column <- cowplot::plot_grid(
     plotlist = right_plots,
     ncol = 1,
-    align = "v"
+    align = "v",
+    rel_heights = right_heights
   )
 
 
