@@ -2941,14 +2941,16 @@ plot_pairwise_metric <- function(
   # 8. Stack each column vertically
   # ============================================================
 
-  left_column <- wrap_plots(
-    left_plots,
-    ncol = 1
+  left_column <- cowplot::plot_grid(
+    plotlist = left_plots,
+    ncol = 1,
+    align = "v"
   )
 
-  right_column <- wrap_plots(
-    right_plots,
-    ncol = 1
+  right_column <- cowplot::plot_grid(
+    plotlist = right_plots,
+    ncol = 1,
+    align = "v"
   )
 
 
@@ -2956,12 +2958,13 @@ plot_pairwise_metric <- function(
   # 9. Combine the two columns
   # ============================================================
 
-  final_plot <- wrap_plots(
+  final_plot <- cowplot::plot_grid(
     left_column,
     right_column,
     ncol = 2,
-    guides = "keep"
+    align = "h"
   )
+
 
   return(final_plot)
 }
