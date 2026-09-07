@@ -2569,11 +2569,10 @@ plot_pairwise_metric <- function(
       drop = FALSE
     ) +
 
-    facet_grid(
-      location_name ~ .,
+    facet_wrap(
+      ~ location_name,
       ncol = 2,
-      scales = "free_y",
-      space = "free_y"
+      scales = "free_y"
     ) +
     
     scale_y_discrete(
@@ -2581,7 +2580,7 @@ plot_pairwise_metric <- function(
         sub("^[^_]+_", "", x)
       }
     ) +
-    
+
     scale_y_reordered() +
     
     # # Location labels
