@@ -412,8 +412,8 @@ figureS14 <- plot_fst_categories(
 ggsave(
   filename = file.path(figure_path, "FigS14_gFSTviolin.png"),
   plot = figureS14,
-  width = 8,
-  height = 8
+  width = 5,
+  height = 5
 )
 
 # fst_species_df <- map_df(
