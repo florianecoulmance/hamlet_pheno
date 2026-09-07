@@ -2474,43 +2474,8 @@ plot_pairwise_metric <- function(
       location = factor(
         location,
         levels = location_levels
-      ),
-      location_name = factor(
-        location_name,
-        levels = geo_table$Locations[
-          match(location_levels, geo_table$geo)
-        ]
       )
     )
-
-  # Unique identifier so the same pair can occur at multiple locations
-  df <- df %>%
-    mutate(
-      pair_location = paste(location, pair, sep = "_")
-    )
-  print(head(df))
-
-
-  
-  # Order pairs within locations
-  pair_order <- df %>%
-    distinct(location, pair, pair_location) %>%
-    arrange(location, pair)
-
-  print(pair_order)
-
-  y_levels <- pair_order$pair_location
-  print(y_levels)
-
-
-  df <- df %>%
-    mutate(
-      pair_location = factor(
-        pair_location,
-        levels = rev(y_levels)
-      )
-    )
-  print(head(df))
 
   df <- df %>%
   group_by(location, pair) %>%
@@ -2529,17 +2494,13 @@ plot_pairwise_metric <- function(
     )
   )
 
-  # Location boundaries
-  loc_bounds <- df %>%
-    mutate(y = as.numeric(pair_location)) %>%
-    group_by(location) %>%
-    summarise(
-      ymin = min(y),
-      ymax = max(y),
-      ymid = mean(y),
-      .groups = "drop"
-    )
-  print(loc_bounds)
+  df <- df %>%
+  mutate(
+    facet_row = ceiling(
+      as.numeric(location) / 3
+    ),
+    facet_col = (as.numeric(location) - 1) %% 3 + 1
+  )
 
   # Plot
   ggplot(
@@ -2551,7 +2512,7 @@ plot_pairwise_metric <- function(
     )
   ) +
     geom_boxplot(
-      width = 0.65,
+      width = 0.75,
       outlier.shape = NA,
       colour = "black"
     ) +
@@ -2559,7 +2520,7 @@ plot_pairwise_metric <- function(
       fun = mean,
       geom = "point",
       shape = 23,
-      size = 3,
+      size = 1.5,
       fill = "white",
       colour = "black"
     ) +
@@ -2569,17 +2530,17 @@ plot_pairwise_metric <- function(
       drop = FALSE
     ) +
 
-    facet_wrap(
-      ~ location_name,
-      ncol = 3,
-      scales = "free_y"
-    ) +
+    # facet_wrap(
+    #   ~ location_name,
+    #   ncol = 3,
+    #   scales = "free_y"
+    # ) +
     
-    scale_y_discrete(
-      labels = function(x) {
-        sub("^[^_]+_", "", x)
-      }
-    ) +
+    # scale_y_discrete(
+    #   labels = function(x) {
+    #     sub("^[^_]+_", "", x)
+    #   }
+    # ) +
 
     scale_y_reordered() +
     coord_cartesian(
@@ -2589,23 +2550,12 @@ plot_pairwise_metric <- function(
     scale_x_continuous(
       breaks = seq(0, 0.5, 0.1)
     ) +
-    
-    # # Location labels
-    # geom_text(
-    #   data = loc_bounds,
-    #   aes(
-    #     x = Inf,
-    #     y = ymid,
-    #     label = location
-    #   ),
-    #   hjust = -0.2,
-    #   fontface = "bold",
-    #   inherit.aes = FALSE
-    # ) +
-    
-    # scale_x_continuous(
-    #   expand = expansion(mult = c(0.02, 0.18))
-    # ) +
+
+    ggh4x::facet_grid2(
+      facet_row ~ facet_col,
+      scales = "free_y",
+      space = "free_y"
+    ) +
     
     labs(
       x = xlab,
