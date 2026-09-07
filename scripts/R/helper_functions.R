@@ -2512,6 +2512,23 @@ plot_pairwise_metric <- function(
     )
   print(head(df))
 
+  df <- df %>%
+  group_by(location, pair) %>%
+  mutate(
+    mean_metric = mean(
+      .data[[metric]],
+      na.rm = TRUE
+    )
+  ) %>%
+  ungroup() %>%
+  mutate(
+    pair = reorder_within(
+      pair,
+      mean_metric,
+      location
+    )
+  )
+
   # Location boundaries
   loc_bounds <- df %>%
     mutate(y = as.numeric(pair_location)) %>%
@@ -2530,21 +2547,31 @@ plot_pairwise_metric <- function(
     aes(
       x = .data[[metric]],
       y = pair,
-      colour = location
+      fill = location
     )
   ) +
     geom_boxplot(
       width = 0.65,
-      outlier.shape = NA
+      outlier.shape = NA,
+      colour = "black"
+    ) +
+    stat_summary(
+      fun = mean,
+      geom = "point",
+      shape = 23,
+      size = 3,
+      fill = "white",
+      colour = "black"
     ) +
 
-    scale_colour_manual(
+    scale_fill_manual(
       values = location_colors,
       drop = FALSE
     ) +
 
     facet_grid(
       location_name ~ .,
+      ncol = 2,
       scales = "free_y",
       space = "free_y"
     ) +
@@ -2554,6 +2581,8 @@ plot_pairwise_metric <- function(
         sub("^[^_]+_", "", x)
       }
     ) +
+    
+    scale_y_reordered() +
     
     # # Location labels
     # geom_text(
@@ -2568,30 +2597,25 @@ plot_pairwise_metric <- function(
     #   inherit.aes = FALSE
     # ) +
     
-    # # Separators between locations
-    # geom_hline(
-    #   data = loc_bounds,
-    #   aes(
-    #     yintercept = ymin - 0.5
-    #   ),
-    #   colour = "grey70",
-    #   linewidth = 0.4,
-    #   inherit.aes = FALSE
-    # ) +
-    
     # scale_x_continuous(
     #   expand = expansion(mult = c(0.02, 0.18))
     # ) +
     
     labs(
       x = xlab,
-      y = "Species pair"
+      y = NA
     ) +
     
     theme_minimal() +
     theme(
       axis.text.y = element_text(size = 8),
-      legend.position = "none"
+      legend.position = "none",
+      strip.text = element_text(
+        angle = 0,
+        face = "bold",
+        size = 11
+      ),
+      panel.spacing = unit(1.2, "lines")
     )
  
 }

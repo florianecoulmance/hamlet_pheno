@@ -38,6 +38,7 @@ library(genoscapeRtools)
 library(gridExtra)
 library(purrr)
 library(forcats)
+library(tidytext)
 
 # ############################
 # CONFIG
@@ -400,7 +401,7 @@ figure2 <- ggarrange(
   ggarrange(pC, pD, ncol =2, nrow = 1),
   ncol = 1,
   nrow = 3,
-  align = "hv",
+  align = "v",
   heights = c (1, 1, 9)
 )
 
