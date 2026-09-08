@@ -300,7 +300,7 @@ figure2 <- ggarrange(
   pC,
   NULL,
   nrow = 6, 
-  heights = c(8, 0.3, 1, 0.3, 5, 0.05)
+  heights = c(6, 0.3, 1, 0.3, 8, 0.05)
 ) # adjust if legend is too big/small
 
 ggsave(
@@ -449,7 +449,7 @@ ggsave(filename = file.path(figure_path, "FigS18_gLocSUP.png"),
 # PERMANOVA heatmaps for each location
 results_locations4 <- results[names(results) %in% c("bel", "boc", "hon", "pri", "arc", "bar", "flk", "gun", "qui")]
 all_perm <- lapply(results_locations4, `[[`, "permanova") # extract per location pcas
-figureS20 <- plot_grid(plotlist = all_perm, ncol = 3, rel_widths = c(1, 1), scale = 0.95)# bundle location pcas in one plot
+figureS20 <- plot_grid(plotlist = all_perm, ncol = 3, rel_widths = c(1, 1, 1), scale = 0.95)# bundle location pcas in one plot
 
 # Save Figure S16 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS20_gLocPERM.png"),

@@ -2735,8 +2735,8 @@ plot_pairwise_metric <- function(
       drop = FALSE,
       name = "Location"
     ) +
-    coord_cartesian(
-        xlim = c(-0.20, 0.5)
+    scale_x_discrete(
+      labels = function(x) { sub( " \\| .*", "", x ) }
     ) +
     scale_y_continuous(
         breaks = seq(-0.2, 0.5, 0.1)
