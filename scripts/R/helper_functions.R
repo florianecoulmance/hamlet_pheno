@@ -2580,6 +2580,8 @@ plot_pairwise_metric <- function(
     max(pair_counts$n_pairs[7:9])
   )
 
+  row_heights <- pmax(row_heights, 4)
+
   # Arrange each row separately
   row1 <- cowplot::plot_grid(
     plotlist = location_plots[1:3],
