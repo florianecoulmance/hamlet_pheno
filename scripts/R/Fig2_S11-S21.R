@@ -166,7 +166,7 @@ for(dat in names(dataset)) {
     # -----------------------------------
     # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
     #-----------------------------------
-    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "uni")) c(0.4, 0.8) else if(dat %in% c("all_s", "all_l")) c(0.3, 0.7) else "none")
+    # p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "uni")) c(0.4, 0.8) else if(dat %in% c("all_s", "all_l")) c(0.3, 0.7) else "none")
 
 
     # -----------------------------------
@@ -181,8 +181,8 @@ for(dat in names(dataset)) {
       pca_f = p_pca1,
       pca_s = p_pca2,
       pca_t = p_pca3,
-      variance_plot = p_var,
-      permanova = p_perm
+      variance_plot = p_var #,
+      # permanova = p_perm
     )
 }
 
