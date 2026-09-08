@@ -2664,16 +2664,9 @@ plot_pairwise_metric <- function(
   print(head(df))
 
 
-  # ------------------------------------------------------------
-  # Factor location
-  # ------------------------------------------------------------
-
   df <- df %>%
     mutate(
-      location = factor(
-        location,
-        levels = location_levels
-      )
+      pair_location = paste( pair, location_name, sep = " | " )
     )
 
 
@@ -2682,7 +2675,7 @@ plot_pairwise_metric <- function(
   # ------------------------------------------------------------
 
   pair_order <- df %>%
-    group_by(pair) %>%
+    group_by(pair_location) %>%
     summarise(
       mean_metric = mean(
         .data[[metric]],
@@ -2691,13 +2684,13 @@ plot_pairwise_metric <- function(
       .groups = "drop"
     ) %>%
     arrange(mean_metric) %>%
-    pull(pair)
+    pull(pair_location)
 
   df <- df %>%
     mutate(
-      pair = factor(
-        pair,
-        levels = pair_order
+      pair_location = factor(
+        pair_location,
+        levels = pair_location_order
       )
     )
 
@@ -2709,18 +2702,20 @@ plot_pairwise_metric <- function(
   final_plot <- ggplot(
     df,
     aes(
-      x = pair,
+      x = pair_location,
       y = .data[[metric]],
       fill = location
     )
   ) +
     geom_boxplot(
+      aes(group = pair_location),
       width = 0.75,
       outlier.shape = NA,
       colour = "black",
       linewidth = 0.2
     ) +
     stat_summary(
+      aes(group = pair_location),
       fun = mean,
       geom = "point",
       shape = 23,

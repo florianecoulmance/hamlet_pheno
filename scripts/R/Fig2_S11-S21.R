@@ -296,7 +296,7 @@ figure2 <- ggarrange(
   pca_grid,
   NULL,
   leg,
-  NULL
+  NULL,
   pC,
   NULL,
   nrow = 6, 
