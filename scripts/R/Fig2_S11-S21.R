@@ -300,13 +300,13 @@ figure2 <- ggarrange(
   leg,
   NULL,
   nrow = 6, 
-  heights = c(8, 0.3, 8, 0.3, 1, 0.05)
+  heights = c(8, 0.3, 5, 0.3, 1, 0.05)
 ) # adjust if legend is too big/small
 
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
   plot = figure2,
-  width = 10,
+  width = 14,
   height = 14,
   units = "in",
   dpi = 150,

@@ -2740,22 +2740,33 @@ plot_pairwise_metric <- function(
       drop = FALSE,
       name = "Location"
     ) +
+    coord_cartesian(
+        xlim = c(-0.20, 0.5)
+    ) +
+    scale_x_continuous(
+        breaks = seq(-0.2, 0.5, 0.1)
+    ) +
     labs(
       x = NULL,
       y = xlab
     ) +
     theme_minimal() +
     theme(
-      legend.position = "right",
-      legend.title = element_text(
-        size = 10
+      legend.position = c(0.02, 0.98),
+      legend.justification = c(0, 1),
+      legend.background = element_rect(
+        colour = "black",
+        fill = "white",
+        linewidth = 0.3
       ),
-      legend.text = element_text(
-        size = 9
-      ),
+      legend.key = element_blank(),
+      legend.key.size = unit(0.5, "cm"),
+      legend.spacing.y = unit(0.1, "cm"),
+      legend.title = element_text(size = 10),
+      legend.text = element_text(size = 9),
       axis.text.x = element_text(
-        size = 8,
-        angle = 45,
+        size = 4,
+        angle = 90,
         hjust = 1
       ),
       axis.text.y = element_text(
