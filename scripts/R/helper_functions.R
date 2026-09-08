@@ -2580,13 +2580,36 @@ plot_pairwise_metric <- function(
     max(pair_counts$n_pairs[7:9])
   )
 
-  # Arrange plots
-  patchwork::wrap_plots(
-    location_plots,
+  # Arrange each row separately
+  row1 <- cowplot::plot_grid(
+    plotlist = location_plots[1:3],
     ncol = 3,
-    nrow = 3,
-    heights = row_heights
+    align = "v"
   )
+
+  row2 <- cowplot::plot_grid(
+    plotlist = location_plots[4:6],
+    ncol = 3,
+    align = "v"
+  )
+
+  row3 <- cowplot::plot_grid(
+    plotlist = location_plots[7:9],
+    ncol = 3,
+    align = "v"
+  )
+
+  # Combine rows with different heights
+  final_plot <- cowplot::plot_grid(
+    row1,
+    row2,
+    row3,
+    ncol = 1,
+    rel_heights = row_heights
+  )
+
+  return(final_plot)
+
 }
 
 # ============================================================
