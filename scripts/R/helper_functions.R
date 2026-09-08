@@ -2738,7 +2738,7 @@ plot_pairwise_metric <- function(
     coord_cartesian(
         xlim = c(-0.20, 0.5)
     ) +
-    scale_x_continuous(
+    scale_y_continuous(
         breaks = seq(-0.2, 0.5, 0.1)
     ) +
     labs(
