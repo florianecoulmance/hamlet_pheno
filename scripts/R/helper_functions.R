@@ -2429,13 +2429,203 @@ add_genome_position <- function(df) {
 # ============================================================
 # pairwise population fst and dxy boxplots
 # ============================================================
+# plot_pairwise_metric <- function(
+#   df,
+#   metric,
+#   xlab,
+#   location_levels = c("bel", "boc", "hon", "pri", "arc", "gun", "flk", "qui", "bar"),
+#   location_colors) {
+  
+#   print("ENTERED plot_pairwise_metric")
+#   print("Rows:")
+#   print(nrow(df))
+
+#   df <- df %>%
+#     mutate(
+#       location1 = substr(pop1, 4, 6),
+#       location2 = substr(pop2, 4, 6),
+#       species1 = substr(pop1, 1, 3),
+#       species2 = substr(pop2, 1, 3)
+#     ) %>%
+#     filter(
+#       location1 == location2,
+#       species1 != species2
+#     ) %>%
+#     mutate(
+#       location = location1,
+#       pair = ifelse (
+#         species1 < species2,
+#         paste(species1, species2, sep = " - "),
+#         paste(species2, species1, sep = " - ")
+#       ),
+#       location_name = geo_table$Locations[
+#         match(as.character(location), geo_table$geo)
+#       ]
+#     ) %>%
+#     filter(location %in% location_levels) 
+
+#   print("After filtering:")
+#   print(nrow(df))
+#   print(head(df))
+
+#   # Factor location
+#   df <- df %>%
+#     mutate(
+#       location = factor(
+#         location,
+#         levels = location_levels
+#       )
+#     )
+
+#   df <- df %>%
+#   group_by(location, pair) %>%
+#   mutate(
+#     mean_metric = mean(
+#       .data[[metric]],
+#       na.rm = TRUE
+#     )
+#   ) %>%
+#   ungroup() %>%
+#   mutate(
+#     pair = reorder_within(
+#       pair,
+#       mean_metric,
+#       location
+#     )
+#   )
+
+#   location_plots <- lapply(
+#   location_levels,
+#   function(loc) {
+
+#     dat <- df %>%
+#       filter(location == loc)
+
+#     ggplot(
+#       dat,
+#       aes(
+#         x = .data[[metric]],
+#         y = pair,
+#         fill = location
+#       )
+#     ) +
+#       geom_boxplot(
+#         width = 0.75,
+#         outlier.shape = NA,
+#         colour = "black",
+#         linewidth = 0.2
+
+#       ) +
+#       stat_summary(
+#         fun = mean,
+#         geom = "point",
+#         shape = 23,
+#         size = 1.5,
+#         fill = "white",
+#         colour = "black"
+#       ) +
+#       scale_fill_manual(
+#         values = location_colors,
+#         drop = FALSE
+#       ) +
+#       coord_cartesian(
+#         xlim = c(-0.20, 0.5)
+#       ) +
+#       scale_x_continuous(
+#         breaks = seq(-0.2, 0.5, 0.1)
+#       ) +
+#       tidytext::scale_y_reordered() +
+#       labs(
+#         x = xlab,
+#         y = NULL,
+#         title = unique(dat$location_name)
+#       ) +
+#       theme_minimal() +
+#       theme(
+#         legend.position = "none",
+#         axis.text.y = element_text(size = 8),
+#         axis.text.x = element_text(size = 9),
+#         axis.title.x = element_text(size = 10),
+#         plot.title = element_text(
+#           face = "bold",
+#           size = 11,
+#           hjust = 0
+#         ),
+#         panel.spacing = unit(1, "lines"),
+#         plot.margin = margin(5, 5, 5, 5)
+#       )
+#     }
+#   )
+
+#   # Calculate relative height of each row
+
+#   pair_counts <- df %>%
+#     count(location, pair) %>%
+#     count(location, name = "n_pairs") %>%
+#     right_join(
+#       tibble(
+#         location = factor(
+#           location_levels,
+#           levels = location_levels
+#         )
+#       ),
+#       by = "location"
+#     ) %>%
+#     mutate(
+#       n_pairs = replace_na(n_pairs, 1)
+#     ) %>%
+#     arrange(location)
+
+#   row_heights <- c(
+#     max(pair_counts$n_pairs[1:3]),
+#     max(pair_counts$n_pairs[4:6]),
+#     max(pair_counts$n_pairs[7:9])
+#   )
+
+#   row_heights <- pmax(row_heights, 6)
+
+#   # Arrange each row separately
+#   row1 <- cowplot::plot_grid(
+#     plotlist = location_plots[1:3],
+#     ncol = 3,
+#     align = "v"
+#   )
+
+#   row2 <- cowplot::plot_grid(
+#     plotlist = location_plots[4:6],
+#     ncol = 3,
+#     align = "v"
+#   )
+
+#   row3 <- cowplot::plot_grid(
+#     plotlist = location_plots[7:9],
+#     ncol = 3,
+#     align = "v"
+#   )
+
+#   # Combine rows with different heights
+#   final_plot <- cowplot::plot_grid(
+#     row1,
+#     row2,
+#     row3,
+#     ncol = 1,
+#     rel_heights = row_heights
+#   )
+
+#   return(final_plot)
+
+# }
+
 plot_pairwise_metric <- function(
   df,
   metric,
   xlab,
-  location_levels = c("bel", "boc", "hon", "pri", "arc", "gun", "flk", "qui", "bar"),
+  location_levels = c(
+    "bel", "boc", "hon", "pri", "arc",
+    "gun", "flk", "qui", "bar"
+  ),
   location_colors) {
-  
+
   print("ENTERED plot_pairwise_metric")
   print("Rows:")
   print(nrow(df))
@@ -2453,22 +2643,31 @@ plot_pairwise_metric <- function(
     ) %>%
     mutate(
       location = location1,
-      pair = ifelse (
+      pair = ifelse(
         species1 < species2,
         paste(species1, species2, sep = " - "),
         paste(species2, species1, sep = " - ")
       ),
       location_name = geo_table$Locations[
-        match(as.character(location), geo_table$geo)
+        match(
+          as.character(location),
+          geo_table$geo
+        )
       ]
     ) %>%
-    filter(location %in% location_levels) 
+    filter(
+      location %in% location_levels
+    )
 
   print("After filtering:")
   print(nrow(df))
   print(head(df))
 
+
+  # ------------------------------------------------------------
   # Factor location
+  # ------------------------------------------------------------
+
   df <- df %>%
     mutate(
       location = factor(
@@ -2477,143 +2676,100 @@ plot_pairwise_metric <- function(
       )
     )
 
-  df <- df %>%
-  group_by(location, pair) %>%
-  mutate(
-    mean_metric = mean(
-      .data[[metric]],
-      na.rm = TRUE
-    )
-  ) %>%
-  ungroup() %>%
-  mutate(
-    pair = reorder_within(
-      pair,
-      mean_metric,
-      location
-    )
-  )
 
-  location_plots <- lapply(
-  location_levels,
-  function(loc) {
+  # ------------------------------------------------------------
+  # Order species pairs by FST
+  # ------------------------------------------------------------
 
-    dat <- df %>%
-      filter(location == loc)
-
-    ggplot(
-      dat,
-      aes(
-        x = .data[[metric]],
-        y = pair,
-        fill = location
-      )
-    ) +
-      geom_boxplot(
-        width = 0.75,
-        outlier.shape = NA,
-        colour = "black",
-        linewidth = 0.2
-
-      ) +
-      stat_summary(
-        fun = mean,
-        geom = "point",
-        shape = 23,
-        size = 1.5,
-        fill = "white",
-        colour = "black"
-      ) +
-      scale_fill_manual(
-        values = location_colors,
-        drop = FALSE
-      ) +
-      coord_cartesian(
-        xlim = c(-0.20, 0.5)
-      ) +
-      scale_x_continuous(
-        breaks = seq(-0.2, 0.5, 0.1)
-      ) +
-      tidytext::scale_y_reordered() +
-      labs(
-        x = xlab,
-        y = NULL,
-        title = unique(dat$location_name)
-      ) +
-      theme_minimal() +
-      theme(
-        legend.position = "none",
-        axis.text.y = element_text(size = 8),
-        axis.text.x = element_text(size = 9),
-        axis.title.x = element_text(size = 10),
-        plot.title = element_text(
-          face = "bold",
-          size = 11,
-          hjust = 0
-        ),
-        panel.spacing = unit(1, "lines"),
-        plot.margin = margin(5, 5, 5, 5)
-      )
-    }
-  )
-
-  # Calculate relative height of each row
-
-  pair_counts <- df %>%
-    count(location, pair) %>%
-    count(location, name = "n_pairs") %>%
-    right_join(
-      tibble(
-        location = factor(
-          location_levels,
-          levels = location_levels
-        )
+  pair_order <- df %>%
+    group_by(pair) %>%
+    summarise(
+      mean_metric = mean(
+        .data[[metric]],
+        na.rm = TRUE
       ),
-      by = "location"
+      .groups = "drop"
     ) %>%
+    arrange(mean_metric) %>%
+    pull(pair)
+
+  df <- df %>%
     mutate(
-      n_pairs = replace_na(n_pairs, 1)
-    ) %>%
-    arrange(location)
+      pair = factor(
+        pair,
+        levels = pair_order
+      )
+    )
 
-  row_heights <- c(
-    max(pair_counts$n_pairs[1:3]),
-    max(pair_counts$n_pairs[4:6]),
-    max(pair_counts$n_pairs[7:9])
-  )
 
-  row_heights <- pmax(row_heights, 6)
+  # ------------------------------------------------------------
+  # Plot
+  # ------------------------------------------------------------
 
-  # Arrange each row separately
-  row1 <- cowplot::plot_grid(
-    plotlist = location_plots[1:3],
-    ncol = 3,
-    align = "v"
-  )
-
-  row2 <- cowplot::plot_grid(
-    plotlist = location_plots[4:6],
-    ncol = 3,
-    align = "v"
-  )
-
-  row3 <- cowplot::plot_grid(
-    plotlist = location_plots[7:9],
-    ncol = 3,
-    align = "v"
-  )
-
-  # Combine rows with different heights
-  final_plot <- cowplot::plot_grid(
-    row1,
-    row2,
-    row3,
-    ncol = 1,
-    rel_heights = row_heights
-  )
+  final_plot <- ggplot(
+    df,
+    aes(
+      x = pair,
+      y = .data[[metric]],
+      fill = location
+    )
+  ) +
+    geom_boxplot(
+      width = 0.75,
+      outlier.shape = NA,
+      colour = "black",
+      linewidth = 0.2
+    ) +
+    stat_summary(
+      fun = mean,
+      geom = "point",
+      shape = 23,
+      size = 1.5,
+      fill = "white",
+      colour = "black"
+    ) +
+    scale_fill_manual(
+      values = location_colors,
+      breaks = location_levels,
+      labels = geo_table$Locations[
+        match(
+          location_levels,
+          geo_table$geo
+        )
+      ],
+      drop = FALSE,
+      name = "Location"
+    ) +
+    labs(
+      x = NULL,
+      y = xlab
+    ) +
+    theme_minimal() +
+    theme(
+      legend.position = "right",
+      legend.title = element_text(
+        size = 10
+      ),
+      legend.text = element_text(
+        size = 9
+      ),
+      axis.text.x = element_text(
+        size = 8,
+        angle = 45,
+        hjust = 1
+      ),
+      axis.text.y = element_text(
+        size = 9
+      ),
+      axis.title.y = element_text(
+        size = 10
+      ),
+      plot.margin = margin(
+        5, 5, 5, 5
+      )
+    )
 
   return(final_plot)
-
 }
 
 # ============================================================

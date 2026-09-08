@@ -108,102 +108,101 @@ dataset <- list(
     uni = list(dir = "bySPC", colors = "location")
 )
 
-# # Create a list to store plots per location
-# results <- list()
-# # FST_RESULTS <- list()
+# Create a list to store plots per location
+results <- list()
 
-# for(dat in names(dataset)) {
-#     dat_info <- dataset[[dat]]
-#     dat_dir <- dat_info$dir
-#     # print(dat_dir)
-#     color <- dat_info$colors
-#     # print(color)  
-#     message("Processing: ", dat)
+for(dat in names(dataset)) {
+    dat_info <- dataset[[dat]]
+    dat_dir <- dat_info$dir
+    # print(dat_dir)
+    color <- dat_info$colors
+    # print(color)  
+    message("Processing: ", dat)
   
-#     #-----------------------------------
-#     # Read GTMAT file + Sample file + PERMANOVA & PERMDISP result table
-#     #-----------------------------------
-#     gtmat_file <- file.path(base_path, "2_popgen", dat_dir, if (dat %in% c("all_s", "all_l")) "all.agg.ld_pruned_gtmat.traw" else paste0(dat, "_ld_pruned_gtmat.traw"))
-#     sample_file <- file.path(base_path, if (dat %in% c("all_s", "all_l")) "metadata/geno_names.txt" else paste0("2_popgen/", dat_dir, "/", dat, ".txt"))
-#     # perm_file <- list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat, ".*\\.csv$"), full.names = TRUE)
-#     perm_file <- if (dat == "all_s") file.path(base_path, "2_popgen", dat_dir, "permanova_results/all.lm.pairwise.csv") else if (dat == "all_l") file.path(base_path, "2_popgen", dat_dir, "permanova_results/all.sm.pairwise.csv") else list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat, ".*\\.csv$"), full.names = TRUE)
+    #-----------------------------------
+    # Read GTMAT file + Sample file + PERMANOVA & PERMDISP result table
+    #-----------------------------------
+    gtmat_file <- file.path(base_path, "2_popgen", dat_dir, if (dat %in% c("all_s", "all_l")) "all.agg.ld_pruned_gtmat.traw" else paste0(dat, "_ld_pruned_gtmat.traw"))
+    sample_file <- file.path(base_path, if (dat %in% c("all_s", "all_l")) "metadata/geno_names.txt" else paste0("2_popgen/", dat_dir, "/", dat, ".txt"))
+    # perm_file <- list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat, ".*\\.csv$"), full.names = TRUE)
+    perm_file <- if (dat == "all_s") file.path(base_path, "2_popgen", dat_dir, "permanova_results/all.lm.pairwise.csv") else if (dat == "all_l") file.path(base_path, "2_popgen", dat_dir, "permanova_results/all.sm.pairwise.csv") else list.files(file.path(base_path, "2_popgen", dat_dir, "permanova_results"), pattern = paste0(dat, ".*\\.csv$"), full.names = TRUE)
 
-#     # print(gtmat_file)
-#     # print(sample_file)
-#     # print(perm_file)
+    # print(gtmat_file)
+    # print(sample_file)
+    # print(perm_file)
 
-#     #-----------------------------------
-#     # PCA
-#     #-----------------------------------
-#     pca_res <- pca_analysis(gtmat_file, sample_file, color_by = color)
-#     pca_eigen <- pca_res$eigen
-#     pca_var   <- pca_res$var
-#     # print(pca_res)
-#     # print(pca_eigen)
-#     # print(pca_var)
+    #-----------------------------------
+    # PCA
+    #-----------------------------------
+    pca_res <- pca_analysis(gtmat_file, sample_file, color_by = color)
+    pca_eigen <- pca_res$eigen
+    pca_var   <- pca_res$var
+    # print(pca_res)
+    # print(pca_eigen)
+    # print(pca_var)
 
-#     #-----------------------------------
-#     # PCA plot
-#     #-----------------------------------
-#     if (dat %in% c("all_s", "all_l")) {
-#         # For the "all" dataset, generate three PCA plots (PC1-2, PC3-4, PC5-6)
-#         p_pca1 <- pca_plot_all(pca_eigen, "PC1", "PC2", species_info, pca_var) %>% annotate_figure(., top = text_grob("(a)", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
-#         p_pca2 <- pca_plot_all(pca_eigen, "PC3", "PC4", species_info, pca_var) %>% annotate_figure(., top = text_grob("(b)", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
-#         p_pca3 <- pca_plot_all(pca_eigen, "PC5", "PC6", species_info, pca_var) %>% annotate_figure(., top = text_grob("(c)", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
-#     } else {
-#         # For all other datasets, generate only PC1-2 and PC3-4
-#         p_pca1 <- pca_plot(pca_eigen, "PC1", "PC2", species_info, geo_table, pca_var, color_by = color)
-#         p_pca2 <- pca_plot(pca_eigen, "PC3", "PC4", species_info, geo_table, pca_var, color_by = color)
-#         p_pca3 <- NULL
-#     }
+    #-----------------------------------
+    # PCA plot
+    #-----------------------------------
+    if (dat %in% c("all_s", "all_l")) {
+        # For the "all" dataset, generate three PCA plots (PC1-2, PC3-4, PC5-6)
+        p_pca1 <- pca_plot_all(pca_eigen, "PC1", "PC2", species_info, pca_var) %>% annotate_figure(., top = text_grob("(a)", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
+        p_pca2 <- pca_plot_all(pca_eigen, "PC3", "PC4", species_info, pca_var) %>% annotate_figure(., top = text_grob("(b)", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
+        p_pca3 <- pca_plot_all(pca_eigen, "PC5", "PC6", species_info, pca_var) %>% annotate_figure(., top = text_grob("(c)", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0))
+    } else {
+        # For all other datasets, generate only PC1-2 and PC3-4
+        p_pca1 <- pca_plot(pca_eigen, "PC1", "PC2", species_info, geo_table, pca_var, color_by = color)
+        p_pca2 <- pca_plot(pca_eigen, "PC3", "PC4", species_info, geo_table, pca_var, color_by = color)
+        p_pca3 <- NULL
+    }
 
-#     #-----------------------------------
-#     # VAR plot
-#     #-----------------------------------
-#     pca_var_df <- data.frame(PC=as.numeric(rownames(pca_var)), Variance = pca_var$X0)
-#     # print(pca_var_df)
-#     p_var <- plot_variance(pca_var_df, dat)
+    #-----------------------------------
+    # VAR plot
+    #-----------------------------------
+    pca_var_df <- data.frame(PC=as.numeric(rownames(pca_var)), Variance = pca_var$X0)
+    # print(pca_var_df)
+    p_var <- plot_variance(pca_var_df, dat)
 
-#     # -----------------------------------
-#     # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
-#     #-----------------------------------
-#     p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "uni")) c(0.4, 0.8) else if(dat %in% c("all_s", "all_l")) c(0.3, 0.7) else "none")
+    # -----------------------------------
+    # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
+    #-----------------------------------
+    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "uni")) c(0.4, 0.8) else if(dat %in% c("all_s", "all_l")) c(0.3, 0.7) else "none")
 
 
-#     # -----------------------------------
-#     # FST (filter <3 inds per species)
-#     #-----------------------------------
-#     # p_fst <- fst_analysis(gtmat_file, color_by = color, species_info, geo_table, dat)
+    # -----------------------------------
+    # FST (filter <3 inds per species)
+    #-----------------------------------
+    # p_fst <- fst_analysis(gtmat_file, color_by = color, species_info, geo_table, dat)
 
-#     #-----------------------------------
-#     # Store outputs
-#     #-----------------------------------
-#     results[[dat]] <- list(
-#       pca_f = p_pca1,
-#       pca_s = p_pca2,
-#       pca_t = p_pca3,
-#       variance_plot = p_var,
-#       permanova = p_perm #,
-#       # fst = p_fst
-#     )
-# }
-
-# print(names(FST_RESULTS))
+    #-----------------------------------
+    # Store outputs
+    #-----------------------------------
+    results[[dat]] <- list(
+      pca_f = p_pca1,
+      pca_s = p_pca2,
+      pca_t = p_pca3,
+      variance_plot = p_var,
+      permanova = p_perm
+    )
+}
 
 
 # # ############################
 # # FINAL PLOTS
 # # ############################
 # # Set datasets for plots
-# results_locations <- results[names(results) %in% c("hon", "bel", "boc", "pri")]
-# keep_names <- names(results_locations)
-# # print(keep_names)
+results_locations <- results[names(results) %in% c("hon", "bel", "boc", "pri")]
+keep_names <- names(results_locations)
+# print(keep_names)
 
 # # Create common legend
-# leg <- legend_plot(species_info, gen = TRUE)
-# leg_g <- legend_geo(geo_table, gen = TRUE)
+leg <- legend_plot(species_info, gen = TRUE)
+leg_g <- legend_geo(geo_table, gen = TRUE)
 
 ########## FIGURE 2 ###################
+all_pcas <- lapply(results_locations, `[[`, "pca_f") # extract per location pcas
+pca_grid <- plot_grid(plotlist = all_pcas, ncol = 4, rel_widths = c(1, 1, 1, 1), scale = 0.95) # bundle location pcas in one plot
+
 # 1. READ PIXY OUTPUT
 fst <- read.table(
   file.path(base_path, "2_popgen", "byALL", "all.flt_fst.min3.txt"),
@@ -292,6 +291,18 @@ print("AFTER pC")
 # )
 # print("AFTER pD")
 
+# Combine PCA grid with legend at the bottom
+figure2 <- ggarrange(
+  pca_grid,
+  NULL,
+  pC,
+  NULL,
+  leg,
+  NULL,
+  nrow = 6, 
+  heights = c(8, 0.3, 8, 0.3, 1, 0.05)
+) # adjust if legend is too big/small
+
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
   plot = pC,
@@ -352,18 +363,18 @@ ggsave(
 # )
 
 
-# ########## FIGURE S16 ###################
-# # Variance of Principal Components for combined genetic space
-# figureS16 <- results[["all_s"]][["variance_plot"]]
-# ggsave(
-#   filename = file.path(figure_path, "FigS16_gAllVAR.png"),
-#   plot = figureS16,
-#   width = 8.27, 
-#   height = 5.22, 
-#   units = "in",      # inches
-#   dpi = 150,         # moderate dpi to reduce file size but keep quality
-#   type = "cairo-png" # better compression and anti-aliasing
-# )
+########## FIGURE S16 ###################
+# Variance of Principal Components for combined genetic space
+figureS16 <- results[["all_s"]][["variance_plot"]]
+ggsave(
+  filename = file.path(figure_path, "FigS16_gAllVAR.png"),
+  plot = figureS16,
+  width = 8.27, 
+  height = 5.22, 
+  units = "in",      # inches
+  dpi = 150,         # moderate dpi to reduce file size but keep quality
+  type = "cairo-png" # better compression and anti-aliasing
+)
 
 
 # ########## FIGURE S17 ###################
