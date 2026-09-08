@@ -306,7 +306,7 @@ figure2 <- ggarrange(
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
   plot = figure2,
-  width = 14,
+  width = 20,
   height = 14,
   units = "in",
   dpi = 150,
