@@ -295,12 +295,12 @@ print("AFTER pC")
 figure2 <- ggarrange(
   pca_grid,
   NULL,
+  leg,
+  NULL
   pC,
   NULL,
-  leg,
-  NULL,
   nrow = 6, 
-  heights = c(8, 0.3, 5, 0.3, 1, 0.05)
+  heights = c(8, 0.3, 1, 0.3, 5, 0.05)
 ) # adjust if legend is too big/small
 
 ggsave(
