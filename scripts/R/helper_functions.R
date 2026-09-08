@@ -2747,7 +2747,7 @@ plot_pairwise_metric <- function(
     ) +
     theme_minimal() +
     theme(
-      legend.position = c(0.02, 0.98),
+      legend.position = c(0.02, 0.25),
       legend.justification = c(0, 1),
       legend.background = element_rect(
         colour = "black",
@@ -2759,6 +2759,7 @@ plot_pairwise_metric <- function(
       legend.spacing.y = unit(0.1, "cm"),
       legend.title = element_text(size = 10),
       legend.text = element_text(size = 9),
+      legend.direction = "horizontal",
       axis.text.x = element_text(
         size = 4,
         angle = 90,
@@ -2772,7 +2773,12 @@ plot_pairwise_metric <- function(
       ),
       plot.margin = margin(
         5, 5, 5, 5
-      )
+      ),
+      guides(
+        fill = guide_legend(
+          nrow = 3,
+          byrow = TRUE
+        )
     )
 
   return(final_plot)
