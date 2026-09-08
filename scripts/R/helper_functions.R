@@ -2674,7 +2674,7 @@ plot_pairwise_metric <- function(
   # Order species pairs by FST
   # ------------------------------------------------------------
 
-  pair_order <- df %>%
+  pair_location_order <- df %>%
     group_by(pair_location) %>%
     summarise(
       mean_metric = mean(
