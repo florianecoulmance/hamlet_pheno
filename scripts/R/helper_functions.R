@@ -2512,7 +2512,9 @@ plot_pairwise_metric <- function(
       geom_boxplot(
         width = 0.75,
         outlier.shape = NA,
-        colour = "black"
+        colour = "black",
+        linewidth = 0.2
+
       ) +
       stat_summary(
         fun = mean,
@@ -2580,7 +2582,7 @@ plot_pairwise_metric <- function(
     max(pair_counts$n_pairs[7:9])
   )
 
-  row_heights <- pmax(row_heights, 4)
+  row_heights <- pmax(row_heights, 6)
 
   # Arrange each row separately
   row1 <- cowplot::plot_grid(
