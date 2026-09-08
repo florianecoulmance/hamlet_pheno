@@ -2494,86 +2494,99 @@ plot_pairwise_metric <- function(
     )
   )
 
-  df <- df %>%
-  mutate(
-    facet_row = ceiling(
-      as.numeric(location) / 3
-    ),
-    facet_col = (as.numeric(location) - 1) %% 3 + 1
+  location_plots <- lapply(
+  location_levels,
+  function(loc) {
+
+    dat <- df %>%
+      filter(location == loc)
+
+    ggplot(
+      dat,
+      aes(
+        x = .data[[metric]],
+        y = pair,
+        fill = location
+      )
+    ) +
+      geom_boxplot(
+        width = 0.75,
+        outlier.shape = NA,
+        colour = "black"
+      ) +
+      stat_summary(
+        fun = mean,
+        geom = "point",
+        shape = 23,
+        size = 1.5,
+        fill = "white",
+        colour = "black"
+      ) +
+      scale_fill_manual(
+        values = location_colors,
+        drop = FALSE
+      ) +
+      coord_cartesian(
+        xlim = c(-0.20, 0.5)
+      ) +
+      scale_x_continuous(
+        breaks = seq(-0.2, 0.5, 0.1)
+      ) +
+      tidytext::scale_y_reordered() +
+      labs(
+        x = xlab,
+        y = NULL,
+        title = unique(dat$location_name)
+      ) +
+      theme_minimal() +
+      theme(
+        legend.position = "none",
+        axis.text.y = element_text(size = 8),
+        axis.text.x = element_text(size = 9),
+        axis.title.x = element_text(size = 10),
+        plot.title = element_text(
+          face = "bold",
+          size = 11,
+          hjust = 0
+        ),
+        panel.spacing = unit(1, "lines"),
+        plot.margin = margin(5, 5, 5, 5)
+      )
+    }
   )
 
-  # Plot
-  ggplot(
-    df,
-    aes(
-      x = .data[[metric]],
-      y = pair,
-      fill = location
-    )
-  ) +
-    geom_boxplot(
-      width = 0.75,
-      outlier.shape = NA,
-      colour = "black"
-    ) +
-    stat_summary(
-      fun = mean,
-      geom = "point",
-      shape = 23,
-      size = 1.5,
-      fill = "white",
-      colour = "black"
-    ) +
+  # Calculate relative height of each row
 
-    scale_fill_manual(
-      values = location_colors,
-      drop = FALSE
-    ) +
-
-    # facet_wrap(
-    #   ~ location_name,
-    #   ncol = 3,
-    #   scales = "free_y"
-    # ) +
-    
-    # scale_y_discrete(
-    #   labels = function(x) {
-    #     sub("^[^_]+_", "", x)
-    #   }
-    # ) +
-
-    scale_y_reordered() +
-    coord_cartesian(
-      xlim = c(0, 0.5)
-    ) +
-
-    scale_x_continuous(
-      breaks = seq(0, 0.5, 0.1)
-    ) +
-
-    ggh4x::facet_grid2(
-      facet_row ~ facet_col,
-      scales = "free_y",
-      space = "free_y"
-    ) +
-    
-    labs(
-      x = xlab,
-      y = NA
-    ) +
-    
-    theme_minimal() +
-    theme(
-      axis.text.y = element_text(size = 8),
-      legend.position = "none",
-      strip.text = element_text(
-        angle = 0,
-        face = "bold",
-        size = 11
+  pair_counts <- df %>%
+    count(location, pair) %>%
+    count(location, name = "n_pairs") %>%
+    right_join(
+      tibble(
+        location = factor(
+          location_levels,
+          levels = location_levels
+        )
       ),
-      panel.spacing = unit(1.2, "lines")
-    )
- 
+      by = "location"
+    ) %>%
+    mutate(
+      n_pairs = replace_na(n_pairs, 1)
+    ) %>%
+    arrange(location)
+
+  row_heights <- c(
+    max(pair_counts$n_pairs[1:3]),
+    max(pair_counts$n_pairs[4:6]),
+    max(pair_counts$n_pairs[7:9])
+  )
+
+  # Arrange plots
+  patchwork::wrap_plots(
+    location_plots,
+    ncol = 3,
+    nrow = 3,
+    heights = row_heights
+  )
 }
 
 # ============================================================
