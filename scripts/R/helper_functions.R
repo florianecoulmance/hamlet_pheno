@@ -2139,7 +2139,7 @@ build_ld_plot <- function(
   labs(
       x = NULL,
       y = expression(r^2),
-      title = title
+      title = location_name
   ) +
   theme_classic()
 

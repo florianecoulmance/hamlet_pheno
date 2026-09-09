@@ -444,14 +444,13 @@ ggsave(filename = file.path(figure_path, "FigS17_gLocSUP.png"),
   type = "cairo-png" # smoother text rendering, smaller file
 )
 
-
 ########## FIGURE S18 ###################
 # Combined genotypic space: PERMANOVA
-figureS18 <- results[["all_s"]][["permanova"]]
+figureS18 <- build_ld_plot("all", location_colors = location_colors)
 
 # Save as PNG (A4 size)
 ggsave(
-  filename = file.path(figure_path, "FigS18_gAllPERM.png"),
+  filename = file.path(figure_path, "FigS18_gAllLD.png"),
   plot = figureS18,
   width = 7.5,    # A4 width in inches
   height = 7.5,  # A4 height in inches
@@ -460,14 +459,29 @@ ggsave(
   type = "cairo-png"
 )
 
+########## FIGURE S19 ###################
+# Combined genotypic space: PERMANOVA
+figureS19 <- results[["all_s"]][["permanova"]]
 
-# ########## FIGURE S19 ###################
+# Save as PNG (A4 size)
+ggsave(
+  filename = file.path(figure_path, "FigS19_gAllPERM.png"),
+  plot = figureS19,
+  width = 7.5,    # A4 width in inches
+  height = 7.5,  # A4 height in inches
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
+
+
+# ########## FIGURE S20 ###################
 # PERMANOVA heatmaps for each location
 all_perm <- lapply(results_locations, `[[`, "permanova") # extract per location pcas
-figureS19 <- plot_grid(plotlist = all_perm, ncol = 2, rel_widths = c(1, 1), scale = 0.95)# bundle location pcas in one plot
+figureS20 <- plot_grid(plotlist = all_perm, ncol = 2, rel_widths = c(1, 1), scale = 0.95)# bundle location pcas in one plot
 
 # Save Figure S16 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "FigS19_gLocPERM.png"),
+ggsave(filename = file.path(figure_path, "FigS20_gLocPERM.png"),
        plot = figureS19,
        width = 10,    # A4 width in inches
        height = 10,  # A4 height in inches
