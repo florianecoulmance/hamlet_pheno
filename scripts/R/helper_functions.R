@@ -1114,7 +1114,7 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
     if(nrow(pair_table2) == 0) return(NULL)  # nothing to plot
 
     # Keep only one direction of each comparison
-    pair_table2 <- pair_table %>%
+    pair_table2 <- pair_table2 %>%
       mutate(
         pair1 = pmin(spc1, spc2),
         pair2 = pmax(spc1, spc2)
