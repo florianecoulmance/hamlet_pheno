@@ -1106,15 +1106,15 @@ pca_plot_all <- function(pca_data, pc_first, pc_second, species_info, variance) 
 # ============================================================
 plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = "species", params_legend = "none") {
     # Read CSV and select only needed columns
-    pair_table <- read.table(file = pair_file, sep = ",", header = TRUE) %>%
+    pair_table2 <- read.table(file = pair_file, sep = ",", header = TRUE) %>%
         select(spc1, spc2, n_spc1, n_spc2, permanova_teststat, permanova_corr_pval, permadisp_teststat, permadisp_corr_pval) %>%
         filter(n_spc1 > 4 & n_spc2 > 4) %>% # Exclude rows where either group has fewer than 5 individuals
-        select(-n_spc1, -n_spc2) 
+        select(-n_spc1, -n_spc2)
     
-    if(nrow(pair_table) == 0) return(NULL)  # nothing to plot
+    if(nrow(pair_table2) == 0) return(NULL)  # nothing to plot
 
     # Keep only one direction of each comparison
-    pair_table <- pair_table %>%
+    pair_table2 <- pair_table %>%
       mutate(
         pair1 = pmin(spc1, spc2),
         pair2 = pmax(spc1, spc2)
@@ -1133,18 +1133,21 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
         permadisp_corr_pval
       )
 
-    pair_table2 <- pair_table %>%
-        select(spc1, spc2, n_spc1, n_spc2, permanova_corr_pval, permadisp_corr_pval)
-        
+    pair_table <- read.table(file = pair_file, sep = ",", header = TRUE) %>%
+      select(spc1, spc2, n_spc1, n_spc2, permanova_corr_pval, permadisp_corr_pval) %>%
+      filter(n_spc1 > 4 & n_spc2 > 4) %>% # Exclude rows where either group has fewer than 5 individuals
+      select(-n_spc1, -n_spc2) 
+    
+    if(nrow(pair_table) == 0) return(NULL)  # nothing to plot
 
     # Make symmetric
     df_sym <- rbind(
-        pair_table2,
+        pair_table,
         data.frame(
-            spc1 = pair_table2$spc2,
-            spc2 = pair_table2$spc1,
-            permanova_corr_pval = pair_table2$permanova_corr_pval,
-            permadisp_corr_pval = pair_table2$permadisp_corr_pval
+            spc1 = pair_table$spc2,
+            spc2 = pair_table$spc1,
+            permanova_corr_pval = pair_table$permanova_corr_pval,
+            permadisp_corr_pval = pair_table$permadisp_corr_pval
         )
     ) %>%
         mutate(
