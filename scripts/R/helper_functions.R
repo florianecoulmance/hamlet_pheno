@@ -2779,6 +2779,7 @@ plot_pairwise_metric <- function(
           nrow = 3,
           byrow = TRUE
         )
+      )
     )
 
   return(final_plot)
