@@ -2739,7 +2739,9 @@ plot_pairwise_metric <- function(
       labels = function(x) { sub( " \\| .*", "", x ) }
     ) +
     scale_y_continuous(
-        breaks = seq(-0.2, 0.5, 0.1)
+      limits = c(-0.2, 0.5),
+      breaks = seq(-0.2, 0.5, 0.1),
+      expand = c(0, 0)
     ) +
     labs(
       x = NULL,
@@ -2747,7 +2749,7 @@ plot_pairwise_metric <- function(
     ) +
     theme_minimal() +
     theme(
-      legend.position = c(0.02, 0.25),
+      legend.position = c(0.02, 0.90),
       legend.justification = c(0, 1),
       legend.background = element_rect(
         colour = "black",
@@ -2759,10 +2761,10 @@ plot_pairwise_metric <- function(
       legend.spacing.y = unit(0.1, "cm"),
       legend.title = element_text(size = 10),
       legend.text = element_text(size = 9),
-      legend.direction = "horizontal",
+      legend.direction = "vertical",
       axis.text.x = element_text(
-        size = 4,
-        angle = 90,
+        size = 6,
+        angle = 60,
         hjust = 1
       ),
       axis.text.y = element_text(

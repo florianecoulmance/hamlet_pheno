@@ -300,7 +300,7 @@ figure2 <- ggarrange(
   pC,
   NULL,
   nrow = 6, 
-  heights = c(6, 0.3, 1, 0.3, 8, 0.05)
+  heights = c(6, 0.3, 0.8, 0.3, 4, 0.05)
 ) # adjust if legend is too big/small
 
 ggsave(
