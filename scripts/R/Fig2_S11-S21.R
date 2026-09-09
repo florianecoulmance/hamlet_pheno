@@ -166,11 +166,11 @@ for(dat in names(dataset)) {
     # -----------------------------------
     # PERMANOVA + PERMDISP (filter <5 inds per species inside perm_f)
     #-----------------------------------
-    # p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "uni")) c(0.4, 0.8) else if(dat %in% c("all_s", "all_l")) c(0.3, 0.7) else "none")
+    p_perm <- plot_permanova_permdisp(perm_file, species_info, geo_table, color_by = color, params_legend = if(dat %in% c("bel", "uni")) c(0.4, 0.8) else if(dat %in% c("all_s", "all_l")) c(0.3, 0.7) else "none")
 
 
     # -----------------------------------
-    # FST (filter <3 inds per species)
+    # FST (filter < 3 inds per species)
     #-----------------------------------
     # p_fst <- fst_analysis(gtmat_file, color_by = color, species_info, geo_table, dat)
 
@@ -181,8 +181,9 @@ for(dat in names(dataset)) {
       pca_f = p_pca1,
       pca_s = p_pca2,
       pca_t = p_pca3,
-      variance_plot = p_var #,
-      # permanova = p_perm
+      variance_plot = p_var,
+      permanova = p_perm$plot,
+      t_permanova = p_perm$data
     )
 }
 
@@ -320,7 +321,7 @@ ld_grid <- plot_grid(
 #   heights = c(6, 0.3, 1.5, 0.3, 4, 0.3, 6, 0.05)
 # ) # adjust if legend is too big/small
 
-figure2 <- plot_grid( pca_grid, leg, pC, ld_grid, ncol = 1, rel_heights = c(6, 1.5, 4, 6), align = "v" )
+figure2 <- plot_grid( pca_grid, leg, pC, ld_grid, ncol = 1, rel_heights = c(6, 1.5, 4, 6), align = "hv" )
 
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
@@ -567,4 +568,23 @@ ggsave(
   units = "in",
   dpi = 150,
   type = "cairo-png"
+)
+
+
+########## TABLE S6 ###################
+create_ld_summary_table(
+  datasets = c("bel", "boc", "hon", "pri", "all", "pue", "nig", "uni")
+)
+
+########## TABLE S7 ###################
+table_s7_file <- file.path(
+    figure_path,
+    "TableS7.tex"
+)
+
+create_permanova_table(
+    base_path = base_path,
+    species_info = species_info,
+    geo_table = geo_table,
+    output_file = table_s7_file
 )

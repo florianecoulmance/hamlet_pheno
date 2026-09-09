@@ -1113,6 +1113,27 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
     
     if(nrow(pair_table) == 0) return(NULL)  # nothing to plot
 
+    # Keep only one direction of each comparison
+    pair_table <- pair_table %>%
+      mutate(
+        pair1 = pmin(spc1, spc2),
+        pair2 = pmax(spc1, spc2)
+      ) %>%
+      distinct(
+        pair1,
+        pair2,
+        .keep_all = TRUE
+      ) %>%
+      select(
+        spc1 = pair1,
+        spc2 = pair2,
+        permanova_r2,
+        permanova_f,
+        permanova_corr_pval,
+        permadisp_f,
+        permadisp_corr_pval
+      )
+
     # Make symmetric
     df_sym <- rbind(
         pair_table,
@@ -1245,7 +1266,13 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
       top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
     )
 
-    return(p_annot)
+    return(
+      list(
+        plot = p_annot,
+        data = pair_table
+      )
+    )
+      
 }
 
 
@@ -2135,7 +2162,7 @@ build_ld_plot <- function(
     tip.length = 0.01,
     vjust = -2.5
   ) +
-  coord_cartesian(ylim = c(0, 0.1)) +    
+  # coord_cartesian(ylim = c(0, 0.1)) +    
   labs(
       x = NULL,
       y = expression(r^2),
@@ -2906,6 +2933,82 @@ plot_fst_categories <- function(
     mutate(
       Fst = sum_a / (sum_a + sum_b + sum_c)
     )
+
+  # TABLE S5 # Pairwise FST within species between locations
+  tableS3 <- fst_same_species %>%
+    select(
+      Species = species1,
+      Location1 = location1,
+      Location2 = location2,
+      Fst) %>%
+      arrange(Species, Location1, Location2)
+  
+  writeLines(
+    knitr::kable(
+      tableS3,
+      format = "latex",
+      booktabs = TRUE,
+      digits = 4,
+      row.names = FALSE,
+      escape = TRUE 
+    ),
+    con = file.path(
+      figure_path,
+      "TableS3.tex"
+    )
+  )
+
+  # TABLE S6 # Pairwise FST between sympatric species
+  tableS4 <- fst_same_location %>%
+    mutate(
+      Species1 = pmin(species1, species2),
+      Species2 = pmax(species1, species2)
+    ) %>%
+    select(
+      Location = location1,
+      Species1,
+      Species2,
+      Fst
+    ) %>%
+    arrange(Location, Species1, Species2)
+  
+  writeLines(
+    knitr::kable(
+      tableS4,
+      format = "latex",
+      booktabs = TRUE,
+      digits = 4,
+      row.names = FALSE,
+      escape = TRUE
+    ),
+    con = file.path(
+      figure_path,
+      "TableS4.tex"
+    )
+  )
+
+  # TABLE S7 # Pairwise FST between species regardless of location
+  tableS5 <- fst_species %>%
+    select(
+      Species_pair = species_pair,
+      Fst
+    ) %>%
+    arrange(Species_pair)
+  
+  writeLines(
+    knitr::kable(
+      tableS5,
+      format = "latex",
+      booktabs = TRUE,
+      digits = 4,
+      row.names = FALSE,
+      escape = TRUE
+    ),
+    con = file.path(
+      figure_path,
+      "TableS5.tex"
+    )
+  )
 
   fst_plot <- bind_rows(
       fst_same_species %>%
@@ -4473,4 +4576,664 @@ lda_plot <- function(
   }
     
   return(p_annot)
+}
+
+```r
+# ============================================================
+# Function: create_ld_summary_table
+#
+# Purpose:
+#   Create a LaTeX table of LD summary statistics
+#   (mean, median, IQR) for a list of datasets.
+#
+# Input:
+#   datasets = vector of dataset names
+#
+# Output:
+#   TableS8_LD_summary.tex
+#
+# Each dataset contains four LD comparisons:
+#   - All genome
+#   - LG04 vs LG12_1
+#   - LG04 vs LG12_2
+#   - LG12_1 vs LG12_2
+# ============================================================
+
+create_ld_summary_table <- function(
+  datasets,
+  output_file = "TableS6.tex") {
+
+  # ----------------------------------------------------------
+  # 1. Function to read one dataset
+  # ----------------------------------------------------------
+
+  read_ld_dataset <- function(ds) {
+
+    message("Processing LD: ", ds)
+
+    files <- list(
+      global = file.path(
+        base_path,
+        "2_popgen",
+        "ld",
+        paste0(ds, "_global.ld")
+      ),
+
+      LG04_LG12_1 = file.path(
+        base_path,
+        "2_popgen",
+        "ld",
+        paste0(ds, ".LG04_LG12_1.ld")
+      ),
+
+      LG04_LG12_2 = file.path(
+        base_path,
+        "2_popgen",
+        "ld",
+        paste0(ds, ".LG04_LG12_2.ld")
+      ),
+
+      LG12_1_LG12_2 = file.path(
+        base_path,
+        "2_popgen",
+        "ld",
+        paste0(ds, ".LG12_1_LG12_2.ld")
+      )
+    )
+
+    rbind(
+      read_global_ld(
+        files$global,
+        "Global"
+      ),
+
+      read_ld_file(
+        files$LG04_LG12_1,
+        "LG04 vs LG12_1"
+      ),
+
+      read_ld_file(
+        files$LG04_LG12_2,
+        "LG04 vs LG12_2"
+      ),
+
+      read_ld_file(
+        files$LG12_1_LG12_2,
+        "LG12_1 vs LG12_2"
+      )
+    ) %>%
+      mutate(
+        dataset_id = ds
+      )
+  }
+
+
+  # ----------------------------------------------------------
+  # 2. Read all requested datasets
+  # ----------------------------------------------------------
+
+  ld_data <- lapply(
+    datasets,
+    read_ld_dataset
+  ) %>%
+    bind_rows()
+
+
+  # ----------------------------------------------------------
+  # 3. Calculate summary statistics
+  # ----------------------------------------------------------
+
+  table <- ld_data %>%
+    group_by(
+      dataset_id,
+      dataset
+    ) %>%
+    summarise(
+      Mean = mean(r2, na.rm = TRUE),
+      Median = median(r2, na.rm = TRUE),
+      IQR = IQR(r2, na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    rename(
+      Dataset = dataset_id,
+      Comparison = dataset
+    )
+
+
+  # ----------------------------------------------------------
+  # 4. Format dataset names
+  # ----------------------------------------------------------
+
+  table <- table %>%
+    mutate(
+      Dataset = case_when(
+
+        Dataset == "all" ~ "All",
+
+        Dataset %in% geo_table$geo ~
+          geo_table$Locations[
+            match(Dataset, geo_table$geo)
+          ],
+
+        TRUE ~ Dataset
+      )
+    )
+
+
+  # ----------------------------------------------------------
+  # 5. Set ordering
+  # ----------------------------------------------------------
+  comparison_order <- c(
+    "Global",
+    "LG04 vs LG12_1",
+    "LG04 vs LG12_2",
+    "LG12_1 vs LG12_2"
+  )
+
+  table <- table %>%
+    mutate(
+      Comparison = factor(
+        Comparison,
+        levels = comparison_order
+      )
+    ) %>%
+    arrange(
+      factor(Dataset, levels = unique(Dataset)),
+      Comparison
+    )
+
+
+  # ----------------------------------------------------------
+  # 6. Round statistics
+  # ----------------------------------------------------------
+
+  table <- table %>%
+    mutate(
+      Mean = round(Mean, 4),
+      Median = round(Median, 4),
+      IQR = round(IQR, 4)
+    )
+
+
+  # ----------------------------------------------------------
+  # 7. Write LaTeX
+  # ----------------------------------------------------------
+
+  writeLines(
+    knitr::kable(
+      table,
+      format = "latex",
+      booktabs = TRUE,
+      row.names = FALSE,
+      escape = TRUE
+    ),
+    con = file.path(
+      figure_path,
+      output_file
+    )
+  )
+
+  # ----------------------------------------------------------
+  # 8. Return table invisibly
+  # ----------------------------------------------------------
+  invisible(table)
+}
+
+```r id="8wq4pm"
+# ============================================================
+# Function: create_permanova_table
+#
+# Purpose:
+#   Create Table S7 directly from the original PERMANOVA/
+#   PERMDISP CSV files.
+#
+# The plotting function is NOT modified.
+#
+# Table columns:
+#   Comparison
+#   PERMANOVA R2
+#   PERMANOVA F
+#   PERMANOVA p-adjusted
+#   PERMDISP F
+#   PERMDISP p-adjusted
+# ============================================================
+create_permanova_table <- function(dataset,
+                                   base_path,
+                                   species_info,
+                                   geo_table,
+                                   output_file) {
+
+    # ------------------------------------------------------------
+    # Helper: LaTeX escape
+    # ------------------------------------------------------------
+    latex_escape <- function(x) {
+
+        x <- as.character(x)
+
+        x <- gsub("\\\\", "\\\\textbackslash{}", x)
+        x <- gsub("([#$%&_{}])", "\\\\\\1", x)
+        x <- gsub("~", "\\\\textasciitilde{}", x)
+        x <- gsub("\\^", "\\\\textasciicircum{}", x)
+
+        x
+    }
+
+
+    # ------------------------------------------------------------
+    # Helper: format numbers
+    # ------------------------------------------------------------
+    format_num <- function(x, digits = 3) {
+
+        if (is.na(x)) {
+            return("")
+        }
+
+        sprintf(
+            paste0("%.", digits, "f"),
+            as.numeric(x)
+        )
+    }
+
+
+    # ------------------------------------------------------------
+    # Helper: format p-values
+    # ------------------------------------------------------------
+    format_p <- function(x) {
+
+        if (is.na(x)) {
+            return("")
+        }
+
+        x <- as.numeric(x)
+
+        if (x < 0.001) {
+            return("<0.001")
+        }
+
+        sprintf("%.3f", x)
+    }
+
+
+    # ------------------------------------------------------------
+    # Helper: species name
+    # ------------------------------------------------------------
+    get_species_name <- function(code) {
+
+        val <- species_info$Species[
+            species_info$spec == code
+        ]
+
+        if (length(val) == 0 || is.na(val[1])) {
+            return(code)
+        }
+
+        paste0("H. ", val[1])
+    }
+
+
+    # ------------------------------------------------------------
+    # Helper: location name
+    # ------------------------------------------------------------
+    get_location_name <- function(code) {
+
+        val <- geo_table$Locations[
+            geo_table$geo == code
+        ]
+
+        if (length(val) == 0 || is.na(val[1])) {
+            return(code)
+        }
+
+        val[1]
+    }
+
+
+    # ------------------------------------------------------------
+    # Helper: determine PERMANOVA file
+    # ------------------------------------------------------------
+    get_perm_file <- function(dat) {
+
+        dat_dir <- dataset[[dat]]$dir
+
+        perm_dir <- file.path(
+            base_path,
+            "2_popgen",
+            dat_dir,
+            "permanova_results"
+        )
+
+        if (dat == "all_s") {
+
+            file.path(
+                perm_dir,
+                "all.lm.pairwise.csv"
+            )
+
+        } else if (dat == "all_l") {
+
+            file.path(
+                perm_dir,
+                "all.sm.pairwise.csv"
+            )
+
+        } else {
+
+            files <- list.files(
+                perm_dir,
+                pattern = paste0(dat, ".*\\.csv$"),
+                full.names = TRUE
+            )
+
+            if (length(files) == 0) {
+                return(NULL)
+            }
+
+            files[1]
+        }
+    }
+
+
+    # ------------------------------------------------------------
+    # Helper: read and prepare one PERMANOVA table
+    # ------------------------------------------------------------
+    read_perm_table <- function(dat) {
+
+        perm_file <- get_perm_file(dat)
+
+        if (is.null(perm_file) ||
+            !file.exists(perm_file)) {
+
+            warning(
+                "No PERMANOVA file found for: ",
+                dat
+            )
+
+            return(NULL)
+        }
+
+        tab <- read.csv(
+            perm_file,
+            header = TRUE,
+            stringsAsFactors = FALSE
+        )
+
+        # Keep only comparisons with >= 5 individuals
+        tab <- tab %>%
+            filter(
+                n_spc1 > 4,
+                n_spc2 > 4
+            )
+
+        if (nrow(tab) == 0) {
+            return(NULL)
+        }
+
+        # Keep only one direction of each comparison
+        tab <- tab %>%
+            mutate(
+                pair1 = pmin(spc1, spc2),
+                pair2 = pmax(spc1, spc2)
+            ) %>%
+            distinct(
+                pair1,
+                pair2,
+                .keep_all = TRUE
+            ) %>%
+            mutate(
+                spc1 = pair1,
+                spc2 = pair2
+            )
+
+        tab
+    }
+
+
+    # ------------------------------------------------------------
+    # Helper: make table rows
+    # ------------------------------------------------------------
+    make_rows <- function(tab, comparison_fun) {
+
+        if (is.null(tab) ||
+            nrow(tab) == 0) {
+
+            return(character(0))
+        }
+
+        rows <- character(nrow(tab))
+
+        for (i in seq_len(nrow(tab))) {
+
+            comparison <- comparison_fun(
+                tab$spc1[i],
+                tab$spc2[i]
+            )
+
+            rows[i] <- paste0(
+                latex_escape(comparison),
+                " & ",
+                format_num(tab$permanova_r2[i]),
+                " & ",
+                format_num(tab$permanova_f[i]),
+                " & ",
+                format_p(tab$permanova_corr_pval[i]),
+                " & ",
+                format_num(tab$permadisp_f[i]),
+                " & ",
+                format_p(tab$permadisp_corr_pval[i]),
+                " \\\\"
+            )
+        }
+
+        rows
+    }
+
+
+    # ============================================================
+    # Begin LaTeX table
+    # ============================================================
+
+    latex <- c(
+
+        "\\begin{xltabular}{\\textwidth}{>{\\raggedright\\arraybackslash}p{5.5cm}XXXXX}",
+
+        "\\hline",
+
+        "\\textbf{Comparison} &",
+        "\\multicolumn{3}{c}{\\textbf{PERMANOVA}} &",
+        "\\multicolumn{2}{c}{\\textbf{PERMDISP}} \\\\",
+
+        "\\cline{2-6}",
+
+        " & $R^2$ & $F$ & p-adjusted & $F$ & p-adjusted \\\\",
+        "\\hline",
+
+        "\\endfirsthead",
+
+        "\\hline",
+
+        "\\textbf{Comparison} &",
+        "\\multicolumn{3}{c}{\\textbf{PERMANOVA}} &",
+        "\\multicolumn{2}{c}{\\textbf{PERMDISP}} \\\\",
+
+        "\\cline{2-6}",
+
+        " & $R^2$ & $F$ & p-adjusted & $F$ & p-adjusted \\\\",
+        "\\hline",
+
+        "\\endhead",
+
+        "\\hline",
+        "\\endfoot",
+
+        "\\hline",
+        "\\endlastfoot"
+    )
+
+
+    # ============================================================
+    # ALL HAMLETS & LOCATIONS
+    # ============================================================
+
+    if ("all_s" %in% names(dataset)) {
+
+        tab <- read_perm_table("all_s")
+
+        if (!is.null(tab)) {
+
+            latex <- c(
+                latex,
+                "\\hline",
+                "\\multicolumn{6}{l}{\\textbf{ALL HAMLETS \\& LOCATIONS}} \\\\",
+                "\\hline"
+            )
+
+            latex <- c(
+                latex,
+                make_rows(
+                    tab,
+                    function(sp1, sp2) {
+                        paste0(
+                            get_species_name(sp1),
+                            " vs. ",
+                            get_species_name(sp2)
+                        )
+                    }
+                )
+            )
+        }
+    }
+
+
+    # ============================================================
+    # LOCATION-SPECIFIC SPECIES COMPARISONS
+    # ============================================================
+
+    for (dat in names(dataset)) {
+
+        if (dat %in% c("all_s", "all_l")) {
+            next
+        }
+
+        if (dataset[[dat]]$dir != "byLOC") {
+            next
+        }
+
+        tab <- read_perm_table(dat)
+
+        if (is.null(tab)) {
+            next
+        }
+
+        location_name <- get_location_name(dat)
+
+        latex <- c(
+            latex,
+            "\\hline",
+            paste0(
+                "\\multicolumn{6}{l}{\\textbf{",
+                latex_escape(toupper(location_name)),
+                "}} \\\\"
+            ),
+            "\\hline"
+        )
+
+        latex <- c(
+            latex,
+            make_rows(
+                tab,
+                function(sp1, sp2) {
+                    paste0(
+                        get_species_name(sp1),
+                        " vs. ",
+                        get_species_name(sp2)
+                    )
+                }
+            )
+        )
+    }
+
+
+    # ============================================================
+    # SPECIES-SPECIFIC LOCATION COMPARISONS
+    # ============================================================
+
+    for (dat in names(dataset)) {
+
+        if (dataset[[dat]]$dir != "bySPC") {
+            next
+        }
+
+        tab <- read_perm_table(dat)
+
+        if (is.null(tab)) {
+            next
+        }
+
+        species_name <- get_species_name(dat)
+
+        latex <- c(
+            latex,
+            "\\hline",
+            paste0(
+                "\\multicolumn{6}{l}{\\textbf{",
+                latex_escape(species_name),
+                "}} \\\\"
+            ),
+            "\\hline"
+        )
+
+        latex <- c(
+            latex,
+            make_rows(
+                tab,
+                function(sp1, sp2) {
+
+                    loc1 <- substr(
+                        sp1,
+                        4,
+                        6
+                    )
+
+                    loc2 <- substr(
+                        sp2,
+                        4,
+                        6
+                    )
+
+                    paste0(
+                        get_location_name(loc1),
+                        " vs. ",
+                        get_location_name(loc2)
+                    )
+                }
+            )
+        )
+    }
+
+
+    # ============================================================
+    # Finish table
+    # ============================================================
+
+    latex <- c(
+        latex,
+        "\\end{xltabular}"
+    )
+
+
+    # ------------------------------------------------------------
+    # Write LaTeX file
+    # ------------------------------------------------------------
+
+    writeLines(
+        latex,
+        con = output_file
+    )
+
+    message(
+        "Table S7 written to: ",
+        output_file
+    )
+
+    invisible(latex)
 }
