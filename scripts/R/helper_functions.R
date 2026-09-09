@@ -1133,14 +1133,18 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
         permadisp_corr_pval
       )
 
+    pair_table2 <- pair_table %>%
+        select(spc1, spc2, n_spc1, n_spc2, permanova_corr_pval, permadisp_corr_pval)
+        
+
     # Make symmetric
     df_sym <- rbind(
-        pair_table,
+        pair_table2,
         data.frame(
-            spc1 = pair_table$spc2,
-            spc2 = pair_table$spc1,
-            permanova_corr_pval = pair_table$permanova_corr_pval,
-            permadisp_corr_pval = pair_table$permadisp_corr_pval
+            spc1 = pair_table2$spc2,
+            spc2 = pair_table2$spc1,
+            permanova_corr_pval = pair_table2$permanova_corr_pval,
+            permadisp_corr_pval = pair_table2$permadisp_corr_pval
         )
     ) %>%
         mutate(
