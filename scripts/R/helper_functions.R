@@ -1127,10 +1127,9 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
       select(
         spc1 = pair1,
         spc2 = pair2,
-        permanova_r2,
-        permanova_f,
+        permanova_teststat,
         permanova_corr_pval,
-        permadisp_f,
+        permadisp_teststat,
         permadisp_corr_pval
       )
 
