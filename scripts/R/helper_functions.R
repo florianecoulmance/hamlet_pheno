@@ -4779,29 +4779,38 @@ create_ld_summary_table <- function(
   invisible(table)
 }
 
-```r id="8wq4pm"
+
 # ============================================================
-# Function: create_permanova_table
+# Create Table S7
 #
-# Purpose:
-#   Create Table S7 directly from the original PERMANOVA/
-#   PERMDISP CSV files.
+# Included datasets:
+#   bel, boc, hon, pri  -> location-specific species comparisons
+#   all_s                -> all hamlets & locations
+#   pue, nig, uni        -> species-specific location comparisons
 #
-# The plotting function is NOT modified.
-#
-# Table columns:
-#   Comparison
-#   PERMANOVA R2
-#   PERMANOVA F
-#   PERMANOVA p-adjusted
-#   PERMDISP F
-#   PERMDISP p-adjusted
+# The existing plot_permanova_permdisp() is NOT modified.
 # ============================================================
-create_permanova_table <- function(dataset,
-                                   base_path,
+create_permanova_table <- function(base_path,
                                    species_info,
                                    geo_table,
                                    output_file) {
+
+    # ------------------------------------------------------------
+    # Only datasets wanted in Table S7
+    # ------------------------------------------------------------
+    location_datasets <- c(
+        "bel",
+        "boc",
+        "hon",
+        "pri"
+    )
+
+    species_datasets <- c(
+        "pue",
+        "nig",
+        "uni"
+    )
+
 
     # ------------------------------------------------------------
     # Helper: LaTeX escape
@@ -4889,52 +4898,63 @@ create_permanova_table <- function(dataset,
 
 
     # ------------------------------------------------------------
-    # Helper: determine PERMANOVA file
+    # Helper: find PERMANOVA file
     # ------------------------------------------------------------
     get_perm_file <- function(dat) {
 
-        dat_dir <- dataset[[dat]]$dir
-
-        perm_dir <- file.path(
-            base_path,
-            "2_popgen",
-            dat_dir,
-            "permanova_results"
-        )
-
+        # all_s has a fixed filename
         if (dat == "all_s") {
 
-            file.path(
-                perm_dir,
-                "all.lm.pairwise.csv"
+            return(
+                file.path(
+                    base_path,
+                    "2_popgen",
+                    "byALL",
+                    "permanova_results",
+                    "all.lm.pairwise.csv"
+                )
             )
+        }
 
-        } else if (dat == "all_l") {
 
-            file.path(
-                perm_dir,
-                "all.sm.pairwise.csv"
+        # Location-specific datasets
+        if (dat %in% location_datasets) {
+
+            perm_dir <- file.path(
+                base_path,
+                "2_popgen",
+                "byLOC",
+                "permanova_results"
             )
 
         } else {
 
-            files <- list.files(
-                perm_dir,
-                pattern = paste0(dat, ".*\\.csv$"),
-                full.names = TRUE
+            # Species-specific datasets
+            perm_dir <- file.path(
+                base_path,
+                "2_popgen",
+                "bySPC",
+                "permanova_results"
             )
-
-            if (length(files) == 0) {
-                return(NULL)
-            }
-
-            files[1]
         }
+
+
+        files <- list.files(
+            perm_dir,
+            pattern = paste0(dat, ".*\\.csv$"),
+            full.names = TRUE
+        )
+
+        if (length(files) == 0) {
+            return(NULL)
+        }
+
+        files[1]
     }
 
 
     # ------------------------------------------------------------
-    # Helper: read and prepare one PERMANOVA table
+    # Helper: read PERMANOVA/PERMDISP results
     # ------------------------------------------------------------
     read_perm_table <- function(dat) {
 
@@ -4944,7 +4964,7 @@ create_permanova_table <- function(dataset,
             !file.exists(perm_file)) {
 
             warning(
-                "No PERMANOVA file found for: ",
+                "No PERMANOVA file found for ",
                 dat
             )
 
@@ -4957,16 +4977,19 @@ create_permanova_table <- function(dataset,
             stringsAsFactors = FALSE
         )
 
-        # Keep only comparisons with >= 5 individuals
+
+        # Keep comparisons where both groups have >= 5 samples
         tab <- tab %>%
             filter(
                 n_spc1 > 4,
                 n_spc2 > 4
             )
 
+
         if (nrow(tab) == 0) {
             return(NULL)
         }
+
 
         # Keep only one direction of each comparison
         tab <- tab %>%
@@ -4989,7 +5012,7 @@ create_permanova_table <- function(dataset,
 
 
     # ------------------------------------------------------------
-    # Helper: make table rows
+    # Helper: create LaTeX rows
     # ------------------------------------------------------------
     make_rows <- function(tab, comparison_fun) {
 
@@ -5029,7 +5052,7 @@ create_permanova_table <- function(dataset,
 
 
     # ============================================================
-    # Begin LaTeX table
+    # Start LaTeX table
     # ============================================================
 
     latex <- c(
@@ -5074,49 +5097,38 @@ create_permanova_table <- function(dataset,
     # ALL HAMLETS & LOCATIONS
     # ============================================================
 
-    if ("all_s" %in% names(dataset)) {
+    tab <- read_perm_table("all_s")
 
-        tab <- read_perm_table("all_s")
+    if (!is.null(tab)) {
 
-        if (!is.null(tab)) {
+        latex <- c(
+            latex,
+            "\\hline",
+            "\\multicolumn{6}{l}{\\textbf{ALL HAMLETS \\& LOCATIONS}} \\\\",
+            "\\hline"
+        )
 
-            latex <- c(
-                latex,
-                "\\hline",
-                "\\multicolumn{6}{l}{\\textbf{ALL HAMLETS \\& LOCATIONS}} \\\\",
-                "\\hline"
+        latex <- c(
+            latex,
+            make_rows(
+                tab,
+                function(sp1, sp2) {
+                    paste0(
+                        get_species_name(sp1),
+                        " vs. ",
+                        get_species_name(sp2)
+                    )
+                }
             )
-
-            latex <- c(
-                latex,
-                make_rows(
-                    tab,
-                    function(sp1, sp2) {
-                        paste0(
-                            get_species_name(sp1),
-                            " vs. ",
-                            get_species_name(sp2)
-                        )
-                    }
-                )
-            )
-        }
+        )
     }
 
 
     # ============================================================
-    # LOCATION-SPECIFIC SPECIES COMPARISONS
+    # LOCATION SECTIONS
     # ============================================================
 
-    for (dat in names(dataset)) {
-
-        if (dat %in% c("all_s", "all_l")) {
-            next
-        }
-
-        if (dataset[[dat]]$dir != "byLOC") {
-            next
-        }
+    for (dat in location_datasets) {
 
         tab <- read_perm_table(dat)
 
@@ -5154,14 +5166,10 @@ create_permanova_table <- function(dataset,
 
 
     # ============================================================
-    # SPECIES-SPECIFIC LOCATION COMPARISONS
+    # SPECIES SECTIONS
     # ============================================================
 
-    for (dat in names(dataset)) {
-
-        if (dataset[[dat]]$dir != "bySPC") {
-            next
-        }
+    for (dat in species_datasets) {
 
         tab <- read_perm_table(dat)
 
@@ -5188,17 +5196,12 @@ create_permanova_table <- function(dataset,
                 tab,
                 function(sp1, sp2) {
 
-                    loc1 <- substr(
-                        sp1,
-                        4,
-                        6
-                    )
+                    # Population IDs:
+                    # first 3 characters = species
+                    # characters 4-6 = location
 
-                    loc2 <- substr(
-                        sp2,
-                        4,
-                        6
-                    )
+                    loc1 <- substr(sp1, 4, 6)
+                    loc2 <- substr(sp2, 4, 6)
 
                     paste0(
                         get_location_name(loc1),
@@ -5212,7 +5215,7 @@ create_permanova_table <- function(dataset,
 
 
     # ============================================================
-    # Finish table
+    # Close table
     # ============================================================
 
     latex <- c(
@@ -5221,9 +5224,9 @@ create_permanova_table <- function(dataset,
     )
 
 
-    # ------------------------------------------------------------
-    # Write LaTeX file
-    # ------------------------------------------------------------
+    # ============================================================
+    # Write table
+    # ============================================================
 
     writeLines(
         latex,
