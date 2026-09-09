@@ -306,19 +306,21 @@ ld_grid <- plot_grid(
   scale = 0.95
 )
 
-# Combine PCA grid with legend at the bottom
-figure2 <- ggarrange(
-  pca_grid,
-  NULL,
-  leg,
-  NULL,
-  pC,
-  NULL,
-  ld_grid,
-  NULL,
-  nrow = 6, 
-  heights = c(6, 0.3, 1.5, 0.3, 4, 0.3, 6, 0.05)
-) # adjust if legend is too big/small
+# # Combine PCA grid with legend at the bottom
+# figure2 <- ggarrange(
+#   pca_grid,
+#   NULL,
+#   leg,
+#   NULL,
+#   pC,
+#   NULL,
+#   ld_grid,
+#   NULL,
+#   nrow = 6, 
+#   heights = c(6, 0.3, 1.5, 0.3, 4, 0.3, 6, 0.05)
+# ) # adjust if legend is too big/small
+
+figure2 <- plot_grid( pca_grid, leg, pC, ld_grid, ncol = 1, rel_heights = c(6, 1.5, 4, 6), align = "v" )
 
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
@@ -482,7 +484,7 @@ figureS20 <- plot_grid(plotlist = all_perm, ncol = 2, rel_widths = c(1, 1), scal
 
 # Save Figure S16 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS20_gLocPERM.png"),
-       plot = figureS19,
+       plot = figureS20,
        width = 10,    # A4 width in inches
        height = 10,  # A4 height in inches
        units = "in",
@@ -491,7 +493,34 @@ ggsave(filename = file.path(figure_path, "FigS20_gLocPERM.png"),
 )
 
 
-########## FIGURE S20 ###################
+########## FIGURE S21 ###################
+ld_spe_datasets <- c("pue", "nig", "uni")
+
+ld_spe_plots <- lapply(
+  ld_spe_datasets,
+  build_ld_plot,
+  location_colors = NULL
+)
+
+figureS21 <- plot_grid(
+  plotlist = ld_spe_plots,
+  ncol = 3,
+  rel_widths = c(1, 1, 1),
+  scale = 0.95
+)
+
+ggsave(
+  filename = file.path(figure_path, "FigS21_gSpeLD.png"),
+  plot = figureS21,
+  width = 10,
+  height = 5,
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
+
+
+########## FIGURE S22 ###################
 # Per species genotypic space: PCA + PERMANOVA + PERMDISP
 # Remove the overall entry before extracting plots
 results_spc <- results[names(results) %in% c("pue", "nig", "uni")]
@@ -514,7 +543,7 @@ pca_uni_s <- results[["uni"]][["pca_s"]]
 perm_uni <- results[["uni"]][["permanova"]]
 uni <- plot_grid(pca_uni_f, pca_uni_s, perm_uni, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
 
-figureS20 <- plot_grid(
+figureS22 <- plot_grid(
   pue,
   NULL,
   nig,
@@ -531,8 +560,8 @@ figureS20 <- plot_grid(
 
 # Save as PNG (A4 size)
 ggsave(
-  filename = file.path(figure_path, "FigS20_gSpe.png"),
-  plot = figureS20,
+  filename = file.path(figure_path, "FigS22_gSpe.png"),
+  plot = figureS22,
   width = 15,    # A4 width in inches
   height = 18,  # A4 height in inches
   units = "in",
