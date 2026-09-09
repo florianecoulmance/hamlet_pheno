@@ -2073,10 +2073,10 @@ read_global_ld <- function(file, label = "global") {
   )
 }
 
+# Pairwise mean comparisons
+pairwise_comparisons <- function(df, grp) combn(unique(as.character(df[[grp]])), 2, simplify = FALSE)
 
-# -----------------------------
 # Build LD plot
-# -----------------------------
 build_ld_plot <- function(
   ds,
   location_colors) {
@@ -2124,11 +2124,11 @@ build_ld_plot <- function(
   stat_compare_means(
     label = "p.signif",
     size = 6,
-    comparisons = pairwise_comparisons(df, "dataset")
+    comparisons = pairwise_comparisons(df_all, "dataset")
   ) +
   # Exact p-values
   stat_compare_means(
-    comparisons = pairwise_comparisons(df, "dataset"),
+    comparisons = pairwise_comparisons(df_all, "dataset"),
     label = "p.format",
     size = 3.2,
     bracket.size = 0.3,
