@@ -2141,7 +2141,7 @@ build_ld_plot <- function(
       y = expression(r^2),
       title = title
   ) +
-  theme_classic() +    
+  theme_classic()   
 
 
 }
