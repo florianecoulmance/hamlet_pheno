@@ -2073,48 +2073,13 @@ read_global_ld <- function(file, label = "global") {
   )
 }
 
-# -----------------------------
-# Make boxplot for one dataset
-# -----------------------------
-plot_ld_box <- function(df, title = NULL) {
-  
-  # define comparisons (all pairwise)
-  comparisons <- list(
-    c("global", "LG04_LG12_1"),
-    c("global", "LG04_LG12_2"),
-    c("global", "LG12_1_LG12_2")
-  )
-  
-  ggplot(df, aes(x = dataset, y = r2, group = dataset)) +
-    geom_boxplot(outlier.size = 0.3) +
-    
-    # stat_compare_means(
-    #   comparisons = comparisons,
-    #   method = "wilcox.test",
-    #   label = "p.signif",
-      
-    #   # keep everything inside 0–0.1
-    #   label.y = c(0.02, 0.22, 0.24),
-    #   step.increase = 0
-    # )  +
-    
-    coord_cartesian(ylim = c(0, 0.1)) +
-    
-    # scale_y_continuous(expand = expansion(mult = c(-0.15, 0.15))) +
-    
-    theme_classic() +    
-    labs(
-      x = NULL,
-      y = expression(r^2),
-      title = title
-    )
-}
-
 
 # -----------------------------
-# Build one dataset plot
+# Build LD plot
 # -----------------------------
-build_plot <- function(ds) {
+build_ld_plot <- function(
+  ds,
+  location_colors) {
 
   message("Processing:    ", ds)
   
@@ -2132,8 +2097,53 @@ build_plot <- function(ds) {
   df_3      <- read_ld_file(files$LG12_1_LG12_2, "LG12_1_LG12_2")
   
   df_all <- rbind(df_global, df_1, df_2, df_3)
+
+  # Full location name
+  location_name <- geo_table$Locations[match(ds, geo_table$geo)]
   
-  plot_ld_box(df_all, title = ds)
+  ggplot(
+    df,
+    aes(x = dataset, y = r2, group = dataset)
+  ) +
+  geom_boxplot(
+    fill = location_colors[ds],
+    colour = "black",
+    outlier.size = 0.3,
+    linewidth = 0.2
+  ) +
+  # Mean
+  stat_summary(
+    fun = mean,
+    geom = "point",
+    shape = 23,
+    size = 2.2,
+    fill = "white",
+    colour = "black"
+  ) +
+  # Significance stars
+  stat_compare_means(
+    label = "p.signif",
+    size = 6,
+    comparisons = pairwise_comparisons(df, "dataset")
+  ) +
+  # Exact p-values
+  stat_compare_means(
+    comparisons = pairwise_comparisons(df, "dataset"),
+    label = "p.format",
+    size = 3.2,
+    bracket.size = 0.3,
+    tip.length = 0.01,
+    vjust = -2.5
+  ) +
+  coord_cartesian(ylim = c(0, 0.1)) +    
+  labs(
+      x = NULL,
+      y = expression(r^2),
+      title = title
+  ) +
+  theme_classic() +    
+
+
 }
 
 # ============================================================
@@ -2778,8 +2788,8 @@ plot_pairwise_metric <- function(
       ),
       guides(
         fill = guide_legend(
-          nrow = 3,
-          byrow = TRUE
+          ncol = 3,
+          bycol = TRUE
         )
       )
     )

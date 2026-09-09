@@ -29,7 +29,7 @@ ld_datasets <- c("all", "bel", "boc", "hon", "pri", "pue", "uni", "nig", "abe")
 # -----------------------------
 # loop over datasets
 # -----------------------------
-plots <- lapply(ld_datasets, build_plot)
+plots <- lapply(ld_datasets, build_ld_plot)
 
 # ensure 3x3 layout (pad if needed)
 length(plots) <- 9

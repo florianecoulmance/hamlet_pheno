@@ -397,57 +397,7 @@ rule filter_dxy_min3:
         """
 
 
-rule pca_plot:
-    input:
-        gtmat = lambda wildcards: (
-            [f"byLOC/{loc}_ld_pruned_gtmat.traw" for loc in locations] +
-            [f"bySPC/{spc}_ld_pruned_gtmat.traw" for spc in plink_species] +
-            ["byALL/all.agg.ld_pruned_gtmat.traw"]
-        ),
-        # PERMANOVA results
-        permanova = lambda wildcards: (
-            [f"byLOC/permanova_results/{loc}.lm.pairwise.csv" for loc in locations] +
-            [f"bySPC/permanova_results/{spc}.sm.pairwise.csv" for spc in plink_species] +
-            ["byALL/permanova_results/all.lm.pairwise.csv"] +
-            ["byALL/permanova_results/all.sm.pairwise.csv"]
-        ),
-        dxy = "byALL/all.flt_dxy.min3.txt",
-        fst = "byALL/all.flt_fst.min3.txt"
-    output:
-        f"{FIGURES_DIR}/Fig2_pairFST.png",
-        f"{FIGURES_DIR}/FigS14_gFSTviolin.png",
-        # f"{FIGURES_DIR}/FigS12_gLocFST.png",
-        # f"{FIGURES_DIR}/FigS13_gAllsFST.png",
-        # f"{FIGURES_DIR}/FigS14_gSpeFST.png",
-        # f"{FIGURES_DIR}/FigS15_gAllPCA.png",
-        # f"{FIGURES_DIR}/FigS16_gAllVAR.png",
-        # f"{FIGURES_DIR}/FigS17_gLocPCA.png",
-        # f"{FIGURES_DIR}/FigS18_gLocSUP.png",
-        # f"{FIGURES_DIR}/FigS19_gAllPERM.png",
-        # f"{FIGURES_DIR}/FigS20_gLocPERM.png",
-        # f"{FIGURES_DIR}/FigS21_gSpe.png"
-    params:
-        base_path = BASE_DIR,
-        figure_path = FIGURES_DIR,
-        logos_path = f"{BASE_DIR}/metadata/logos_hamlet",
-        spec_colors = f"{BASE_DIR}/metadata/species_colors.tsv",
-        geo_colors = f"{BASE_DIR}/metadata/locations_colors.tsv"
-    threads: 1
-    resources:
-        mem_mb=64000,
-        time="2:00:00"
-    shell:
-        """
-        module load hpc-env/13.1
-        module load R/4.3.1-foss-2023a
 
-        Rscript {R_SCRIPT} \
-            --base_path {params.base_path} \
-            --figure_path {params.figure_path} \
-            --logos_path {params.logos_path} \
-            --spec_colors {params.spec_colors} \
-            --geo_colors {params.geo_colors}
-        """
 
 
 rule corr_plot:
@@ -937,19 +887,75 @@ rule split_region_ld_full:
         rm -f {params.prefix}.tmp.annotated.ld
         """
 
-rule plot_ld:
+# rule plot_ld:
+#     input:
+#         expand("ld/{dataset}_global.ld", dataset=ld_datasets),
+#         expand("ld/{dataset}.LG04_LG12_1.ld", dataset=ld_datasets),
+#         expand("ld/{dataset}.LG04_LG12_2.ld", dataset=ld_datasets),
+#         expand("ld/{dataset}.LG12_1_LG12_2.ld", dataset=ld_datasets)
+#     output:
+#         f"{FIGURES_DIR}/FigS27_LDboxplots.png"
+#     params:
+#         base_dir = BASE_DIR,
+#         fig_dir = FIGURES_DIR
+#     shell:
+#         r"""
+#         module load R/4.3.1-foss-2023a
+#         Rscript {SCRIPTS_DIR}/R/FigS27.R {params.base_dir} {params.fig_dir}
+#         """
+
+rule pca_plot:
     input:
+        gtmat = lambda wildcards: (
+            [f"byLOC/{loc}_ld_pruned_gtmat.traw" for loc in locations] +
+            [f"bySPC/{spc}_ld_pruned_gtmat.traw" for spc in plink_species] +
+            ["byALL/all.agg.ld_pruned_gtmat.traw"]
+        ),
+        # PERMANOVA results
+        permanova = lambda wildcards: (
+            [f"byLOC/permanova_results/{loc}.lm.pairwise.csv" for loc in locations] +
+            [f"bySPC/permanova_results/{spc}.sm.pairwise.csv" for spc in plink_species] +
+            ["byALL/permanova_results/all.lm.pairwise.csv"] +
+            ["byALL/permanova_results/all.sm.pairwise.csv"]
+        ),
+        dxy = "byALL/all.flt_dxy.min3.txt",
+        fst = "byALL/all.flt_fst.min3.txt",
         expand("ld/{dataset}_global.ld", dataset=ld_datasets),
         expand("ld/{dataset}.LG04_LG12_1.ld", dataset=ld_datasets),
         expand("ld/{dataset}.LG04_LG12_2.ld", dataset=ld_datasets),
         expand("ld/{dataset}.LG12_1_LG12_2.ld", dataset=ld_datasets)
     output:
-        f"{FIGURES_DIR}/FigS27_LDboxplots.png"
+        f"{FIGURES_DIR}/Fig2_pairFST.png",
+        f"{FIGURES_DIR}/FigS14_gFSTviolin.png",
+        # f"{FIGURES_DIR}/FigS12_gLocFST.png",
+        # f"{FIGURES_DIR}/FigS13_gAllsFST.png",
+        # f"{FIGURES_DIR}/FigS14_gSpeFST.png",
+        # f"{FIGURES_DIR}/FigS15_gAllPCA.png",
+        # f"{FIGURES_DIR}/FigS16_gAllVAR.png",
+        # f"{FIGURES_DIR}/FigS17_gLocPCA.png",
+        # f"{FIGURES_DIR}/FigS18_gLocSUP.png",
+        # f"{FIGURES_DIR}/FigS19_gAllPERM.png",
+        # f"{FIGURES_DIR}/FigS20_gLocPERM.png",
+        # f"{FIGURES_DIR}/FigS21_gSpe.png"
     params:
-        base_dir = BASE_DIR,
-        fig_dir = FIGURES_DIR
+        base_path = BASE_DIR,
+        figure_path = FIGURES_DIR,
+        logos_path = f"{BASE_DIR}/metadata/logos_hamlet",
+        spec_colors = f"{BASE_DIR}/metadata/species_colors.tsv",
+        geo_colors = f"{BASE_DIR}/metadata/locations_colors.tsv"
+    threads: 1
+    resources:
+        mem_mb=64000,
+        time="2:00:00"
     shell:
-        r"""
+        """
+        module load hpc-env/13.1
         module load R/4.3.1-foss-2023a
-        Rscript {SCRIPTS_DIR}/R/FigS27.R {params.base_dir} {params.fig_dir}
+
+        Rscript {R_SCRIPT} \
+            --base_path {params.base_path} \
+            --figure_path {params.figure_path} \
+            --logos_path {params.logos_path} \
+            --spec_colors {params.spec_colors} \
+            --geo_colors {params.geo_colors}
         """
