@@ -4578,7 +4578,6 @@ lda_plot <- function(
   return(p_annot)
 }
 
-```r
 # ============================================================
 # Function: create_ld_summary_table
 #
@@ -4598,7 +4597,6 @@ lda_plot <- function(
 #   - LG04 vs LG12_2
 #   - LG12_1 vs LG12_2
 # ============================================================
-
 create_ld_summary_table <- function(
   datasets,
   output_file = "TableS6.tex") {
