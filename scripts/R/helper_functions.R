@@ -2084,10 +2084,10 @@ build_ld_plot <- function(
   message("Processing:    ", ds)
   
   files <- list(
-    global = file.path(base_dir, "/2_popgen/ld/", paste0(ds, "_global.ld")),
-    LG04_LG12_1 = file.path(base_dir, "/2_popgen/ld/", paste0(ds, ".LG04_LG12_1.ld")),
-    LG04_LG12_2 = file.path(base_dir, "/2_popgen/ld/", paste0(ds, ".LG04_LG12_2.ld")),
-    LG12_1_LG12_2 = file.path(base_dir, "/2_popgen/ld/", paste0(ds, ".LG12_1_LG12_2.ld"))
+    global = file.path(base_path, "/2_popgen/ld/", paste0(ds, "_global.ld")),
+    LG04_LG12_1 = file.path(base_path, "/2_popgen/ld/", paste0(ds, ".LG04_LG12_1.ld")),
+    LG04_LG12_2 = file.path(base_path, "/2_popgen/ld/", paste0(ds, ".LG04_LG12_2.ld")),
+    LG12_1_LG12_2 = file.path(base_path, "/2_popgen/ld/", paste0(ds, ".LG12_1_LG12_2.ld"))
   )
   
   # use YOUR existing functions
@@ -2141,8 +2141,7 @@ build_ld_plot <- function(
       y = expression(r^2),
       title = title
   ) +
-  theme_classic()   
-
+  theme_classic()
 
 }
 
