@@ -2102,7 +2102,7 @@ build_ld_plot <- function(
   location_name <- geo_table$Locations[match(ds, geo_table$geo)]
   
   ggplot(
-    df,
+    df_all,
     aes(x = dataset, y = r2, group = dataset)
   ) +
   geom_boxplot(
