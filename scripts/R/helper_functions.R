@@ -371,21 +371,21 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     if (length(geo_val) == 1) {
       title_val <- geo_info$Locations[geo_info$geo == geo_val]
       if (title_val=="Panama") {
-        title_val <- "(b) Panama"
+        title_val <- "Panama"
       } else if (title_val=="USVI") {
-        title_val <- "(f) USVI"
+        title_val <- "USVI"
       } else if (title_val=="Belize") {
-        title_val <- "(a) Belize"
+        title_val <- "Belize"
       } else if (title_val=="Florida Keys") {
-        title_val <- "(c) Florida Keys"
+        title_val <- "Florida Keys"
       } else if (title_val=="Tobago") {
-        title_val <- "(b) Tobago"
+        title_val <- "Tobago"
       } else if (title_val=="Mexico") {
-        title_val <- "(a) Mexico"
+        title_val <- "Mexico"
       } else if (title_val=="Honduras") { 
-        title_val <- "(c) Honduras"
+        title_val <- "Honduras"
       } else if (title_val=="Puerto Rico") { 
-        title_val <- "(d) Puerto Rico"
+        title_val <- "Puerto Rico"
       } else {
         title_val <- ""
       }
@@ -2134,6 +2134,13 @@ build_ld_plot <- function(
   # Full location name
   location_name <- geo_table$Locations[match(ds, geo_table$geo)]
   
+  # Conditional title
+  title_text <- if (ds %in% c("bel", "boc", "hon", "pri")) {
+    location_name
+  } else {
+    ""
+  }
+
   ggplot(
     df_all,
     aes(x = dataset, y = r2, group = dataset)
@@ -2141,7 +2148,7 @@ build_ld_plot <- function(
   geom_boxplot(
     fill = location_colors[ds],
     colour = "black",
-    outlier.size = 0.3,
+    outlier.size = 0.1,
     linewidth = 0.2
   ) +
   # Mean
@@ -2156,25 +2163,41 @@ build_ld_plot <- function(
   # Significance stars
   stat_compare_means(
     label = "p.signif",
-    size = 6,
+    size = 1,
+    colour = "grey",
     comparisons = pairwise_comparisons(df_all, "dataset")
   ) +
   # Exact p-values
   stat_compare_means(
     comparisons = pairwise_comparisons(df_all, "dataset"),
     label = "p.format",
-    size = 3.2,
+    size = 1,
+    colour = "grey",
     bracket.size = 0.3,
     tip.length = 0.01,
     vjust = -2.5
   ) +
-  # coord_cartesian(ylim = c(0, 0.1)) +    
+  coord_cartesian(ylim = c(0, 1)) +    
   labs(
       x = NULL,
       y = expression(r^2),
-      title = location_name
+      title = title_text
   ) +
-  theme_classic()
+  theme_classic() +
+  theme(
+      legend.position = "none",
+      axis.text.x = element_text(
+        size = 12,
+        angle = 60,
+      ),
+      axis.text.y = element_text(
+        size = 12
+      ),
+      axis.title.y = element_text(
+        size = 18
+      )
+    )
+
 
 }
 
@@ -2791,7 +2814,7 @@ plot_pairwise_metric <- function(
     ) +
     theme_minimal() +
     theme(
-      legend.position = c(0.02, 0.90),
+      legend.position = c(0.02, 0.98),
       legend.justification = c(0, 1),
       legend.background = element_rect(
         colour = "black",
@@ -2801,27 +2824,26 @@ plot_pairwise_metric <- function(
       legend.key = element_blank(),
       legend.key.size = unit(0.5, "cm"),
       legend.spacing.y = unit(0.1, "cm"),
-      legend.title = element_text(size = 10),
-      legend.text = element_text(size = 9),
+      legend.title = element_text(size = 18),
+      legend.text = element_text(size = 15),
       legend.direction = "vertical",
       axis.text.x = element_text(
-        size = 6,
+        size = 12,
         angle = 60,
         hjust = 1
       ),
       axis.text.y = element_text(
-        size = 9
+        size = 12
       ),
       axis.title.y = element_text(
-        size = 10
+        size = 18
       ),
       plot.margin = margin(
         5, 5, 5, 5
       ),
       guides(
         fill = guide_legend(
-          ncol = 3,
-          bycol = TRUE
+          ncol = 3
         )
       )
     )
@@ -4794,58 +4816,33 @@ create_ld_summary_table <- function(
 #
 # The existing plot_permanova_permdisp() is NOT modified.
 # ============================================================
-create_permanova_table <- function(base_path,
-                                    species_info,
-                                    geo_table,
-                                    output_file) {
+create_permanova_table <- function(
+    base_path,
+    species_info,
+    geo_table,
+    output_file = "TableS7_PERMANOVA_PERMDISP.csv") {
 
     # ============================================================
-    # Datasets to include
+    # 1. Datasets to include
     # ============================================================
 
     location_datasets <- c("bel", "boc", "hon", "pri")
     species_datasets  <- c("pue", "nig", "uni")
 
-    # ============================================================
-    # Helper functions
-    # ============================================================
+    datasets <- c(
+        "bel",
+        "boc",
+        "hon",
+        "pri",
+        "all",
+        "pue",
+        "nig",
+        "uni"
+    )
 
-    format_num <- function(x, digits = 3) {
-
-        if (length(x) == 0 || is.null(x) || is.na(x)) {
-            return("")
-        }
-
-        sprintf(paste0("%.", digits, "f"), as.numeric(x))
-    }
-
-    format_p <- function(x) {
-
-        if (length(x) == 0 || is.null(x) || is.na(x)) {
-            return("")
-        }
-
-        x <- as.numeric(x)
-
-        if (x < 0.001) {
-            return("<0.001")
-        }
-
-        sprintf("%.3f", x)
-    }
-
-    latex_escape <- function(x) {
-
-        x <- gsub("\\\\", "\\\\textbackslash{}", x)
-        x <- gsub("([#$%&_{}])", "\\\\\\1", x)
-        x <- gsub("~", "\\\\textasciitilde{}", x, fixed = TRUE)
-        x <- gsub("\\^", "\\\\textasciicircum{}", x)
-
-        x
-    }
 
     # ============================================================
-    # Find the PERMANOVA/PERMDISP file
+    # 2. Find PERMANOVA/PERMDISP file
     # ============================================================
 
     get_perm_file <- function(dat) {
@@ -4899,13 +4896,13 @@ create_permanova_table <- function(base_path,
             files[1]
 
         } else {
-
             stop("Unknown dataset: ", dat)
         }
     }
 
+
     # ============================================================
-    # Read and prepare one PERMANOVA file
+    # 3. Read and prepare one PERMANOVA file
     # ============================================================
 
     read_perm_file <- function(perm_file) {
@@ -4917,7 +4914,6 @@ create_permanova_table <- function(base_path,
             check.names = FALSE
         )
 
-        # Check that required columns exist
         required_cols <- c(
             "spc1",
             "spc2",
@@ -4929,18 +4925,23 @@ create_permanova_table <- function(base_path,
             "permadisp_corr_pval"
         )
 
-        missing_cols <- setdiff(required_cols, names(dat))
+        missing_cols <- setdiff(
+            required_cols,
+            names(dat)
+        )
 
         if (length(missing_cols) > 0) {
             stop(
-                "Missing columns in ", basename(perm_file), ": ",
+                "Missing columns in ",
+                basename(perm_file),
+                ": ",
                 paste(missing_cols, collapse = ", ")
             )
         }
 
         dat <- dat[, required_cols]
 
-        # Exclude comparisons with fewer than 5 individuals
+        # Exclude comparisons where either group has < 5 individuals
         dat <- dat[
             dat$n_spc1 > 4 &
             dat$n_spc2 > 4,
@@ -4953,11 +4954,20 @@ create_permanova_table <- function(base_path,
         }
 
         # Keep only one direction of each comparison
-        dat$pair1 <- pmin(dat$spc1, dat$spc2)
-        dat$pair2 <- pmax(dat$spc1, dat$spc2)
+        dat$pair1 <- pmin(
+            dat$spc1,
+            dat$spc2
+        )
+
+        dat$pair2 <- pmax(
+            dat$spc1,
+            dat$spc2
+        )
 
         dat <- dat[
-            !duplicated(dat[, c("pair1", "pair2")]),
+            !duplicated(
+                dat[, c("pair1", "pair2")]
+            ),
             ,
             drop = FALSE
         ]
@@ -4970,256 +4980,205 @@ create_permanova_table <- function(base_path,
         dat
     }
 
+
     # ============================================================
-    # Make table rows
+    # 4. Helper: get species name
+    #
+    #    Population IDs are expected to start with the
+    #    three-letter species code.
     # ============================================================
 
-    make_rows <- function(dat, comparison_type) {
+    get_species_name <- function(x) {
 
-        if (is.null(dat) || nrow(dat) == 0) {
-            return(character(0))
+        if (length(x) == 0 || is.na(x)) {
+            return(NA_character_)
         }
 
-        rows <- character(0)
+        # Extract species code from population ID
+        species_code <- substr(x, 1, 3)
+
+        # Look up full species name
+        name <- species_info$Species[
+            species_info$spec == species_code
+        ]
+
+        # If lookup fails, retain the 3-letter code
+        if (length(name) == 0 || is.na(name[1])) {
+            return(species_code)
+        }
+
+        name[1]
+    }
+
+
+    # ============================================================
+    # 5. Helper: get location name
+    # ============================================================
+
+    get_location_name <- function(x) {
+
+        if (length(x) == 0 || is.na(x)) {
+            return(NA_character_)
+        }
+
+        location_code <- substr(x, 4, 6)
+
+        name <- geo_table$Locations[
+            geo_table$geo == location_code
+        ]
+
+        # If lookup fails, retain 3-letter code
+        if (length(name) == 0 || is.na(name[1])) {
+            return(location_code)
+        }
+
+        name[1]
+    }
+
+
+    # ============================================================
+    # 6. Create rows for one dataset
+    # ============================================================
+
+    make_rows <- function(
+        dat,
+        dataset_name,
+        comparison_type
+    ) {
+
+        if (is.null(dat) || nrow(dat) == 0) {
+            return(NULL)
+        }
+
+        output <- vector(
+            "list",
+            nrow(dat)
+        )
 
         for (i in seq_len(nrow(dat))) {
 
             spc1 <- dat$spc1[i]
             spc2 <- dat$spc2[i]
 
+
             # ----------------------------------------------------
-            # Comparison label
+            # Between species
             # ----------------------------------------------------
 
-            if (comparison_type == "location") {
+            if (comparison_type == "species") {
 
-                name1 <- species_info$Species[
-                    species_info$spec == spc1
-                ]
-
-                name2 <- species_info$Species[
-                    species_info$spec == spc2
-                ]
-
-                # Fall back to codes if metadata lookup fails
-                if (length(name1) == 0 || is.na(name1)) {
-                    name1 <- spc1
-                }
-
-                if (length(name2) == 0 || is.na(name2)) {
-                    name2 <- spc2
-                }
+                species1 <- get_species_name(spc1)
+                species2 <- get_species_name(spc2)
 
                 comparison <- paste0(
-                    "H. ", name1,
-                    " vs. H. ", name2
+                    "H. ",
+                    species1,
+                    " vs. H. ",
+                    species2
                 )
+
+
+            # ----------------------------------------------------
+            # Between locations within species
+            # ----------------------------------------------------
 
             } else {
 
-                # Species-specific comparison:
-                # first 3 characters = species
-                # characters 4-6 = geographic code
-
-                geo1 <- substr(spc1, 4, 6)
-                geo2 <- substr(spc2, 4, 6)
-
-                loc1 <- geo_table$Locations[
-                    geo_table$geo == geo1
-                ]
-
-                loc2 <- geo_table$Locations[
-                    geo_table$geo == geo2
-                ]
-
-                # Fall back to geographic codes if lookup fails
-                if (length(loc1) == 0 || is.na(loc1)) {
-                    loc1 <- geo1
-                }
-
-                if (length(loc2) == 0 || is.na(loc2)) {
-                    loc2 <- geo2
-                }
+                location1 <- get_location_name(spc1)
+                location2 <- get_location_name(spc2)
 
                 comparison <- paste0(
-                    loc1,
+                    location1,
                     " vs. ",
-                    loc2
+                    location2
                 )
             }
 
-            # ----------------------------------------------------
-            # Statistics
-            # ----------------------------------------------------
-
-            perm_f <- dat$permanova_teststat[i]
-            perm_p <- dat$permanova_corr_pval[i]
-
-            disp_f <- dat$permadisp_teststat[i]
-            disp_p <- dat$permadisp_corr_pval[i]
 
             # ----------------------------------------------------
-            # Create LaTeX row
+            # Store row
             # ----------------------------------------------------
 
-            rows <- c(
-                rows,
-                paste0(
-                    latex_escape(comparison),
-                    " & ",
-                    format_num(perm_f),
-                    " & ",
-                    format_p(perm_p),
-                    " & ",
-                    format_num(disp_f),
-                    " & ",
-                    format_p(disp_p),
-                    " \\\\"
-                )
+            output[[i]] <- data.frame(
+
+                Dataset = dataset_name,
+
+                Comparison = comparison,
+
+                PERMANOVA_F =
+                    as.numeric(
+                        dat$permanova_teststat[i]
+                    ),
+
+                PERMANOVA_p_adjusted =
+                    as.numeric(
+                        dat$permanova_corr_pval[i]
+                    ),
+
+                PERMDISP_F =
+                    as.numeric(
+                        dat$permadisp_teststat[i]
+                    ),
+
+                PERMDISP_p_adjusted =
+                    as.numeric(
+                        dat$permadisp_corr_pval[i]
+                    ),
+
+                stringsAsFactors = FALSE
             )
         }
 
-        rows
+        bind_rows(output)
     }
 
-    # ============================================================
-    # Dataset definitions
-    # ============================================================
-
-    datasets <- c(
-        "bel",
-        "boc",
-        "hon",
-        "pri",
-        "all",
-        "pue",
-        "nig",
-        "uni"
-    )
 
     # ============================================================
-    # Build LaTeX table
+    # 7. Process all datasets
     # ============================================================
 
-    table_lines <- c(
-
-        "\\begin{xltabular}{\\textwidth}{p{6.0cm}XXXX}",
-
-        "\\toprule",
-
-        "\\textbf{Comparison} &",
-        "\\multicolumn{2}{c}{\\textbf{PERMANOVA}} &",
-        "\\multicolumn{2}{c}{\\textbf{PERMDISP}} \\\\",
-
-        "\\cmidrule(lr){2-3}",
-        "\\cmidrule(lr){4-5}",
-
-        "& $F$ & p-adjusted & $F$ & p-adjusted \\\\",
-
-        "\\midrule",
-        "\\endfirsthead",
-
-        "\\toprule",
-
-        "\\textbf{Comparison} &",
-        "\\multicolumn{2}{c}{\\textbf{PERMANOVA}} &",
-        "\\multicolumn{2}{c}{\\textbf{PERMDISP}} \\\\",
-
-        "\\cmidrule(lr){2-3}",
-        "\\cmidrule(lr){4-5}",
-
-        "& $F$ & p-adjusted & $F$ & p-adjusted \\\\",
-
-        "\\midrule",
-        "\\endhead",
-
-        "\\midrule",
-        "\\multicolumn{5}{r}{Continued on next page} \\\\",
-        "\\endfoot",
-
-        "\\bottomrule",
-        "\\endlastfoot"
-    )
-
-    # ============================================================
-    # Add datasets
-    # ============================================================
+    all_tables <- list()
 
     for (dat in datasets) {
 
-        message("Processing LD: ", dat)
+        message("Processing PERMANOVA: ", dat)
 
         perm_file <- get_perm_file(dat)
 
         if (!file.exists(perm_file)) {
+
             warning(
                 "PERMANOVA file does not exist: ",
                 perm_file
             )
+
             next
         }
 
-        dat_table <- read_perm_file(perm_file)
 
-        if (is.null(dat_table) || nrow(dat_table) == 0) {
+        dat_table <- read_perm_file(
+            perm_file
+        )
+
+        if (
+            is.null(dat_table) ||
+            nrow(dat_table) == 0
+        ) {
+
             warning(
                 "No valid comparisons for dataset: ",
                 dat
             )
+
             next
         }
 
-        # --------------------------------------------------------
-        # Section title
-        # --------------------------------------------------------
 
-        if (dat == "all") {
-
-            section_title <- "ALL HAMLETS \\& LOCATIONS"
-
-        } else if (dat %in% location_datasets) {
-
-            location_name <- geo_table$Locations[
-                geo_table$geo == dat
-            ]
-
-            if (length(location_name) == 0 || is.na(location_name)) {
-                location_name <- toupper(dat)
-            }
-
-            section_title <- toupper(location_name)
-
-        } else {
-
-            species_name <- species_info$Species[
-                species_info$spec == dat
-            ]
-
-            if (length(species_name) == 0 || is.na(species_name)) {
-                species_name <- dat
-            }
-
-            section_title <- paste0(
-                "H. ",
-                species_name
-            )
-        }
-
-        table_lines <- c(
-            table_lines,
-            "",
-            paste0(
-                "\\multicolumn{5}{l}{\\textbf{",
-                latex_escape(section_title),
-                "}} \\\\"
-            )
-        )
-
-        # --------------------------------------------------------
-        # Comparison type
-        # --------------------------------------------------------
-
-        if (dat %in% location_datasets || dat == "all") {
+        # Determine type of comparison
+        if (
+            dat %in% location_datasets ||
+            dat == "all"
+        ) {
 
             comparison_type <- "species"
 
@@ -5228,43 +5187,70 @@ create_permanova_table <- function(base_path,
             comparison_type <- "location"
         }
 
-        # --------------------------------------------------------
-        # Add rows
-        # --------------------------------------------------------
 
-        rows <- make_rows(
-            dat_table,
-            comparison_type
-        )
-
-        table_lines <- c(
-            table_lines,
-            rows
+        all_tables[[dat]] <- make_rows(
+            dat = dat_table,
+            dataset_name = dat,
+            comparison_type = comparison_type
         )
     }
 
-    # ============================================================
-    # Close table
-    # ============================================================
-
-    table_lines <- c(
-        table_lines,
-        "\\end{xltabular}"
-    )
 
     # ============================================================
-    # Write file
+    # 8. Combine everything
     # ============================================================
 
-    writeLines(
-        table_lines,
-        con = output_file
-    )
+    table <- bind_rows(all_tables)
 
-    message(
-        "Table S7 written to: ",
+
+    # ============================================================
+    # 9. Round values
+    # ============================================================
+
+    table <- table %>%
+        mutate(
+            PERMANOVA_F = round(
+                PERMANOVA_F,
+                3
+            ),
+
+            PERMANOVA_p_adjusted = round(
+                PERMANOVA_p_adjusted,
+                3
+            ),
+
+            PERMDISP_F = round(
+                PERMDISP_F,
+                3
+            ),
+
+            PERMDISP_p_adjusted = round(
+                PERMDISP_p_adjusted,
+                3
+            )
+        )
+
+
+    # ============================================================
+    # 10. Write CSV
+    # ============================================================
+
+    output_path <- file.path(
+        figure_path,
         output_file
     )
 
-    invisible(output_file)
+    write.csv(
+        table,
+        file = output_path,
+        row.names = FALSE
+    )
+
+
+    message(
+        "PERMANOVA/PERMDISP table written to: ",
+        output_path
+    )
+
+    invisible(table)
 }

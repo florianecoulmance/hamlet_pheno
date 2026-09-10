@@ -202,7 +202,12 @@ leg_g <- legend_geo(geo_table, gen = TRUE)
 
 ########## FIGURE 2 ###################
 all_pcas <- lapply(results_locations, `[[`, "pca_f") # extract per location pcas
-pca_grid <- plot_grid(plotlist = all_pcas, ncol = 4, rel_widths = c(1, 1, 1, 1), scale = 0.95) # bundle location pcas in one plot
+pca_grid <- plot_grid(plotlist = all_pcas,
+                      ncol = 4,
+                      align = "v",
+                      axis = "tb",
+                      rel_widths = c(1, 1, 1, 1),
+                      scale = 0.95) # bundle location pcas in one plot
 
 # 1. READ PIXY OUTPUT
 fst <- read.table(
@@ -303,6 +308,8 @@ ld_plots <- lapply(
 ld_grid <- plot_grid(
   plotlist = ld_plots,
   ncol = 4,
+  align = "v",
+  axis = "tb",
   rel_widths = c(1, 1, 1, 1),
   scale = 0.95
 )
@@ -321,13 +328,20 @@ ld_grid <- plot_grid(
 #   heights = c(6, 0.3, 1.5, 0.3, 4, 0.3, 6, 0.05)
 # ) # adjust if legend is too big/small
 
-figure2 <- plot_grid( pca_grid, leg, pC, ld_grid, ncol = 1, rel_heights = c(6, 1.5, 4, 6), align = "hv" )
+figure2 <- plot_grid(
+  pca_grid,
+  leg,
+  pC,
+  ld_grid,
+  labels = c("(a)", "", "(b)", "(c)"),
+  ncol = 1,
+  rel_heights = c(8, 1, 8, 8), align = "v" )
 
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
   plot = figure2,
   width = 20,
-  height = 20,
+  height = 18,
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -426,7 +440,7 @@ ggsave(
 # ########## FIGURE S17 ###################
 # Other PCs combination for genotypes per location
 all_sup <- lapply(results_locations, `[[`, "pca_s") # extract per location pcas
-sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
+sup_grid <- plot_grid(plotlist = all_sup, ncol = 2,   labels = c("(a)", "(b)", "(c)", "(d)"), rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
 figureS17 <- ggarrange(
   sup_grid,
@@ -495,56 +509,34 @@ ggsave(filename = file.path(figure_path, "FigS20_gLocPERM.png"),
 
 
 ########## FIGURE S21 ###################
-ld_spe_datasets <- c("pue", "nig", "uni")
-
+# Per species genotypic space: PCA + PERMANOVA + PERMDISP
+ld_spe_datasets <- c(pue = "pue", nig = "nig", uni = "uni")
 ld_spe_plots <- lapply(
   ld_spe_datasets,
   build_ld_plot,
   location_colors = NULL
 )
 
-figureS21 <- plot_grid(
-  plotlist = ld_spe_plots,
-  ncol = 3,
-  rel_widths = c(1, 1, 1),
-  scale = 0.95
-)
-
-ggsave(
-  filename = file.path(figure_path, "FigS21_gSpeLD.png"),
-  plot = figureS21,
-  width = 10,
-  height = 5,
-  units = "in",
-  dpi = 150,
-  type = "cairo-png"
-)
-
-
-########## FIGURE S22 ###################
-# Per species genotypic space: PCA + PERMANOVA + PERMDISP
-# Remove the overall entry before extracting plots
-results_spc <- results[names(results) %in% c("pue", "nig", "uni")]
-keep_spc <- names(results_spc)
-# print(keep_spc)
-
 pca_pue_f <- results[["pue"]][["pca_f"]]
 pca_pue_s <- results[["pue"]][["pca_s"]] %>% annotate_figure(., top=NULL)
+ld_pue <- ld_spe_plots[["pue"]]
 perm_pue <- results[["pue"]][["permanova"]]
-pue <- plot_grid(pca_pue_f, pca_pue_s, perm_pue, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
+pue <- plot_grid(pca_pue_f, pca_pue_s, ld_pue, perm_pue, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
 
 
 pca_nig_f <- results[["nig"]][["pca_f"]]
 pca_nig_s <- results[["nig"]][["pca_s"]]
+ld_nig <- ld_spe_plots[["nig"]]
 perm_nig <- results[["nig"]][["permanova"]]
-nig <- plot_grid(pca_nig_f, pca_nig_s, perm_nig, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
+nig <- plot_grid(pca_nig_f, pca_nig_s, ld_nig, perm_nig, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
 
 pca_uni_f <- results[["uni"]][["pca_f"]]
 pca_uni_s <- results[["uni"]][["pca_s"]]
+ld_uni <- ld_spe_plots[["uni"]]
 perm_uni <- results[["uni"]][["permanova"]]
-uni <- plot_grid(pca_uni_f, pca_uni_s, perm_uni, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
+uni <- plot_grid(pca_uni_f, pca_uni_s, ld_uni, perm_uni, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
 
-figureS22 <- plot_grid(
+figureS21 <- plot_grid(
   pue,
   NULL,
   nig,
@@ -561,9 +553,9 @@ figureS22 <- plot_grid(
 
 # Save as PNG (A4 size)
 ggsave(
-  filename = file.path(figure_path, "FigS22_gSpe.png"),
-  plot = figureS22,
-  width = 15,    # A4 width in inches
+  filename = file.path(figure_path, "FigS21_gSpe.png"),
+  plot = figureS21,
+  width = 18,    # A4 width in inches
   height = 18,  # A4 height in inches
   units = "in",
   dpi = 150,
@@ -577,14 +569,12 @@ create_ld_summary_table(
 )
 
 ########## TABLE S7 ###################
-table_s7_file <- file.path(
-    figure_path,
-    "TableS7.tex"
-)
-
 create_permanova_table(
     base_path = base_path,
     species_info = species_info,
     geo_table = geo_table,
-    output_file = table_s7_file
+    output_file = file.path(
+      figure_path,
+      "TableS7.csv"
+    ) 
 )
