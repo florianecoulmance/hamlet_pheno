@@ -54,8 +54,34 @@ cat("-----------------\n")
 # ############################
 
 # 1. ASSORTATIVE MATING PERMUTATIONS
-pairing_table <- read.delim(file.path(base_path, "metadata", "pairing_counts.txt"),
-                            sep=" ", header = TRUE, stringsAsFactors = FALSE, row.names = NULL)
+pairing_table <- read.delim(file.path(base_path, "metadata", "assortative_mating.csv"),
+                            sep=",", header = TRUE, stringsAsFactors = FALSE, row.names = NULL)
+
+# create long table
+pairing_table_wide <- pairing_table %>%
+  pivot_wider(
+    id_cols = c(species1, species2),
+    names_from = Location,
+    values_from = spawning,
+    values_fill = NA
+  )
+writeLines(
+  kable(
+    pairing_table_wide,
+    format = "latex",
+    booktabs = TRUE,
+    row.names = FALSE
+  ),
+  file.path(figure_path, "TableS8.tex")
+)
+
+write.csv(
+  pairing_table_wide,
+  file.path(figure_path, "TableS8.tex"),
+  row.names = FALSE
+)
+
+
 
 RI <- global_RI_permutation(pairing_table, n_perm = 10000, seed = 123)
 print(RI$results)

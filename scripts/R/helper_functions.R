@@ -4820,7 +4820,7 @@ create_permanova_table <- function(
     base_path,
     species_info,
     geo_table,
-    output_file = "TableS7_PERMANOVA_PERMDISP.csv") {
+    output_file = "TableS7.csv") {
 
     # ============================================================
     # 1. Datasets to include
@@ -5233,16 +5233,17 @@ create_permanova_table <- function(
 
     # ============================================================
     # 10. Write CSV
-    # ============================================================
+    # # ============================================================
+    # figure_path <- file.path(base_path, "figures")
 
-    output_path <- file.path(
-        figure_path,
-        output_file
-    )
+    # output_path <- file.path(
+    #     figure_path,
+    #     output_file
+    # )
 
     write.csv(
         table,
-        file = output_path,
+        file = output_file,
         row.names = FALSE
     )
 

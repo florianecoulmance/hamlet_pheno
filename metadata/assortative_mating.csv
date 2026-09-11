@@ -1,0 +1,198 @@
+Location,species1,species2,spawning
+Jamaica - Guna Yala,puella,puella,75
+Jamaica - Guna Yala,nigricans,nigricans,28
+Jamaica - Guna Yala,unicolor,unicolor,16
+Jamaica - Guna Yala,aberrans,aberrans,29
+Jamaica - Guna Yala,indigo,indigo,25
+Jamaica - Guna Yala,affinis,affinis,7
+Jamaica - Guna Yala,guttavarius,guttavarius,2
+Jamaica - Guna Yala,puella,nigricans,0
+Jamaica - Guna Yala,puella,unicolor,3
+Jamaica - Guna Yala,puella,aberrans,1
+Jamaica - Guna Yala,puella,indigo,0
+Jamaica - Guna Yala,puella,affinis,0
+Jamaica - Guna Yala,puella,guttavarius,0
+Jamaica - Guna Yala,nigricans,unicolor,0
+Jamaica - Guna Yala,nigricans,aberrans,3
+Jamaica - Guna Yala,nigricans,indigo,0
+Jamaica - Guna Yala,nigricans,affinis,0
+Jamaica - Guna Yala,nigricans,guttavarius,0
+Jamaica - Guna Yala,unicolor,aberrans,0
+Jamaica - Guna Yala,unicolor,indigo,0
+Jamaica - Guna Yala,unicolor,affinis,0
+Jamaica - Guna Yala,unicolor,guttavarius,0
+Jamaica - Guna Yala,aberrans,indigo,0
+Jamaica - Guna Yala,aberrans,affinis,0
+Jamaica - Guna Yala,aberrans,guttavarius,0
+Jamaica - Guna Yala,indigo,affinis,0
+Jamaica - Guna Yala,indigo,guttavarius,0
+Jamaica - Guna Yala,affinis,guttavarius,0
+Guna Yala,puella,puella,65
+Guna Yala,nigricans,nigricans,20
+Guna Yala,unicolor,unicolor,1
+Guna Yala,aberrans,aberrans,17
+Guna Yala,indigo,indigo,1
+Guna Yala,affinis,affinis,0
+Guna Yala,puella,nigricans,0
+Guna Yala,puella,unicolor,0
+Guna Yala,puella,aberrans,1
+Guna Yala,puella,indigo,0
+Guna Yala,puella,affinis,0
+Guna Yala,nigricans,unicolor,0
+Guna Yala,nigricans,aberrans,1
+Guna Yala,nigricans,indigo,0
+Guna Yala,nigricans,affinis,1
+Guna Yala,unicolor,aberrans,0
+Guna Yala,unicolor,indigo,0
+Guna Yala,unicolor,affinis,0
+Guna Yala,aberrans,indigo,0
+Guna Yala,aberrans,affinis,0
+Guna Yala,indigo,affinis,0
+Bocas del Toro,puella,puella,58
+Bocas del Toro,nigricans,nigricans,31
+Bocas del Toro,unicolor,unicolor,10
+Bocas del Toro,aberrans,aberrans,1
+Bocas del Toro,sp1,sp1,0
+Bocas del Toro,gummigutta,gummigutta,0
+Bocas del Toro,puella,nigricans,1
+Bocas del Toro,puella,unicolor,0
+Bocas del Toro,puella,aberrans,0
+Bocas del Toro,puella,sp1,0
+Bocas del Toro,puella,gummigutta,0
+Bocas del Toro,nigricans,unicolor,0
+Bocas del Toro,nigricans,aberrans,0
+Bocas del Toro,nigricans,sp1,0
+Bocas del Toro,nigricans,gummigutta,0
+Bocas del Toro,unicolor,aberrans,0
+Bocas del Toro,unicolor,sp1,0
+Bocas del Toro,unicolor,gummigutta,0
+Bocas del Toro,aberrans,sp1,0
+Bocas del Toro,aberrans,gummigutta,0
+Bocas del Toro,sp1,gummigutta,0
+Barbados,puella,puella,8
+Barbados,nigricans,nigricans,0
+Barbados,guttavarius,guttavarius,0
+Barbados,chlorurus,chlorurus,1
+Barbados,puella,nigricans,0
+Barbados,puella,guttavarius,0
+Barbados,puella,chlorurus,0
+Barbados,nigricans,guttavarius,0
+Barbados,nigricans,chlorurus,0
+Barbados,guttavarius,chlorurus,0
+Florida Keys,puella,puella,2
+Florida Keys,nigricans,nigricans,5
+Florida Keys,unicolor,unicolor,39
+Florida Keys,gemma,gemma,17
+Florida Keys,sp1,sp1,1
+Florida Keys,sp,sp,1
+Florida Keys,puella,nigricans,0
+Florida Keys,puella,unicolor,0
+Florida Keys,puella,gemma,1
+Florida Keys,puella,sp1,0
+Florida Keys,puella,sp,0
+Florida Keys,nigricans,unicolor,0
+Florida Keys,nigricans,gemma,0
+Florida Keys,nigricans,sp1,0
+Florida Keys,nigricans,sp,0
+Florida Keys,unicolor,gemma,0
+Florida Keys,unicolor,sp1,0
+Florida Keys,unicolor,sp,0
+Florida Keys,gemma,sp1,0
+Florida Keys,gemma,sp,0
+Florida Keys,sp1,sp,0
+Belize,puella,puella,1
+Belize,nigricans,nigricans,27
+Belize,unicolor,unicolor,0
+Belize,aberrans,aberrans,1
+Belize,indigo,indigo,5
+Belize,affinis,affinis,0
+Belize,guttavarius,guttavarius,0
+Belize,puella,nigricans,0
+Belize,puella,unicolor,0
+Belize,puella,aberrans,0
+Belize,puella,indigo,0
+Belize,puella,affinis,0
+Belize,puella,guttavarius,0
+Belize,nigricans,unicolor,0
+Belize,nigricans,aberrans,0
+Belize,nigricans,indigo,0
+Belize,nigricans,affinis,0
+Belize,nigricans,guttavarius,0
+Belize,unicolor,aberrans,0
+Belize,unicolor,indigo,0
+Belize,unicolor,affinis,
+Belize,unicolor,guttavarius,0
+Belize,aberrans,indigo,0
+Belize,aberrans,affinis,0
+Belize,aberrans,guttavarius,0
+Belize,indigo,affinis,0
+Belize,indigo,guttavarius,0
+Belize,affinis,guttavarius,0
+Honduras Guanaja,puella,puella,29
+Honduras Guanaja,nigricans,nigricans,5
+Honduras Guanaja,unicolor,unicolor,1
+Honduras Guanaja,aberrans,aberrans,3
+Honduras Guanaja,indigo,indigo,8
+Honduras Guanaja,guttavarius,guttavarius,0
+Honduras Guanaja,chlorurus,chlorurus,0
+Honduras Guanaja,sp1,sp1,0
+Honduras Guanaja,puella,nigricans,1
+Honduras Guanaja,puella,unicolor,0
+Honduras Guanaja,puella,aberrans,1
+Honduras Guanaja,puella,indigo,0
+Honduras Guanaja,puella,guttavarius,0
+Honduras Guanaja,puella,chlorurus,0
+Honduras Guanaja,puella,sp1,0
+Honduras Guanaja,nigricans,unicolor,0
+Honduras Guanaja,nigricans,aberrans,0
+Honduras Guanaja,nigricans,indigo,0
+Honduras Guanaja,nigricans,guttavarius,0
+Honduras Guanaja,nigricans,chlorurus,0
+Honduras Guanaja,nigricans,sp1,0
+Honduras Guanaja,unicolor,aberrans,0
+Honduras Guanaja,unicolor,indigo,0
+Honduras Guanaja,unicolor,guttavarius,0
+Honduras Guanaja,unicolor,chlorurus,0
+Honduras Guanaja,unicolor,sp1,0
+Honduras Guanaja,aberrans,indigo,0
+Honduras Guanaja,aberrans,guttavarius,0
+Honduras Guanaja,aberrans,chlorurus,0
+Honduras Guanaja,aberrans,sp1,0
+Honduras Guanaja,indigo,guttavarius,0
+Honduras Guanaja,indigo,chlorurus,0
+Honduras Guanaja,indigo,sp1,0
+Honduras Guanaja,guttavarius,chlorurus,0
+Honduras Guanaja,guttavarius,sp1,0
+Honduras Guanaja,chlorurus,sp1,0
+Honduras Utila,puella,puella,35
+Honduras Utila,nigricans,nigricans,0
+Honduras Utila,aberrans,aberrans,2
+Honduras Utila,indigo,indigo,0
+Honduras Utila,puella,nigricans,0
+Honduras Utila,puella,aberrans,1
+Honduras Utila,puella,indigo,0
+Honduras Utila,nigricans,aberrans,0
+Honduras Utila,nigricans,indigo,1
+Honduras Utila,aberrans,indigo,0
+Honduras Half-Moon Cay,puella,puella,0
+Honduras Half-Moon Cay,nigricans,nigricans,3
+Honduras Half-Moon Cay,unicolor,unicolor,1
+Honduras Half-Moon Cay,aberrans,aberrans,0
+Honduras Half-Moon Cay,gummigutta,gummigutta,0
+Honduras Half-Moon Cay,puella,nigricans,0
+Honduras Half-Moon Cay,puella,unicolor,0
+Honduras Half-Moon Cay,puella,aberrans,0
+Honduras Half-Moon Cay,puella,gummigutta,0
+Honduras Half-Moon Cay,nigricans,unicolor,0
+Honduras Half-Moon Cay,nigricans,aberrans,0
+Honduras Half-Moon Cay,nigricans,gummigutta,0
+Honduras Half-Moon Cay,unicolor,aberrans,0
+Honduras Half-Moon Cay,unicolor,gummigutta,0
+Honduras Half-Moon Cay,aberrans,gummigutta,0
+
+
+
+
+
+
+
