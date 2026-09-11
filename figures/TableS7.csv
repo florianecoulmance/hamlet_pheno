@@ -1,0 +1,145 @@
+"Dataset","Comparison","PERMANOVA_F","PERMANOVA_p_adjusted","PERMDISP_F","PERMDISP_p_adjusted"
+"bel","H. indigo vs. H. nigricans",2.832,0.002,18.842,0.003
+"bel","H. indigo vs. H. puella",2.412,0.002,25.293,0.003
+"bel","H. indigo vs. H. unicolor",2.534,0.002,28.355,0.003
+"bel","H. indigo vs. H. maya",3.063,0.002,0.376,0.641
+"bel","H. nigricans vs. H. puella",1.424,0.002,4.613,0.007
+"bel","H. nigricans vs. H. unicolor",1.384,0.002,10.109,0.003
+"bel","H. maya vs. H. nigricans",1.961,0.002,22.204,0.003
+"bel","H. puella vs. H. unicolor",1.116,0.002,2.164,0.121
+"bel","H. maya vs. H. puella",1.643,0.002,32.862,0.003
+"bel","H. maya vs. H. unicolor",1.705,0.002,37.547,0.003
+"boc","H. nigricans vs. H. puella",1.668,0.003,166.387,0.006
+"boc","H. nigricans vs. H. unicolor",1.875,0.003,39.994,0.006
+"boc","H. puella vs. H. unicolor",1.329,0.003,3.055,0.045
+"hon","H. gummigutta vs. H. randallorum",2.224,0.001,425.087,0.003
+"hon","H. aberrans vs. H. gummigutta",2.049,0.001,428.145,0.003
+"hon","H. gummigutta vs. H. puella",2.233,0.001,570.84,0.003
+"hon","H. gummigutta vs. H. unicolor",2.231,0.001,388.338,0.003
+"hon","H. gummigutta vs. H. nigricans",2.202,0.001,653.296,0.003
+"hon","H. aberrans vs. H. randallorum",1.091,0.001,11.123,0.12
+"hon","H. puella vs. H. randallorum",1.118,0.001,9.427,0.016
+"hon","H. randallorum vs. H. unicolor",1.179,0.001,49.749,0.003
+"hon","H. nigricans vs. H. randallorum",1.123,0.001,17.038,0.021
+"hon","H. aberrans vs. H. puella",1.07,0.001,0.667,0.998
+"hon","H. aberrans vs. H. unicolor",1.129,0.001,21.199,0.003
+"hon","H. aberrans vs. H. nigricans",1.078,0.001,0.034,0.998
+"hon","H. puella vs. H. unicolor",1.069,0.001,44.227,0.011
+"hon","H. nigricans vs. H. puella",1.081,0.001,2.086,0.162
+"hon","H. nigricans vs. H. unicolor",1.119,0.001,52.409,0.039
+"pri","H. chlorurus vs. H. sp1",1.162,0.002,236.036,0.246
+"pri","H. puella vs. H. sp1",1.088,0.002,91.443,0.154
+"pri","H. sp1 vs. H. unicolor",1.141,0.002,63.706,0.387
+"pri","H. chlorurus vs. H. puella",1.041,0.004,63.927,0.704
+"pri","H. chlorurus vs. H. unicolor",1.193,0.002,86.442,0.284
+"pri","H. puella vs. H. unicolor",1.059,0.002,3.353,0.154
+"all","H. puella vs. H. unicolor",1.19,0.001,2.486,0.196
+"all","H. indigo vs. H. puella",4.838,0.001,211.106,0.003
+"all","H. nigricans vs. H. puella",1.69,0.001,20.435,0.008
+"all","H. guttavarius vs. H. puella",1.534,0.001,112.563,0.082
+"all","H. aberrans vs. H. puella",1.121,0.001,16.682,0.292
+"all","H. gummigutta vs. H. puella",3.051,0.001,417.187,0.003
+"all","H. affinis vs. H. puella",1.255,0.001,228.821,0.016
+"all","H. puella vs. H. sp1",1.596,0.001,193.144,0.003
+"all","H. chlorurus vs. H. puella",1.395,0.001,98.334,0.011
+"all","H. puella vs. H. randallorum",1.199,0.001,45.185,0.45
+"all","H. atlahua vs. H. puella",9.239,0.001,315.309,0.003
+"all","H. gemma vs. H. puella",1.523,0.001,135.333,0.136
+"all","H. maya vs. H. puella",1.907,0.001,259.925,0.003
+"all","H. indigo vs. H. unicolor",4.91,0.001,214.859,0.003
+"all","H. nigricans vs. H. unicolor",1.859,0.001,12.52,0.014
+"all","H. guttavarius vs. H. unicolor",1.488,0.001,148.912,0.043
+"all","H. aberrans vs. H. unicolor",1.215,0.001,11.157,0.581
+"all","H. gummigutta vs. H. unicolor",3.047,0.001,576.613,0.003
+"all","H. affinis vs. H. unicolor",1.334,0.001,343.115,0.003
+"all","H. sp1 vs. H. unicolor",1.571,0.001,283.49,0.003
+"all","H. chlorurus vs. H. unicolor",1.428,0.001,121.779,0.013
+"all","H. randallorum vs. H. unicolor",1.231,0.001,48.012,0.578
+"all","H. atlahua vs. H. unicolor",9.208,0.001,283.675,0.003
+"all","H. gemma vs. H. unicolor",1.525,0.001,182.245,0.062
+"all","H. maya vs. H. unicolor",1.973,0.001,316.96,0.003
+"all","H. indigo vs. H. nigricans",4.938,0.001,141.366,0.003
+"all","H. guttavarius vs. H. indigo",3.167,0.001,1.818,0.569
+"all","H. aberrans vs. H. indigo",4.252,0.001,101.184,0.003
+"all","H. gummigutta vs. H. indigo",5.097,0.001,11.262,0.005
+"all","H. affinis vs. H. indigo",2.73,0.001,6.15,0.399
+"all","H. indigo vs. H. sp1",3.262,0.001,0.642,0.854
+"all","H. chlorurus vs. H. indigo",3.876,0.001,11.911,0.01
+"all","H. indigo vs. H. randallorum",3.4,0.001,29.089,0.003
+"all","H. atlahua vs. H. indigo",10.668,0.001,56.153,0.003
+"all","H. gemma vs. H. indigo",3.009,0.001,0.086,0.985
+"all","H. indigo vs. H. maya",3.384,0.001,7.937,0.196
+"all","H. guttavarius vs. H. nigricans",1.81,0.001,111.021,0.008
+"all","H. aberrans vs. H. nigricans",1.461,0.001,0.063,1
+"all","H. gummigutta vs. H. nigricans",3.237,0.001,495.799,0.003
+"all","H. affinis vs. H. nigricans",1.251,0.001,317.402,0.043
+"all","H. nigricans vs. H. sp1",1.871,0.001,248.552,0.003
+"all","H. chlorurus vs. H. nigricans",1.778,0.001,78.127,0.06
+"all","H. nigricans vs. H. randallorum",1.436,0.001,21.037,0.859
+"all","H. atlahua vs. H. nigricans",9.426,0.001,209.941,0.003
+"all","H. gemma vs. H. nigricans",1.677,0.001,143.403,0.023
+"all","H. maya vs. H. nigricans",1.995,0.001,248.922,0.005
+"all","H. aberrans vs. H. guttavarius",1.391,0.001,90.286,0.091
+"all","H. gummigutta vs. H. guttavarius",1.952,0.001,49.289,0.003
+"all","H. affinis vs. H. guttavarius",1.499,0.001,45.02,0.023
+"all","H. guttavarius vs. H. sp1",1.387,0.001,15.622,0.005
+"all","H. chlorurus vs. H. guttavarius",1.403,0.001,6.7,0.832
+"all","H. guttavarius vs. H. randallorum",1.329,0.001,22.945,0.292
+"all","H. atlahua vs. H. guttavarius",7.185,0.001,32.005,0.003
+"all","H. gemma vs. H. guttavarius",1.472,0.001,2.075,0.361
+"all","H. guttavarius vs. H. maya",1.975,0.001,19.067,0.003
+"all","H. aberrans vs. H. gummigutta",2.633,0.001,404.753,0.003
+"all","H. aberrans vs. H. affinis",1.223,0.001,275.358,0.03
+"all","H. aberrans vs. H. sp1",1.538,0.001,215.01,0.003
+"all","H. aberrans vs. H. chlorurus",1.377,0.001,62.023,0.019
+"all","H. aberrans vs. H. randallorum",1.113,0.001,15.561,0.701
+"all","H. aberrans vs. H. atlahua",8.579,0.001,144.254,0.003
+"all","H. aberrans vs. H. gemma",1.497,0.001,116.857,0.191
+"all","H. aberrans vs. H. maya",1.785,0.001,188.918,0.003
+"all","H. affinis vs. H. gummigutta",2.194,0.001,0,1
+"all","H. gummigutta vs. H. sp1",2.489,0.001,16.364,0.028
+"all","H. chlorurus vs. H. gummigutta",2.602,0.001,123.493,0.003
+"all","H. gummigutta vs. H. randallorum",2.431,0.001,165.088,0.003
+"all","H. atlahua vs. H. gummigutta",9.295,0.001,29.611,0.003
+"all","H. gemma vs. H. gummigutta",2.508,0.001,24.468,0.007
+"all","H. gummigutta vs. H. maya",2.88,0.001,0.123,0.895
+"all","H. affinis vs. H. sp1",1.531,0.001,30.01,0.01
+"all","H. affinis vs. H. chlorurus",1.442,0.001,104.722,0.071
+"all","H. affinis vs. H. randallorum",1.219,0.001,119.032,0.122
+"all","H. affinis vs. H. atlahua",6.583,0.001,14.432,0.003
+"all","H. affinis vs. H. gemma",1.479,0.001,21.721,0.292
+"all","H. affinis vs. H. maya",1.602,0.001,0.08,0.985
+"all","H. chlorurus vs. H. sp1",1.229,0.001,56.208,0.027
+"all","H. randallorum vs. H. sp1",1.431,0.001,80.43,0.02
+"all","H. atlahua vs. H. sp1",7.112,0.001,23.562,0.003
+"all","H. gemma vs. H. sp1",1.55,0.001,3.591,0.013
+"all","H. maya vs. H. sp1",2.035,0.001,5.63,0.011
+"all","H. chlorurus vs. H. randallorum",1.382,0.001,8.688,0.021
+"all","H. atlahua vs. H. chlorurus",7.913,0.001,56.042,0.003
+"all","H. chlorurus vs. H. gemma",1.568,0.001,16.824,0.701
+"all","H. chlorurus vs. H. maya",1.963,0.001,49.005,0.003
+"all","H. atlahua vs. H. randallorum",7.87,0.001,67.624,0.003
+"all","H. gemma vs. H. randallorum",1.447,0.001,35.913,0.52
+"all","H. maya vs. H. randallorum",1.605,0.001,72.751,0.003
+"all","H. atlahua vs. H. gemma",6.367,0.001,25.896,0.003
+"all","H. atlahua vs. H. maya",7.96,0.001,19.034,0.003
+"all","H. gemma vs. H. maya",1.957,0.001,10.011,0.003
+"pue"," vs. ",1.23,0.005,7.811,0.012
+"pue"," vs. ",1.139,0.005,6.831,0.012
+"pue"," vs. ",1.316,0.005,153.6,0.012
+"pue"," vs. ",1.234,0.005,48.333,0.012
+"pue"," vs. ",1.404,0.005,181.791,0.017
+"pue"," vs. ",1.203,0.005,312.605,0.012
+"nig"," vs. ",1.662,0.003,54.24,0.002
+"nig"," vs. ",1.341,0.003,0.026,0.932
+"nig"," vs. ",1.646,0.003,265.005,0.002
+"uni"," vs. ",1.252,0.002,0.023,0.983
+"uni"," vs. ",1.144,0.002,34.645,0.087
+"uni"," vs. ",1.206,0.002,151.575,0.009
+"uni"," vs. ",1.176,0.002,236.493,0.02
+"uni"," vs. ",1.242,0.002,4.21,0.399
+"uni"," vs. ",1.351,0.002,21.176,0.434
+"uni"," vs. ",1.314,0.002,44.24,0.233
+"uni"," vs. ",1.252,0.002,70.899,0.009
+"uni"," vs. ",1.249,0.002,145.335,0.009
+"uni"," vs. ",1.209,0.002,18.806,0.008
