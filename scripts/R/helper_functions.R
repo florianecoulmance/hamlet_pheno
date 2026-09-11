@@ -5250,7 +5250,7 @@ create_permanova_table <- function(
 
     message(
         "PERMANOVA/PERMDISP table written to: ",
-        output_path
+        output_file
     )
 
     invisible(table)

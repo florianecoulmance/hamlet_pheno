@@ -29,6 +29,7 @@ library(grid)
 library(ggtree)
 library(glue)
 library(vegan)
+library(knitr)
 
 # ############################
 # CONFIG
@@ -42,12 +43,36 @@ args <- commandArgs(trailingOnly = TRUE)
 # ============================================================
 # Paths passed from Snakemake
 # ============================================================
-base_path      <- get_arg("--base_path", ".")
-figure_path     <- get_arg("--figure_path", file.path(base_path, "figures"))
-path_phenotypes <- get_arg("--path_phenotypes", file.path(base_path, "1_phenotyping/pca"))
-logos_path      <- get_arg("--logos_path", file.path(base_path, "metadata/logos_hamlet"))
-spec_colors     <- get_arg("--spec_colors", file.path(base_path, "metadata/species_colors.tsv"))
-geo_colors      <- get_arg("--geo_colors", file.path(base_path, "metadata/locations_colors.tsv"))
+# base_path      <- get_arg("--base_path", ".")
+# figure_path     <- get_arg("--figure_path", file.path(base_path, "figures"))
+# path_phenotypes <- get_arg("--path_phenotypes", file.path(base_path, "1_phenotyping/pca"))
+# path_genotypes_all <- file.path(
+#   base_path,
+#   "2_popgen",
+#   "byALL"
+# )
+# path_genotypes_loc <- file.path(
+#   base_path,
+#   "2_popgen",
+#   "byLOC"
+# )
+# association_file <- file.path(
+#   base_path,
+#   "metadata",
+#   "assortative_mating.csv"
+# )
+# logos_path      <- get_arg("--logos_path", file.path(base_path, "metadata/logos_hamlet"))
+# spec_colors     <- get_arg("--spec_colors", file.path(base_path, "metadata/species_colors.tsv"))
+# geo_colors      <- get_arg("--geo_colors", file.path(base_path, "metadata/locations_colors.tsv"))
+base_path      <- "/Users/fcoulman/Desktop/hamlet_pheno/3_CHAPTER3/hamlet_pheno/"
+path_phenotypes <- file.path(base_path, "1_phenotyping/pca")
+path_genotypes_all <- file.path(base_path, "2_popgen/byALL")
+path_genotypes_loc <- file.path(base_path, "2_popgen/byLOC")
+association_file <- file.path(base_path, "metadata/assortative_mating.csv")
+figure_path     <- file.path(base_path, "figures")
+logos_path      <- file.path(base_path, "metadata/logos_hamlet")
+spec_colors     <- file.path(base_path, "metadata/species_colors.tsv")
+geo_colors      <- file.path(base_path, "metadata/locations_colors.tsv")
 
 # ============================================================
 # Print summary for debugging
