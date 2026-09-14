@@ -3160,6 +3160,19 @@ global_RI_permutation <- function(
     )
   }
 
+  # Convert species names to character
+  pairing_table$species1 <- as.character(pairing_table$species1)
+  pairing_table$species2 <- as.character(pairing_table$species2)
+
+  # Remove rows where BOTH species are missing.
+  # These rows contain no useful pairing information.
+  pairing_table <- pairing_table %>%
+    filter(
+      !(is.na(species1) & is.na(species2))
+    )
+  print(pairing_table)
+
+
   if (anyNA(pairing_table[, required])) {
     stop("pairing_table contains NA values.")
   }
@@ -3169,37 +3182,42 @@ global_RI_permutation <- function(
     stop("count must contain non-negative integers.")
   }
 
-  # ============================================================
-  # 2. Define EXACTLY the six species pairs of interest
-  # ============================================================
-
-  focal_pairs <- data.frame(
-    species1 = c(
-      "aberrans",
-      "aberrans",
-      "puella",
-      "puella",
-      "puella",
-      "nigricans"
-    ),
-    species2 = c(
-      "puella",
-      "nigricans",
-      "unicolor",
-      "nigricans",
-      "gemma",
-      "indigo"
-    ),
-    stringsAsFactors = FALSE
+  all_species_present <- sort(
+    unique(
+      c(
+        pairing_table$species1,
+        pairing_table$species2
+      )
+    )
   )
+
+  n_species <- length(all_species_present)
+
+  print(all_species_present)
+
+  # ============================================================
+  focal_pairs <- expand.grid(
+    species1 = all_species_present,
+    species2 = all_species_present,
+    stringsAsFactors = FALSE
+  ) %>%
+    mutate(
+      sp1 = pmin(species1, species2),
+      sp2 = pmax(species1, species2)
+    ) %>%
+    select(
+      species1 = sp1,
+      species2 = sp2
+    ) %>%
+    distinct()
+  
+  print(focal_pairs)
+
+
 
   # ============================================================
   # 3. Convert species names to character
   # ============================================================
-
-  pairing_table$species1 <- as.character(pairing_table$species1)
-  pairing_table$species2 <- as.character(pairing_table$species2)
-
   # Pairings are unordered, so standardize their order.
   pairing_table$sp1 <- pmin(
     pairing_table$species1,
@@ -3228,39 +3246,16 @@ global_RI_permutation <- function(
   # ============================================================
   # 4. Reconstruct the 597 observed pairings
   # ============================================================
-
-  species1_obs <- rep(
-    pairing_table$sp1,
-    pairing_table$count
-  )
-
-  species2_obs <- rep(
-    pairing_table$sp2,
-    pairing_table$count
-  )
-
-  n_pairings <- length(species1_obs)
-
-  if (n_pairings != 597) {
-    warning(
-      "The input table contains ",
-      n_pairings,
-      " pairings rather than 597."
-    )
-  }
-
-  # There are two species observations per pairing.
-  all_species <- c(
-    species1_obs,
-    species2_obs
-  )
-
-  N <- length(all_species)
-  print(N)
-
-  # Overall species frequencies.
-  species_freq <- table(all_species)
-  print(species_freq)
+  n_pairings <- sum(pairing_table$count)
+  
+  if (n_pairings == 0) {
+    stop( "There are zero spawning observations at this location." ) 
+    }
+    message("Total spawning observations: ", n_pairings)
+    
+    # Each spawning event contains two species observations.
+    N <- 2 * n_pairings
+    print(N)
 
   # ============================================================
   # 5. Function to obtain observed count for a species pair
@@ -3268,15 +3263,18 @@ global_RI_permutation <- function(
 
   get_pair_count <- function(
     sp1,
-    sp2,
-    x1 = species1_obs,
-    x2 = species2_obs
-  ) {
-
-    sum(
-      (x1 == sp1 & x2 == sp2) |
-      (x1 == sp2 & x2 == sp1)
-    )
+    sp2) {
+      
+      idx <- pairing_table$sp1 == sp1 &
+             pairing_table$sp2 == sp2
+      
+      if (any(idx)) {
+        return(pairing_table$count[idx][1])
+      }
+      
+      # If the pair is possible but was not explicitly recorded,
+      # its observed count is zero. 
+      return(0)
   }
 
   # ============================================================
@@ -3303,14 +3301,13 @@ global_RI_permutation <- function(
   # species occurrences are randomly paired.
   # ============================================================
 
-  expected <- mapply(
+  expected <- mapply(  
     function(sp1, sp2) {
-
-      Ni <- as.numeric(species_freq[sp1])
-      Nj <- as.numeric(species_freq[sp2])
-
-      Ni * Nj / (N - 1)
-
+      if (sp1 == sp2) {
+        n_pairings * (1 / n_species^2)
+      } else {
+        n_pairings * (2 / n_species^2)
+      }
     },
     focal_pairs$species1,
     focal_pairs$species2
@@ -3331,10 +3328,12 @@ global_RI_permutation <- function(
   # Negative values are set to zero.
   # ============================================================
 
-  RI <- pmax(
-    0,
-    1 - observed / expected
-  )
+  RI <- ifelse(
+    expected > 0,
+    pmax(0, 1 - observed / expected),
+    NA_real_
+    )
+
   print(RI)
 
   # ============================================================
@@ -3371,20 +3370,18 @@ global_RI_permutation <- function(
 
   for (b in seq_len(n_perm)) {
 
-    shuffled <- sample(
-      all_species,
-      size = N,
-      replace = FALSE
+    # Make 597 randomized pairs.
+    perm1 <- sample(
+      all_species_present,
+      size = n_pairings,
+      replace = TRUE
     )
 
-    # Make 597 randomized pairs.
-    perm1 <- shuffled[
-      seq(1, N, by = 2)
-    ]
-
-    perm2 <- shuffled[
-      seq(2, N, by = 2)
-    ]
+    perm2 <- sample(
+      all_species_present,
+      size = n_pairings,
+      replace = TRUE
+    )
 
     # Count each of the six focal pairs.
     for (j in seq_len(nrow(focal_pairs))) {
@@ -3423,14 +3420,14 @@ global_RI_permutation <- function(
     }
   )
 
-  print(permutation_p)
+  # print(permutation_p)
 
   # ============================================================
   # 11. RI under each permutation
   # ============================================================
 
   perm_RI <- matrix(
-    0,
+    NA_real_,
     nrow = n_perm,
     ncol = nrow(focal_pairs)
   )
@@ -3443,7 +3440,7 @@ global_RI_permutation <- function(
     )
   }
 
-  print(perm_RI)
+  # print(perm_RI)
 
   # ============================================================
   # 12. 95% permutation interval
@@ -3484,14 +3481,21 @@ global_RI_permutation <- function(
   )
   print(results)
 
+  results <- results %>%
+  filter(
+    species1 != species2
+  )
+
+  print(results)
+
   # ============================================================
   # 14. Species frequencies used in the null model
   # ============================================================
 
   species_frequency <- data.frame(
-    species = names(species_freq),
-    occurrences = as.integer(species_freq),
-    frequency = as.numeric(species_freq) / N,
+    species = all_species_present,
+    occurrences = n_pairings * 2 / n_species,
+    frequency = 1 / n_species,
     stringsAsFactors = FALSE
   )
   print(species_frequency)
@@ -5254,4 +5258,537 @@ create_permanova_table <- function(
     )
 
     invisible(table)
+}
+
+calculate_pheno_distance <- function(
+    pca_file,
+    dataset,
+    level,
+    species_info,
+    geo_table) {
+
+    message(
+        "  Reading: ",
+        basename(pca_file)
+    )
+
+
+    # ========================================================
+    # 1. Read PCA
+    # ========================================================
+
+    pca <- read.csv(
+        pca_file,
+        sep=","
+    )
+
+
+    # ========================================================
+    # 2. Add existing metadata
+    # ========================================================
+    pc_table <- write_metadata_gxp(
+        pca
+    )
+
+
+    # ========================================================
+    # 3. Average PCA coordinates by species
+    # ========================================================
+    pca_species <- average_pca_by_species(
+        pc_table,
+        species_col = "spec",
+        pc_prefix = "PC",
+        min_n = 1
+    )
+
+
+    # Make sure species codes are characters
+    pca_species$spec <- as.character(
+        pca_species$spec
+    )
+
+    species_lookup <- species_info %>%
+        select(
+            spec,
+            Species
+        ) %>%
+        distinct()
+
+
+    pca_species <- pca_species %>%
+        left_join(
+            species_lookup,
+            by = "spec"
+        )
+    
+
+
+    # ========================================================
+    # 6. Use species codes as row names
+    # ========================================================
+    pca_mat <- pca_species %>%
+                column_to_rownames("Species")
+
+    message(
+        "  PCA mat: ",
+        basename(pca_file)
+    )
+    
+    print(pca_mat)
+
+
+    # Calculate Euclidean distances
+    d <- dist(
+        pca_mat,
+        method = "euclidean"
+    )
+
+
+    # Convert distance matrix to pairwise table
+    dmat <- as.data.frame(as.table(as.matrix(d))) %>%
+        setNames(c("species1", "species2", "distance_pheno")) %>%
+        mutate(
+            species1 = as.character(species1),
+            species2 = as.character(species2)
+        ) %>%
+        filter(species1 < species2)
+    print(dmat)
+
+    if (dataset == "lab_571_left_noflash") {
+      Location <- "all"
+    } else {
+      location_code <- sub(
+          "^lab_([A-Za-z]{3}).*$",
+          "\\1",
+          dataset
+      )
+
+      location_code <- tolower(
+          location_code
+      )
+
+      location_match <- geo_table$Locations[
+          tolower(
+              geo_table$geo
+          ) == location_code
+      ]
+
+
+      if (
+          length(location_match) == 0 ||
+          is.na(location_match[1])
+      ) {
+
+          stop(
+              "Could not match location code '",
+              location_code,
+              "' from dataset '",
+              dataset,
+              "' to geo_table."
+          )
+      }
+
+      Location <- location_match[1]
+    }
+
+
+    # ========================================================
+    # Add dataset information
+    # ========================================================
+
+    result <- dmat %>%
+        mutate(
+            dataset = dataset,
+            level = level,
+            Location = Location
+        )
+    print(result)
+
+
+    # ========================================================
+    # 10. Standardise column order
+    # ========================================================
+
+    result <- result %>%
+        select(
+            Location,
+            species1,
+            species2,
+            distance_pheno,
+            dataset,
+            level
+        )
+
+
+    # ========================================================
+    # 11. Return phenotype distance table
+    # ========================================================
+
+    result
+}
+
+
+calculate_geno_distance <- function(
+    gtmat_file,
+    dataset,
+    level,
+    species_info,
+    geo_table) {
+
+    message(
+        "  Reading: ",
+        basename(gtmat_file)
+    )
+
+
+    # --------------------------------------------------------
+    # Determine sample file
+    # --------------------------------------------------------
+
+    geno_dir <- dirname(
+        gtmat_file
+    )
+
+
+    if (level == "all") {
+
+        sample_file <- file.path(
+            base_path,
+            "metadata",
+            "geno_names.txt"
+        )
+
+    } else {
+
+        sample_file <- file.path(
+            geno_dir,
+            paste0(
+                dataset,
+                ".txt"
+            )
+        )
+    }
+
+
+    if (!file.exists(sample_file)) {
+
+        stop(
+            "Sample file not found:\n",
+            sample_file
+        )
+    }
+
+
+    # --------------------------------------------------------
+    # Genotype PCA
+    # --------------------------------------------------------
+
+    geno_pca <- pca_analysis(
+        gtmat_file,
+        sample_file,
+        color_by = "species"
+    )
+
+
+    # --------------------------------------------------------
+    # Average by species
+    # --------------------------------------------------------
+
+    geno_species <- average_pca_by_species(
+        geno_pca$eigen,
+        species_col = "spec",
+        pc_prefix = "PC",
+        min_n = 3
+    )
+
+    # Make sure species codes are characters
+    geno_species$spec <- as.character(geno_species$spec)
+
+    species_lookup <- species_info %>%
+      select(spec, Species) %>%
+      distinct()
+    
+    geno_species <- geno_species %>%
+      left_join(
+        species_lookup,
+        by = "spec"
+      )
+
+    geno_mat <- geno_species %>%
+                column_to_rownames("Species")
+
+    message(
+        "  PCA mat: ",
+        basename(gtmat_file)
+    )
+    
+    print(geno_mat)
+
+    # --------------------------------------------------------
+    # Euclidean genetic distance
+    # --------------------------------------------------------
+
+    d <- dist(
+        geno_mat,
+        method = "euclidean"
+    )
+
+
+    # --------------------------------------------------------
+    # Long pairwise table
+    # --------------------------------------------------------
+    dmat <- as.data.frame(
+      as.table(
+        as.matrix(d)
+      )
+    ) %>%
+    setNames(
+      c(
+        "species1",
+        "species2",
+        "distance_geno"
+      )
+    ) %>%
+    mutate(
+      species1 = as.character(species1),
+      species2 = as.character(species2)
+    ) %>%
+    filter(
+      species1 < species2
+    )
+    
+    print(dmat)
+
+    if (level == "all") {
+      Location <- "all"
+    } else {
+      location_code <- sub(
+        "^lab_([A-Za-z]{3}).*$", "\\1",
+        dataset
+      )
+      
+      location_code <- tolower(
+        location_code
+      )
+      
+      location_match <- geo_table$Locations[
+        tolower(geo_table$geo) == location_code
+      ]
+      
+      if (length(location_match) == 0 || is.na(location_match[1])) {
+        stop(
+          "Could not match location code '",
+          location_code,
+          "' from dataset '",
+          dataset,
+          "' to geo_table."
+        )
+      }
+
+      Location <- location_match[1]
+      
+      }
+      
+    result <- dmat %>%
+      mutate(
+        dataset = dataset,
+        level = level,
+        Location = Location
+      )
+    
+    print(result)
+    
+    result <- result %>%
+      select(
+        Location,
+        species1,
+        species2,
+        distance_geno,
+        dataset,
+        level
+      )
+
+
+    result
+}
+
+
+plot_pairwise_correlations <- function(
+  df,
+  x_col,
+  y_col,
+  x_lab = x_col,
+  y_lab = y_col,
+  title_prefix = NULL,
+  level_col = "level") {
+
+  # ============================================================
+  # 1. Checks
+  # ============================================================
+
+  required <- c(
+    x_col,
+    y_col,
+    level_col
+  )
+
+  missing_cols <- setdiff(
+    required,
+    names(df)
+  )
+
+  if (length(missing_cols) > 0) {
+    stop(
+      "Missing required columns: ",
+      paste(missing_cols, collapse = ", ")
+    )
+  }
+
+  # Keep only rows with both distances available
+  df_clean <- df %>%
+    filter(
+      !is.na(.data[[x_col]]),
+      !is.na(.data[[y_col]]),
+      !is.na(.data[[level_col]])
+    )
+
+  # ============================================================
+  # 2. Correlation helper
+  # ============================================================
+
+  run_correlations <- function(dat) {
+
+    if (nrow(dat) < 3) {
+      stop(
+        "Fewer than 3 pairwise observations are available for ",
+        "this level."
+      )
+    }
+
+    pearson <- cor.test(
+      dat[[x_col]],
+      dat[[y_col]],
+      method = "pearson"
+    )
+
+    spearman <- cor.test(
+      dat[[x_col]],
+      dat[[y_col]],
+      method = "spearman",
+      exact = FALSE
+    )
+
+    list(
+      pearson = pearson,
+      spearman = spearman
+    )
+  }
+
+  # ============================================================
+  # 3. Plot helper
+  # ============================================================
+
+  make_plot <- function(
+    dat,
+    cor_results,
+    plot_title
+  ) {
+
+    plot_distance_correlation(
+      df = dat,
+      x_col = x_col,
+      y_col = y_col,
+      x_lab = x_lab,
+      y_lab = y_lab,
+      title = plot_title,
+      pearson_res = cor_results$pearson,
+      spearman_res = cor_results$spearman
+    )
+  }
+
+  # ============================================================
+  # 4. Run one analysis for each level
+  # ============================================================
+
+  levels <- unique(df_clean[[level_col]])
+
+  results <- list()
+
+  for (lev in levels) {
+
+    message(
+      "\nCorrelation level: ",
+      lev
+    )
+
+    # ----------------------------------------------------------
+    # Subset one level
+    # ----------------------------------------------------------
+
+    dat <- df_clean %>%
+      filter(
+        .data[[level_col]] == lev
+      )
+
+    message(
+      "Number of pairwise observations: ",
+      nrow(dat)
+    )
+
+    # ----------------------------------------------------------
+    # Correlations
+    # ----------------------------------------------------------
+
+    cor_results <- run_correlations(dat)
+
+    # ----------------------------------------------------------
+    # Plot title
+    # ----------------------------------------------------------
+
+    if (is.null(title_prefix)) {
+
+      plot_title <- paste0(
+        tools::toTitleCase(lev),
+        ": ",
+        x_lab,
+        " vs ",
+        y_lab
+      )
+
+    } else {
+
+      plot_title <- paste0(
+        title_prefix,
+        " - ",
+        tools::toTitleCase(lev)
+      )
+    }
+
+    # ----------------------------------------------------------
+    # Plot
+    # ----------------------------------------------------------
+
+    plot <- make_plot(
+      dat = dat,
+      cor_results = cor_results,
+      plot_title = plot_title
+    )
+
+    # ----------------------------------------------------------
+    # Store
+    # ----------------------------------------------------------
+
+    results[[lev]] <- list(
+      data = dat,
+      pearson = cor_results$pearson,
+      spearman = cor_results$spearman,
+      plot = plot
+    )
+  }
+
+  # ============================================================
+  # 5. Return
+  # ============================================================
+
+  return(results)
 }
