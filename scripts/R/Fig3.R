@@ -209,7 +209,7 @@ message("========================================")
 
 geno_files_all <- list.files(
   path = path_genotypes_all,
-  pattern = "_ld_pruned_gtmat\\.traw$",
+  pattern = ".agg.ld_pruned_gtmat\\.traw$",
   recursive = TRUE,
   full.names = TRUE
 )
