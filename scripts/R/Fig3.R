@@ -159,6 +159,14 @@ pheno_info <- tibble(
       
       TRUE ~ "location"
     )
+  ) %>%
+  filter(
+    dataset %in% c(
+      "lab_flo29_left_noflash",
+      "lab_boc229_left_noflash",
+      "lab_bel46_left_noflash",
+      "lab_571_left_noflash"
+    )
   )
 
 
