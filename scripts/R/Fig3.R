@@ -244,7 +244,7 @@ geno_info <- tibble(
     level = case_when(
       str_detect(
         tolower(file),
-        "byall"
+        "all"
       ) ~ "all",
       
       str_detect(
