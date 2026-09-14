@@ -497,12 +497,13 @@ geno_asso_cor$location$plot
 
 ########## FIGURE 3 ###################
 figure3 <- plot_grid(
-  plotlist = c(pheno_geno_cor$all$plot,
+  plotlist = list(pheno_geno_cor$all$plot,
                pheno_geno_cor$location$plot,
                pheno_asso_cor$all$plot,
                pheno_asso_cor$location$plot,
                geno_asso_cor$all$plot,
-               geno_asso_cor$location$plot),
+               geno_asso_cor$location$plot
+              ),
   ncol = 2,
   labels = c("(a)", "", "(b)", "", "(c)", ""),
   label_size = 14,
@@ -512,8 +513,8 @@ figure3 <- plot_grid(
 ggsave(
   filename = file.path(figure_path, "Fig3_correlations.png"),
   plot = figure3,
-  width = 6,
-  height = 12,
+  width = 12,
+  height = 19,
   units = "in",
   dpi = 300,
   type = "cairo-png"
