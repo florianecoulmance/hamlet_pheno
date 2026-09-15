@@ -669,7 +669,7 @@ ggsave(
 #   units = "in",
 #   dpi = 300,
 #   type = "cairo-png"
-)
+# )
 
 # ggsave(
 #   filename = file.path(figure_path, "Fig4_interactiveCUBE_v1.png"),
