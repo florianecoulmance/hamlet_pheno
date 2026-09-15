@@ -6970,19 +6970,19 @@ plot_speciation_paper2 <- function(data, species_meta) {
     # --------------------------------------------------------
 
     ggplot2::scale_x_continuous(
-      name = "Phenotypic divergence",
-      limits = c(0, 1),
-      breaks = seq(
-        0,
-        1,
-        0.2
-      ),
-      expand = ggplot2::expansion(
-        mult = c(
-          0.02,
-          0.10
-        )
-      )
+      name = "Phenotypic divergence"#,
+      # limits = c(0, 1),
+      # breaks = seq(
+      #   0,
+      #   1,
+      #   0.2
+      # ),
+      # expand = ggplot2::expansion(
+      #   mult = c(
+      #     0.02,
+      #     0.10
+      #   )
+      # )
     ) +
 
     # --------------------------------------------------------
@@ -6990,21 +6990,21 @@ plot_speciation_paper2 <- function(data, species_meta) {
     # --------------------------------------------------------
 
     ggplot2::scale_y_continuous(
-      name = "Genetic divergence (Fst)",
-      breaks = c(
-        0,
-        0.025,
-        0.05,
-        0.075,
-        0.10,
-        0.125
-      ),
-      expand = ggplot2::expansion(
-        mult = c(
-          0.02,
-          0.20
-        )
-      )
+      name = "Genetic divergence (Fst)"#,
+      # breaks = c(
+      #   0,
+      #   0.025,
+      #   0.05,
+      #   0.075,
+      #   0.10,
+      #   0.125
+      # ),
+      # expand = ggplot2::expansion(
+      #   mult = c(
+      #     0.02,
+      #     0.20
+      #   )
+      # )
     ) +
 
     # --------------------------------------------------------
