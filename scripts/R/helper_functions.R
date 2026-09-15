@@ -6474,7 +6474,7 @@ plot_speciation_hypercube <- function(
         y = ~distance_pheno,
         z = ~distance_asso,
 
-        name = "All locations",
+        name = "Between species",
 
         text = ~label,
 
@@ -6505,7 +6505,7 @@ plot_speciation_hypercube <- function(
         y = ~distance_pheno,
         z = ~distance_asso,
 
-        name = "Location",
+        name = "Between sympatric species",
 
         text = ~label,
 
@@ -6563,28 +6563,42 @@ plot_speciation_hypercube <- function(
 }
 
 
-plot_speciation_paper <- function(data, species_meta) {
+plot_speciation_paper <- function(
+    data,
+    species_meta,
+    label_location = TRUE) {
 
-  # ----------------------------------------------------------
-  # Clean data
-  # ----------------------------------------------------------
+  library(dplyr)
+  library(ggplot2)
+  library(ggimage)
+  library(patchwork)
+  library(grid)
+
+  # ============================================================
+  # 1. DATA
+  # ============================================================
 
   data <- data %>%
-    dplyr::mutate(
-      species1 = trimws(as.character(species1)),
-      species2 = trimws(as.character(species2)),
-      Location = trimws(as.character(Location))
+    mutate(
+      species_pair = paste(
+        species1,
+        species2,
+        sep = " – "
+      )
     )
 
-  species_meta <- species_meta %>%
-    dplyr::mutate(
-      Species = trimws(as.character(Species))
-    )
+  data_all <- data %>%
+    filter(level == "all") %>%
+    arrange(distance_geno)
+
+  data_location <- data %>%
+    filter(level == "location") %>%
+    arrange(distance_geno)
 
 
-  # ----------------------------------------------------------
-  # Species logo lookup
-  # ----------------------------------------------------------
+  # ============================================================
+  # 2. LOGOS
+  # ============================================================
 
   logo_map <- setNames(
     species_meta$link,
@@ -6592,484 +6606,1296 @@ plot_speciation_paper <- function(data, species_meta) {
   )
 
 
-  # ----------------------------------------------------------
-  # Build species labels
-  # ----------------------------------------------------------
+  # ============================================================
+  # 3. FIXED BOX SIZE
+  # ============================================================
 
-  data <- data %>%
-    dplyr::mutate(
+  box_width  <- 0.08
+  box_height <- 0.002
 
-      species_label = paste0(
-        "<span style='display:inline-block; text-align:center;'>",
-        "<img src='", logo_map[species1], "' width='22'><br>",
-        "<i>H. ", species1, "</i>",
-        "</span>",
-        "&nbsp;&nbsp;&nbsp;&nbsp;",
-        "<span style='display:inline-block; text-align:center;'>",
-        "<img src='", logo_map[species2], "' width='22'><br>",
-        "<i>H. ", species2, "</i>",
-        "</span>"
-      ),
 
-      label = ifelse(
-        level == "location",
-        paste0(
-          species_label,
-          "<br><b>",
-          Location,
-          "</b>"
+  # ============================================================
+  # 4. LABEL POSITION FUNCTION
+  # ============================================================
+
+  make_labels <- function(
+      df,
+      panel = c("all", "location")) {
+
+    panel <- match.arg(panel)
+
+    if (nrow(df) == 0) {
+      return(df)
+    }
+
+    df <- df %>%
+      arrange(distance_geno) %>%
+      mutate(
+        point_id = row_number(),
+
+        name1 = paste0(
+          "H. ",
+          species1
         ),
-        species_label
-      )
-    )
 
+        name2 = paste0(
+          "H. ",
+          species2
+        ),
 
-  # ----------------------------------------------------------
-  # Create horizontal label dodging
-  #
-  # Only labels that are close together are shifted.
-  # ----------------------------------------------------------
-
-  data <- data %>%
-    dplyr::group_by(level) %>%
-    dplyr::arrange(distance_asso) %>%
-    dplyr::mutate(
-
-      # Distance from previous point on x-axis
-      x_distance = distance_asso - dplyr::lag(distance_asso),
-
-      # Identify groups of nearby points
-      close_group = cumsum(
-        dplyr::coalesce(x_distance < 0.07, FALSE)
-      ),
-
-      # Alternate labels horizontally within close groups
-      dodge_position = dplyr::case_when(
-        dplyr::n() == 1 ~ 0,
-
-        row_number() %% 3 == 1 ~ -0.035,
-        row_number() %% 3 == 2 ~  0,
-        TRUE                   ~  0.035
+        ri_one = distance_asso >= 0.999
       )
 
-    ) %>%
-    dplyr::ungroup()
 
+    # ==========================================================
+    # RI < 1
+    # ==========================================================
 
-  # ----------------------------------------------------------
-  # Plot
-  # ----------------------------------------------------------
+    df_non1 <- df %>%
+      filter(!ri_one) %>%
+      arrange(distance_geno) %>%
+      mutate(
+        label_id = row_number()
+      )
 
-  ggplot2::ggplot(
-    data,
-    ggplot2::aes(
-      x = distance_asso + dodge_position,
-      y = distance_geno,
-      colour = distance_pheno
-    )
-  ) +
+    if (nrow(df_non1) > 0) {
 
-    # --------------------------------------------------------
-    # Points
-    # --------------------------------------------------------
+      if (panel == "all") {
 
-    ggplot2::geom_point(
-      ggplot2::aes(
-        x = distance_asso,
-        y = distance_geno
-      ),
-      size = 3,
-      alpha = 0.9
-    ) +
+        x_offset <- 0
+        y_offset <- 0.012
 
-    # --------------------------------------------------------
-    # Labels
-    # --------------------------------------------------------
+      } else {
 
-    ggtext::geom_textbox(
-      ggplot2::aes(
-        y = distance_geno + 0.012,
-        label = label
-      ),
-      colour = "black",
-      fill = NA,
-      box.colour = NA,
-      width = grid::unit(1.5, "inch"),
-      halign = 0.5,
-      valign = 0,
-      size = 2.2
-    ) +
+        x_offset <- 0
+        y_offset <- 0.007
+      }
 
-    # --------------------------------------------------------
-    # Phenotypic divergence
-    # --------------------------------------------------------
+      df_non1 <- df_non1 %>%
+        mutate(
+          x_direction = ifelse(
+            label_id %% 2 == 1,
+            1,
+            -1
+          ),
 
-    ggplot2::scale_colour_viridis_c(
-      name = "Phenotypic divergence",
-      limits = c(0, 1),
-      breaks = seq(0, 1, 0.2),
-      oob = scales::squish
-    ) +
+          box_x =
+            distance_asso +
+            x_direction * x_offset,
 
-    # --------------------------------------------------------
-    # X axis
-    # --------------------------------------------------------
-
-    ggplot2::scale_x_continuous(
-      name = "Reproductive isolation",
-      limits = c(0.5, 1),
-      breaks = seq(
-        0.5,
-        1,
-        0.1
-      ),
-      expand = ggplot2::expansion(
-        mult = c(
-          0.02,
-          0.08
+          box_y =
+            distance_geno +
+            ifelse(
+              label_id %% 2 == 1,
+              y_offset,
+              -y_offset
+            )
         )
+    }
+
+
+    # ==========================================================
+    # RI = 1
+    # ==========================================================
+
+    df_one <- df %>%
+      filter(ri_one) %>%
+      arrange(distance_geno) %>%
+      mutate(
+        label_id = row_number()
       )
-    ) +
 
-    # --------------------------------------------------------
-    # Y axis
-    # --------------------------------------------------------
 
-    ggplot2::scale_y_continuous(
-      name = "Genetic divergence (Fst)",
-      limits = c(0, 0.135),
-      breaks = c(
-        0,
-        0.025,
-        0.05,
-        0.075,
-        0.10,
-        0.125
-      ),
-      expand = ggplot2::expansion(
-        mult = c(
-          0.02,
-          0.15
+    if (nrow(df_one) > 0) {
+
+      right_x <- 1.11
+
+      if (nrow(df_one) == 1) {
+
+        box_y <- df_one$distance_geno
+
+      } else {
+
+        # Spread boxes vertically with a minimum separation
+        # while preserving the order of the points
+
+        min_spacing <- if (panel == "all") {
+          0.006
+        } else {
+          0.007
+        }
+
+        y_min <- min(df_one$distance_geno)
+        y_max <- max(df_one$distance_geno)
+
+        box_y <- seq(
+          y_min,
+          y_max,
+          length.out = nrow(df_one)
         )
-      )
-    ) +
 
-    # --------------------------------------------------------
-    # Different y limits for the two panels
-    # --------------------------------------------------------
+        # If the range is too small, expand it
+        # around the centre so boxes do not overlap
 
-    ggplot2::facet_wrap(
-      ~ level,
-      nrow = 1,
-      scales = "free_y",
-      labeller = ggplot2::as_labeller(
-        c(
-          all = "Between species",
-          location = "Between sympatric species"
+        required_range <-
+          min_spacing * (nrow(df_one) - 1)
+
+        if ((y_max - y_min) < required_range) {
+
+          y_mid <- mean(c(y_min, y_max))
+
+          box_y <- seq(
+            y_mid - required_range / 2,
+            y_mid + required_range / 2,
+            length.out = nrow(df_one)
+          )
+        }
+      }
+
+      df_one <- df_one %>%
+        mutate(
+          box_x = right_x,
+          box_y = box_y
         )
-      )
-    ) +
+    }
 
-    # --------------------------------------------------------
-    # Theme
-    # --------------------------------------------------------
 
-    ggplot2::theme_classic(
-      base_size = 10
-    ) +
+    # ==========================================================
+    # 5. COMBINE LABELS
+    # ============================================================
 
-    ggplot2::theme(
-
-      strip.background =
-        ggplot2::element_blank(),
-
-      strip.text =
-        ggplot2::element_text(
-          face = "bold",
-          size = 12
-        ),
-
-      axis.title =
-        ggplot2::element_text(
-          size = 11
-        ),
-
-      axis.text =
-        ggplot2::element_text(
-          size = 9
-        ),
-
-      legend.title =
-        ggplot2::element_text(
-          size = 10
-        ),
-
-      legend.text =
-        ggplot2::element_text(
-          size = 9
-        )
-    )
-}
-
-plot_speciation_paper2 <- function(data, species_meta) {
-
-  # ----------------------------------------------------------
-  # Clean data
-  # ----------------------------------------------------------
-
-  data <- data %>%
-    dplyr::mutate(
-      species1 = trimws(as.character(species1)),
-      species2 = trimws(as.character(species2)),
-      Location = trimws(as.character(Location))
-    )
-
-  species_meta <- species_meta %>%
-    dplyr::mutate(
-      Species = trimws(as.character(Species))
+    labels <- bind_rows(
+      df_non1,
+      df_one
     )
 
 
-  # ----------------------------------------------------------
-  # Species logo lookup
-  # ----------------------------------------------------------
+    if (nrow(labels) == 0) {
+      return(labels)
+    }
 
-  logo_map <- setNames(
-    species_meta$link,
-    species_meta$Species
+
+    # ============================================================
+    # 6. BOX GEOMETRY
+    # ============================================================
+
+    labels <- labels %>%
+      mutate(
+
+        box_xmin =
+          box_x - box_width / 2,
+
+        box_xmax =
+          box_x + box_width / 2,
+
+        box_ymin =
+          box_y - box_height / 2,
+
+        box_ymax =
+          box_y + box_height / 2,
+
+        species1_x =
+          box_x - box_width * 0.23,
+
+        species2_x =
+          box_x + box_width * 0.23,
+
+        logo_y =
+          box_y + box_height * 0.18,
+
+        name_y =
+          box_y - box_height * 0.18,
+
+        link1 =
+          unname(logo_map[species1]),
+
+        link2 =
+          unname(logo_map[species2])
+      )
+
+
+    return(labels)
+  }
+
+
+  # ============================================================
+  # 7. CREATE LABELS
+  # ============================================================
+
+  labels_all <- make_labels(
+    data_all,
+    panel = "all"
+  )
+
+  labels_location <- make_labels(
+    data_location,
+    panel = "location"
   )
 
 
-  # ----------------------------------------------------------
-  # Horizontal label positions
-  # ----------------------------------------------------------
+  # ============================================================
+  # 8. COMMON THEME
+  # ============================================================
 
-  data <- data %>%
-    dplyr::group_by(level) %>%
-    dplyr::arrange(distance_pheno) %>%
-    dplyr::mutate(
+  paper_theme <- theme_classic(
+    base_size = 9
+  ) +
+  theme(
+    axis.title = element_text(size = 15),
+    axis.text = element_text(size = 10),
+    plot.title = element_text(
+      size = 20,
+      face = "bold"
+    ),
+    plot.margin = margin(
+      8, 55, 8, 8
+    ),
 
-      previous_x = dplyr::lag(distance_pheno),
+    # Legend
+    legend.position = c(0.04, 0.96),
+    legend.justification = c(0, 1),
 
-      close_to_previous =
-        !is.na(previous_x) &
-        (distance_pheno - previous_x < 0.12),
+    legend.background = element_rect(
+      fill = "white",
+      colour = "black",
+      linewidth = 0.3
+    ),
 
-      dodge_position = dplyr::case_when(
+    legend.key.height = unit(
+      0.8, "cm"
+    ),
 
-        !close_to_previous ~ 0,
+    legend.key.width = unit(
+      1, "cm"
+    ),
 
-        close_to_previous &
-          !dplyr::lag(close_to_previous, default = FALSE) ~ -0.07,
-
-        close_to_previous ~ 0.07,
-
-        TRUE ~ 0
-      )
-
-    ) %>%
-    dplyr::ungroup()
-
-
-  # ----------------------------------------------------------
-  # Species x positions
-  #
-  #       [logo]           [logo]
-  #    H. aberrans       H. luciae
-  # ----------------------------------------------------------
-
-  species_spacing <- 0.04
-
-  data <- data %>%
-    dplyr::mutate(
-
-      species1_x =
-        distance_pheno +
-        dodge_position -
-        species_spacing,
-
-      species2_x =
-        distance_pheno +
-        dodge_position +
-        species_spacing
-
+    legend.margin = margin(
+      4, 4, 4, 4
     )
+  )
 
+  # ============================================================
+  # 9. PANEL A — BETWEEN SPECIES
+  # ============================================================
 
-  # ----------------------------------------------------------
-  # Plot
-  # ----------------------------------------------------------
-
-  ggplot2::ggplot(
-    data,
-    ggplot2::aes(
-      x = distance_pheno,
-      y = distance_geno,
-      colour = distance_asso
+  p_all <- ggplot(
+    data_all,
+    aes(
+      x = distance_asso,
+      y = distance_geno
     )
   ) +
 
-    # --------------------------------------------------------
-    # Points
-    # --------------------------------------------------------
-
-    ggplot2::geom_point(
-      size = 3,
-      alpha = 0.9
-    ) +
-
-    # --------------------------------------------------------
-    # Species 1 logo
-    # --------------------------------------------------------
-
-    ggimage::geom_image(
-      data = data,
-      ggplot2::aes(
-        x = species1_x,
-        y = distance_geno + 0.012,
-        image = logo_map[species1]
+    geom_point(
+      aes(
+        colour = distance_pheno
       ),
-      size = 0.045,
-      inherit.aes = FALSE
+      size = 2.8
     ) +
 
-    # --------------------------------------------------------
-    # Species 2 logo
-    # --------------------------------------------------------
+    # ----------------------------------------------------------
+    # Phenotypic divergence legend — orange
+    # ----------------------------------------------------------
 
-    ggimage::geom_image(
-      data = data,
-      ggplot2::aes(
-        x = species2_x,
-        y = distance_geno + 0.012,
-        image = logo_map[species2]
+    scale_colour_gradientn(
+      colours = c(
+        "#F2E4D0",
+        "#D09F64",
+        "#8C5F2D"
       ),
-      size = 0.045,
-      inherit.aes = FALSE
-    ) +
-
-    # --------------------------------------------------------
-    # Species 1 name
-    # --------------------------------------------------------
-
-    ggplot2::geom_text(
-      data = data,
-      ggplot2::aes(
-        x = species1_x,
-        y = distance_geno + 0.004,
-        label = paste0("H. ", species1)
-      ),
-      colour = "black",
-      fontface = "italic",
-      size = 2.5,
-      inherit.aes = FALSE
-    ) +
-
-    # --------------------------------------------------------
-    # Species 2 name
-    # --------------------------------------------------------
-
-    ggplot2::geom_text(
-      data = data,
-      ggplot2::aes(
-        x = species2_x,
-        y = distance_geno + 0.004,
-        label = paste0("H. ", species2)
-      ),
-      colour = "black",
-      fontface = "italic",
-      size = 2.5,
-      inherit.aes = FALSE
-    ) +
-
-    # --------------------------------------------------------
-    # Location labels
-    # --------------------------------------------------------
-
-    ggplot2::geom_text(
-      data = data %>%
-        dplyr::filter(level == "location"),
-      ggplot2::aes(
-        x = distance_pheno + dodge_position,
-        y = distance_geno - 0.009,
-        label = Location
-      ),
-      colour = "black",
-      fontface = "bold",
-      size = 2.5,
-      inherit.aes = FALSE
-    ) +
-
-    # --------------------------------------------------------
-    # Purple reproductive-isolation gradient
-    # --------------------------------------------------------
-
-    ggplot2::scale_colour_gradient(
-      name = "Reproductive isolation",
-      low = "#E6D9F2",
-      high = "#542788",
-      limits = c(0.5, 1),
-      breaks = seq(0.5, 1, 0.1),
-      oob = scales::squish
-    ) +
-
-    # --------------------------------------------------------
-    # X axis
-    # --------------------------------------------------------
-
-    ggplot2::scale_x_continuous(
       name = "Phenotypic divergence"
     ) +
 
-    # --------------------------------------------------------
-    # Y axis
-    # --------------------------------------------------------
+    # ----------------------------------------------------------
+    # Pointers
+    # ----------------------------------------------------------
 
-    ggplot2::scale_y_continuous(
-      name = "Genetic divergence (Fst)"
+    geom_segment(
+      data = labels_all,
+      aes(
+        x = distance_asso,
+        y = distance_geno,
+        xend = box_xmin,
+        yend = box_y
+      ),
+      inherit.aes = FALSE,
+      linewidth = 0.3,
+      colour = "grey45"
     ) +
 
-    # --------------------------------------------------------
-    # Panels
-    # --------------------------------------------------------
+    # ----------------------------------------------------------
+    # Boxes
+    # ----------------------------------------------------------
 
-    ggplot2::facet_wrap(
-      ~ level,
-      nrow = 1,
-      scales = "free_y",
-      labeller = ggplot2::as_labeller(
-        c(
-          all = "Between species",
-          location = "Between sympatric species"
+    geom_rect(
+      data = labels_all,
+      aes(
+        xmin = box_xmin,
+        xmax = box_xmax,
+        ymin = box_ymin - 0.0015,
+        ymax = box_ymax + 0.0015
+      ),
+      inherit.aes = FALSE,
+      fill = "white",
+      colour = "grey35",
+      linewidth = 0.3
+    ) +
+
+    # ----------------------------------------------------------
+    # Logos
+    # ----------------------------------------------------------
+
+    ggimage::geom_image(
+      data = labels_all,
+      aes(
+        x = species1_x,
+        y = logo_y,
+        image = link1
+      ),
+      inherit.aes = FALSE,
+      size = 0.032
+    ) +
+
+    ggimage::geom_image(
+      data = labels_all,
+      aes(
+        x = species2_x,
+        y = logo_y,
+        image = link2
+      ),
+      inherit.aes = FALSE,
+      size = 0.032
+    ) +
+
+    # ----------------------------------------------------------
+    # Species names
+    # ----------------------------------------------------------
+
+    geom_text(
+      data = labels_all,
+      aes(
+        x = species1_x,
+        y = name_y - 0.001,
+        label = name1
+      ),
+      inherit.aes = FALSE,
+      size = 1.75,
+      fontface = "italic"
+    ) +
+
+    geom_text(
+      data = labels_all,
+      aes(
+        x = species2_x,
+        y = name_y - 0.001,
+        label = name2
+      ),
+      inherit.aes = FALSE,
+      size = 1.75,
+      fontface = "italic"
+
+    ) +
+
+    labs(
+      title = "(a) Between species",
+      x = "Reproductive isolation",
+      y = "Genetic divergence (Fst)"
+    ) +
+
+    coord_cartesian(
+      xlim = c(
+        0.5,
+        1.18
+      ),
+      ylim = c(
+        -0.012,
+        0.15
+      ),
+      clip = "off"
+    ) +
+
+    paper_theme
+
+
+  # ============================================================
+  # 10. PANEL B — BETWEEN SYMPATRIC SPECIES
+  # ============================================================
+
+  p_location <- ggplot(
+    data_location,
+    aes(
+      x = distance_asso,
+      y = distance_geno
+    )
+  ) +
+
+    geom_point(
+      aes(
+        colour = distance_pheno
+      ),
+      size = 2.8
+    ) +
+
+    # ----------------------------------------------------------
+    # Phenotypic divergence legend — pink
+    # ----------------------------------------------------------
+
+    scale_colour_gradientn(
+      colours = c(
+        "#F0D4E0",
+        "#D06495",
+        "#8F315D"
+      ),
+      name = "Phenotypic divergence"
+    ) +
+
+    # ----------------------------------------------------------
+    # Pointers
+    # ----------------------------------------------------------
+
+    geom_segment(
+      data = labels_location,
+      aes(
+        x = distance_asso,
+        y = distance_geno,
+        xend = box_x,
+        yend = box_y
+      ),
+      inherit.aes = FALSE,
+      linewidth = 0.3,
+      colour = "grey45"
+    ) +
+
+    # ----------------------------------------------------------
+    # Boxes
+    # ----------------------------------------------------------
+
+    geom_rect(
+      data = labels_location,
+      aes(
+        xmin = box_xmin + 0.001,
+        xmax = box_xmax - 0.001,
+        ymin = box_ymin - 0.001,
+        ymax = box_ymax + 0.001
+      ),
+      inherit.aes = FALSE,
+      fill = "white",
+      colour = "grey35",
+      linewidth = 0.5
+    ) +
+
+    # ----------------------------------------------------------
+    # Logos
+    # ----------------------------------------------------------
+
+    ggimage::geom_image(
+      data = labels_location,
+      aes(
+        x = species1_x,
+        y = logo_y,
+        image = link1
+      ),
+      inherit.aes = FALSE,
+      size = 0.030
+    ) +
+
+    ggimage::geom_image(
+      data = labels_location,
+      aes(
+        x = species2_x,
+        y = logo_y,
+        image = link2
+      ),
+      inherit.aes = FALSE,
+      size = 0.030
+    ) +
+
+    # ----------------------------------------------------------
+    # Species names
+    # ----------------------------------------------------------
+
+    geom_text(
+      data = labels_location,
+      aes(
+        x = species1_x,
+        y = name_y - 0.0005,
+        label = name1
+      ),
+      inherit.aes = FALSE,
+      size = 1.75,
+      fontface = "italic"
+
+    ) +
+
+    geom_text(
+      data = labels_location,
+      aes(
+        x = species2_x,
+        y = name_y - 0.0005,
+        label = name2
+      ),
+      inherit.aes = FALSE,
+      size = 1.75,
+      fontface = "italic"
+
+    ) +
+
+    labs(
+      title = "(b) Between sympatric species",
+      x = "Reproductive isolation",
+      y = "Genetic divergence (Fst)"
+    ) +
+
+    coord_cartesian(
+      xlim = c(
+        0.5,
+        1.18
+      ),
+      ylim = c(
+        0,
+        0.075
+      ),
+      clip = "off"
+    ) +
+
+    paper_theme
+
+    if (label_location) {
+
+      p_location <- p_location +
+        geom_text(
+          data = labels_location,
+          aes(
+            x = box_x,
+            y = box_ymax + 0.002,
+            label = Location
+          ),
+          inherit.aes = FALSE,
+          size = 2.5,
+          colour = "grey35",
+          fontface = "bold"
         )
-      )
-    ) +
+    }
 
-    # --------------------------------------------------------
-    # Theme
-    # --------------------------------------------------------
 
-    ggplot2::theme_classic(
-      base_size = 5
-    ) +
+  # ============================================================
+  # 11. STACK PANELS
+  # ============================================================
 
-    ggplot2::theme(
-      strip.background = ggplot2::element_blank(),
-      strip.text = ggplot2::element_text(
-        face = "bold",
-        size = 12
+  p <-
+    p_all /
+    p_location +
+
+    patchwork::plot_layout(
+      heights = c(
+        1,
+        1
       ),
-      axis.title = ggplot2::element_text(
-        size = 11
-      ),
-      axis.text = ggplot2::element_text(
-        size = 9
-      ),
-      legend.title = ggplot2::element_text(
-        size = 10
-      ),
-      legend.text = ggplot2::element_text(
-        size = 9
+      guides = "keep"
+    )
+
+
+  return(p)
+}
+
+
+plot_speciation_paper2 <- function(
+    data,
+    species_meta,
+    label_location = TRUE) {
+
+  library(dplyr)
+  library(ggplot2)
+  library(ggimage)
+  library(patchwork)
+  library(grid)
+
+  # ============================================================
+  # 1. DATA
+  # ============================================================
+
+  data <- data %>%
+    mutate(
+      species_pair = paste(
+        species1,
+        species2,
+        sep = " – "
       )
     )
+
+  data_all <- data %>%
+    filter(level == "all") %>%
+    arrange(distance_geno)
+
+  data_location <- data %>%
+    filter(level == "location") %>%
+    arrange(distance_geno)
+
+
+  # ============================================================
+  # 2. LOGOS
+  # ============================================================
+
+  logo_map <- setNames(
+    species_meta$link,
+    species_meta$Species
+  )
+
+
+  # ============================================================
+  # 3. FIXED BOX SIZE
+  # ============================================================
+
+  box_width  <- 0.08
+  box_height <- 0.002
+
+
+  # ============================================================
+  # 4. LABEL POSITION FUNCTION
+  # ============================================================
+
+  make_labels <- function(
+      df,
+      panel = c("all", "location")) {
+
+    panel <- match.arg(panel)
+
+    if (nrow(df) == 0) {
+      return(df)
+    }
+
+    df <- df %>%
+      arrange(distance_geno) %>%
+      mutate(
+        point_id = row_number(),
+
+        name1 = paste0(
+          "H. ",
+          species1
+        ),
+
+        name2 = paste0(
+          "H. ",
+          species2
+        ),
+
+        ri_one = distance_asso >= 0.999
+      )
+
+
+    # ==========================================================
+    # RI < 1
+    # ==========================================================
+
+    df_non1 <- df %>%
+      filter(!ri_one) %>%
+      arrange(distance_geno) %>%
+      mutate(
+        label_id = row_number()
+      )
+
+    if (nrow(df_non1) > 0) {
+
+      # X-axis is now phenotypic distance
+      # Use an offset based on the observed range
+
+      x_range <- diff(
+        range(
+          df$distance_pheno,
+          na.rm = TRUE
+        )
+      )
+
+      if (x_range == 0) {
+        x_range <- 1
+      }
+
+      if (panel == "all") {
+
+        x_offset <- x_range * 0.08
+        y_offset <- 0.012
+
+      } else {
+
+        x_offset <- x_range * 0.08
+        y_offset <- 0.007
+      }
+
+      df_non1 <- df_non1 %>%
+        mutate(
+          x_direction = ifelse(
+            label_id %% 2 == 1,
+            1,
+            -1
+          ),
+
+          box_x =
+            distance_pheno +
+            x_direction * x_offset,
+
+          box_y =
+            distance_geno +
+            ifelse(
+              label_id %% 2 == 1,
+              y_offset,
+              -y_offset
+            )
+        )
+    }
+
+
+    # ==========================================================
+    # RI = 1
+    # ==========================================================
+
+    df_one <- df %>%
+      filter(ri_one) %>%
+      arrange(distance_geno) %>%
+      mutate(
+        label_id = row_number()
+      )
+
+
+    if (nrow(df_one) > 0) {
+
+      # Keep RI = 1 labels in a right-hand column
+      # relative to the phenotypic-distance range
+
+      pheno_max <- max(
+        df$distance_pheno,
+        na.rm = TRUE
+      )
+
+      pheno_range <- diff(
+        range(
+          df$distance_pheno,
+          na.rm = TRUE
+        )
+      )
+
+      if (pheno_range == 0) {
+        pheno_range <- 1
+      }
+
+      right_x <-
+        pheno_max +
+        pheno_range * 0.12
+
+
+      if (nrow(df_one) == 1) {
+
+        box_y <- df_one$distance_geno
+
+      } else {
+
+        min_spacing <- if (panel == "all") {
+          0.006
+        } else {
+          0.007
+        }
+
+        y_min <- min(
+          df_one$distance_geno
+        )
+
+        y_max <- max(
+          df_one$distance_geno
+        )
+
+        box_y <- seq(
+          y_min,
+          y_max,
+          length.out = nrow(df_one)
+        )
+
+        required_range <-
+          min_spacing *
+          (nrow(df_one) - 1)
+
+        if (
+          (y_max - y_min) <
+          required_range
+        ) {
+
+          y_mid <- mean(
+            c(y_min, y_max)
+          )
+
+          box_y <- seq(
+            y_mid -
+              required_range / 2,
+
+            y_mid +
+              required_range / 2,
+
+            length.out =
+              nrow(df_one)
+          )
+        }
+      }
+
+      df_one <- df_one %>%
+        mutate(
+          box_x = right_x,
+          box_y = box_y
+        )
+    }
+
+
+    # ============================================================
+    # 5. COMBINE LABELS
+    # ============================================================
+
+    labels <- bind_rows(
+      df_non1,
+      df_one
+    )
+
+    if (nrow(labels) == 0) {
+      return(labels)
+    }
+
+
+    # ============================================================
+    # 6. BOX GEOMETRY
+    # ============================================================
+
+    labels <- labels %>%
+      mutate(
+
+        box_xmin =
+          box_x - box_width / 2,
+
+        box_xmax =
+          box_x + box_width / 2,
+
+        box_ymin =
+          box_y - box_height / 2,
+
+        box_ymax =
+          box_y + box_height / 2,
+
+        species1_x =
+          box_x -
+          box_width * 0.23,
+
+        species2_x =
+          box_x +
+          box_width * 0.23,
+
+        logo_y =
+          box_y +
+          box_height * 0.18,
+
+        name_y =
+          box_y -
+          box_height * 0.18,
+
+        link1 =
+          unname(
+            logo_map[species1]
+          ),
+
+        link2 =
+          unname(
+            logo_map[species2]
+          )
+      )
+
+    return(labels)
+  }
+
+
+  # ============================================================
+  # 7. CREATE LABELS
+  # ============================================================
+
+  labels_all <- make_labels(
+    data_all,
+    panel = "all"
+  )
+
+  labels_location <- make_labels(
+    data_location,
+    panel = "location"
+  )
+
+
+  # ============================================================
+  # 8. COMMON THEME
+  # ============================================================
+
+  paper_theme <- theme_classic(
+    base_size = 9
+  ) +
+    theme(
+      axis.title = element_text(
+        size = 15
+      ),
+
+      axis.text = element_text(
+        size = 10
+      ),
+
+      plot.title = element_text(
+        size = 20,
+        face = "bold"
+      ),
+
+      plot.margin = margin(
+        8, 55, 8, 8
+      ),
+
+      # Legend
+
+      legend.position = c(
+        0.04,
+        0.96
+      ),
+
+      legend.justification = c(
+        0,
+        1
+      ),
+
+      legend.background = element_rect(
+        fill = "white",
+        colour = "black",
+        linewidth = 0.3
+      ),
+
+      legend.key.height = unit(
+        0.8,
+        "cm"
+      ),
+
+      legend.key.width = unit(
+        1,
+        "cm"
+      ),
+
+      legend.margin = margin(
+        4, 4, 4, 4
+      )
+    )
+
+
+  # ============================================================
+  # 9. PANEL A — BETWEEN SPECIES
+  # ============================================================
+
+  p_all <- ggplot(
+    data_all,
+    aes(
+      x = distance_pheno,
+      y = distance_geno
+    )
+  ) +
+
+    geom_point(
+      aes(
+        colour = distance_asso
+      ),
+      size = 2.8
+    ) +
+
+    # ----------------------------------------------------------
+    # Reproductive isolation legend — orange
+    # ----------------------------------------------------------
+
+    scale_colour_gradientn(
+      colours = c(
+        "#F2E4D0",
+        "#D09F64",
+        "#8C5F2D"
+      ),
+      name = "Reproductive isolation"
+    ) +
+
+    # ----------------------------------------------------------
+    # Pointers
+    # ----------------------------------------------------------
+
+    geom_segment(
+      data = labels_all,
+      aes(
+        x = distance_pheno,
+        y = distance_geno,
+        xend = box_xmin,
+        yend = box_y
+      ),
+      inherit.aes = FALSE,
+      linewidth = 0.3,
+      colour = "grey45"
+    ) +
+
+    # ----------------------------------------------------------
+    # Boxes
+    # ----------------------------------------------------------
+
+    geom_rect(
+      data = labels_all,
+      aes(
+        xmin = box_xmin,
+        xmax = box_xmax,
+        ymin = box_ymin - 0.0015,
+        ymax = box_ymax + 0.0015
+      ),
+      inherit.aes = FALSE,
+      fill = "white",
+      colour = "grey35",
+      linewidth = 0.3
+    ) +
+
+    # ----------------------------------------------------------
+    # Logos
+    # ----------------------------------------------------------
+
+    ggimage::geom_image(
+      data = labels_all,
+      aes(
+        x = species1_x,
+        y = logo_y,
+        image = link1
+      ),
+      inherit.aes = FALSE,
+      size = 0.032
+    ) +
+
+    ggimage::geom_image(
+      data = labels_all,
+      aes(
+        x = species2_x,
+        y = logo_y,
+        image = link2
+      ),
+      inherit.aes = FALSE,
+      size = 0.032
+    ) +
+
+    # ----------------------------------------------------------
+    # Species names
+    # ----------------------------------------------------------
+
+    geom_text(
+      data = labels_all,
+      aes(
+        x = species1_x,
+        y = name_y - 0.001,
+        label = name1
+      ),
+      inherit.aes = FALSE,
+      size = 1.75,
+      fontface = "italic"
+    ) +
+
+    geom_text(
+      data = labels_all,
+      aes(
+        x = species2_x,
+        y = name_y - 0.001,
+        label = name2
+      ),
+      inherit.aes = FALSE,
+      size = 1.75,
+      fontface = "italic"
+    ) +
+
+    labs(
+      title = "(a) Between species",
+      x = "Phenotypic divergence",
+      y = "Genetic divergence (Fst)"
+    ) +
+
+    coord_cartesian(
+      xlim = NULL,
+      ylim = c(
+        -0.012,
+        0.15
+      ),
+      clip = "off"
+    ) +
+
+    paper_theme
+
+
+  # ============================================================
+  # 10. PANEL B — BETWEEN SYMPATRIC SPECIES
+  # ============================================================
+
+  p_location <- ggplot(
+    data_location,
+    aes(
+      x = distance_pheno,
+      y = distance_geno
+    )
+  ) +
+
+    geom_point(
+      aes(
+        colour = distance_asso
+      ),
+      size = 2.8
+    ) +
+
+    # ----------------------------------------------------------
+    # Reproductive isolation legend — pink
+    # ----------------------------------------------------------
+
+    scale_colour_gradientn(
+      colours = c(
+        "#F0D4E0",
+        "#D06495",
+        "#8F315D"
+      ),
+      name = "Reproductive isolation"
+    ) +
+
+    # ----------------------------------------------------------
+    # Pointers
+    # ----------------------------------------------------------
+
+    geom_segment(
+      data = labels_location,
+      aes(
+        x = distance_pheno,
+        y = distance_geno,
+        xend = box_x,
+        yend = box_y
+      ),
+      inherit.aes = FALSE,
+      linewidth = 0.3,
+      colour = "grey45"
+    ) +
+
+    # ----------------------------------------------------------
+    # Boxes
+    # ----------------------------------------------------------
+
+    geom_rect(
+      data = labels_location,
+      aes(
+        xmin = box_xmin + 0.001,
+        xmax = box_xmax - 0.001,
+        ymin = box_ymin - 0.001,
+        ymax = box_ymax + 0.001
+      ),
+      inherit.aes = FALSE,
+      fill = "white",
+      colour = "grey35",
+      linewidth = 0.5
+    ) +
+
+    # ----------------------------------------------------------
+    # Logos
+    # ----------------------------------------------------------
+
+    ggimage::geom_image(
+      data = labels_location,
+      aes(
+        x = species1_x,
+        y = logo_y,
+        image = link1
+      ),
+      inherit.aes = FALSE,
+      size = 0.030
+    ) +
+
+    ggimage::geom_image(
+      data = labels_location,
+      aes(
+        x = species2_x,
+        y = logo_y,
+        image = link2
+      ),
+      inherit.aes = FALSE,
+      size = 0.030
+    ) +
+
+    # ----------------------------------------------------------
+    # Species names
+    # ----------------------------------------------------------
+
+    geom_text(
+      data = labels_location,
+      aes(
+        x = species1_x,
+        y = name_y - 0.0005,
+        label = name1
+      ),
+      inherit.aes = FALSE,
+      size = 1.75,
+      fontface = "italic"
+    ) +
+
+    geom_text(
+      data = labels_location,
+      aes(
+        x = species2_x,
+        y = name_y - 0.0005,
+        label = name2
+      ),
+      inherit.aes = FALSE,
+      size = 1.75,
+      fontface = "italic"
+    ) +
+
+    labs(
+      title = "(b) Between sympatric species",
+      x = "Phenotypic divergence",
+      y = "Genetic divergence (Fst)"
+    ) +
+
+    coord_cartesian(
+      xlim = NULL,
+      ylim = c(
+        0,
+        0.075
+      ),
+      clip = "off"
+    ) +
+
+    paper_theme
+
+
+  # ============================================================
+  # LOCATION LABELS
+  # ============================================================
+
+  if (label_location) {
+
+    p_location <- p_location +
+      geom_text(
+        data = labels_location,
+        aes(
+          x = box_x,
+          y = box_ymax + 0.002,
+          label = Location
+        ),
+        inherit.aes = FALSE,
+        size = 2.5,
+        colour = "grey35",
+        fontface = "bold"
+      )
+  }
+
+
+  # ============================================================
+  # 11. STACK PANELS
+  # ============================================================
+
+  p <-
+    p_all /
+    p_location +
+
+    patchwork::plot_layout(
+      heights = c(
+        1,
+        1
+      ),
+      guides = "keep"
+    )
+
+
+  return(p)
 }

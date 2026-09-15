@@ -547,36 +547,36 @@ geno_asso_cor <- plot_pairwise_correlations(
 geno_asso_cor$all$plot
 geno_asso_cor$location$plot
 
-speciation_hypercube_data <- pheno_distances_lda %>%
-  dplyr::inner_join(
-    geno_distances_fst,
-    by = c(
-      "level",
-      "Location",
-      "species1",
-      "species2"
-    )
-  ) %>%
-  dplyr::inner_join(
-    asso_RI,
-    by = c(
-      "level",
-      "Location",
-      "species1",
-      "species2"
-    )
-  )
-
-hypercube <- plot_speciation_hypercube(
-  speciation_hypercube_data
-)
-hypercube
-
-hypercube_paper <- plot_speciation_paper(
-  speciation_hypercube_data,
-  species_info
-)
-hypercube_paper
+# speciation_hypercube_data <- pheno_distances_lda %>%
+#   dplyr::inner_join(
+#     geno_distances_fst,
+#     by = c(
+#       "level",
+#       "Location",
+#       "species1",
+#       "species2"
+#     )
+#   ) %>%
+#   dplyr::inner_join(
+#     asso_RI,
+#     by = c(
+#       "level",
+#       "Location",
+#       "species1",
+#       "species2"
+#     )
+#   )
+# 
+# hypercube <- plot_speciation_hypercube(
+#   speciation_hypercube_data
+# )
+# hypercube
+# 
+# hypercube_paper <- plot_speciation_paper(
+#   speciation_hypercube_data,
+#   species_info
+# )
+# hypercube_paper
 
 
 
@@ -611,6 +611,7 @@ hypercube_paper2 <- plot_speciation_paper2(
 )
 hypercube_paper2
 
+
 # ############################
 # FINAL PLOTS
 # ############################
@@ -641,11 +642,9 @@ ggsave(
 )
 
 
-########## FIGURE 4 ###################
-# figure4 <- hypercube
-# 
+########## FIGURE 4 #################### 
 # ggsave(
-#   filename = file.path(figure_path, "Fig4_interactiveCUBE.png"),
+#   filename = file.path(figure_path, "Fig4_interactiveCUBE_v2.png"),
 #   plot = figure4,
 #   width = 12,
 #   height = 19,
@@ -654,10 +653,44 @@ ggsave(
 #   type = "cairo-png"
 # )
 
+# htmlwidgets::saveWidget(
+#   hypercube,
+#   file.path(figure_path, "Fig4_interactiveCUBE_v2.html"),
+#   selfcontained = TRUE
+# )
+# 
+# figure4 <- hypercube_paper
+# 
+# ggsave(
+#   filename = file.path(figure_path, "Fig4_2dCUBE_v2.png"),
+#   plot = figure4,
+#   width = 12,
+#   height = 19,
+#   units = "in",
+#   dpi = 300,
+#   type = "cairo-png"
+)
+
+# ggsave(
+#   filename = file.path(figure_path, "Fig4_interactiveCUBE_v1.png"),
+#   plot = figure4,
+#   width = 12,
+#   height = 19,
+#   units = "in",
+#   dpi = 300,
+#   type = "cairo-png"
+# )
+
+htmlwidgets::saveWidget(
+  hypercube2,
+  file.path(figure_path, "Fig4_interactiveCUBE_v1.html"),
+  selfcontained = TRUE
+)
+
 figure4 <- hypercube_paper2
 
 ggsave(
-  filename = file.path(figure_path, "Fig4_2dCUBE_v2.png"),
+  filename = file.path(figure_path, "Fig4_2dCUBE_v1.png"),
   plot = figure4,
   width = 12,
   height = 19,
