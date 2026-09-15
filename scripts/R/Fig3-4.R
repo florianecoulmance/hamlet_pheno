@@ -1,6 +1,6 @@
 # by: Floriane Coulmance: 16/08/2024
 # usage:
-# Rscript Fig3.R 
+# Rscript Fig3-4.R 
 #___________________________________________________________________
 
 
@@ -31,6 +31,8 @@ library(ggtree)
 library(glue)
 library(vegan)
 library(knitr)
+library(plotly)
+library(base64enc)
 
 
 # ############################
@@ -60,6 +62,14 @@ path_genotypes_loc <- file.path(
   "2_popgen",
   "byLOC"
 )
+fst_all_file <- file.path(
+  figure_path,
+  "TableS5.tex"
+)
+fst_loc_file <- file.path(
+  figure_path,
+  "TableS4.tex"
+)
 association_file <- file.path(
   base_path,
   "metadata",
@@ -68,12 +78,15 @@ association_file <- file.path(
 logos_path      <- get_arg("--logos_path", file.path(base_path, "metadata/logos_hamlet"))
 spec_colors     <- get_arg("--spec_colors", file.path(base_path, "metadata/species_colors.tsv"))
 geo_colors      <- get_arg("--geo_colors", file.path(base_path, "metadata/locations_colors.tsv"))
+
 # base_path      <- "/Users/fcoulman/Desktop/hamlet_pheno/3_CHAPTER3/hamlet_pheno/"
+# figure_path     <- file.path(base_path, "figures")
 # path_phenotypes <- file.path(base_path, "1_phenotyping/pca")
 # path_genotypes_all <- file.path(base_path, "2_popgen/byALL")
 # path_genotypes_loc <- file.path(base_path, "2_popgen/byLOC")
+# fst_all_file <- file.path(figure_path, "TableS5.tex")
+# fst_loc_file <- file.path(figure_path, "TableS4.tex")
 # association_file <- file.path(base_path, "metadata/assortative_mating.csv")
-# figure_path     <- file.path(base_path, "figures")
 # logos_path      <- file.path(base_path, "metadata/logos_hamlet")
 # spec_colors     <- file.path(base_path, "metadata/species_colors.tsv")
 # geo_colors      <- file.path(base_path, "metadata/locations_colors.tsv")
@@ -177,6 +190,11 @@ pheno_distances <- vector(
   nrow(pheno_info)
 )
 
+pheno_distances_lda <- vector(
+  "list",
+  nrow(pheno_info)
+)
+
 for (i in seq_len(nrow(pheno_info))) {
   
   message(
@@ -196,10 +214,23 @@ for (i in seq_len(nrow(pheno_info))) {
       species_info = species_info,
       geo_table = geo_table
     )
+  
+  pheno_distances_lda[[i]] <-
+    calculate_pheno_distance_lda(
+      pca_file = pheno_info$file[i],
+      dataset = pheno_info$dataset[i],
+      level = pheno_info$level[i],
+      species_info = species_info,
+      geo_table = geo_table
+    )
 }
 
 pheno_distances <- bind_rows(
   pheno_distances
+)
+
+pheno_distances_lda <- bind_rows(
+  pheno_distances_lda
 )
 
 
@@ -246,12 +277,12 @@ geno_info <- tibble(
         tolower(file),
         "all"
       ) ~ "all",
-      
+
       str_detect(
         tolower(file),
         "byloc"
       ) ~ "location",
-      
+
       TRUE ~ NA_character_
     )
   )
@@ -266,7 +297,7 @@ geno_distances <- vector(
 
 
 for (i in seq_len(nrow(geno_info))) {
-  
+
   message(
     "\nGenotype dataset ",
     i,
@@ -275,7 +306,7 @@ for (i in seq_len(nrow(geno_info))) {
     ": ",
     geno_info$dataset[i]
   )
-  
+
   geno_distances[[i]] <-
     calculate_geno_distance(
       gtmat_file = geno_info$file[i],
@@ -288,6 +319,14 @@ for (i in seq_len(nrow(geno_info))) {
 
 geno_distances <- bind_rows(
   geno_distances
+)
+
+
+geno_distances_fst <- read_fst_tables(
+  s4_file = fst_loc_file,
+  s5_file = fst_all_file,
+  species_info = species_info,
+  geo_table = geo_table
 )
 
 
@@ -435,20 +474,38 @@ asso_RI <- bind_rows(
 message("\n========================================")
 message("INTERSECTIONS")
 message("========================================")
+# pheno_geno <- inner_join(
+#   pheno_distances,
+#   geno_distances,
+#   by = c("level", "Location", "species1", "species2")
+# )
+
 pheno_geno <- inner_join(
-  pheno_distances,
-  geno_distances,
+  pheno_distances_lda, 
+  geno_distances_fst,
   by = c("level", "Location", "species1", "species2")
 )
 
+# pheno_asso <- inner_join(
+#   pheno_distances,
+#   asso_RI,
+#   by = c("level", "Location", "species1", "species2")
+# )
+
 pheno_asso <- inner_join(
-  pheno_distances,
+  pheno_distances_lda,
   asso_RI,
   by = c("level", "Location", "species1", "species2")
 )
 
+# geno_asso <- inner_join(
+#   geno_distances,
+#   asso_RI,
+#   by = c("level", "Location", "species1", "species2")
+# )
+
 geno_asso <- inner_join(
-  geno_distances,
+  geno_distances_fst, 
   asso_RI,
   by = c("level", "Location", "species1", "species2")
 )
@@ -490,6 +547,69 @@ geno_asso_cor <- plot_pairwise_correlations(
 geno_asso_cor$all$plot
 geno_asso_cor$location$plot
 
+speciation_hypercube_data <- pheno_distances_lda %>%
+  dplyr::inner_join(
+    geno_distances_fst,
+    by = c(
+      "level",
+      "Location",
+      "species1",
+      "species2"
+    )
+  ) %>%
+  dplyr::inner_join(
+    asso_RI,
+    by = c(
+      "level",
+      "Location",
+      "species1",
+      "species2"
+    )
+  )
+
+hypercube <- plot_speciation_hypercube(
+  speciation_hypercube_data
+)
+hypercube
+
+hypercube_paper <- plot_speciation_paper(
+  speciation_hypercube_data,
+  species_info
+)
+hypercube_paper
+
+
+
+speciation_hypercube_data2 <- pheno_distances %>%
+  dplyr::inner_join(
+    geno_distances,
+    by = c(
+      "level",
+      "Location",
+      "species1",
+      "species2"
+    )
+  ) %>%
+  dplyr::inner_join(
+    asso_RI,
+    by = c(
+      "level",
+      "Location",
+      "species1",
+      "species2"
+    )
+  )
+
+hypercube2 <- plot_speciation_hypercube(
+  speciation_hypercube_data
+)
+hypercube2
+
+hypercube_paper2 <- plot_speciation_paper2(
+  speciation_hypercube_data,
+  species_info
+)
+hypercube_paper2
 
 # ############################
 # FINAL PLOTS
@@ -513,6 +633,32 @@ figure3 <- plot_grid(
 ggsave(
   filename = file.path(figure_path, "Fig3_correlations.png"),
   plot = figure3,
+  width = 12,
+  height = 19,
+  units = "in",
+  dpi = 300,
+  type = "cairo-png"
+)
+
+
+########## FIGURE 4 ###################
+# figure4 <- hypercube
+# 
+# ggsave(
+#   filename = file.path(figure_path, "Fig4_interactiveCUBE.png"),
+#   plot = figure4,
+#   width = 12,
+#   height = 19,
+#   units = "in",
+#   dpi = 300,
+#   type = "cairo-png"
+# )
+
+figure4 <- hypercube_paper2
+
+ggsave(
+  filename = file.path(figure_path, "Fig4_2dCUBE_v2.png"),
+  plot = figure4,
   width = 12,
   height = 19,
   units = "in",

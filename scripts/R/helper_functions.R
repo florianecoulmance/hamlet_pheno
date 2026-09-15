@@ -3523,29 +3523,10 @@ global_RI_permutation <- function(
 # ============================================================
 pairwise_phenotypic_divergence <- function(
     pc_table,
-    pairs,
     pcs = paste0("PC", 1:15),
     spec = "spec",
     nfolds = 10,
     seed = 123) {
-
-  species_codes <- c(
-    abe = "aberrans",
-    pue = "puella",
-    nig = "nigricans",
-    uni = "unicolor",
-    ind = "indigo",
-    gem = "gemma"
-  )
-
-  allowed_species <- names(species_codes)
-
-  if (missing(pairs) || is.null(pairs)) {
-    stop("You must provide the species pairs to analyse.")
-  }
-
-  # Make sure pairs are character vectors
-  pairs <- lapply(pairs, as.character)
 
   # Prepare data
   dat <- pc_table %>%
@@ -3553,14 +3534,16 @@ pairwise_phenotypic_divergence <- function(
     dplyr::mutate(
       .species = as.character(.data[[spec]])
     ) %>%
-    dplyr::filter(
-      .species %in% allowed_species
-    )
+    dplyr::filter(!is.na(.species))
   print(dat)
 
-  # Sample sizes
-  species_counts <- table(dat$.species)
-  print(species_counts)
+  # Species present in this dataset
+  species <- sort(unique(dat$.species))
+  if (length(species) < 2) {
+    stop("Less than two species found in the phenotype dataset.")
+  }
+
+  pairs <- combn(species, 2, simplify = FALSE)
 
   # Analyse every pair
   results <- lapply(
@@ -3569,10 +3552,10 @@ pairwise_phenotypic_divergence <- function(
     dat = dat,
     pcs = pcs,
     nfolds = nfolds,
-    seed = seed,
-    species_codes = species_codes
+    seed = seed
   )
   print(results[[3]])
+  
   # Remove failed analyses
   results <- results[
     !vapply(results, is.null, logical(1))
@@ -3594,12 +3577,6 @@ pairwise_phenotypic_divergence <- function(
           species_1 = x$species_1,
           species_2 = x$species_2,
 
-          species_1_name = x$species_1_name,
-          species_2_name = x$species_2_name,
-
-          n_1 = x$n_1,
-          n_2 = x$n_2,
-
           n_classified = x$n_classified,
           nfolds = x$nfolds,
 
@@ -3617,9 +3594,8 @@ pairwise_phenotypic_divergence <- function(
   list(
     summary = summary,
     pairwise = results,
-    species = species_codes,
-    pcs = pcs,
-    sample_sizes = species_counts
+    species = species,
+    pcs = pcs
   )
 }
 
@@ -3627,151 +3603,98 @@ pairwise_phenotypic_divergence <- function(
 # Pairwise LDA analysis for phenotypes
 # ============================================================
 analyse_single_pair <- function(
-    dat,
     pair,
+    dat,
     pcs,
     nfolds = 10,
-    seed = 123,
-    species_codes) {
+    seed = 123) {
 
-  sp1 <- pair[1]
-  sp2 <- pair[2]
-
-  message("Analysing: ", sp1, " vs ", sp2)
-
-  # Keep only the two species
-  d <- dat %>%
-    dplyr::filter(.species %in% c(sp1, sp2))
-
-  n1 <- sum(d$.species == sp1)
-  n2 <- sum(d$.species == sp2)
-
-  message("Counts: ", n1, " vs ", n2)
-
-  # Need at least two individuals per species
-  if (n1 < 2 || n2 < 2) {
-    warning(
-      "Skipping ", sp1, " vs ", sp2,
-      ": fewer than 2 individuals in one species."
-    )
-    return(NULL)
-  }
-
-  # Cannot use more folds than the smallest sample
-  folds_used <- min(nfolds, n1, n2)
-  message("Fold used: ", folds_used)
-
-  # Create stratified folds
   set.seed(seed)
 
-  d <- d %>%
-    dplyr::group_by(.species) %>%
-    dplyr::mutate(
-      fold = sample(
-        rep(seq_len(folds_used), length.out = dplyr::n())
-      )
-    ) %>%
-    dplyr::ungroup()
+  species_1 <- pair[1]
+  species_2 <- pair[2]
 
-  print(d)
+  # Keep only the two species
+  pair_dat <- dat %>%
+    dplyr::filter(.species %in% c(species_1, species_2)) %>%
+    dplyr::filter(dplyr::if_all(dplyr::all_of(pcs), ~ !is.na(.x)))
 
-  # Storage
-  predicted <- rep(NA_character_, nrow(d))
-  print(predicted)
-  p_correct <- rep(NA_real_, nrow(d))
-  print(p_correct)
+  n_1 <- sum(pair_dat$.species == species_1)
+  n_2 <- sum(pair_dat$.species == species_2)
 
-
-  # Cross-validation
-  for (fold_i in seq_len(folds_used)) {
-
-    print(fold_i)
-
-    train <- d %>%
-      dplyr::filter(fold != fold_i)
-    print(train)
-
-    test <- d %>%
-      dplyr::filter(fold == fold_i)
-    print(test)
-
-    # Fit LDA
-    lda_formula <- as.formula(
-      paste(".species ~", paste(pcs, collapse = " + "))
-    )
-    print(lda_formula)
-
-    lda_fit <- tryCatch(
-      MASS::lda(lda_formula, data = train),
-      error = function(e) {
-        warning(
-          "LDA failed for ", sp1, " vs ", sp2,
-          ", fold ", fold_i, ": ", e$message
-        )
-        NULL
-      }
-    )
-    print(lda_fit)
-
-
-    if (is.null(lda_fit)) {
-      next
-    }
-
-
-    # Predict test individuals
-    prediction <- predict(lda_fit, newdata = test)
-    print(prediction)
-
-    # Find their rows
-    test_rows <- which(d$fold == fold_i)
-    print(test_rows)
-
-    predicted[test_rows] <- as.character(prediction$class)
-    print(predicted)
-
-    # Probability assigned to the true species
-    posterior <- prediction$posterior
-    print(posterior)
-
-    true_probability <- posterior[
-      cbind(
-        seq_len(nrow(test)),
-        match(test$.species, colnames(posterior))
-      )
-    ]
-    print(true_probability)
-
-    p_correct[test_rows] <- true_probability
-    print(p_correct)
-  }
-
-  # Keep successful predictions
-  valid <- !is.na(predicted)
-  print(valid)
-
-  if (!any(valid)) {
+  # Need at least two individuals per species
+  if (n_1 < 3 || n_2 < 3) {
     warning(
-      "No successful cross-validation predictions for ",
-      sp1, " vs ", sp2
+      "Skipping ", species_1, " vs ", species_2,
+      ": fewer than 3 individuals in one species."
     )
     return(NULL)
   }
 
-  # Classification accuracy
+  # Number of folds cannot exceed sample size of either species
+  folds_used <- min(nfolds, n_1, n_2)
+
+  # Stratified folds
+  fold_id <- integer(nrow(pair_dat))
+
+  for (sp in c(species_1, species_2)) {
+
+    idx <- which(pair_dat$.species == sp)
+
+    fold_id[idx] <- sample(
+      rep(seq_len(folds_used), length.out = length(idx))
+    )
+  }
+
+  # Cross-validation
+  predictions <- vector("list", folds_used)
+
+  for (fold in seq_len(folds_used)) {
+
+    train <- pair_dat[fold_id != fold, , drop = FALSE]
+    test  <- pair_dat[fold_id == fold, , drop = FALSE]
+
+    # LDA
+    formula_lda <- as.formula(
+      paste(".species ~", paste(pcs, collapse = " + "))
+    )
+
+    fit <- MASS::lda(
+      formula_lda,
+      data = train
+    )
+
+    pred <- predict(fit, newdata = test)
+
+    # Probability assigned to the true species
+    p_correct <- pred$posterior[
+      cbind(
+        seq_len(nrow(pred$posterior)),
+        match(test$.species, colnames(pred$posterior))
+      )
+    ]
+
+    predictions[[fold]] <- tibble::tibble(
+      species = test$.species,
+      predicted = pred$class,
+      p_correct = p_correct
+    )
+  }
+
+  predictions <- dplyr::bind_rows(predictions)
+
+  # Accuracy
   accuracy <- mean(
-    predicted[valid] == d$.species[valid]
+    predictions$species == predictions$predicted
   )
-  print(accuracy)
 
   # Mean probability assigned to the correct species
   mean_p_correct <- mean(
-    p_correct[valid],
+    predictions$p_correct,
     na.rm = TRUE
   )
-  print(mean_p_correct)
 
-  # Convert to 0-1 phenotypic divergence
+  # Convert classification performance to 0–1 divergence
   phenotypic_divergence <- max(
     0,
     min(
@@ -3779,53 +3702,41 @@ analyse_single_pair <- function(
       2 * mean_p_correct - 1
     )
   )
-  print(phenotypic_divergence)
 
-  # Fit final LDA using all individuals
-  lda_formula <- as.formula(
+  # Final LDA using all individuals
+  formula_lda <- as.formula(
     paste(".species ~", paste(pcs, collapse = " + "))
   )
 
   final_lda <- MASS::lda(
-    lda_formula,
-    data = d
+    formula_lda,
+    data = pair_dat
   )
 
-  # LDA scores
-  lda_scores <- predict(final_lda, newdata = d)$x
+  pred_final <- predict(final_lda)
 
-  # LDA loadings
-  lda_loadings <- final_lda$scaling[, 1]
-
-  # Return results
   list(
-    species_1 = sp1,
-    species_2 = sp2,
-
-    species_1_name = species_codes[sp1],
-    species_2_name = species_codes[sp2],
-
-    n_1 = n1,
-    n_2 = n2,
-
-    n_classified = sum(valid),
+    species_1 = species_1,
+    species_2 = species_2,
+    n_1 = n_1,
+    n_2 = n_2,
+    n_classified = nrow(predictions),
     nfolds = folds_used,
-
     accuracy = accuracy,
     mean_p_correct = mean_p_correct,
     phenotypic_divergence = phenotypic_divergence,
 
-    actual = d$.species[valid],
-    predicted = predicted[valid],
-    p_correct = p_correct[valid],
+    actual = pair_dat$.species,
+    predicted = pred_final$class,
+    p_correct = predictions$p_correct,
 
     confusion = table(
-      Actual = d$.species[valid],
-      Predicted = predicted[valid]
+      Actual = pair_dat$.species,
+      Predicted = pred_final$class
     ),
 
-    lda_scores = lda_scores,
-    lda_loadings = lda_loadings
+    lda_scores = as.data.frame(pred_final$x),
+    lda_loadings = as.data.frame(final_lda$scaling)
   )
 }
 
@@ -5791,4 +5702,1364 @@ plot_pairwise_correlations <- function(
   # ============================================================
 
   return(results)
+}
+
+
+calculate_pheno_distance_lda <- function(
+    pca_file,
+    dataset,
+    level,
+    species_info,
+    geo_table,
+    pcs = paste0("PC", 1:15),
+    nfolds = 10,
+    seed = 123) {
+  
+  # ---------------------------------------------------------------
+  # Read PCA data
+  # ---------------------------------------------------------------
+  
+  pca <- read.csv(
+    pca_file,
+    sep = ",",
+    check.names = FALSE
+  )
+  
+  # Remove first column (sample ID)
+  pca <- pca[, -1, drop = FALSE]
+  
+  # Add species / metadata
+  pc_table <- write_metadata_gxp(pca)
+  
+  
+  # ---------------------------------------------------------------
+  # Pairwise LDA phenotypic divergence
+  # ---------------------------------------------------------------
+  
+  lda_result <- pairwise_phenotypic_divergence(
+    pc_table = pc_table,
+    pcs = pcs,
+    spec = "spec",
+    nfolds = nfolds,
+    seed = seed
+  )
+  
+  
+  # ---------------------------------------------------------------
+  # Convert LDA result to Fig3 format
+  # ---------------------------------------------------------------
+  
+  pheno_distance <- lda_result$summary %>%
+    transmute(
+      species1 = species_1,
+      species2 = species_2,
+      distance_pheno = phenotypic_divergence
+    )
+  
+  pheno_distance <- pheno_distance %>%
+    mutate(
+      species1 = species_info$Species[
+        match(
+          tolower(species1),
+          tolower(species_info$spec)
+        )
+      ],
+      species2 = species_info$Species[
+        match(
+          tolower(species2),
+          tolower(species_info$spec)
+        )
+      ]
+    )
+  
+  
+  # ---------------------------------------------------------------
+  # Add dataset / geographic information
+  # ---------------------------------------------------------------
+  
+  pheno_distance <- pheno_distance %>%
+    mutate(
+      level = level,
+      dataset = dataset
+    )
+  
+  
+  if (dataset == "lab_571_left_noflash") {
+      pheno_distance$Location <- "all"
+  } else {
+      location_code <- sub(
+          "^lab_([A-Za-z]{3}).*$",
+          "\\1",
+          dataset
+      )
+
+      location_code <- tolower(
+          location_code
+      )
+
+      location_match <- geo_table$Locations[
+          tolower(
+              geo_table$geo
+          ) == location_code
+      ]
+
+
+      if (
+          length(location_match) == 0 ||
+          is.na(location_match[1])
+      ) {
+
+          stop(
+              "Could not match location code '",
+              location_code,
+              "' from dataset '",
+              dataset,
+              "' to geo_table."
+          )
+      }
+
+      pheno_distance$Location <- location_match[1]
+    }
+
+  
+  
+  # ---------------------------------------------------------------
+  # Final output
+  # ---------------------------------------------------------------
+  
+  pheno_distance %>%
+    select(
+      level,
+      Location,
+      species1,
+      species2,
+      distance_pheno
+    )
+}
+
+# ===============================================================
+# Read a simple LaTeX tabular table
+# ===============================================================
+read_latex_table <- function(file) {
+
+  lines <- readLines(
+    file,
+    warn = FALSE
+  )
+
+  # -------------------------------------------------------------
+  # Clean whitespace
+  # -------------------------------------------------------------
+
+  lines <- trimws(lines)
+
+  # -------------------------------------------------------------
+  # Keep only rows containing table data
+  # -------------------------------------------------------------
+
+  lines <- lines[
+    lines != "" &
+      !grepl("^\\\\begin\\{", lines) &
+      !grepl("^\\\\end\\{", lines) &
+      !grepl("^\\\\toprule", lines) &
+      !grepl("^\\\\midrule", lines) &
+      !grepl("^\\\\bottomrule", lines) &
+      !grepl("^\\\\addlinespace", lines)
+  ]
+
+  # -------------------------------------------------------------
+  # Remove LaTeX row ending: \\
+  # -------------------------------------------------------------
+
+  lines <- gsub(
+    "\\\\\\\\$",
+    "",
+    lines
+  )
+
+  lines <- trimws(lines)
+
+  # -------------------------------------------------------------
+  # Split rows using &
+  # -------------------------------------------------------------
+
+  rows <- strsplit(
+    lines,
+    "\\s*&\\s*"
+  )
+
+  # -------------------------------------------------------------
+  # Check that all rows have the same number of columns
+  # -------------------------------------------------------------
+
+  n_columns <- lengths(rows)
+
+  if (length(unique(n_columns)) != 1) {
+
+    stop(
+      "LaTeX table contains rows with different numbers of columns: ",
+      file
+    )
+  }
+
+  # -------------------------------------------------------------
+  # Convert to data frame
+  # -------------------------------------------------------------
+
+  out <- as.data.frame(
+    do.call(rbind, rows),
+    stringsAsFactors = FALSE
+  )
+
+  # -------------------------------------------------------------
+  # First row = column names
+  # -------------------------------------------------------------
+
+  names(out) <- trimws(
+    as.character(out[1, ])
+  )
+
+  out <- out[
+    -1,
+    ,
+    drop = FALSE
+  ]
+
+  # -------------------------------------------------------------
+  # Clean column names
+  # -------------------------------------------------------------
+
+  names(out) <- gsub(
+    "\\\\_",
+    "_",
+    names(out)
+  )
+
+  names(out) <- trimws(
+    names(out)
+  )
+
+  # -------------------------------------------------------------
+  # Clean cell values
+  # -------------------------------------------------------------
+
+  out[] <- lapply(
+    out,
+    function(x) {
+      trimws(as.character(x))
+    }
+  )
+
+  rownames(out) <- NULL
+
+  return(out)
+}
+
+
+# ===============================================================
+# Read genetic pairwise Fst distances from Tables S4 and S5
+# ===============================================================
+read_fst_tables <- function(
+    s4_file,
+    s5_file,
+    species_info,
+    geo_table,
+    species_code_col = "spec",
+    species_name_col = "Species",
+    geo_code_col = "geo",
+    location_name_col = "Locations") {
+
+  # -------------------------------------------------------------
+  # Check required columns
+  # -------------------------------------------------------------
+
+  required_species_cols <- c(
+    species_code_col,
+    species_name_col
+  )
+
+  missing_species_cols <- setdiff(
+    required_species_cols,
+    names(species_info)
+  )
+
+  if (length(missing_species_cols) > 0) {
+
+    stop(
+      "Missing column(s) in species_info: ",
+      paste(missing_species_cols, collapse = ", ")
+    )
+  }
+
+
+  required_geo_cols <- c(
+    geo_code_col,
+    location_name_col
+  )
+
+  missing_geo_cols <- setdiff(
+    required_geo_cols,
+    names(geo_table)
+  )
+
+  if (length(missing_geo_cols) > 0) {
+
+    stop(
+      "Missing column(s) in geo_table: ",
+      paste(missing_geo_cols, collapse = ", ")
+    )
+  }
+
+
+  # -------------------------------------------------------------
+  # Create species lookup table
+  # -------------------------------------------------------------
+
+  species_lookup <- data.frame(
+    code = tolower(
+      trimws(
+        as.character(
+          species_info[[species_code_col]]
+        )
+      )
+    ),
+
+    species_name = as.character(
+      species_info[[species_name_col]]
+    ),
+
+    stringsAsFactors = FALSE
+  )
+
+
+  # Check for duplicate species codes
+
+  if (anyDuplicated(species_lookup$code)) {
+
+    duplicated_codes <- unique(
+      species_lookup$code[
+        duplicated(species_lookup$code)
+      ]
+    )
+
+    stop(
+      "Duplicate species codes in species_info: ",
+      paste(duplicated_codes, collapse = ", ")
+    )
+  }
+
+
+  # -------------------------------------------------------------
+  # Helper: convert species codes to full names
+  # -------------------------------------------------------------
+
+  convert_species <- function(x) {
+
+    x_clean <- tolower(
+      trimws(
+        as.character(x)
+      )
+    )
+
+    result <- species_lookup$species_name[
+      match(
+        x_clean,
+        species_lookup$code
+      )
+    ]
+
+    # Stop if species codes are missing
+
+    if (any(is.na(result))) {
+
+      missing_codes <- unique(
+        x_clean[is.na(result)]
+      )
+
+      stop(
+        "Could not match species code(s): ",
+        paste(missing_codes, collapse = ", ")
+      )
+    }
+
+    return(result)
+  }
+
+
+  # -------------------------------------------------------------
+  # Create geographic lookup table
+  # -------------------------------------------------------------
+
+  geo_lookup <- data.frame(
+    geo_code = tolower(
+      trimws(
+        as.character(
+          geo_table[[geo_code_col]]
+        )
+      )
+    ),
+
+    Location = as.character(
+      geo_table[[location_name_col]]
+    ),
+
+    stringsAsFactors = FALSE
+  )
+
+
+  # Check for duplicate geographic codes
+
+  if (anyDuplicated(geo_lookup$geo_code)) {
+
+    duplicated_codes <- unique(
+      geo_lookup$geo_code[
+        duplicated(geo_lookup$geo_code)
+      ]
+    )
+
+    stop(
+      "Duplicate geographic codes in geo_table: ",
+      paste(duplicated_codes, collapse = ", ")
+    )
+  }
+
+
+  # =============================================================
+  # TABLE S4
+  # Pairwise Fst within locations
+  # =============================================================
+
+  s4 <- read_latex_table(
+    s4_file
+  )
+
+
+  # Check expected columns
+
+  required_s4_cols <- c(
+    "Location",
+    "Species1",
+    "Species2",
+    "Fst"
+  )
+
+  missing_s4_cols <- setdiff(
+    required_s4_cols,
+    names(s4)
+  )
+
+  if (length(missing_s4_cols) > 0) {
+
+    stop(
+      "Missing column(s) in Table S4: ",
+      paste(missing_s4_cols, collapse = ", ")
+    )
+  }
+
+
+  # Convert Fst to numeric
+
+  s4$Fst <- as.numeric(
+    s4$Fst
+  )
+
+  if (any(is.na(s4$Fst))) {
+
+    warning(
+      "Some Fst values in Table S4 could not be converted to numeric."
+    )
+  }
+
+
+  # Convert location codes
+
+  location_code <- tolower(
+    trimws(
+      s4$Location
+    )
+  )
+
+  location_full <- geo_lookup$Location[
+    match(
+      location_code,
+      geo_lookup$geo_code
+    )
+  ]
+
+  if (any(is.na(location_full))) {
+
+    missing_locations <- unique(
+      location_code[
+        is.na(location_full)
+      ]
+    )
+
+    stop(
+      "Could not match location code(s) from Table S4: ",
+      paste(missing_locations, collapse = ", ")
+    )
+  }
+
+
+  # Standardize S4
+
+  s4_out <- data.frame(
+    level = "location",
+
+    Location = location_full,
+
+    species1 = convert_species(
+      s4$Species1
+    ),
+
+    species2 = convert_species(
+      s4$Species2
+    ),
+
+    distance_geno = s4$Fst,
+
+    stringsAsFactors = FALSE
+  )
+
+
+  # =============================================================
+  # TABLE S5
+  # Pairwise Fst across all locations
+  # =============================================================
+
+  s5 <- read_latex_table(
+    s5_file
+  )
+
+
+  # Check expected columns
+
+  required_s5_cols <- c(
+    "Species_pair",
+    "Fst"
+  )
+
+  missing_s5_cols <- setdiff(
+    required_s5_cols,
+    names(s5)
+  )
+
+  if (length(missing_s5_cols) > 0) {
+
+    stop(
+      "Missing column(s) in Table S5: ",
+      paste(missing_s5_cols, collapse = ", ")
+    )
+  }
+
+
+  # -------------------------------------------------------------
+  # Split species pairs
+  # -------------------------------------------------------------
+
+  species_pair <- trimws(
+    s5$Species_pair
+  )
+
+  pair_split <- strsplit(
+    species_pair,
+    "\\s*-\\s*"
+  )
+
+
+  # Check that every pair has exactly two species
+
+  if (any(lengths(pair_split) != 2)) {
+
+    bad_pairs <- species_pair[
+      lengths(pair_split) != 2
+    ]
+
+    stop(
+      "Could not parse species pair(s) in Table S5: ",
+      paste(bad_pairs, collapse = ", ")
+    )
+  }
+
+
+  species1_code <- vapply(
+    pair_split,
+    function(x) trimws(x[1]),
+    character(1)
+  )
+
+  species2_code <- vapply(
+    pair_split,
+    function(x) trimws(x[2]),
+    character(1)
+  )
+
+
+  # Convert Fst to numeric
+
+  s5$Fst <- as.numeric(
+    s5$Fst
+  )
+
+  if (any(is.na(s5$Fst))) {
+
+    warning(
+      "Some Fst values in Table S5 could not be converted to numeric."
+    )
+  }
+
+
+  # Standardize S5
+
+  s5_out <- data.frame(
+    level = "all",
+
+    Location = "all",
+
+    species1 = convert_species(
+      species1_code
+    ),
+
+    species2 = convert_species(
+      species2_code
+    ),
+
+    distance_geno = s5$Fst,
+
+    stringsAsFactors = FALSE
+  )
+
+
+  # =============================================================
+  # Combine Tables S4 and S5
+  # =============================================================
+
+  geno_distances_fst <- dplyr::bind_rows(
+    s4_out,
+    s5_out
+  )
+
+
+  # =============================================================
+  # Normalize species pair order
+  #
+  # This ensures:
+  #
+  # species A - species B
+  #
+  # is treated the same as:
+  #
+  # species B - species A
+  # =============================================================
+
+  species_pair_sorted <- t(
+    apply(
+      geno_distances_fst[
+        c("species1", "species2")
+      ],
+      1,
+      sort
+    )
+  )
+
+  geno_distances_fst$species1 <- species_pair_sorted[, 1]
+
+  geno_distances_fst$species2 <- species_pair_sorted[, 2]
+
+
+  # =============================================================
+  # Check for duplicate comparisons
+  # =============================================================
+
+  duplicate_pairs <- geno_distances_fst %>%
+    dplyr::count(
+      level,
+      Location,
+      species1,
+      species2
+    ) %>%
+    dplyr::filter(
+      n > 1
+    )
+
+  if (nrow(duplicate_pairs) > 0) {
+
+    warning(
+      "Duplicate species comparisons detected in Fst tables."
+    )
+  }
+
+
+  # =============================================================
+  # Final output
+  # =============================================================
+
+  geno_distances_fst <- geno_distances_fst %>%
+    dplyr::select(
+      level,
+      Location,
+      species1,
+      species2,
+      distance_geno
+    )
+
+  return(
+    geno_distances_fst
+  )
+}
+
+
+plot_speciation_hypercube <- function(
+    data,
+    label_location = TRUE) {
+
+  # ------------------------------------------------------------
+  # Species-pair labels
+  # ------------------------------------------------------------
+
+  data <- data %>%
+    dplyr::mutate(
+      species_pair = paste(
+        species1,
+        species2,
+        sep = " – "
+      )
+    )
+
+  if (label_location) {
+    data <- data %>%
+      dplyr::mutate(
+        label = ifelse(
+          level == "location",
+          paste0(
+            species_pair,
+            " (",
+            Location,
+            ")"
+          ),
+          species_pair
+        )
+      )
+  } else {
+    data$label <- data$species_pair
+  }
+
+
+  # ------------------------------------------------------------
+  # Split data
+  # ------------------------------------------------------------
+
+  data_all <- data %>%
+    dplyr::filter(level == "all")
+
+  data_location <- data %>%
+    dplyr::filter(level == "location")
+
+
+  # ------------------------------------------------------------
+  # Create plot
+  # ------------------------------------------------------------
+
+  p <- plotly::plot_ly()
+
+
+  # All locations
+  if (nrow(data_all) > 0) {
+
+    p <- p %>%
+      plotly::add_markers(
+        data = data_all,
+
+        x = ~distance_geno,
+        y = ~distance_pheno,
+        z = ~distance_asso,
+
+        name = "All locations",
+
+        text = ~label,
+
+        hovertemplate =
+          paste0(
+            "<b>%{text}</b><br>",
+            "Genetic: %{x:.3f}<br>",
+            "Phenotypic: %{y:.3f}<br>",
+            "RI: %{z:.3f}",
+            "<extra></extra>"
+          ),
+
+        marker = list(
+          size = 6
+        )
+      )
+  }
+
+
+  # Location comparisons
+  if (nrow(data_location) > 0) {
+
+    p <- p %>%
+      plotly::add_markers(
+        data = data_location,
+
+        x = ~distance_geno,
+        y = ~distance_pheno,
+        z = ~distance_asso,
+
+        name = "Location",
+
+        text = ~label,
+
+        hovertemplate =
+          paste0(
+            "<b>%{text}</b><br>",
+            "Genetic: %{x:.3f}<br>",
+            "Phenotypic: %{y:.3f}<br>",
+            "RI: %{z:.3f}",
+            "<extra></extra>"
+          ),
+
+        marker = list(
+          size = 5,
+          symbol = "diamond"
+        )
+      )
+  }
+
+
+  # ------------------------------------------------------------
+  # Layout
+  # ------------------------------------------------------------
+
+  p <- p %>%
+    plotly::layout(
+      scene = list(
+
+        xaxis = list(
+          title = "Genetic divergence (Fst)",
+          range = c(0, 0.15)
+        ),
+
+        yaxis = list(
+          title = "Phenotypic divergence",
+          range = c(0, 1)
+        ),
+
+        zaxis = list(
+          title = "Reproductive isolation",
+          range = c(0.5, 1)
+        ),
+
+        aspectmode = "cube"
+      ),
+
+      legend = list(
+        title = list(
+          text = "Comparison"
+        )
+      )
+    )
+
+  return(p)
+}
+
+
+plot_speciation_paper <- function(data, species_meta) {
+
+  # ----------------------------------------------------------
+  # Clean data
+  # ----------------------------------------------------------
+
+  data <- data %>%
+    dplyr::mutate(
+      species1 = trimws(as.character(species1)),
+      species2 = trimws(as.character(species2)),
+      Location = trimws(as.character(Location))
+    )
+
+  species_meta <- species_meta %>%
+    dplyr::mutate(
+      Species = trimws(as.character(Species))
+    )
+
+
+  # ----------------------------------------------------------
+  # Species logo lookup
+  # ----------------------------------------------------------
+
+  logo_map <- setNames(
+    species_meta$link,
+    species_meta$Species
+  )
+
+
+  # ----------------------------------------------------------
+  # Build species labels
+  # ----------------------------------------------------------
+
+  data <- data %>%
+    dplyr::mutate(
+
+      species_label = paste0(
+        "<span style='display:inline-block; text-align:center;'>",
+        "<img src='", logo_map[species1], "' width='22'><br>",
+        "<i>H. ", species1, "</i>",
+        "</span>",
+        "&nbsp;&nbsp;&nbsp;&nbsp;",
+        "<span style='display:inline-block; text-align:center;'>",
+        "<img src='", logo_map[species2], "' width='22'><br>",
+        "<i>H. ", species2, "</i>",
+        "</span>"
+      ),
+
+      label = ifelse(
+        level == "location",
+        paste0(
+          species_label,
+          "<br><b>",
+          Location,
+          "</b>"
+        ),
+        species_label
+      )
+    )
+
+
+  # ----------------------------------------------------------
+  # Create horizontal label dodging
+  #
+  # Only labels that are close together are shifted.
+  # ----------------------------------------------------------
+
+  data <- data %>%
+    dplyr::group_by(level) %>%
+    dplyr::arrange(distance_asso) %>%
+    dplyr::mutate(
+
+      # Distance from previous point on x-axis
+      x_distance = distance_asso - dplyr::lag(distance_asso),
+
+      # Identify groups of nearby points
+      close_group = cumsum(
+        dplyr::coalesce(x_distance < 0.07, FALSE)
+      ),
+
+      # Alternate labels horizontally within close groups
+      dodge_position = dplyr::case_when(
+        dplyr::n() == 1 ~ 0,
+
+        row_number() %% 3 == 1 ~ -0.035,
+        row_number() %% 3 == 2 ~  0,
+        TRUE                   ~  0.035
+      )
+
+    ) %>%
+    dplyr::ungroup()
+
+
+  # ----------------------------------------------------------
+  # Plot
+  # ----------------------------------------------------------
+
+  ggplot2::ggplot(
+    data,
+    ggplot2::aes(
+      x = distance_asso + dodge_position,
+      y = distance_geno,
+      colour = distance_pheno
+    )
+  ) +
+
+    # --------------------------------------------------------
+    # Points
+    # --------------------------------------------------------
+
+    ggplot2::geom_point(
+      ggplot2::aes(
+        x = distance_asso,
+        y = distance_geno
+      ),
+      size = 3,
+      alpha = 0.9
+    ) +
+
+    # --------------------------------------------------------
+    # Labels
+    # --------------------------------------------------------
+
+    ggtext::geom_textbox(
+      ggplot2::aes(
+        y = distance_geno + 0.012,
+        label = label
+      ),
+      colour = "black",
+      fill = NA,
+      box.colour = NA,
+      width = grid::unit(1.5, "inch"),
+      halign = 0.5,
+      valign = 0,
+      size = 2.2
+    ) +
+
+    # --------------------------------------------------------
+    # Phenotypic divergence
+    # --------------------------------------------------------
+
+    ggplot2::scale_colour_viridis_c(
+      name = "Phenotypic divergence",
+      limits = c(0, 1),
+      breaks = seq(0, 1, 0.2),
+      oob = scales::squish
+    ) +
+
+    # --------------------------------------------------------
+    # X axis
+    # --------------------------------------------------------
+
+    ggplot2::scale_x_continuous(
+      name = "Reproductive isolation",
+      limits = c(0.5, 1),
+      breaks = seq(
+        0.5,
+        1,
+        0.1
+      ),
+      expand = ggplot2::expansion(
+        mult = c(
+          0.02,
+          0.08
+        )
+      )
+    ) +
+
+    # --------------------------------------------------------
+    # Y axis
+    # --------------------------------------------------------
+
+    ggplot2::scale_y_continuous(
+      name = "Genetic divergence (Fst)",
+      limits = c(0, 0.135),
+      breaks = c(
+        0,
+        0.025,
+        0.05,
+        0.075,
+        0.10,
+        0.125
+      ),
+      expand = ggplot2::expansion(
+        mult = c(
+          0.02,
+          0.15
+        )
+      )
+    ) +
+
+    # --------------------------------------------------------
+    # Different y limits for the two panels
+    # --------------------------------------------------------
+
+    ggplot2::facet_wrap(
+      ~ level,
+      nrow = 1,
+      scales = "free_y",
+      labeller = ggplot2::as_labeller(
+        c(
+          all = "Between species",
+          location = "Between sympatric species"
+        )
+      )
+    ) +
+
+    # --------------------------------------------------------
+    # Theme
+    # --------------------------------------------------------
+
+    ggplot2::theme_classic(
+      base_size = 10
+    ) +
+
+    ggplot2::theme(
+
+      strip.background =
+        ggplot2::element_blank(),
+
+      strip.text =
+        ggplot2::element_text(
+          face = "bold",
+          size = 12
+        ),
+
+      axis.title =
+        ggplot2::element_text(
+          size = 11
+        ),
+
+      axis.text =
+        ggplot2::element_text(
+          size = 9
+        ),
+
+      legend.title =
+        ggplot2::element_text(
+          size = 10
+        ),
+
+      legend.text =
+        ggplot2::element_text(
+          size = 9
+        )
+    )
+}
+
+plot_speciation_paper2 <- function(data, species_meta) {
+
+  # ----------------------------------------------------------
+  # Clean data
+  # ----------------------------------------------------------
+
+  data <- data %>%
+    dplyr::mutate(
+      species1 = trimws(as.character(species1)),
+      species2 = trimws(as.character(species2)),
+      Location = trimws(as.character(Location))
+    )
+
+  species_meta <- species_meta %>%
+    dplyr::mutate(
+      Species = trimws(as.character(Species))
+    )
+
+
+  # ----------------------------------------------------------
+  # Species logo lookup
+  # ----------------------------------------------------------
+
+  logo_map <- setNames(
+    species_meta$link,
+    species_meta$Species
+  )
+
+
+  # ----------------------------------------------------------
+  # Build species labels
+  #
+  #       [logo]          [logo]
+  #    H. aberrans     H. luciae
+  # ----------------------------------------------------------
+
+  data <- data %>%
+    dplyr::mutate(
+
+      species_label = paste0(
+        "<span style='display:inline-block; text-align:center;'>",
+        "<img src='", logo_map[species1], "' width='22'><br>",
+        "<i>H. ", species1, "</i>",
+        "</span>",
+        "&nbsp;&nbsp;&nbsp;&nbsp;",
+        "<span style='display:inline-block; text-align:center;'>",
+        "<img src='", logo_map[species2], "' width='22'><br>",
+        "<i>H. ", species2, "</i>",
+        "</span>"
+      ),
+
+      label = ifelse(
+        level == "location",
+        paste0(
+          species_label,
+          "<br><b>",
+          Location,
+          "</b>"
+        ),
+        species_label
+      )
+    )
+
+
+  # ----------------------------------------------------------
+  # Horizontal label dodging
+  #
+  # Only labels close together are shifted horizontally.
+  # ----------------------------------------------------------
+
+  data <- data %>%
+    dplyr::group_by(level) %>%
+    dplyr::arrange(distance_pheno) %>%
+    dplyr::mutate(
+
+      previous_x = dplyr::lag(distance_pheno),
+
+      close_to_previous =
+        !is.na(previous_x) &
+        (distance_pheno - previous_x < 0.12),
+
+      dodge_position = dplyr::case_when(
+
+        !close_to_previous ~ 0,
+
+        close_to_previous &
+          !dplyr::lag(close_to_previous, default = FALSE) ~ -0.07,
+
+        close_to_previous ~ 0.07,
+
+        TRUE ~ 0
+      )
+
+    ) %>%
+    dplyr::ungroup()
+
+
+  # ----------------------------------------------------------
+  # Plot
+  # ----------------------------------------------------------
+
+  ggplot2::ggplot(
+    data,
+    ggplot2::aes(
+      x = distance_pheno,
+      y = distance_geno,
+      colour = distance_asso
+    )
+  ) +
+
+    # --------------------------------------------------------
+    # Points
+    # --------------------------------------------------------
+
+    ggplot2::geom_point(
+      size = 3,
+      alpha = 0.9
+    ) +
+
+    # --------------------------------------------------------
+    # Species labels
+    # --------------------------------------------------------
+
+    ggtext::geom_textbox(
+      ggplot2::aes(
+        x = distance_pheno + dodge_position,
+        y = distance_geno + 0.010,
+        label = label
+      ),
+      colour = "black",
+      fill = NA,
+      box.colour = NA,
+      width = grid::unit(1.5, "inch"),
+      halign = 0.5,
+      valign = 0,
+      size = 2.2,
+      inherit.aes = FALSE
+    ) +
+
+    # --------------------------------------------------------
+    # Reproductive isolation colour scale
+    # --------------------------------------------------------
+
+    ggplot2::scale_colour_viridis_c(
+      name = "Reproductive isolation",
+      limits = c(0.5, 1),
+      breaks = seq(
+        0.5,
+        1,
+        0.1
+      ),
+      oob = scales::squish
+    ) +
+
+    # --------------------------------------------------------
+    # X axis
+    # --------------------------------------------------------
+
+    ggplot2::scale_x_continuous(
+      name = "Phenotypic divergence",
+      limits = c(0, 1),
+      breaks = seq(
+        0,
+        1,
+        0.2
+      ),
+      expand = ggplot2::expansion(
+        mult = c(
+          0.02,
+          0.10
+        )
+      )
+    ) +
+
+    # --------------------------------------------------------
+    # Y axis
+    # --------------------------------------------------------
+
+    ggplot2::scale_y_continuous(
+      name = "Genetic divergence (Fst)",
+      breaks = c(
+        0,
+        0.025,
+        0.05,
+        0.075,
+        0.10,
+        0.125
+      ),
+      expand = ggplot2::expansion(
+        mult = c(
+          0.02,
+          0.20
+        )
+      )
+    ) +
+
+    # --------------------------------------------------------
+    # Panels
+    # --------------------------------------------------------
+
+    ggplot2::facet_wrap(
+      ~ level,
+      nrow = 1,
+      scales = "free_y",
+      labeller = ggplot2::as_labeller(
+        c(
+          all = "Between species",
+          location = "Between sympatric species"
+        )
+      )
+    ) +
+
+    # --------------------------------------------------------
+    # Theme
+    # --------------------------------------------------------
+
+    ggplot2::theme_classic(
+      base_size = 10
+    ) +
+
+    ggplot2::theme(
+
+      strip.background =
+        ggplot2::element_blank(),
+
+      strip.text =
+        ggplot2::element_text(
+          face = "bold",
+          size = 12
+        ),
+
+      axis.title =
+        ggplot2::element_text(
+          size = 11
+        ),
+
+      axis.text =
+        ggplot2::element_text(
+          size = 9
+        ),
+
+      legend.title =
+        ggplot2::element_text(
+          size = 10
+        ),
+
+      legend.text =
+        ggplot2::element_text(
+          size = 9
+        )
+    )
 }
