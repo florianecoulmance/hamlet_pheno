@@ -6841,44 +6841,7 @@ plot_speciation_paper2 <- function(data, species_meta) {
 
 
   # ----------------------------------------------------------
-  # Build species labels
-  #
-  #       [logo]          [logo]
-  #    H. aberrans     H. luciae
-  # ----------------------------------------------------------
-
-  data <- data %>%
-    dplyr::mutate(
-
-      species_label = paste0(
-        "<span style='display:inline-block; text-align:center;'>",
-        "<img src='", logo_map[species1], "' width='22'><br>",
-        "<i>H. ", species1, "</i>",
-        "</span>",
-        "&nbsp;&nbsp;&nbsp;&nbsp;",
-        "<span style='display:inline-block; text-align:center;'>",
-        "<img src='", logo_map[species2], "' width='22'><br>",
-        "<i>H. ", species2, "</i>",
-        "</span>"
-      ),
-
-      label = ifelse(
-        level == "location",
-        paste0(
-          species_label,
-          "<br><b>",
-          Location,
-          "</b>"
-        ),
-        species_label
-      )
-    )
-
-
-  # ----------------------------------------------------------
-  # Horizontal label dodging
-  #
-  # Only labels close together are shifted horizontally.
+  # Horizontal label positions
   # ----------------------------------------------------------
 
   data <- data %>%
@@ -6909,6 +6872,31 @@ plot_speciation_paper2 <- function(data, species_meta) {
 
 
   # ----------------------------------------------------------
+  # Species x positions
+  #
+  #       [logo]           [logo]
+  #    H. aberrans       H. luciae
+  # ----------------------------------------------------------
+
+  species_spacing <- 0.04
+
+  data <- data %>%
+    dplyr::mutate(
+
+      species1_x =
+        distance_pheno +
+        dodge_position -
+        species_spacing,
+
+      species2_x =
+        distance_pheno +
+        dodge_position +
+        species_spacing
+
+    )
+
+
+  # ----------------------------------------------------------
   # Plot
   # ----------------------------------------------------------
 
@@ -6931,37 +6919,97 @@ plot_speciation_paper2 <- function(data, species_meta) {
     ) +
 
     # --------------------------------------------------------
-    # Species labels
+    # Species 1 logo
     # --------------------------------------------------------
 
-    ggtext::geom_textbox(
+    ggimage::geom_image(
+      data = data,
       ggplot2::aes(
-        x = distance_pheno + dodge_position,
-        y = distance_geno + 0.010,
-        label = label
+        x = species1_x,
+        y = distance_geno + 0.012,
+        image = logo_map[species1]
       ),
-      colour = "black",
-      fill = NA,
-      box.colour = NA,
-      width = grid::unit(1.5, "inch"),
-      halign = 0.5,
-      valign = 0,
-      size = 2.2,
+      size = 0.045,
       inherit.aes = FALSE
     ) +
 
     # --------------------------------------------------------
-    # Reproductive isolation colour scale
+    # Species 2 logo
     # --------------------------------------------------------
 
-    ggplot2::scale_colour_viridis_c(
-      name = "Reproductive isolation",
-      limits = c(0.5, 1),
-      breaks = seq(
-        0.5,
-        1,
-        0.1
+    ggimage::geom_image(
+      data = data,
+      ggplot2::aes(
+        x = species2_x,
+        y = distance_geno + 0.012,
+        image = logo_map[species2]
       ),
+      size = 0.045,
+      inherit.aes = FALSE
+    ) +
+
+    # --------------------------------------------------------
+    # Species 1 name
+    # --------------------------------------------------------
+
+    ggplot2::geom_text(
+      data = data,
+      ggplot2::aes(
+        x = species1_x,
+        y = distance_geno + 0.004,
+        label = paste0("H. ", species1)
+      ),
+      colour = "black",
+      fontface = "italic",
+      size = 2.5,
+      inherit.aes = FALSE
+    ) +
+
+    # --------------------------------------------------------
+    # Species 2 name
+    # --------------------------------------------------------
+
+    ggplot2::geom_text(
+      data = data,
+      ggplot2::aes(
+        x = species2_x,
+        y = distance_geno + 0.004,
+        label = paste0("H. ", species2)
+      ),
+      colour = "black",
+      fontface = "italic",
+      size = 2.5,
+      inherit.aes = FALSE
+    ) +
+
+    # --------------------------------------------------------
+    # Location labels
+    # --------------------------------------------------------
+
+    ggplot2::geom_text(
+      data = data %>%
+        dplyr::filter(level == "location"),
+      ggplot2::aes(
+        x = distance_pheno + dodge_position,
+        y = distance_geno - 0.009,
+        label = Location
+      ),
+      colour = "black",
+      fontface = "bold",
+      size = 2.5,
+      inherit.aes = FALSE
+    ) +
+
+    # --------------------------------------------------------
+    # Purple reproductive-isolation gradient
+    # --------------------------------------------------------
+
+    ggplot2::scale_colour_gradient(
+      name = "Reproductive isolation",
+      low = "#E6D9F2",
+      high = "#542788",
+      limits = c(0.5, 1),
+      breaks = seq(0.5, 1, 0.1),
       oob = scales::squish
     ) +
 
@@ -6970,19 +7018,7 @@ plot_speciation_paper2 <- function(data, species_meta) {
     # --------------------------------------------------------
 
     ggplot2::scale_x_continuous(
-      name = "Phenotypic divergence"#,
-      # limits = c(0, 1),
-      # breaks = seq(
-      #   0,
-      #   1,
-      #   0.2
-      # ),
-      # expand = ggplot2::expansion(
-      #   mult = c(
-      #     0.02,
-      #     0.10
-      #   )
-      # )
+      name = "Phenotypic divergence"
     ) +
 
     # --------------------------------------------------------
@@ -6990,21 +7026,7 @@ plot_speciation_paper2 <- function(data, species_meta) {
     # --------------------------------------------------------
 
     ggplot2::scale_y_continuous(
-      name = "Genetic divergence (Fst)"#,
-      # breaks = c(
-      #   0,
-      #   0.025,
-      #   0.05,
-      #   0.075,
-      #   0.10,
-      #   0.125
-      # ),
-      # expand = ggplot2::expansion(
-      #   mult = c(
-      #     0.02,
-      #     0.20
-      #   )
-      # )
+      name = "Genetic divergence (Fst)"
     ) +
 
     # --------------------------------------------------------
@@ -7028,38 +7050,26 @@ plot_speciation_paper2 <- function(data, species_meta) {
     # --------------------------------------------------------
 
     ggplot2::theme_classic(
-      base_size = 10
+      base_size = 5
     ) +
 
     ggplot2::theme(
-
-      strip.background =
-        ggplot2::element_blank(),
-
-      strip.text =
-        ggplot2::element_text(
-          face = "bold",
-          size = 12
-        ),
-
-      axis.title =
-        ggplot2::element_text(
-          size = 11
-        ),
-
-      axis.text =
-        ggplot2::element_text(
-          size = 9
-        ),
-
-      legend.title =
-        ggplot2::element_text(
-          size = 10
-        ),
-
-      legend.text =
-        ggplot2::element_text(
-          size = 9
-        )
+      strip.background = ggplot2::element_blank(),
+      strip.text = ggplot2::element_text(
+        face = "bold",
+        size = 12
+      ),
+      axis.title = ggplot2::element_text(
+        size = 11
+      ),
+      axis.text = ggplot2::element_text(
+        size = 9
+      ),
+      legend.title = ggplot2::element_text(
+        size = 10
+      ),
+      legend.text = ggplot2::element_text(
+        size = 9
+      )
     )
 }
