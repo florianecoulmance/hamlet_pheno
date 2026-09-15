@@ -601,12 +601,12 @@ speciation_hypercube_data2 <- pheno_distances %>%
   )
 
 hypercube2 <- plot_speciation_hypercube(
-  speciation_hypercube_data
+  speciation_hypercube_data2
 )
 hypercube2
 
 hypercube_paper2 <- plot_speciation_paper2(
-  speciation_hypercube_data,
+  speciation_hypercube_data2,
   species_info
 )
 hypercube_paper2
