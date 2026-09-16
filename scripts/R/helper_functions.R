@@ -7235,7 +7235,6 @@ plot_speciation_paper <- function(
   return(p)
 }
 
-
 plot_speciation_paper2 <- function(
     data,
     species_meta,
@@ -7290,14 +7289,12 @@ plot_speciation_paper2 <- function(
   # ============================================================
   # 4. Function to create label positions
   #
-  # Every pairwise comparison is treated in exactly the same way.
+  # Every pairwise comparison is treated identically.
   #
-  # The label box starts close to its associated point.
-  # If another box is already occupying that space, the box is
-  # progressively moved away until a non-overlapping position
-  # is found.
+  # Boxes are placed close to their corresponding points.
+  # If boxes overlap, they are progressively displaced.
   #
-  # There is NO RI-based positioning.
+  # RI is NOT used for positioning.
   # ============================================================
 
   make_labels <- function(df) {
@@ -7307,7 +7304,7 @@ plot_speciation_paper2 <- function(
     }
 
     # ----------------------------------------------------------
-    # 4.1 Calculate data ranges
+    # 4.1 Calculate actual axis ranges
     # ----------------------------------------------------------
 
     x_range <- diff(
@@ -7325,22 +7322,36 @@ plot_speciation_paper2 <- function(
     )
 
     if (!is.finite(x_range) || x_range <= 0) {
-      x_range <- 1
+      x_range <- max(
+        abs(df$distance_pheno),
+        na.rm = TRUE
+      )
+
+      if (!is.finite(x_range) || x_range <= 0) {
+        x_range <- 1
+      }
     }
 
     if (!is.finite(y_range) || y_range <= 0) {
-      y_range <- 1
+      y_range <- max(
+        abs(df$distance_geno),
+        na.rm = TRUE
+      )
+
+      if (!is.finite(y_range) || y_range <= 0) {
+        y_range <- 1
+      }
     }
 
     # ----------------------------------------------------------
-    # 4.2 Define box dimensions relative to the new axes
+    # 4.2 Define box dimensions
     #
-    # These are percentages of the actual data range, so the
-    # function does not assume axes between 0 and 1.
+    # These are fractions of the actual axis ranges.
+    # This works whether the axes range from 0-1 or 0-100.
     # ----------------------------------------------------------
 
-    box_width <- x_range * 10
-    box_height <- y_range * 10
+    box_width <- x_range * 0.035
+    box_height <- y_range * 0.035
 
     # ----------------------------------------------------------
     # 4.3 Prepare label information
@@ -7355,30 +7366,30 @@ plot_speciation_paper2 <- function(
       )
 
     # ----------------------------------------------------------
-    # 4.4 Initial box positions
+    # 4.4 Initial positions
     #
-    # Start each box directly on its associated point.
+    # Every box initially sits directly on its point.
     # ----------------------------------------------------------
 
     df$box_x <- df$distance_pheno
     df$box_y <- df$distance_geno
 
     # ----------------------------------------------------------
-    # 4.5 Define minimum spacing between boxes
+    # 4.5 Collision spacing
     # ----------------------------------------------------------
 
-    min_x_spacing <- box_width * 10.10
-    min_y_spacing <- box_height * 10.25
+    min_x_spacing <- box_width * 1.15
+    min_y_spacing <- box_height * 1.35
 
     # ----------------------------------------------------------
-    # 4.6 Keep track of already placed boxes
+    # 4.6 Store positions of already placed boxes
     # ----------------------------------------------------------
 
     placed_x <- numeric(0)
     placed_y <- numeric(0)
 
     # ==========================================================
-    # 4.7 Place each box
+    # 4.7 Place boxes
     # ==========================================================
 
     for (i in seq_len(nrow(df))) {
@@ -7389,11 +7400,7 @@ plot_speciation_paper2 <- function(
       position_found <- FALSE
 
       # --------------------------------------------------------
-      # Candidate positions
-      #
-      # First try positions immediately around the point.
-      # The point itself is tried first so that isolated labels
-      # remain directly attached to their points.
+      # Candidate positions close to the point
       # --------------------------------------------------------
 
       candidate_positions <- data.frame(
@@ -7402,22 +7409,29 @@ plot_speciation_paper2 <- function(
           original_x,
           original_x,
           original_x,
-          original_x + box_width * 10.25,
-          original_x - box_width * 10.25,
-          original_x + box_width * 10.25,
-          original_x - box_width * 10.25,
-          original_x + box_width * 20.25,
-          original_x - box_width * 20.25
+
+          original_x + box_width * 1.4,
+          original_x - box_width * 1.4,
+
+          original_x + box_width * 1.4,
+          original_x - box_width * 1.4,
+
+          original_x + box_width * 2.5,
+          original_x - box_width * 2.5
         ),
 
         y = c(
           original_y,
-          original_y + box_height * 10.25,
-          original_y - box_height * 10.25,
-          original_y + box_height * 10.25,
-          original_y + box_height * 10.25,
-          original_y - box_height * 10.25,
-          original_y - box_height * 10.25,
+
+          original_y + box_height * 1.4,
+          original_y - box_height * 1.4,
+
+          original_y + box_height * 1.4,
+          original_y + box_height * 1.4,
+
+          original_y - box_height * 1.4,
+          original_y - box_height * 1.4,
+
           original_y,
           original_y
         )
@@ -7466,7 +7480,7 @@ plot_speciation_paper2 <- function(
       }
 
       # ========================================================
-      # 4.8 Expand search if necessary
+      # 4.8 Expand search when necessary
       # ========================================================
 
       if (!position_found) {
@@ -7475,35 +7489,33 @@ plot_speciation_paper2 <- function(
 
         while (
           !position_found &&
-          multiplier <= 50
+          multiplier <= 30
         ) {
 
           candidate_positions <- data.frame(
 
             x = c(
               original_x,
+
               original_x,
-              original_x,
-              original_x,
+
               original_x + box_width * multiplier,
               original_x - box_width * multiplier
             ),
 
             y = c(
               original_y + box_height * multiplier,
+
               original_y - box_height * multiplier,
-              original_y,
-              original_y,
+
               original_y,
               original_y
             )
           )
 
-          for (
-            j in seq_len(
-              nrow(candidate_positions)
-            )
-          ) {
+          for (j in seq_len(
+            nrow(candidate_positions)
+          )) {
 
             test_x <- candidate_positions$x[j]
             test_y <- candidate_positions$y[j]
@@ -7534,7 +7546,7 @@ plot_speciation_paper2 <- function(
             }
           }
 
-          multiplier <- multiplier + 20
+          multiplier <- multiplier + 2
         }
       }
 
@@ -7587,22 +7599,22 @@ plot_speciation_paper2 <- function(
         # Logo positions
         # ------------------------------------------------------
 
-        species1_x = box_x - box_width * 10.23,
-        species2_x = box_x + box_width * 10.23,
+        species1_x = box_x - box_width * 0.23,
+        species2_x = box_x + box_width * 0.23,
 
-        logo_y = box_y + box_height * 10.18,
+        logo_y = box_y + box_height * 0.18,
 
         # ------------------------------------------------------
-        # Species-name positions
+        # Species names
         # ------------------------------------------------------
 
-        name_y = box_y - box_height * 10.20,
+        name_y = box_y - box_height * 0.20,
 
         # ------------------------------------------------------
         # Location label
         # ------------------------------------------------------
 
-        location_y = box_ymax + box_height * 10.18,
+        location_y = box_ymax + box_height * 0.20,
 
         # ------------------------------------------------------
         # Logo paths
@@ -7633,7 +7645,7 @@ plot_speciation_paper2 <- function(
   )
 
   # ============================================================
-  # 6. Function to create a plotting panel
+  # 6. Function to create plotting panel
   # ============================================================
 
   make_panel <- function(
@@ -7681,8 +7693,8 @@ plot_speciation_paper2 <- function(
       na.rm = TRUE
     )
 
-    x_padding <- diff(x_limits) * 10.05
-    y_padding <- diff(y_limits) * 10.05
+    x_padding <- diff(x_limits) * 0.05
+    y_padding <- diff(y_limits) * 0.05
 
     if (
       !is.finite(x_padding) ||
@@ -7718,7 +7730,7 @@ plot_speciation_paper2 <- function(
         aes(
           colour = distance_asso
         ),
-        size = 10,
+        size = 2.5,
         alpha = 0.9
       ) +
 
@@ -7894,24 +7906,24 @@ plot_speciation_paper2 <- function(
     p <- p +
 
       theme_classic(
-        base_size = 20
+        base_size = 10
       ) +
 
       theme(
 
         plot.title = element_text(
-          size = 20,
+          size = 11,
           face = "bold",
           hjust = 0
         ),
 
         axis.title = element_text(
-          size = 20,
+          size = 10,
           colour = "black"
         ),
 
         axis.text = element_text(
-          size = 15,
+          size = 8,
           colour = "black"
         ),
 
@@ -7921,11 +7933,11 @@ plot_speciation_paper2 <- function(
         ),
 
         legend.title = element_text(
-          size = 18
+          size = 8
         ),
 
         legend.text = element_text(
-          size = 15
+          size = 7
         ),
 
         legend.position = c(
