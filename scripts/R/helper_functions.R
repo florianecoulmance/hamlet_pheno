@@ -6427,21 +6427,45 @@ plot_speciation_hypercube <- function(
     )
 
   if (label_location) {
+
     data <- data %>%
       dplyr::mutate(
         label = ifelse(
           level == "location",
+
           paste0(
-            species_pair,
-            " (",
+            "<i>H. ",
+            species1,
+            "</i> – <i>H. ",
+            species2,
+            "</i> ",
+            "<b>(",
             Location,
-            ")"
+            ")</b>"
           ),
-          species_pair
+
+          paste0(
+            "<i>H. ",
+            species1,
+            "</i> – <i>H. ",
+            species2,
+            "</i>"
+          )
         )
       )
+
   } else {
-    data$label <- data$species_pair
+
+    data <- data %>%
+      dplyr::mutate(
+        label = paste0(
+          "<i>H. ",
+          species1,
+          "</i> – <i>H. ",
+          species2,
+          "</i>"
+        )
+      )
   }
 
 
@@ -6480,7 +6504,7 @@ plot_speciation_hypercube <- function(
 
         hovertemplate =
           paste0(
-            "<b>%{text}</b><br>",
+            "%{text}<br>",
             "Genetic: %{x:.3f}<br>",
             "Phenotypic: %{y:.3f}<br>",
             "RI: %{z:.3f}",
@@ -6489,7 +6513,7 @@ plot_speciation_hypercube <- function(
 
         marker = list(
           size = 5,
-          color = "#8C5F2D"
+          color = "#D09F64"
         )
       )
   }
@@ -6512,7 +6536,7 @@ plot_speciation_hypercube <- function(
 
         hovertemplate =
           paste0(
-            "<b>%{text}</b><br>",
+            "%{text}<br>",
             "Genetic: %{x:.3f}<br>",
             "Phenotypic: %{y:.3f}<br>",
             "RI: %{z:.3f}",
@@ -6522,7 +6546,7 @@ plot_speciation_hypercube <- function(
         marker = list(
           size = 5,
           symbol = "diamond",
-          color = "#8F315D"
+          color = "#D06495"
         )
       )
   }
@@ -6563,7 +6587,8 @@ plot_speciation_hypercube <- function(
       legend = list(
         title = list(
           text = "Comparison"
-        )
+        ),
+        size = 6
       )
     )
 
@@ -6618,8 +6643,8 @@ plot_speciation_paper <- function(
   # 3. FIXED BOX SIZE
   # ============================================================
 
-  box_width  <- 0.08
-  box_height <- 0.002
+  box_width  <- 0.1
+  box_height <- 0.003
 
 
   # ============================================================
@@ -6671,7 +6696,7 @@ plot_speciation_paper <- function(
       if (panel == "all") {
 
         x_offset <- 0
-        y_offset <- 0.006
+        y_offset <- 0.009
 
       } else {
 
@@ -6698,6 +6723,7 @@ plot_speciation_paper <- function(
               y_offset,
               -y_offset
             )
+
         )
     }
 
@@ -6716,7 +6742,7 @@ plot_speciation_paper <- function(
 
     if (nrow(df_one) > 0) {
 
-      right_x <- 1.11
+      right_x <- 1.14
 
       if (nrow(df_one) == 1) {
 
@@ -6728,7 +6754,7 @@ plot_speciation_paper <- function(
         # while preserving the order of the points
 
         min_spacing <- if (panel == "all") {
-          0.006
+          0.01
         } else {
           0.007
         }
@@ -6756,7 +6782,7 @@ plot_speciation_paper <- function(
             y_mid - required_range / 2,
             y_mid + required_range / 2,
             length.out = nrow(df_one)
-          )
+          ) - ifelse(panel == "all", 0.04, 0)
         }
       }
 
@@ -6801,6 +6827,12 @@ plot_speciation_paper <- function(
 
         box_ymax =
           box_y + box_height / 2,
+        
+        segment_xend = ifelse(
+          ri_one,
+          box_xmin,
+          distance_asso
+        ),
 
         species1_x =
           box_x - box_width * 0.23,
@@ -6846,7 +6878,7 @@ plot_speciation_paper <- function(
   # ============================================================
 
   paper_theme <- theme_classic(
-    base_size = 9
+    base_size = 15
   ) +
   theme(
     axis.title = element_text(size = 20),
@@ -6879,7 +6911,8 @@ plot_speciation_paper <- function(
 
     legend.margin = margin(
       4, 4, 4, 4
-    )
+    ),
+    legend.title = element_text(size = 20)
   )
 
   # ============================================================
@@ -6923,7 +6956,7 @@ plot_speciation_paper <- function(
       aes(
         x = distance_asso,
         y = distance_geno,
-        xend = box_xmin - 0.05,
+        xend = segment_xend,
         yend = box_y
       ),
       inherit.aes = FALSE,
@@ -6938,15 +6971,15 @@ plot_speciation_paper <- function(
     geom_rect(
       data = labels_all,
       aes(
-        xmin = box_xmin,
-        xmax = box_xmax,
-        ymin = box_ymin - 0.0015,
-        ymax = box_ymax + 0.0015
+        xmin = box_xmin - 0.005,
+        xmax = box_xmax + 0.005,
+        ymin = box_ymin - 0.0025,
+        ymax = box_ymax + 0.0025
       ),
       inherit.aes = FALSE,
       fill = "white",
-      colour = "grey35",
-      linewidth = 0.3
+      colour = "grey45",
+      linewidth = 0.4
     ) +
 
     # ----------------------------------------------------------
@@ -6961,7 +6994,7 @@ plot_speciation_paper <- function(
         image = link1
       ),
       inherit.aes = FALSE,
-      size = 0.032
+      size = 0.042
     ) +
 
     ggimage::geom_image(
@@ -6972,7 +7005,7 @@ plot_speciation_paper <- function(
         image = link2
       ),
       inherit.aes = FALSE,
-      size = 0.032
+      size = 0.042
     ) +
 
     # ----------------------------------------------------------
@@ -6983,11 +7016,11 @@ plot_speciation_paper <- function(
       data = labels_all,
       aes(
         x = species1_x,
-        y = name_y - 0.001,
+        y = name_y - 0.0015,
         label = name1
       ),
       inherit.aes = FALSE,
-      size = 1.75,
+      size = 2,
       fontface = "italic"
     ) +
 
@@ -6995,11 +7028,11 @@ plot_speciation_paper <- function(
       data = labels_all,
       aes(
         x = species2_x,
-        y = name_y - 0.001,
+        y = name_y - 0.0015,
         label = name2
       ),
       inherit.aes = FALSE,
-      size = 1.75,
+      size = 2,
       fontface = "italic"
 
     ) +
@@ -7012,11 +7045,11 @@ plot_speciation_paper <- function(
 
     coord_cartesian(
       xlim = c(
-        0.5,
+        0.45,
         1.18
       ),
       ylim = c(
-        -0.012,
+        -0.1,
         0.15
       ),
       clip = "off"
@@ -7041,7 +7074,7 @@ plot_speciation_paper <- function(
       aes(
         colour = distance_pheno
       ),
-      size = 2.8
+      size = 4
     ) +
 
     # ----------------------------------------------------------
@@ -7066,7 +7099,7 @@ plot_speciation_paper <- function(
       aes(
         x = distance_asso,
         y = distance_geno,
-        xend = box_x,
+        xend = segment_xend,
         yend = box_y
       ),
       inherit.aes = FALSE,
@@ -7081,15 +7114,15 @@ plot_speciation_paper <- function(
     geom_rect(
       data = labels_location,
       aes(
-        xmin = box_xmin + 0.001,
-        xmax = box_xmax - 0.001,
+        xmin = box_xmin,
+        xmax = box_xmax,
         ymin = box_ymin - 0.001,
         ymax = box_ymax + 0.001
       ),
       inherit.aes = FALSE,
       fill = "white",
-      colour = "grey35",
-      linewidth = 0.5
+      colour = "grey45",
+      linewidth = 0.4
     ) +
 
     # ----------------------------------------------------------
@@ -7104,7 +7137,7 @@ plot_speciation_paper <- function(
         image = link1
       ),
       inherit.aes = FALSE,
-      size = 0.030
+      size = 0.042
     ) +
 
     ggimage::geom_image(
@@ -7115,7 +7148,7 @@ plot_speciation_paper <- function(
         image = link2
       ),
       inherit.aes = FALSE,
-      size = 0.030
+      size = 0.042
     ) +
 
     # ----------------------------------------------------------
@@ -7126,11 +7159,11 @@ plot_speciation_paper <- function(
       data = labels_location,
       aes(
         x = species1_x,
-        y = name_y - 0.0005,
+        y = name_y - 0.0006,
         label = name1
       ),
       inherit.aes = FALSE,
-      size = 1.75,
+      size = 3,
       fontface = "italic"
 
     ) +
@@ -7139,11 +7172,11 @@ plot_speciation_paper <- function(
       data = labels_location,
       aes(
         x = species2_x,
-        y = name_y - 0.0005,
+        y = name_y - 0.0006,
         label = name2
       ),
       inherit.aes = FALSE,
-      size = 1.75,
+      size = 3,
       fontface = "italic"
 
     ) +
@@ -7179,8 +7212,8 @@ plot_speciation_paper <- function(
             label = Location
           ),
           inherit.aes = FALSE,
-          size = 2.5,
-          colour = "grey35",
+          size = 5,
+          colour = "black",
           fontface = "bold"
         )
     }
