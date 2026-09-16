@@ -7350,8 +7350,8 @@ plot_speciation_paper2 <- function(
     # This works whether the axes range from 0-1 or 0-100.
     # ----------------------------------------------------------
 
-    box_width <- x_range * 0.055
-    box_height <- y_range * 0.055
+    box_width <- x_range * 0.085
+    box_height <- y_range * 0.075
 
     # ----------------------------------------------------------
     # 4.3 Prepare label information
@@ -7586,8 +7586,8 @@ plot_speciation_paper2 <- function(
         # Logo positions
         # ------------------------------------------------------
 
-        species1_x = box_x - box_width * 0.33,
-        species2_x = box_x + box_width * 0.33,
+        species1_x = box_x - box_width * 0.43,
+        species2_x = box_x + box_width * 0.43,
 
         logo_y = box_y + box_height * 0.18,
 
@@ -7643,7 +7643,9 @@ plot_speciation_paper2 <- function(
       colour_mid,
       colour_high,
       x_label,
-      y_label) {
+      y_label,
+      show_location = FALSE,
+      legend_pos = c(0.04, 0.96)) {
 
     if (nrow(df) == 0) {
 
@@ -7718,7 +7720,7 @@ plot_speciation_paper2 <- function(
         aes(
           colour = distance_asso
         ),
-        size = 2.5,
+        size = 3,
         alpha = 0.9
       ) +
 
@@ -7769,7 +7771,7 @@ plot_speciation_paper2 <- function(
           image = link1
         ),
         inherit.aes = FALSE,
-        size = 0.055
+        size = 0.045
       ) +
 
       ggimage::geom_image(
@@ -7780,7 +7782,7 @@ plot_speciation_paper2 <- function(
           image = link2
         ),
         inherit.aes = FALSE,
-        size = 0.055
+        size = 0.045
       ) +
 
       # ========================================================
@@ -7826,7 +7828,7 @@ plot_speciation_paper2 <- function(
     # ==========================================================
 
     if (
-      label_location &&
+      show_location &&
       "Location" %in% colnames(labels)
     ) {
 
@@ -7840,7 +7842,7 @@ plot_speciation_paper2 <- function(
             label = Location
           ),
           inherit.aes = FALSE,
-          size = 2.1,
+          size = 5,
           fontface = "bold",
           colour = "black",
           hjust = 0.5
@@ -7893,24 +7895,24 @@ plot_speciation_paper2 <- function(
     p <- p +
 
       theme_classic(
-        base_size = 10
+        base_size = 20
       ) +
 
       theme(
 
         plot.title = element_text(
-          size = 11,
+          size = 20,
           face = "bold",
           hjust = 0
         ),
 
         axis.title = element_text(
-          size = 10,
+          size = 20,
           colour = "black"
         ),
 
         axis.text = element_text(
-          size = 8,
+          size = 15,
           colour = "black"
         ),
 
@@ -7920,17 +7922,14 @@ plot_speciation_paper2 <- function(
         ),
 
         legend.title = element_text(
-          size = 8
+          size = 18
         ),
 
         legend.text = element_text(
-          size = 7
+          size = 15
         ),
 
-        legend.position = c(
-          0.04,
-          0.96
-        ),
+        legend.position = legend_pos,
 
         legend.justification = c(
           0,
@@ -7976,7 +7975,10 @@ plot_speciation_paper2 <- function(
 
     x_label = "Phenotypic divergence",
 
-    y_label = "Genetic divergence (Fst)"
+    y_label = "Genetic divergence (Fst)",
+    
+    show_location = FALSE,
+    legend_pos = c(0.04, 0.96)
   )
 
   # ============================================================
@@ -7999,7 +8001,10 @@ plot_speciation_paper2 <- function(
 
     x_label = "Phenotypic divergence",
 
-    y_label = "Genetic divergence (Fst)"
+    y_label = "Genetic divergence (Fst)",
+    
+    show_location = TRUE,
+    legend_pos = c(0.04, 0.04)
   )
 
   # ============================================================
