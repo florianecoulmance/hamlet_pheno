@@ -7350,8 +7350,8 @@ plot_speciation_paper2 <- function(
     # This works whether the axes range from 0-1 or 0-100.
     # ----------------------------------------------------------
 
-    box_width <- x_range * 0.035
-    box_height <- y_range * 0.035
+    box_width <- x_range * 0.055
+    box_height <- y_range * 0.055
 
     # ----------------------------------------------------------
     # 4.3 Prepare label information
@@ -7404,36 +7404,23 @@ plot_speciation_paper2 <- function(
       # --------------------------------------------------------
 
       candidate_positions <- data.frame(
-
         x = c(
           original_x,
+          original_x + box_width * 1.8,
+          original_x - box_width * 1.8,
           original_x,
           original_x,
-
-          original_x + box_width * 1.4,
-          original_x - box_width * 1.4,
-
-          original_x + box_width * 1.4,
-          original_x - box_width * 1.4,
-
-          original_x + box_width * 2.5,
-          original_x - box_width * 2.5
+          original_x + box_width * 1.8,
+          original_x - box_width * 1.8
         ),
-
         y = c(
+          original_y + box_height * 1.8,
           original_y,
-
-          original_y + box_height * 1.4,
-          original_y - box_height * 1.4,
-
-          original_y + box_height * 1.4,
-          original_y + box_height * 1.4,
-
-          original_y - box_height * 1.4,
-          original_y - box_height * 1.4,
-
           original_y,
-          original_y
+          original_y + box_height * 1.8,
+          original_y - box_height * 1.8,
+          original_y + box_height * 1.8,
+          original_y - box_height * 1.8
         )
       )
 
@@ -7599,8 +7586,8 @@ plot_speciation_paper2 <- function(
         # Logo positions
         # ------------------------------------------------------
 
-        species1_x = box_x - box_width * 0.23,
-        species2_x = box_x + box_width * 0.23,
+        species1_x = box_x - box_width * 0.33,
+        species2_x = box_x + box_width * 0.33,
 
         logo_y = box_y + box_height * 0.18,
 
@@ -7653,6 +7640,7 @@ plot_speciation_paper2 <- function(
       labels,
       panel_title,
       colour_low,
+      colour_mid,
       colour_high,
       x_label,
       y_label) {
@@ -7865,9 +7853,8 @@ plot_speciation_paper2 <- function(
 
     p <- p +
 
-      scale_colour_gradient(
-        low = colour_low,
-        high = colour_high,
+      scale_colour_gradientn(
+        colours = c(colour_low, colour_mid, colour_high),
         name = "Assortative mating"
       ) +
 
@@ -7983,6 +7970,8 @@ plot_speciation_paper2 <- function(
 
     colour_low = "#F2E4D0",
 
+    colour_mid ="#D09F64",
+
     colour_high = "#8C5F2D",
 
     x_label = "Phenotypic divergence",
@@ -8003,6 +7992,8 @@ plot_speciation_paper2 <- function(
     panel_title = "(b) Between sympatric species",
 
     colour_low = "#F0D4E0",
+
+    colour_mid ="#D06495",
 
     colour_high = "#8F315D",
 
