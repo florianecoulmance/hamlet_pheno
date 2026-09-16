@@ -547,6 +547,10 @@ geno_asso_cor <- plot_pairwise_correlations(
 geno_asso_cor$all$plot
 geno_asso_cor$location$plot
 
+
+message("\n========================================")
+message("HYPERCUBE")
+message("========================================")
 # speciation_hypercube_data <- pheno_distances_lda %>%
 #   dplyr::inner_join(
 #     geno_distances_fst,
@@ -600,16 +604,18 @@ speciation_hypercube_data2 <- pheno_distances %>%
     )
   )
 
+print(speciation_hypercube_data2)
+
 hypercube2 <- plot_speciation_hypercube(
   speciation_hypercube_data2
 )
-hypercube2
+print(hypercube2)
 
 hypercube_paper2 <- plot_speciation_paper2(
   speciation_hypercube_data2,
   species_info
 )
-hypercube_paper2
+print(hypercube_paper2)
 
 
 # ############################

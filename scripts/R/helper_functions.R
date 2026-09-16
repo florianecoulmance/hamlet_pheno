@@ -6488,7 +6488,8 @@ plot_speciation_hypercube <- function(
           ),
 
         marker = list(
-          size = 6
+          size = 5,
+          color = "#8C5F2D"
         )
       )
   }
@@ -6520,7 +6521,8 @@ plot_speciation_hypercube <- function(
 
         marker = list(
           size = 5,
-          symbol = "diamond"
+          symbol = "diamond",
+          color = "#8F315D"
         )
       )
   }
@@ -7892,8 +7894,7 @@ plot_speciation_paper2 <- function(
       heights = c(
         1,
         1
-      ),
-      guides = "keep"
+      )
     )
 
 
