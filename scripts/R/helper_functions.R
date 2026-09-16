@@ -7223,17 +7223,13 @@ plot_speciation_paper <- function(
   # 11. STACK PANELS
   # ============================================================
 
-  p <-
-    p_all /
-    p_location +
-
-    patchwork::plot_layout(
-      heights = c(
-        1,
-        1
-      ),
-      guides = "keep"
-    )
+  p <- plot_grid(
+    p_all,
+    p_location,
+    ncol = 1,
+    nrow = 2,
+    align = "v"
+  )
 
 
   return(p)
@@ -7925,11 +7921,13 @@ plot_speciation_paper2 <- function(
   # 11. STACK PANELS
   # ============================================================
 
-  p <- (p_all / p_location) +
-    patchwork::plot_layout(
-      heights = c(1, 1),
-      guides = "keep"
-    )
+  p <- plot_grid(
+    p_all,
+    p_location,
+    ncol = 1,
+    nrow = 2,
+    align = "v"
+  )
 
 
   return(p)
