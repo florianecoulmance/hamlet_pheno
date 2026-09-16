@@ -7378,8 +7378,8 @@ plot_speciation_paper2 <- function(
     # 4.5 Collision spacing
     # ----------------------------------------------------------
 
-    min_x_spacing <- box_width * 1.15
-    min_y_spacing <- box_height * 1.35
+    min_x_spacing <- box_width * 1.05
+    min_y_spacing <- box_height * 1.10
 
     # ----------------------------------------------------------
     # 4.6 Store positions of already placed boxes
@@ -7406,21 +7406,21 @@ plot_speciation_paper2 <- function(
       candidate_positions <- data.frame(
         x = c(
           original_x,
-          original_x + box_width * 1.8,
-          original_x - box_width * 1.8,
+          original_x + box_width * 1.15,
+          original_x - box_width * 1.15,
           original_x,
           original_x,
-          original_x + box_width * 1.8,
-          original_x - box_width * 1.8
+          original_x + box_width * 1.15,
+          original_x - box_width * 1.15
         ),
         y = c(
-          original_y + box_height * 1.8,
+          original_y + box_height * 1.15,
           original_y,
           original_y,
-          original_y + box_height * 1.8,
-          original_y - box_height * 1.8,
-          original_y + box_height * 1.8,
-          original_y - box_height * 1.8
+          original_y + box_height * 1.15,
+          original_y - box_height * 1.15,
+          original_y + box_height * 1.15,
+          original_y - box_height * 1.15
         )
       )
 
@@ -7645,7 +7645,7 @@ plot_speciation_paper2 <- function(
       x_label,
       y_label,
       show_location = FALSE,
-      legend_pos = c(0.04, 0.96)) {
+      legend_pos = c(0.7, 0.96)) {
 
     if (nrow(df) == 0) {
 
@@ -7978,7 +7978,7 @@ plot_speciation_paper2 <- function(
     y_label = "Genetic divergence (Fst)",
     
     show_location = FALSE,
-    legend_pos = c(0.04, 0.96)
+    legend_pos = c(0.7, 0.96)
   )
 
   # ============================================================
@@ -8004,7 +8004,7 @@ plot_speciation_paper2 <- function(
     y_label = "Genetic divergence (Fst)",
     
     show_location = TRUE,
-    legend_pos = c(0.04, 0.04)
+    legend_pos = c(0.04, 0.3)
   )
 
   # ============================================================
