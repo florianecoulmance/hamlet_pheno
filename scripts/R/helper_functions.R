@@ -6538,12 +6538,18 @@ plot_speciation_hypercube <- function(
 
         xaxis = list(
           title = "Genetic divergence (Fst)",
-          max(data$distance_geno, na.rm = TRUE) * 1.05
+          range = c(
+            0,
+            max(data$distance_geno, na.rm = TRUE) * 1.05
+          )
         ),
 
         yaxis = list(
           title = "Phenotypic divergence",
-          max(data$distance_pheno, na.rm = TRUE) * 1.05
+          range = c(
+            0,
+            max(data$distance_pheno, na.rm = TRUE) * 1.05
+          )
         ),
 
         zaxis = list(

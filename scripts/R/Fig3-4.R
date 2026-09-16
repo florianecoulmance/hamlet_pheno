@@ -49,6 +49,20 @@ args <- commandArgs(trailingOnly = TRUE)
 # ============================================================
 # Paths passed from Snakemake
 # ============================================================
+base_path      <- "/Users/fcoulman/Desktop/hamlet_pheno/3_CHAPTER3/hamlet_pheno/"
+figure_path     <- file.path(base_path, "figures")
+path_phenotypes <- file.path(base_path, "1_phenotyping/pca")
+path_genotypes_all <- file.path(base_path, "2_popgen/byALL")
+path_genotypes_loc <- file.path(base_path, "2_popgen/byLOC")
+fst_all_file <- file.path(figure_path, "TableS5.tex")
+fst_loc_file <- file.path(figure_path, "TableS4.tex")
+association_file <- file.path(base_path, "metadata/assortative_mating.csv")
+logos_path      <- file.path(base_path, "metadata/logos_hamlet")
+spec_colors     <- file.path(base_path, "metadata/species_colors.tsv")
+geo_colors      <- file.path(base_path, "metadata/locations_colors.tsv")
+
+
+
 base_path      <- get_arg("--base_path", ".")
 figure_path     <- get_arg("--figure_path", file.path(base_path, "figures"))
 path_phenotypes <- get_arg("--path_phenotypes", file.path(base_path, "1_phenotyping/pca"))
@@ -79,17 +93,7 @@ logos_path      <- get_arg("--logos_path", file.path(base_path, "metadata/logos_
 spec_colors     <- get_arg("--spec_colors", file.path(base_path, "metadata/species_colors.tsv"))
 geo_colors      <- get_arg("--geo_colors", file.path(base_path, "metadata/locations_colors.tsv"))
 
-# base_path      <- "/Users/fcoulman/Desktop/hamlet_pheno/3_CHAPTER3/hamlet_pheno/"
-# figure_path     <- file.path(base_path, "figures")
-# path_phenotypes <- file.path(base_path, "1_phenotyping/pca")
-# path_genotypes_all <- file.path(base_path, "2_popgen/byALL")
-# path_genotypes_loc <- file.path(base_path, "2_popgen/byLOC")
-# fst_all_file <- file.path(figure_path, "TableS5.tex")
-# fst_loc_file <- file.path(figure_path, "TableS4.tex")
-# association_file <- file.path(base_path, "metadata/assortative_mating.csv")
-# logos_path      <- file.path(base_path, "metadata/logos_hamlet")
-# spec_colors     <- file.path(base_path, "metadata/species_colors.tsv")
-# geo_colors      <- file.path(base_path, "metadata/locations_colors.tsv")
+
 
 if (!dir.exists(figure_path)) {
   dir.create(
@@ -551,36 +555,36 @@ geno_asso_cor$location$plot
 message("\n========================================")
 message("HYPERCUBE")
 message("========================================")
-# speciation_hypercube_data <- pheno_distances_lda %>%
-#   dplyr::inner_join(
-#     geno_distances_fst,
-#     by = c(
-#       "level",
-#       "Location",
-#       "species1",
-#       "species2"
-#     )
-#   ) %>%
-#   dplyr::inner_join(
-#     asso_RI,
-#     by = c(
-#       "level",
-#       "Location",
-#       "species1",
-#       "species2"
-#     )
-#   )
-# 
-# hypercube <- plot_speciation_hypercube(
-#   speciation_hypercube_data
-# )
-# hypercube
-# 
-# hypercube_paper <- plot_speciation_paper(
-#   speciation_hypercube_data,
-#   species_info
-# )
-# hypercube_paper
+speciation_hypercube_data <- pheno_distances_lda %>%
+  dplyr::inner_join(
+    geno_distances_fst,
+    by = c(
+      "level",
+      "Location",
+      "species1",
+      "species2"
+    )
+  ) %>%
+  dplyr::inner_join(
+    asso_RI,
+    by = c(
+      "level",
+      "Location",
+      "species1",
+      "species2"
+    )
+  )
+
+hypercube <- plot_speciation_hypercube(
+  speciation_hypercube_data
+)
+hypercube
+
+hypercube_paper <- plot_speciation_paper(
+  speciation_hypercube_data,
+  species_info
+)
+hypercube_paper
 
 
 
