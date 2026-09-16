@@ -6538,12 +6538,12 @@ plot_speciation_hypercube <- function(
 
         xaxis = list(
           title = "Genetic divergence (Fst)",
-          range = c(0, 0.15)
+          max(data$distance_geno, na.rm = TRUE) * 1.05
         ),
 
         yaxis = list(
           title = "Phenotypic divergence",
-          range = c(0, 1)
+          max(data$distance_pheno, na.rm = TRUE) * 1.05
         ),
 
         zaxis = list(
@@ -6665,12 +6665,12 @@ plot_speciation_paper <- function(
       if (panel == "all") {
 
         x_offset <- 0
-        y_offset <- 0.012
+        y_offset <- 0.006
 
       } else {
 
         x_offset <- 0
-        y_offset <- 0.007
+        y_offset <- 0.006
       }
 
       df_non1 <- df_non1 %>%
@@ -6843,8 +6843,8 @@ plot_speciation_paper <- function(
     base_size = 9
   ) +
   theme(
-    axis.title = element_text(size = 15),
-    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 20),
+    axis.text = element_text(size = 15),
     plot.title = element_text(
       size = 20,
       face = "bold"
@@ -6892,7 +6892,7 @@ plot_speciation_paper <- function(
       aes(
         colour = distance_pheno
       ),
-      size = 2.8
+      size = 4
     ) +
 
     # ----------------------------------------------------------
@@ -6917,7 +6917,7 @@ plot_speciation_paper <- function(
       aes(
         x = distance_asso,
         y = distance_geno,
-        xend = box_xmin,
+        xend = box_xmin - 0.05,
         yend = box_y
       ),
       inherit.aes = FALSE,
@@ -7709,14 +7709,14 @@ plot_speciation_paper2 <- function(
       y = "Genetic divergence (Fst)"
     ) +
 
-    coord_cartesian(
-      xlim = NULL,
-      ylim = c(
-        -0.012,
-        0.15
-      ),
-      clip = "off"
-    ) +
+    # coord_cartesian(
+    #   xlim = NULL,
+    #   ylim = c(
+    #     -0.012,
+    #     0.15
+    #   ),
+    #   clip = "off"
+    # ) +
 
     paper_theme
 
@@ -7848,14 +7848,14 @@ plot_speciation_paper2 <- function(
       y = "Genetic divergence (Fst)"
     ) +
 
-    coord_cartesian(
-      xlim = NULL,
-      ylim = c(
-        0,
-        0.075
-      ),
-      clip = "off"
-    ) +
+    # coord_cartesian(
+    #   xlim = NULL,
+    #   ylim = c(
+    #     0,
+    #     0.075
+    #   ),
+    #   clip = "off"
+    # ) +
 
     paper_theme
 
@@ -7886,15 +7886,10 @@ plot_speciation_paper2 <- function(
   # 11. STACK PANELS
   # ============================================================
 
-  p <-
-    p_all /
-    p_location +
-
+  p <- (p_all / p_location) +
     patchwork::plot_layout(
-      heights = c(
-        1,
-        1
-      )
+      heights = c(1, 1),
+      guides = "keep"
     )
 
 
