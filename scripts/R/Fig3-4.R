@@ -657,7 +657,7 @@ ggsave(
 htmlwidgets::saveWidget(
   hypercube,
   file.path(figure_path, "Fig4_interactiveCUBE_v2.html"),
-  selfcontained = TRUE
+  selfcontained = FALSE
 )
 
 figure4 <- hypercube_paper
@@ -675,7 +675,7 @@ ggsave(
 htmlwidgets::saveWidget(
   hypercube2,
   file.path(figure_path, "Fig4_interactiveCUBE_v1.html"),
-  selfcontained = TRUE
+  selfcontained = FALSE
 )
 
 figure4 <- hypercube_paper2
