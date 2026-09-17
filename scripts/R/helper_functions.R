@@ -7350,8 +7350,8 @@ plot_speciation_paper2 <- function(
     # This works whether the axes range from 0-1 or 0-100.
     # ----------------------------------------------------------
 
-    box_width <- x_range * 0.095
-    box_height <- y_range * 0.055
+    box_width <- x_range * 0.17
+    box_height <- y_range * 0.045
 
     # ----------------------------------------------------------
     # 4.3 Prepare label information
@@ -7387,6 +7387,10 @@ plot_speciation_paper2 <- function(
 
     placed_x <- numeric(0)
     placed_y <- numeric(0)
+
+    # Store actual data point coordinates
+    point_x <- df$distance_pheno
+    point_y <- df$distance_geno
 
     # ==========================================================
     # 4.7 Place boxes
@@ -7433,17 +7437,33 @@ plot_speciation_paper2 <- function(
         test_x <- candidate_positions$x[j]
         test_y <- candidate_positions$y[j]
 
+        # Candidate box boundaries
+        candidate_xmin <- test_x - box_width / 2
+        candidate_xmax <- test_x + box_width / 2
+
+        candidate_ymin <- test_y - box_height / 2
+        candidate_ymax <- test_y + box_height / 2
+
         if (length(placed_x) == 0) {
 
-          collision <- FALSE
+          box_collision <- FALSE
 
         } else {
 
-          collision <- any(
+          box_collision <- any(
             abs(test_x - placed_x) < min_x_spacing &
               abs(test_y - placed_y) < min_y_spacing
           )
         }
+
+        point_collision <- any(
+          point_x >= candidate_xmin &
+            point_x <= candidate_xmax &
+            point_y >= candidate_ymin &
+            point_y <= candidate_ymax
+        )
+
+        collision <- box_collision || point_collision
 
         if (!collision) {
 
@@ -7472,7 +7492,7 @@ plot_speciation_paper2 <- function(
 
       if (!position_found) {
 
-        multiplier <- 3
+        multiplier <- 1.5
 
         while (
           !position_found &&
@@ -7507,10 +7527,42 @@ plot_speciation_paper2 <- function(
             test_x <- candidate_positions$x[j]
             test_y <- candidate_positions$y[j]
 
-            collision <- any(
-              abs(test_x - placed_x) < min_x_spacing &
-                abs(test_y - placed_y) < min_y_spacing
+            # Candidate box boundaries
+            candidate_xmin <- test_x - box_width / 2
+            candidate_xmax <- test_x + box_width / 2
+
+            candidate_ymin <- test_y - box_height / 2
+            candidate_ymax <- test_y + box_height / 2
+
+            # --------------------------------------------------
+            # Check overlap with existing boxes
+            # --------------------------------------------------
+
+            if (length(placed_x) == 0) {
+
+              box_collision <- FALSE
+
+            } else {
+
+              box_collision <- any(
+                abs(test_x - placed_x) < min_x_spacing &
+                  abs(test_y - placed_y) < min_y_spacing
+              )
+            }
+
+            # --------------------------------------------------
+            # Check overlap with actual data points
+            # --------------------------------------------------
+
+            point_collision <- any(
+              point_x >= candidate_xmin &
+                point_x <= candidate_xmax &
+                point_y >= candidate_ymin &
+                point_y <= candidate_ymax
             )
+
+            collision <- box_collision || point_collision
+
 
             if (!collision) {
 
@@ -7533,7 +7585,7 @@ plot_speciation_paper2 <- function(
             }
           }
 
-          multiplier <- multiplier + 2
+          multiplier <- multiplier + 1
         }
       }
 
