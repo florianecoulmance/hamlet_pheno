@@ -7351,7 +7351,7 @@ plot_speciation_paper2 <- function(
     # ----------------------------------------------------------
 
     box_width <- x_range * 0.095
-    box_height <- y_range * 0.065
+    box_height <- y_range * 0.055
 
     # ----------------------------------------------------------
     # 4.3 Prepare label information
@@ -7378,7 +7378,7 @@ plot_speciation_paper2 <- function(
     # 4.5 Collision spacing
     # ----------------------------------------------------------
 
-    min_x_spacing <- box_width * 1.05
+    min_x_spacing <- box_width * 1.03
     min_y_spacing <- box_height * 1.10
 
     # ----------------------------------------------------------
@@ -7750,7 +7750,7 @@ plot_speciation_paper2 <- function(
         aes(
           xmin = box_xmin,
           xmax = box_xmax,
-          ymin = box_ymin,
+          ymin = box_ymin + 0.1,
           ymax = box_ymax
         ),
         inherit.aes = FALSE,
