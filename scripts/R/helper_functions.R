@@ -7748,9 +7748,9 @@ plot_speciation_paper2 <- function(
       geom_rect(
         data = labels,
         aes(
-          xmin = box_xmin,
-          xmax = box_xmax,
-          ymin = box_ymin,
+          xmin = box_xmin - 0.1,
+          xmax = box_xmax + 10,
+          ymin = box_ymin + 0.1,
           ymax = box_ymax
         ),
         inherit.aes = FALSE,
@@ -7800,7 +7800,7 @@ plot_speciation_paper2 <- function(
           )
         ),
         inherit.aes = FALSE,
-        size = 2.0,
+        size = 1.5,
         fontface = "italic",
         colour = "black",
         hjust = 0.5
@@ -7817,7 +7817,7 @@ plot_speciation_paper2 <- function(
           )
         ),
         inherit.aes = FALSE,
-        size = 2.0,
+        size = 1.5,
         fontface = "italic",
         colour = "black",
         hjust = 0.5
@@ -7842,7 +7842,7 @@ plot_speciation_paper2 <- function(
             label = Location
           ),
           inherit.aes = FALSE,
-          size = 5,
+          size = 4,
           fontface = "bold",
           colour = "black",
           hjust = 0.5
