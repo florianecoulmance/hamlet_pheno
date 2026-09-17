@@ -7350,8 +7350,8 @@ plot_speciation_paper2 <- function(
     # This works whether the axes range from 0-1 or 0-100.
     # ----------------------------------------------------------
 
-    box_width <- x_range * 0.085
-    box_height <- y_range * 0.075
+    box_width <- x_range * 0.095
+    box_height <- y_range * 0.065
 
     # ----------------------------------------------------------
     # 4.3 Prepare label information
@@ -7406,21 +7406,21 @@ plot_speciation_paper2 <- function(
       candidate_positions <- data.frame(
         x = c(
           original_x,
-          original_x + box_width * 1.15,
-          original_x - box_width * 1.15,
+          original_x + box_width * 1.1,
+          original_x - box_width * 1.1,
           original_x,
           original_x,
-          original_x + box_width * 1.15,
-          original_x - box_width * 1.15
+          original_x + box_width * 1.1,
+          original_x - box_width * 1.1
         ),
         y = c(
-          original_y + box_height * 1.15,
+          original_y + box_height * 1.1,
           original_y,
           original_y,
-          original_y + box_height * 1.15,
-          original_y - box_height * 1.15,
-          original_y + box_height * 1.15,
-          original_y - box_height * 1.15
+          original_y + box_height * 1.1,
+          original_y - box_height * 1.1,
+          original_y + box_height * 1.1,
+          original_y - box_height * 1.1
         )
       )
 
@@ -7586,8 +7586,8 @@ plot_speciation_paper2 <- function(
         # Logo positions
         # ------------------------------------------------------
 
-        species1_x = box_x - box_width * 0.43,
-        species2_x = box_x + box_width * 0.43,
+        species1_x = box_x - box_width * 0.4,
+        species2_x = box_x + box_width * 0.4,
 
         logo_y = box_y + box_height * 0.18,
 
@@ -7720,7 +7720,7 @@ plot_speciation_paper2 <- function(
         aes(
           colour = distance_asso
         ),
-        size = 3,
+        size = 4,
         alpha = 0.9
       ) +
 
@@ -7748,9 +7748,9 @@ plot_speciation_paper2 <- function(
       geom_rect(
         data = labels,
         aes(
-          xmin = box_xmin - 0.1,
-          xmax = box_xmax + 10,
-          ymin = box_ymin + 0.1,
+          xmin = box_xmin,
+          xmax = box_xmax,
+          ymin = box_ymin,
           ymax = box_ymax
         ),
         inherit.aes = FALSE,
