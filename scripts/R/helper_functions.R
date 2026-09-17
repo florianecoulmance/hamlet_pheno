@@ -7406,21 +7406,21 @@ plot_speciation_paper2 <- function(
       candidate_positions <- data.frame(
         x = c(
           original_x,
-          original_x + box_width * 1.1,
-          original_x - box_width * 1.1,
+          original_x + box_width * 0.6,
+          original_x - box_width * 0.6,
           original_x,
           original_x,
-          original_x + box_width * 1.1,
-          original_x - box_width * 1.1
+          original_x + box_width * 0.6,
+          original_x - box_width * 0.6
         ),
         y = c(
-          original_y + box_height * 1.1,
+          original_y + box_height * 0.6,
           original_y,
           original_y,
-          original_y + box_height * 1.1,
-          original_y - box_height * 1.1,
-          original_y + box_height * 1.1,
-          original_y - box_height * 1.1
+          original_y + box_height * 0.6,
+          original_y - box_height * 0.6,
+          original_y + box_height * 0.6,
+          original_y - box_height * 0.6
         )
       )
 
@@ -7586,8 +7586,8 @@ plot_speciation_paper2 <- function(
         # Logo positions
         # ------------------------------------------------------
 
-        species1_x = box_x - box_width * 0.4,
-        species2_x = box_x + box_width * 0.4,
+        species1_x = box_x - box_width * 0.27,
+        species2_x = box_x + box_width * 0.27,
 
         logo_y = box_y + box_height * 0.18,
 
@@ -7720,8 +7720,8 @@ plot_speciation_paper2 <- function(
         aes(
           colour = distance_asso
         ),
-        size = 4,
-        alpha = 0.9
+        size = 5,
+        alpha = 1
       ) +
 
       # ========================================================
@@ -7748,9 +7748,9 @@ plot_speciation_paper2 <- function(
       geom_rect(
         data = labels,
         aes(
-          xmin = box_xmin,
-          xmax = box_xmax,
-          ymin = box_ymin + 0.1,
+          xmin = box_xmin - 0.2,
+          xmax = box_xmax + 0.2,
+          ymin = box_ymin + 0.4,
           ymax = box_ymax
         ),
         inherit.aes = FALSE,
@@ -7842,7 +7842,7 @@ plot_speciation_paper2 <- function(
             label = Location
           ),
           inherit.aes = FALSE,
-          size = 4,
+          size = 3,
           fontface = "bold",
           colour = "black",
           hjust = 0.5
