@@ -335,7 +335,7 @@ figure2 <- ggarrange(
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
   plot = figure2,
-  width = 16,
+  width = 17,
   height = 22,
   units = "in",
   dpi = 150,
@@ -343,14 +343,14 @@ ggsave(
 )
 
 
-# ########## FIGURE S14 ###################
-figureS14 <- plot_fst_categories(
+# ########## FIGURE S9 ###################
+figureS9 <- plot_fst_categories(
   df = fst
 )
 
 ggsave(
-  filename = file.path(figure_path, "FigS14_gFSTviolin.png"),
-  plot = figureS14,
+  filename = file.path(figure_path, "FigS9_gFSTviolin.png"),
+  plot = figureS9,
   width = 6.5,
   height = 6.5
 )
@@ -392,12 +392,12 @@ ggsave(
 # )
 
 
-########## FIGURE S16 ###################
+########## FIGURE S10 ###################
 # Variance of Principal Components for combined genetic space
-figureS16 <- results[["all_s"]][["variance_plot"]]
+figureS10 <- results[["all_s"]][["variance_plot"]]
 ggsave(
-  filename = file.path(figure_path, "FigS16_gAllVAR.png"),
-  plot = figureS16,
+  filename = file.path(figure_path, "FigS10_gAllVAR.png"),
+  plot = figureS10,
   width = 8.27, 
   height = 5.22, 
   units = "in",      # inches
@@ -432,12 +432,12 @@ ggsave(
 # )
 
 
-# ########## FIGURE S17 ###################
+# ########## FIGURE S11 ###################
 # Other PCs combination for genotypes per location
 all_sup <- lapply(results_locations, `[[`, "pca_s") # extract per location pcas
 sup_grid <- plot_grid(plotlist = all_sup, ncol = 2,   labels = c("(a)", "(b)", "(c)", "(d)"), rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figureS17 <- ggarrange(
+figureS11 <- ggarrange(
   sup_grid,
   NULL,
   leg,
@@ -447,8 +447,8 @@ figureS17 <- ggarrange(
 ) # adjust if legend is too big/small
 
 # Save Figure S12 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "FigS17_gLocSUP.png"),
-  plot = figureS17,
+ggsave(filename = file.path(figure_path, "FigS11_gLocSUP.png"),
+  plot = figureS11,
   width = 12,    # A4 width in inches
   height = 14,  # A4 height in inches
   units = "in",
