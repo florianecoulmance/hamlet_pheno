@@ -337,7 +337,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       panel.border = element_rect(color = "black", fill = NA, size = 1),
       axis.text = element_text(size = 12),
       axis.title = element_text(size = 18),
-      plot.margin = margin(3,3,0,0)
+      plot.margin = margin(10,3,0,0)
     ) +
     scale_x_continuous(position = "bottom",labels = unit_format(unit = "k", scale = 1e-3)) +
     scale_y_continuous(labels = unit_format(unit = "k", scale = 1e-3)) +

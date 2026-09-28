@@ -343,20 +343,20 @@ ggsave(
 )
 
 
-# ########## FIGURE S9 ###################
-figureS9 <- plot_fst_categories(
+# ########## FIGURE S8 ###################
+figureS8 <- plot_fst_categories(
   df = fst
 )
 
 ggsave(
-  filename = file.path(figure_path, "FigS9_gFSTviolin.png"),
-  plot = figureS9,
+  filename = file.path(figure_path, "FigS8_gFSTviolin.png"),
+  plot = figureS8,
   width = 6.5,
   height = 6.5
 )
 
 
-# ########## FIGURE S10 ###################
+# ########## FIGURE S9 ###################
 # # Combined genetic space with legend
 # # Access each PCA plot for the "all" dataset
 # pca1 <- results[["all_s"]][["pca_f"]]
@@ -373,7 +373,7 @@ ggsave(
 #   legend = "right"
 #   )
 
-# figureS10 <- ggarrange(
+# figureS9 <- ggarrange(
 #   NULL,
 #   plot,
 #   nrow = 2,
@@ -382,8 +382,8 @@ ggsave(
 #   )
 
 # ggsave(
-#   filename = file.path(figure_path, "FigS10_gAllPCA.png"),
-#   plot = figureS10,
+#   filename = file.path(figure_path, "FigS9_gAllPCA.png"),
+#   plot = figureS9,
 #   width = 6, 
 #   height = 16, 
 #   units = "in",      # inches
@@ -392,12 +392,12 @@ ggsave(
 # )
 
 
-########## FIGURE S11 ###################
+########## FIGURE S10 ###################
 # Variance of Principal Components for combined genetic space
-figureS11 <- results[["all_s"]][["variance_plot"]]
+figureS10 <- results[["all_s"]][["variance_plot"]]
 ggsave(
-  filename = file.path(figure_path, "FigS11_gAllVAR.png"),
-  plot = figureS11,
+  filename = file.path(figure_path, "FigS10_gAllVAR.png"),
+  plot = figureS10,
   width = 8.27, 
   height = 5.22, 
   units = "in",      # inches
@@ -406,13 +406,29 @@ ggsave(
 )
 
 
-########## FIGURE S12 ###################
+########## FIGURE S11 ###################
 # Combined genotypic space: LD
-figureS12 <- build_ld_plot("all", location_colors = location_colors)
+figureS11 <- build_ld_plot("all", location_colors = location_colors)
 
 # Save as PNG (A4 size)
 ggsave(
-  filename = file.path(figure_path, "FigS12_gAllLD.png"),
+  filename = file.path(figure_path, "FigS11_gAllLD.png"),
+  plot = figureS11,
+  width = 7.5,    # A4 width in inches
+  height = 7.5,  # A4 height in inches
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
+
+
+########## FIGURE S12 ###################
+# Combined genotypic space: PERMANOVA
+figureS12 <- results[["all_s"]][["permanova"]]
+
+# Save as PNG (A4 size)
+ggsave(
+  filename = file.path(figure_path, "FigS12_gAllPERM.png"),
   plot = figureS12,
   width = 7.5,    # A4 width in inches
   height = 7.5,  # A4 height in inches
@@ -422,29 +438,13 @@ ggsave(
 )
 
 
-########## FIGURE S13 ###################
-# Combined genotypic space: PERMANOVA
-figureS13 <- results[["all_s"]][["permanova"]]
 
-# Save as PNG (A4 size)
-ggsave(
-  filename = file.path(figure_path, "FigS13_gAllPERM.png"),
-  plot = figureS13,
-  width = 7.5,    # A4 width in inches
-  height = 7.5,  # A4 height in inches
-  units = "in",
-  dpi = 150,
-  type = "cairo-png"
-)
-
-
-
-# ########## FIGURE S14 ###################
+# ########## FIGURE S13 ###################
 # Other PCs combination for genotypes per location
 all_sup <- lapply(results_locations, `[[`, "pca_s") # extract per location pcas
 sup_grid <- plot_grid(plotlist = all_sup, ncol = 2,   labels = c("(a)", "(b)", "(c)", "(d)"), rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
 # Combine PCA grid with legend at the bottom
-figureS14 <- ggarrange(
+figureS13 <- ggarrange(
   sup_grid,
   NULL,
   leg,
@@ -454,8 +454,8 @@ figureS14 <- ggarrange(
 ) # adjust if legend is too big/small
 
 # Save Figure S12 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "FigS14_gLocSUP.png"),
-  plot = figureS14,
+ggsave(filename = file.path(figure_path, "FigS13_gLocSUP.png"),
+  plot = figureS13,
   width = 12,    # A4 width in inches
   height = 14,  # A4 height in inches
   units = "in",
@@ -464,14 +464,14 @@ ggsave(filename = file.path(figure_path, "FigS14_gLocSUP.png"),
 )
 
 
-# ########## FIGURE S15 ###################
+# ########## FIGURE S14 ###################
 # PERMANOVA heatmaps for each location
 all_perm <- lapply(results_locations, `[[`, "permanova") # extract per location pcas
-figureS15 <- plot_grid(plotlist = all_perm, ncol = 2, rel_widths = c(1, 1), scale = 0.95)# bundle location pcas in one plot
+figureS14 <- plot_grid(plotlist = all_perm, ncol = 2, rel_widths = c(1, 1), scale = 0.95)# bundle location pcas in one plot
 
 # Save Figure S16 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "FigS15_gLocPERM.png"),
-       plot = figureS15,
+ggsave(filename = file.path(figure_path, "FigS14_gLocPERM.png"),
+       plot = figureS14,
        width = 10,    # A4 width in inches
        height = 10,  # A4 height in inches
        units = "in",
@@ -480,7 +480,7 @@ ggsave(filename = file.path(figure_path, "FigS15_gLocPERM.png"),
 )
 
 
-########## FIGURE S16 ###################
+########## FIGURE S15 ###################
 # Per species genotypic space: PCA + PERMANOVA + PERMDISP
 ld_spe_datasets <- c(pue = "pue", nig = "nig", uni = "uni")
 ld_spe_plots <- lapply(
@@ -508,7 +508,7 @@ ld_uni <- ld_spe_plots[["uni"]]
 perm_uni <- results[["uni"]][["permanova"]]
 uni <- plot_grid(pca_uni_f, pca_uni_s, ld_uni, perm_uni, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
 
-figureS16 <- plot_grid(
+figureS15 <- plot_grid(
   pue,
   NULL,
   nig,
@@ -525,8 +525,8 @@ figureS16 <- plot_grid(
 
 # Save as PNG (A4 size)
 ggsave(
-  filename = file.path(figure_path, "FigS16_gSpe.png"),
-  plot = figureS16,
+  filename = file.path(figure_path, "FigS15_gSpe.png"),
+  plot = figureS15,
   width = 18,    # A4 width in inches
   height = 18,  # A4 height in inches
   units = "in",
