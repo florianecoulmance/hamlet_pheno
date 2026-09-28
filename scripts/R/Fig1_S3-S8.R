@@ -221,7 +221,7 @@ figure1 <- ggarrange(
   NULL,
   nrow = 4,
   ncol = 1,
-  heights = c(8, 0.3, 1.5, 0.05)
+  heights = c(8, 0.3, 0.75, 0.05)
 )
 
 ggsave(
@@ -296,7 +296,7 @@ figureS5 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(8, 0.3, 1.5, 0.05)
+  heights = c(8, 0.3, 0.75, 0.05)
 )
 
 ggsave(
