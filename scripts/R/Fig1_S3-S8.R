@@ -325,7 +325,7 @@ figureS6 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)")
+  labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)"),
   heights = c(9, 0.3, 1, 0.05)
   )
 
