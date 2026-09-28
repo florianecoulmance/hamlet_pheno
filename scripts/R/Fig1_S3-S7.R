@@ -256,17 +256,17 @@ figureS4 <- ggarrange(
   NULL,
   leg,
   NULL,
-  results[["all"]][["heatmap"]],
-  labels = c("(a)", "", "", "", "(b)"),
-  nrow = 5,
-  heights = c(8, 0.3, 1, 0.05, 4)
+  # results[["all"]][["heatmap"]],
+  labels = c("(a)", "", "", ""),
+  nrow = 4,
+  heights = c(8, 0.3, 1, 0.05)
 )
 
 ggsave(
   filename = file.path(figure_path, "FigS4_pPCA_all.png"),
   plot = figureS4,
   width = 12,    # A4 width in inches
-  height = 20,  # A4 height in inches
+  height = 16,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -420,66 +420,74 @@ ggsave(filename = file.path(figure_path, "FigS6_pPCA_sup.png"),
 
 
 ########## FIGURE S7 ###################
-# Heatmap PC images for each location
-all_heat <- lapply(results_no_overall, `[[`, "heatmap") # extract per location pcas
-heat_grid <- plot_grid(plotlist = all_heat, ncol = 2, rel_widths = c(1, 1), scale=0.95) # bundle location pcas in one plot
-# Combine heatmaps grid with legend at the bottom
-figureS7 <- ggarrange(
-  heat_grid
-  )
+# # Heatmap PC images for each location
+# all_heat <- lapply(results_no_overall, `[[`, "heatmap") # extract per location pcas
+# heat_grid <- plot_grid(plotlist = all_heat, ncol = 2, rel_widths = c(1, 1), scale=0.95) # bundle location pcas in one plot
+# # Combine heatmaps grid with legend at the bottom
+# figureS7 <- ggarrange(
+#   heat_grid
+#   )
 
-# Save Figure S9 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "FigS7_pLocHEAT.png"),
-       plot = figureS7,
-       width = 14.2,    # A4 width in inches
-       height = 17,  # A4 height in inches
-       units = "in",
-       dpi = 150,       # good quality but light (~1 MB)
-       type = "cairo-png" # smoother text rendering, smaller file
-)
+# # Save Figure S9 as A4 PNG, optimized for small file size
+# ggsave(filename = file.path(figure_path, "FigS7_pLocHEAT.png"),
+#        plot = figureS7,
+#        width = 14.2,    # A4 width in inches
+#        height = 17,  # A4 height in inches
+#        units = "in",
+#        dpi = 150,       # good quality but light (~1 MB)
+#        type = "cairo-png" # smoother text rendering, smaller file
+# )
 
 
-########## FIGURE S8 ###################
+########## FIGURE S7 ###################
 # Per species phenotypic space: PCA + heatmaps + hierarchical clustering + PERMANOVA
 pca_pue <- results[["pue"]][["pca"]]
 heat_pue <- results[["pue"]][["heatmap"]]
 perm_pue <- results[["pue"]][["permanova"]]
 hier_pue <- results[["pue"]][["hclust"]]
-pue <- plot_grid(pca_pue, perm_pue, heat_pue, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
+pue <- plot_grid(pca_pue, perm_pue, ncol = 2, rel_widths = c(1, 1), scale=0.95)
 
 pca_nig <- results[["nig"]][["pca"]]
 heat_nig <- results[["nig"]][["heatmap"]]
 perm_nig <- results[["nig"]][["permanova"]]
 hier_nig <- results[["nig"]][["hclust"]]
-nig <- plot_grid(pca_nig, perm_nig, heat_nig, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
+nig <- plot_grid(pca_nig, perm_nig, ncol = 2, rel_widths = c(1, 1), scale=0.95)
 
 pca_uni <- results[["uni"]][["pca"]]
 heat_uni <- results[["uni"]][["heatmap"]]
 perm_uni <- results[["uni"]][["permanova"]]
 hier_uni <- results[["uni"]][["hclust"]]
-uni <- plot_grid(pca_uni, perm_uni, heat_uni, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
+uni <- plot_grid(pca_uni, perm_uni, ncol = 2, rel_widths = c(1, 1), scale=0.95)
 
 pca_chl <- results[["chl"]][["pca"]]
 heat_chl <- results[["chl"]][["heatmap"]]
 perm_chl <- results[["chl"]][["permanova"]]
 hier_chl <- results[["chl"]][["hclust"]]
-chl <- plot_grid(pca_chl, perm_chl, heat_chl, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
+chl <- plot_grid(pca_chl, perm_chl, ncol = 2, rel_widths = c(1, 1), scale=0.95)
 
 pca_abe <- results[["abe"]][["pca"]]
 heat_abe <- results[["abe"]][["heatmap"]]
 perm_abe <- results[["abe"]][["permanova"]]
 hier_abe <- results[["abe"]][["hclust"]]
-abe <- plot_grid(pca_abe, perm_abe, heat_abe, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
+abe <- plot_grid(pca_abe, perm_abe, ncol = 2, rel_widths = c(1, 1), scale=0.95)
 
 pca_ind <- results[["ind"]][["pca"]]
 heat_ind <- results[["ind"]][["heatmap"]]
 perm_ind <- results[["ind"]][["permanova"]]
 hier_ind <- results[["ind"]][["hclust"]]
-ind <- plot_grid(pca_ind, perm_ind, heat_ind, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
+ind <- plot_grid(pca_ind, perm_ind, ncol = 2, rel_widths = c(1, 1), scale=0.95)
 
-figureS8 <- ggarrange(pue, NULL, nig, NULL, uni, NULL, chl, NULL, abe, NULL, ind, nrow = 11, heights = c(10, 0.3, 10, 0.3, 10, 0.3, 10, 0.3, 10, 0.3, 10))
-figureS8 <- ggarrange(
-  figureS8,
+figureS7 <- ggarrange(
+  ggarrange(pue, nig, ncol = 2),
+  NULL,
+  ggarrange(uni, chl, ncol = 2),
+  NULL,
+  ggarrange(abe, ind, ncol = 2),
+  nrow = 5, heights = c(10, 0.3, 10, 0.3, 10)
+)
+
+figureS7 <- ggarrange(
+  figureS7,
   leg_g,
   nrow = 2,
   heights = c(10, 0.5)
@@ -487,8 +495,8 @@ figureS8 <- ggarrange(
 
 # Save as PNG (A4 size)
 ggsave(
-  filename = file.path(figure_path, "FigS8_pSpe.png"),
-  plot = figureS8,
+  filename = file.path(figure_path, "FigS7_pSpe.png"),
+  plot = figureS7,
   width = 24,    # A4 width in inches
   height = 40,  # A4 height in inches
   units = "in",
