@@ -209,6 +209,31 @@ pca_grid <- plot_grid(plotlist = all_pcas,
                       rel_widths = c(1, 1, 1, 1),
                       scale = 0.95) # bundle location pcas in one plot
 
+ld_datasets <- c("bel", "boc", "hon", "pri")
+
+ld_plots <- lapply(
+  ld_datasets,
+  build_ld_plot,
+  location_colors = location_colors
+)
+
+ld_grid <- plot_grid(
+  plotlist = ld_plots,
+  ncol = 4,
+  align = "v",
+  axis = "tb",
+  rel_widths = c(1, 1, 1, 1),
+  scale = 0.95
+)
+
+# PCA on left, LD on right
+figure2_top <- plot_grid(
+  pca_grid,
+  ld_grid,
+  ncol = 2,
+  rel_widths = c(1, 1)
+)
+
 # 1. READ PIXY OUTPUT
 fst <- read.table(
   file.path(base_path, "2_popgen", "byALL", "all.flt_fst.min3.txt"),
@@ -297,22 +322,7 @@ print("AFTER pC")
 # )
 # print("AFTER pD")
 
-ld_datasets <- c("bel", "boc", "hon", "pri")
 
-ld_plots <- lapply(
-  ld_datasets,
-  build_ld_plot,
-  location_colors = location_colors
-)
-
-ld_grid <- plot_grid(
-  plotlist = ld_plots,
-  ncol = 4,
-  align = "v",
-  axis = "tb",
-  rel_widths = c(1, 1, 1, 1),
-  scale = 0.95
-)
 
 # # Combine PCA grid with legend at the bottom
 # figure2 <- ggarrange(

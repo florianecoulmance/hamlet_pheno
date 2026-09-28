@@ -220,6 +220,7 @@ figure1 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
+  ncol = 1,
   heights = c(8, 0.3, 1, 0.05)
 )
 
@@ -256,7 +257,7 @@ figureS4 <- ggarrange(
     results[["all"]][["heatmap"]],
     results[["all"]][["hclust"]],
     ncol = 2
-  ) 
+  ), 
   NULL,
   leg,
   NULL,
