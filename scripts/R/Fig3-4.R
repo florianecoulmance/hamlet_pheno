@@ -49,50 +49,56 @@ args <- commandArgs(trailingOnly = TRUE)
 # ============================================================
 # Paths passed from Snakemake
 # ============================================================
-# base_path      <- "/Users/fcoulman/Desktop/hamlet_pheno/3_CHAPTER3/hamlet_pheno/"
-# figure_path     <- file.path(base_path, "figures")
-# path_phenotypes <- file.path(base_path, "1_phenotyping/pca")
-# path_genotypes_all <- file.path(base_path, "2_popgen/byALL")
-# path_genotypes_loc <- file.path(base_path, "2_popgen/byLOC")
-# fst_all_file <- file.path(figure_path, "TableS5.tex")
-# fst_loc_file <- file.path(figure_path, "TableS4.tex")
-# association_file <- file.path(base_path, "metadata/assortative_mating.csv")
-# logos_path      <- file.path(base_path, "metadata/logos_hamlet")
-# spec_colors     <- file.path(base_path, "metadata/species_colors.tsv")
-# geo_colors      <- file.path(base_path, "metadata/locations_colors.tsv")
+base_path      <- "/Users/fcoulman/Desktop/hamlet_pheno/3_CHAPTER3/hamlet_pheno/"
+figure_path     <- file.path(base_path, "figures")
+path_phenotypes <- file.path(base_path, "1_phenotyping/pca")
+path_genotypes_all <- file.path(base_path, "2_popgen/byALL")
+path_genotypes_loc <- file.path(base_path, "2_popgen/byLOC")
+fst_all_file <- file.path(figure_path, "TableS5.tex")
+fst_loc_file <- file.path(figure_path, "TableS4.tex")
+association_file <- file.path(base_path, "metadata/assortative_mating.csv")
+transect_file <- file.path(base_path, "metadata/assortative_counts.csv")
+logos_path      <- file.path(base_path, "metadata/logos_hamlet")
+spec_colors     <- file.path(base_path, "metadata/species_colors.tsv")
+geo_colors      <- file.path(base_path, "metadata/locations_colors.tsv")
 
 
-
-base_path      <- get_arg("--base_path", ".")
-figure_path     <- get_arg("--figure_path", file.path(base_path, "figures"))
-path_phenotypes <- get_arg("--path_phenotypes", file.path(base_path, "1_phenotyping/pca"))
-path_genotypes_all <- file.path(
-  base_path,
-  "2_popgen",
-  "byALL"
-)
-path_genotypes_loc <- file.path(
-  base_path,
-  "2_popgen",
-  "byLOC"
-)
-fst_all_file <- file.path(
-  figure_path,
-  "TableS5.tex"
-)
-fst_loc_file <- file.path(
-  figure_path,
-  "TableS4.tex"
-)
-association_file <- file.path(
-  base_path,
-  "metadata",
-  "assortative_mating.csv"
-)
-logos_path      <- get_arg("--logos_path", file.path(base_path, "metadata/logos_hamlet"))
-spec_colors     <- get_arg("--spec_colors", file.path(base_path, "metadata/species_colors.tsv"))
-geo_colors      <- get_arg("--geo_colors", file.path(base_path, "metadata/locations_colors.tsv"))
-
+# 
+# base_path      <- get_arg("--base_path", ".")
+# figure_path     <- get_arg("--figure_path", file.path(base_path, "figures"))
+# path_phenotypes <- get_arg("--path_phenotypes", file.path(base_path, "1_phenotyping/pca"))
+# path_genotypes_all <- file.path(
+#   base_path,
+#   "2_popgen",
+#   "byALL"
+# )
+# path_genotypes_loc <- file.path(
+#   base_path,
+#   "2_popgen",
+#   "byLOC"
+# )
+# fst_all_file <- file.path(
+#   figure_path,
+#   "TableS5.tex"
+# )
+# fst_loc_file <- file.path(
+#   figure_path,
+#   "TableS4.tex"
+# )
+# association_file <- file.path(
+#   base_path,
+#   "metadata",
+#   "assortative_mating.csv"
+# )
+# transect_file <- file.path(
+#   base_path,
+#   "metadata",
+#   "assortative_counts.csv"
+# )
+# logos_path      <- get_arg("--logos_path", file.path(base_path, "metadata/logos_hamlet"))
+# spec_colors     <- get_arg("--spec_colors", file.path(base_path, "metadata/species_colors.tsv"))
+# geo_colors      <- get_arg("--geo_colors", file.path(base_path, "metadata/locations_colors.tsv"))
+# 
 
 
 if (!dir.exists(figure_path)) {
@@ -229,9 +235,9 @@ for (i in seq_len(nrow(pheno_info))) {
     )
 }
 
-pheno_distances <- bind_rows(
-  pheno_distances
-)
+# pheno_distances <- bind_rows(
+#   pheno_distances
+# )
 
 pheno_distances_lda <- bind_rows(
   pheno_distances_lda
@@ -241,89 +247,89 @@ pheno_distances_lda <- bind_rows(
 message("\n========================================")
 message("GENOTYPE ANALYSIS")
 message("========================================")
-
-geno_files_all <- list.files(
-  path = path_genotypes_all,
-  pattern = ".agg.ld_pruned_gtmat\\.traw$",
-  recursive = TRUE,
-  full.names = TRUE
-)
-
-geno_files_loc <- list.files(
-  path = path_genotypes_loc,
-  pattern = "_ld_pruned_gtmat\\.traw$",
-  recursive = TRUE,
-  full.names = TRUE
-)
-
-geno_files <- unique(
-  c(
-    geno_files_all,
-    geno_files_loc
-  )
-)
-
-
-if (length(geno_files) == 0) {
-  stop(
-    "No genotype files found."
-  )
-}
-
-geno_info <- tibble(
-  file = geno_files,
-  dataset = basename(file) %>%
-    str_remove("_ld_pruned_gtmat\\.traw$")
-) %>%
-  mutate(
-    level = case_when(
-      str_detect(
-        tolower(file),
-        "all"
-      ) ~ "all",
-
-      str_detect(
-        tolower(file),
-        "byloc"
-      ) ~ "location",
-
-      TRUE ~ NA_character_
-    )
-  )
-
-
-print(geno_info)
-
-geno_distances <- vector(
-  "list",
-  nrow(geno_info)
-)
-
-
-for (i in seq_len(nrow(geno_info))) {
-
-  message(
-    "\nGenotype dataset ",
-    i,
-    "/",
-    nrow(geno_info),
-    ": ",
-    geno_info$dataset[i]
-  )
-
-  geno_distances[[i]] <-
-    calculate_geno_distance(
-      gtmat_file = geno_info$file[i],
-      dataset = geno_info$dataset[i],
-      level = geno_info$level[i],
-      species_info = species_info,
-      geo_table = geo_table
-    )
-}
-
-geno_distances <- bind_rows(
-  geno_distances
-)
+# 
+# geno_files_all <- list.files(
+#   path = path_genotypes_all,
+#   pattern = ".agg.ld_pruned_gtmat\\.traw$",
+#   recursive = TRUE,
+#   full.names = TRUE
+# )
+# 
+# geno_files_loc <- list.files(
+#   path = path_genotypes_loc,
+#   pattern = "_ld_pruned_gtmat\\.traw$",
+#   recursive = TRUE,
+#   full.names = TRUE
+# )
+# 
+# geno_files <- unique(
+#   c(
+#     geno_files_all,
+#     geno_files_loc
+#   )
+# )
+# 
+# 
+# if (length(geno_files) == 0) {
+#   stop(
+#     "No genotype files found."
+#   )
+# }
+# 
+# geno_info <- tibble(
+#   file = geno_files,
+#   dataset = basename(file) %>%
+#     str_remove("_ld_pruned_gtmat\\.traw$")
+# ) %>%
+#   mutate(
+#     level = case_when(
+#       str_detect(
+#         tolower(file),
+#         "all"
+#       ) ~ "all",
+# 
+#       str_detect(
+#         tolower(file),
+#         "byloc"
+#       ) ~ "location",
+# 
+#       TRUE ~ NA_character_
+#     )
+#   )
+# 
+# 
+# print(geno_info)
+# 
+# geno_distances <- vector(
+#   "list",
+#   nrow(geno_info)
+# )
+# 
+# 
+# for (i in seq_len(nrow(geno_info))) {
+# 
+#   message(
+#     "\nGenotype dataset ",
+#     i,
+#     "/",
+#     nrow(geno_info),
+#     ": ",
+#     geno_info$dataset[i]
+#   )
+# 
+#   geno_distances[[i]] <-
+#     calculate_geno_distance(
+#       gtmat_file = geno_info$file[i],
+#       dataset = geno_info$dataset[i],
+#       level = geno_info$level[i],
+#       species_info = species_info,
+#       geo_table = geo_table
+#     )
+# }
+# 
+# geno_distances <- bind_rows(
+#   geno_distances
+# )
 
 
 geno_distances_fst <- read_fst_tables(
@@ -337,6 +343,16 @@ geno_distances_fst <- read_fst_tables(
 message("\n========================================")
 message("ASSOCIATION / RI ANALYSIS")
 message("========================================")
+
+transect <- read.csv(
+  transect_file,
+  stringsAsFactors = FALSE
+) %>%
+  mutate(
+    Location = as.character(Location),
+    species = as.character(species),
+    count = as.numeric(count)
+  )
 
 association <- read.csv(
   association_file,
@@ -369,12 +385,24 @@ association_global <- association %>%
     .groups = "drop"
   )
 
+global_species_counts <- transect %>%
+  group_by(species) %>%
+  summarise(
+    count = sum(count),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    proportion = count / sum(count)
+  )
 
-RI_global <- global_RI_permutation(
-  pairing_table = association_global,
-  n_perm = n_perm,
-  seed = seed
-)
+RI_global <- calculate_global_RI(
+  association_global,
+  global_species_counts,
+  species1_col = "species1",
+  species2_col = "species2",
+  spawning_count_col = "count",
+  species_col = "species",
+  species_count_col = "count")
 
 
 asso_RI_global <- RI_global$results %>%
@@ -428,17 +456,32 @@ for (i in seq_along(locations)) {
       count = spawning
     )
   
+  print(pairing_table)
+  
+  species_counts <- transect %>%
+    filter(
+      Location == loc
+    ) %>%
+    mutate(
+      proportion = count / sum(count)
+    )
+
+  print(species_counts)
+  
   
   # --------------------------------------------------------
   # Run RI permutation
   # --------------------------------------------------------
   
-  RI <- global_RI_permutation(
-    pairing_table = pairing_table,
-    n_perm = n_perm,
-    seed = seed
-  )
-  
+  RI <- calculate_global_RI(
+    pairing_table,
+    species_counts,
+    species1_col = "species1",
+    species2_col = "species2",
+    spawning_count_col = "count",
+    species_col = "species",
+    species_count_col = "count")
+
   print(RI$results)
   
   # --------------------------------------------------------
@@ -478,83 +521,6 @@ asso_RI <- bind_rows(
 message("\n========================================")
 message("INTERSECTIONS")
 message("========================================")
-# pheno_geno <- inner_join(
-#   pheno_distances,
-#   geno_distances,
-#   by = c("level", "Location", "species1", "species2")
-# )
-
-pheno_geno <- inner_join(
-  pheno_distances_lda, 
-  geno_distances_fst,
-  by = c("level", "Location", "species1", "species2")
-)
-
-# pheno_asso <- inner_join(
-#   pheno_distances,
-#   asso_RI,
-#   by = c("level", "Location", "species1", "species2")
-# )
-
-pheno_asso <- inner_join(
-  pheno_distances_lda,
-  asso_RI,
-  by = c("level", "Location", "species1", "species2")
-)
-
-# geno_asso <- inner_join(
-#   geno_distances,
-#   asso_RI,
-#   by = c("level", "Location", "species1", "species2")
-# )
-
-geno_asso <- inner_join(
-  geno_distances_fst, 
-  asso_RI,
-  by = c("level", "Location", "species1", "species2")
-)
-
-pheno_geno_cor <- plot_pairwise_correlations(
-  df = pheno_geno,
-  x_col = "distance_pheno",
-  y_col = "distance_geno",
-  x_lab = "Phenotypic distance",
-  y_lab = "Genetic distance",
-  title_prefix = "Phenotype vs genotype"
-)
-
-pheno_geno_cor$all$plot
-pheno_geno_cor$location$plot
-
-pheno_asso_cor <- plot_pairwise_correlations(
-  df = pheno_asso,
-  x_col = "distance_pheno",
-  y_col = "distance_asso",
-  x_lab = "Phenotypic distance",
-  y_lab = "Reproductive isolation",
-  title_prefix = "Phenotype vs reproductive isolation"
-)
-
-pheno_asso_cor$all$plot
-pheno_asso_cor$location$plot
-
-
-geno_asso_cor <- plot_pairwise_correlations(
-  df = geno_asso,
-  x_col = "distance_geno",
-  y_col = "distance_asso",
-  x_lab = "Genetic distance",
-  y_lab = "Reproductive isolation",
-  title_prefix = "Genotype vs reproductive isolation"
-)
-
-geno_asso_cor$all$plot
-geno_asso_cor$location$plot
-
-
-message("\n========================================")
-message("HYPERCUBE")
-message("========================================")
 speciation_hypercube_data <- pheno_distances_lda %>%
   dplyr::inner_join(
     geno_distances_fst,
@@ -576,6 +542,16 @@ speciation_hypercube_data <- pheno_distances_lda %>%
   )
 print(speciation_hypercube_data)
 
+correlation_figure <- plot_all_pairwise_correlations(
+  speciation_hypercube_data
+)
+
+correlation_figure
+
+
+message("\n========================================")
+message("HYPERCUBE")
+message("========================================")
 hypercube <- plot_speciation_hypercube(
   speciation_hypercube_data
 )
@@ -588,39 +564,39 @@ hypercube_paper <- plot_speciation_paper(
 print(hypercube_paper)
 
 
-
-speciation_hypercube_data2 <- pheno_distances %>%
-  dplyr::inner_join(
-    geno_distances,
-    by = c(
-      "level",
-      "Location",
-      "species1",
-      "species2"
-    )
-  ) %>%
-  dplyr::inner_join(
-    asso_RI,
-    by = c(
-      "level",
-      "Location",
-      "species1",
-      "species2"
-    )
-  )
-
-print(speciation_hypercube_data2)
-
-hypercube2 <- plot_speciation_hypercube(
-  speciation_hypercube_data2
-)
-print(hypercube2)
-
-hypercube_paper2 <- plot_speciation_paper2(
-  speciation_hypercube_data2,
-  species_info
-)
-print(hypercube_paper2)
+# 
+# speciation_hypercube_data2 <- pheno_distances %>%
+#   dplyr::inner_join(
+#     geno_distances,
+#     by = c(
+#       "level",
+#       "Location",
+#       "species1",
+#       "species2"
+#     )
+#   ) %>%
+#   dplyr::inner_join(
+#     asso_RI,
+#     by = c(
+#       "level",
+#       "Location",
+#       "species1",
+#       "species2"
+#     )
+#   )
+# 
+# print(speciation_hypercube_data2)
+# 
+# hypercube2 <- plot_speciation_hypercube(
+#   speciation_hypercube_data2
+# )
+# print(hypercube2)
+# 
+# hypercube_paper2 <- plot_speciation_paper2(
+#   speciation_hypercube_data2,
+#   species_info
+# )
+# print(hypercube_paper2)
 
 
 # ############################
@@ -628,25 +604,13 @@ print(hypercube_paper2)
 # ############################
 
 ########## FIGURE 3 ###################
-figure3 <- plot_grid(
-  plotlist = list(pheno_geno_cor$all$plot,
-               pheno_geno_cor$location$plot,
-               pheno_asso_cor$all$plot,
-               pheno_asso_cor$location$plot,
-               geno_asso_cor$all$plot,
-               geno_asso_cor$location$plot
-              ),
-  ncol = 2,
-  labels = c("(a)", "", "(b)", "", "(c)", ""),
-  label_size = 14,
-  align = "v"
-)
+figure3 <- correlation_figure
 
 ggsave(
   filename = file.path(figure_path, "Fig3_correlations.png"),
   plot = figure3,
-  width = 12,
-  height = 19,
+  width = 9,
+  height = 12,
   units = "in",
   dpi = 300,
   type = "cairo-png"

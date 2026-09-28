@@ -2241,17 +2241,20 @@ plot_distance_correlation <- function(df,
                                       y_lab,
                                       title = NULL,
                                       pearson_res = NULL,
-                                      spearman_res = NULL) {
+                                      spearman_res = NULL,
+                                      plot_color = "black") {
 
     p <- ggplot(df,
                 aes(x = .data[[x_col]],
                     y = .data[[y_col]])) +
 
-        geom_point(size = 3, alpha = 0.8) +
+        geom_point(size = 3, alpha = 0.8, color = plot_color) +
 
         geom_smooth(method = "lm",
                     se = TRUE,
-                    linewidth = 1) +
+                    linewidth = 1,
+                    color = plot_color,
+                    fill = plot_color) +
 
         labs(
             x = x_lab,
@@ -2308,11 +2311,11 @@ plot_distance_correlation <- function(df,
                     "Pearson r = ",
                     round(pearson_r, 3),
                     "\nP = ",
-                    signif(pearson_p, 3),
-                    "\n\nSpearman r = ",
-                    round(spearman_r, 3),
-                    "\nP = ",
-                    signif(spearman_p, 3)
+                    signif(pearson_p, 3)
+                    # "\n\nSpearman r = ",
+                    # round(spearman_r, 3),
+                    # "\nP = ",
+                    # signif(spearman_p, 3)
                 )
             )
     }
@@ -3139,381 +3142,252 @@ plot_fst_categories <- function(
     )
 }
 
-# ============================================================
-# assortative mating for speciacion hypercube
-# ============================================================
-global_RI_permutation <- function(
-  pairing_table,
-  n_perm = 10000,
-  seed = 123) {
+calculate_species_proportions <- function(
+  species_counts,
+  species_col = "species",
+  count_col = "count") {
 
-  # ============================================================
-  # 1. Checks
-  # ============================================================
+  required <- c(species_col, count_col)
 
-  required <- c("species1", "species2", "count")
-
-  if (!all(required %in% names(pairing_table))) {
+  if (!all(required %in% names(species_counts))) {
     stop(
-      "pairing_table must contain columns: ",
+      "species_counts must contain columns: ",
       paste(required, collapse = ", ")
     )
   }
 
-  # Convert species names to character
-  pairing_table$species1 <- as.character(pairing_table$species1)
-  pairing_table$species2 <- as.character(pairing_table$species2)
-
-  # Remove rows where BOTH species are missing.
-  # These rows contain no useful pairing information.
-  pairing_table <- pairing_table %>%
-    filter(
-      !(is.na(species1) & is.na(species2))
+  species_counts <- species_counts %>%
+    dplyr::select(
+      species = all_of(species_col),
+      count = all_of(count_col)
+    ) %>%
+    dplyr::mutate(
+      species = as.character(species)
     )
-  print(pairing_table)
 
-
-  if (anyNA(pairing_table[, required])) {
-    stop("pairing_table contains NA values.")
+  if (anyNA(species_counts$species) ||
+      anyNA(species_counts$count)) {
+    stop("species_counts contains NA values.")
   }
 
-  if (any(pairing_table$count < 0) ||
-      any(pairing_table$count != floor(pairing_table$count))) {
-    stop("count must contain non-negative integers.")
+  if (any(species_counts$count < 0)) {
+    stop("Species counts must be non-negative.")
   }
 
-  all_species_present <- sort(
-    unique(
-      c(
-        pairing_table$species1,
-        pairing_table$species2
-      )
+  if (anyDuplicated(species_counts$species)) {
+    stop(
+      "Each species must appear only once in species_counts."
     )
+  }
+
+  total_count <- sum(species_counts$count)
+
+  if (total_count == 0) {
+    stop("Total species count is zero.")
+  }
+
+  species_counts <- species_counts %>%
+    dplyr::mutate(
+      proportion = count / total_count
+    )
+
+  return(species_counts)
+}
+
+prepare_spawning_table <- function(
+  spawning_table,
+  species1_col = "species1",
+  species2_col = "species2",
+  count_col = "count") {
+
+  required <- c(
+    species1_col,
+    species2_col,
+    count_col
   )
 
-  n_species <- length(all_species_present)
+  if (!all(required %in% names(spawning_table))) {
+    stop(
+      "spawning_table must contain columns: ",
+      paste(required, collapse = ", ")
+    )
+  }
 
-  print(all_species_present)
+  spawning_table <- spawning_table %>%
+    dplyr::select(
+      species1 = all_of(species1_col),
+      species2 = all_of(species2_col),
+      count = all_of(count_col)
+    ) %>%
+    dplyr::mutate(
+      species1 = as.character(species1),
+      species2 = as.character(species2)
+    )
 
-  # ============================================================
-  focal_pairs <- expand.grid(
-    species1 = all_species_present,
-    species2 = all_species_present,
-    stringsAsFactors = FALSE
-  ) %>%
-    mutate(
+  if (anyNA(spawning_table[, c(
+    "species1",
+    "species2",
+    "count"
+  )])) {
+    stop("spawning_table contains NA values.")
+  }
+
+  if (any(spawning_table$count < 0) ||
+      any(spawning_table$count != floor(spawning_table$count))) {
+    stop("Spawning counts must be non-negative integers.")
+  }
+
+  # Standardize unordered pair
+  spawning_table <- spawning_table %>%
+    dplyr::mutate(
       sp1 = pmin(species1, species2),
       sp2 = pmax(species1, species2)
     ) %>%
-    select(
+    dplyr::group_by(sp1, sp2) %>%
+    dplyr::summarise(
+      observed = sum(count),
+      .groups = "drop"
+    ) %>%
+    dplyr::rename(
       species1 = sp1,
       species2 = sp2
-    ) %>%
-    distinct()
-  
-  print(focal_pairs)
-
-
-
-  # ============================================================
-  # 3. Convert species names to character
-  # ============================================================
-  # Pairings are unordered, so standardize their order.
-  pairing_table$sp1 <- pmin(
-    pairing_table$species1,
-    pairing_table$species2
-  )
-
-  pairing_table$sp2 <- pmax(
-    pairing_table$species1,
-    pairing_table$species2
-  )
-
-  # Check for duplicated unordered pairs.
-  pair_id <- paste(
-    pairing_table$sp1,
-    pairing_table$sp2,
-    sep = "__"
-  )
-
-  if (anyDuplicated(pair_id)) {
-    stop(
-      "Duplicate unordered species pairs detected. ",
-      "Combine their counts before running the function."
     )
-  }
 
-  # ============================================================
-  # 4. Reconstruct the 597 observed pairings
-  # ============================================================
-  n_pairings <- sum(pairing_table$count)
+  return(spawning_table)
+}
+
+calculate_expected_spawning <- function(
+  species1,
+  species2,
+  species_proportions,
+  proportion_col = "proportion") {
+
+  p1 <- species_proportions$proportion[
+    species_proportions$species == species1
+  ]
+
+  p2 <- species_proportions$proportion[
+    species_proportions$species == species2
+  ]
+
+  # Return NA if either species is missing or has an NA proportion
+  if (
+    length(p1) != 1 ||
+    length(p2) != 1 ||
+    is.na(p1) ||
+    is.na(p2)
+  ) {
+    return(NA_real_)
+  }
   
-  if (n_pairings == 0) {
-    stop( "There are zero spawning observations at this location." ) 
-    }
-    message("Total spawning observations: ", n_pairings)
+  if (species1 == species2) {
     
-    # Each spawning event contains two species observations.
-    N <- 2 * n_pairings
-    print(N)
-
-  # ============================================================
-  # 5. Function to obtain observed count for a species pair
-  # ============================================================
-
-  get_pair_count <- function(
-    sp1,
-    sp2) {
-      
-      idx <- pairing_table$sp1 == sp1 &
-             pairing_table$sp2 == sp2
-      
-      if (any(idx)) {
-        return(pairing_table$count[idx][1])
-      }
-      
-      # If the pair is possible but was not explicitly recorded,
-      # its observed count is zero. 
-      return(0)
+    return(p1^2)
+    
+  } else {
+    
+    return(2 * p1 * p2)
+    
   }
+  
+  
+}
 
-  # ============================================================
-  # 6. Observed counts for the six focal pairs
-  # ============================================================
+calculate_RI <- function(
+  observed,
+  expected) {
 
-  observed <- mapply(
-    get_pair_count,
-    focal_pairs$species1,
-    focal_pairs$species2
-  )
-  print(observed)
-
-  # ============================================================
-  # 7. Expected counts under random pairing
-  # ============================================================
-  #
-  # E_ij = N_i * N_j / (N - 1)
-  #
-  # where N_i and N_j are the total numbers of occurrences
-  # of species i and j among the 1,194 species occurrences.
-  #
-  # This is the expected number of i-j pairings if all
-  # species occurrences are randomly paired.
-  # ============================================================
-
-  expected <- mapply(  
-    function(sp1, sp2) {
-      if (sp1 == sp2) {
-        n_pairings * (1 / n_species^2)
-      } else {
-        n_pairings * (2 / n_species^2)
-      }
-    },
-    focal_pairs$species1,
-    focal_pairs$species2
-  )
-
-  print(expected)
-
-
-  # ============================================================
-  # 8. Calculate observed RI
-  # ============================================================
-  #
-  # RI = 1 - observed / expected
-  #
-  # RI = 0 -> observed mixing is equal to or greater than expected
-  # RI = 1 -> no observed mixed pairings despite expected mixing
-  #
-  # Negative values are set to zero.
-  # ============================================================
-
-  RI <- ifelse(
+  ifelse(
     expected > 0,
-    pmax(0, 1 - observed / expected),
+    1 - observed / expected,
     NA_real_
-    )
+  )
+}
 
-  print(RI)
+calculate_global_RI <- function(
+  spawning_table,
+  species_counts,
+  species1_col = "species1",
+  species2_col = "species2",
+  spawning_count_col = "count",
+  species_col = "species",
+  species_count_col = "count") {
 
   # ============================================================
-  # 9. Global permutation
-  # ============================================================
-  #
-  # All 1,194 species occurrences are pooled.
-  #
-  # Their identities are randomly shuffled.
-  #
-  # They are then re-paired into 597 pairs.
-  #
-  # This preserves the overall frequency of every species but
-  # destroys the observed association between partners.
-  #
-  # Location is NOT preserved.
+  # 1. Prepare species proportions
   # ============================================================
 
-  set.seed(seed)
-
-  perm_counts <- matrix(
-    0,
-    nrow = n_perm,
-    ncol = nrow(focal_pairs)
+  species_proportions <- calculate_species_proportions(
+    species_counts = species_counts,
+    species_col = species_col,
+    count_col = species_count_col
   )
 
-  colnames(perm_counts) <- paste(
-    focal_pairs$species1,
-    focal_pairs$species2,
-    sep = "_"
+
+  # ============================================================
+  # 2. Prepare spawning table
+  # ============================================================
+
+  spawning <- prepare_spawning_table(
+    spawning_table = spawning_table,
+    species1_col = species1_col,
+    species2_col = species2_col,
+    count_col = spawning_count_col
   )
 
-  print(perm_counts)
 
-  for (b in seq_len(n_perm)) {
+  # ============================================================
+  # 3. Total number of spawning events
+  # ============================================================
 
-    # Make 597 randomized pairs.
-    perm1 <- sample(
-      all_species_present,
-      size = n_pairings,
-      replace = TRUE
+  N_pairing_total <- sum(spawning$observed)
+
+  if (N_pairing_total == 0) {
+    stop("There are zero spawning observations.")
+  }
+
+
+  # ============================================================
+  # 4. Calculate expected number of pairings
+  # ============================================================
+
+  spawning <- spawning %>%
+    dplyr::mutate(
+      expected_proportion = mapply(
+        calculate_expected_spawning,
+        species1,
+        species2,
+        MoreArgs = list(
+          species_proportions = species_proportions
+        )
+      ),
+
+      expected = expected_proportion * N_pairing_total
     )
 
-    perm2 <- sample(
-      all_species_present,
-      size = n_pairings,
-      replace = TRUE
-    )
 
-    # Count each of the six focal pairs.
-    for (j in seq_len(nrow(focal_pairs))) {
+  # ============================================================
+  # 5. Calculate RI
+  # ============================================================
 
-      sp1 <- focal_pairs$species1[j]
-      sp2 <- focal_pairs$species2[j]
-
-      perm_counts[b, j] <- sum(
-        (perm1 == sp1 & perm2 == sp2) |
-        (perm1 == sp2 & perm2 == sp1)
+  spawning <- spawning %>%
+    dplyr::mutate(
+      RI = calculate_RI(
+        observed = observed,
+        expected = expected
       )
-    }
-  }
-
-  # ============================================================
-  # 10. Permutation p-values
-  # ============================================================
-  #
-  # One-sided test:
-  #
-  # Is the observed number of mixed pairings unusually LOW
-  # compared with random pairing?
-  #
-  # +1 correction prevents a p-value of exactly zero.
-  # ============================================================
-
-  permutation_p <- sapply(
-    seq_len(nrow(focal_pairs)),
-    function(j) {
-
-      (
-        sum(
-          perm_counts[, j] <= observed[j]
-        ) + 1
-      ) / (n_perm + 1)
-    }
-  )
-
-  # print(permutation_p)
-
-  # ============================================================
-  # 11. RI under each permutation
-  # ============================================================
-
-  perm_RI <- matrix(
-    NA_real_,
-    nrow = n_perm,
-    ncol = nrow(focal_pairs)
-  )
-
-  for (j in seq_len(nrow(focal_pairs))) {
-
-    perm_RI[, j] <- pmax(
-      0,
-      1 - perm_counts[, j] / expected[j]
     )
-  }
 
-  # print(perm_RI)
 
   # ============================================================
-  # 12. 95% permutation interval
-  # ============================================================
-  #
-  # This is the central 95% range of RI values under the
-  # random-pairing null distribution.
-  #
-  # It is NOT a confidence interval around the observed RI.
-  # ============================================================
-
-  RI_perm_CI <- t(
-    apply(
-      perm_RI,
-      2,
-      quantile,
-      probs = c(0.025, 0.975),
-      na.rm = TRUE,
-      names = FALSE
-    )
-  )
-  print(RI_perm_CI)
-
-  # ============================================================
-  # 13. Final results table
-  # ============================================================
-
-  results <- data.frame(
-    species1 = focal_pairs$species1,
-    species2 = focal_pairs$species2,
-    observed = observed,
-    expected = expected,
-    RI = RI,
-    permutation_p = permutation_p,
-    RI_perm_2.5 = RI_perm_CI[, 1],
-    RI_perm_97.5 = RI_perm_CI[, 2],
-    stringsAsFactors = FALSE
-  )
-  print(results)
-
-  results <- results %>%
-  filter(
-    species1 != species2
-  )
-
-  print(results)
-
-  # ============================================================
-  # 14. Species frequencies used in the null model
-  # ============================================================
-
-  species_frequency <- data.frame(
-    species = all_species_present,
-    occurrences = n_pairings * 2 / n_species,
-    frequency = 1 / n_species,
-    stringsAsFactors = FALSE
-  )
-  print(species_frequency)
-
-  # ============================================================
-  # 15. Return results
+  # 6. Return results
   # ============================================================
 
   return(
     list(
-      results = results,
-      species_frequency = species_frequency,
-      permutation_counts = perm_counts,
-      permutation_RI = perm_RI,
-      n_pairings = n_pairings,
-      n_species_occurrences = N,
-      n_permutations = n_perm,
-      seed = seed
+      results = spawning,
+      species_proportions = species_proportions,
+      N_pairing_total = N_pairing_total
     )
   )
 }
@@ -5602,7 +5476,8 @@ plot_pairwise_correlations <- function(
   make_plot <- function(
     dat,
     cor_results,
-    plot_title
+    plot_title,
+    plot_color
   ) {
 
     plot_distance_correlation(
@@ -5613,7 +5488,8 @@ plot_pairwise_correlations <- function(
       y_lab = y_lab,
       title = plot_title,
       pearson_res = cor_results$pearson,
-      spearman_res = cor_results$spearman
+      spearman_res = cor_results$spearman,
+      plot_color = plot_color
     )
   }
 
@@ -5702,6 +5578,284 @@ plot_pairwise_correlations <- function(
   # ============================================================
 
   return(results)
+}
+
+
+plot_all_pairwise_correlations <- function(df) {
+  
+  # Colours
+  colours_all <- c(
+    low  = "#F2E4D0",
+    mid  = "#D09F64",
+    high = "#8C5F2D"
+  )
+  
+  colours_location <- c(
+    low  = "#F0D4E0",
+    mid  = "#D06495",
+    high = "#8F315D"
+  )
+
+  # Convert pairwise data to distance matrices
+  make_matrix <- function(data, value_col) {
+
+    print(data)
+    print(value_col)
+    
+    species <- sort(unique(c(data$species1, data$species2)))
+    print(species)
+    
+    mat <- matrix(
+      NA,
+      nrow = length(species),
+      ncol = length(species),
+      dimnames = list(species, species)
+    )
+    print(mat)
+    
+    for (i in seq_len(nrow(data))) {
+      s1 <- data$species1[i]
+      s2 <- data$species2[i]
+      value <- data[[value_col]][i]
+      
+      mat[s1, s2] <- value
+      mat[s2, s1] <- value
+    }
+    
+    diag(mat) <- 0
+    
+    as.dist(mat)
+  }
+  
+  # Function for one correlation plot
+  make_plot <- function(data, x, y, x_lab, y_lab, colours, mantel = TRUE) {
+    
+    test <- cor.test(
+      data[[x]],
+      data[[y]],
+      method = "pearson"
+    )
+    
+    if (mantel) {
+    
+      # Convert pairwise data to distance matrices
+      x_mat <- make_matrix(data, x)
+      print(x_mat)
+      y_mat <- make_matrix(data, y)
+      print(y_mat)
+
+      print(sum(is.na(x_mat)))
+      print(sum(is.na(y_mat)))
+
+      
+      # Mantel test
+      mantel_test <- vegan::mantel(
+        x_mat,
+        y_mat,
+        method = "pearson",
+        permutations = 9999,
+        na.rm = TRUE
+      )
+      
+      mantel_r <- mantel_test$statistic
+      mantel_p <- mantel_test$signif
+      
+      label <- sprintf(
+        "Pearson r = %.2f, p = %.3g\nMantel r = %.2f, p = %.3g",
+        test$estimate,
+        test$p.value,
+        mantel_r,
+        mantel_p
+      )
+    
+    } else {
+    
+      label <- sprintf(
+        "Pearson r = %.2f, p = %.3g",
+        test$estimate,
+        test$p.value
+      )
+    }
+
+    ggplot(data, aes(x = .data[[x]], y = .data[[y]])) +
+      
+      geom_smooth(
+        method = "lm",
+        se = TRUE,
+        colour = colours["high"],
+        fill = colours["low"],
+        alpha = 0.3
+      ) +
+
+      geom_point(
+        colour = colours["mid"],
+        size = 2.5
+      ) +
+      
+      annotate(
+        "text",
+        x = mean(range(data[[x]], na.rm = TRUE)),
+        y = -Inf,
+        label = label,
+        hjust = 0.5,
+        vjust = -0.8,
+        size = 3.5
+      ) +
+      
+      labs(
+        x = x_lab,
+        y = y_lab
+      ) +
+      
+      theme_classic() +
+      theme(
+        plot.title = element_text(
+          hjust = 0.5,
+          face = "bold",
+          size = 12
+        )
+      )
+  }
+  
+  
+  # Data for the two levels
+  data_all <- df %>%
+    filter(level == "all")
+  
+  data_location <- df %>%
+    filter(level == "location")
+  
+  
+  # ── Row 1: Phenotype vs genotype ─────────────────────────────
+  
+  p1 <- make_plot(
+    data_all,
+    "distance_pheno",
+    "distance_geno",
+    "Phenotypic distance",
+    "Genetic differentiation",
+    colours_all,
+    mantel = TRUE
+  ) +
+    labs(title = "Between species")
+  
+  
+  p2 <- make_plot(
+    data_location,
+    "distance_pheno",
+    "distance_geno",
+    "Phenotypic distance",
+    "Genetic differentiation",
+    colours_location,
+    mantel = TRUE
+  ) +
+  labs(title = "Between sympatric species")
+  
+  
+  row1 <- annotate_figure(
+    ggarrange(
+      p1,
+      p2,
+      ncol = 2
+    ),
+    top = text_grob(
+      "(a)",
+      face = "bold",
+      size = 12,
+      hjust = 0,
+      x = 0
+    )
+  )
+  
+  
+  
+  # ── Row 2: Phenotype vs reproductive isolation ────────────────
+  
+  p3 <- make_plot(
+    data_all,
+    "distance_pheno",
+    "distance_asso",
+    "Phenotypic distance",
+    "Reproductive isolation",
+    colours_all,
+    mantel = TRUE
+  )
+  
+  
+  p4 <- make_plot(
+    data_location,
+    "distance_pheno",
+    "distance_asso",
+    "Phenotypic distance",
+    "Reproductive isolation",
+    colours_location,
+    mantel = TRUE
+  )
+  
+  
+  row2 <- annotate_figure(
+    ggarrange(
+      p3,
+      p4,
+      ncol = 2
+    ),
+    top = text_grob(
+      "(b)",
+      face = "bold",
+      size = 12,
+      hjust = 0,
+      x = 0
+    )
+  )
+
+
+  
+  # ── Row 3: Genotype vs reproductive isolation ─────────────────
+  
+  p5 <- make_plot(
+    data_all,
+    "distance_geno",
+    "distance_asso",
+    "Genetic differentiation",
+    "Reproductive isolation",
+    colours_all,
+    mantel = TRUE
+  )
+  
+  
+  p6 <- make_plot(
+    data_location,
+    "distance_geno",
+    "distance_asso",
+    "Genetic differentiation",
+    "Reproductive isolation",
+    colours_location,
+    mantel = TRUE
+  )
+  
+  row3 <- annotate_figure(
+    ggarrange(
+      p5,
+      p6,
+      ncol = 2
+    ),
+    top = text_grob(
+      "(c)",
+      face = "bold",
+      size = 12,
+      hjust = 0,
+      x = 0
+    )
+  )
+  
+  final_plot <- ggarrange(
+    row1,
+    row2,
+    row3,
+    ncol = 1
+  )
+
+  final_plot
 }
 
 
@@ -6564,7 +6718,8 @@ plot_speciation_hypercube <- function(
           title = "Genetic divergence (Fst)",
           range = c(
             0,
-            max(data$distance_geno, na.rm = TRUE) * 1.05
+            1
+            #max(data$distance_geno, na.rm = TRUE) * 1.05
           )
         ),
 
@@ -6572,13 +6727,14 @@ plot_speciation_hypercube <- function(
           title = "Phenotypic divergence",
           range = c(
             0,
-            max(data$distance_pheno, na.rm = TRUE) * 1.05
+            1
+            #max(data$distance_pheno, na.rm = TRUE) * 1.05
           )
         ),
 
         zaxis = list(
           title = "Reproductive isolation",
-          range = c(0.5, 1)
+          range = c(0, 1)
         ),
 
         aspectmode = "cube"

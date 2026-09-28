@@ -197,20 +197,23 @@ leg_g <- legend_geo(geo_table)
 
 ########## FIGURE 1 ###################
 # PCA plots for all, mexico, belize and usvi
-resFig1 <- results[names(results) %in% c("ver", "bel", "uvi")]
+resFig1 <- results[names(results) %in% c("all", "ver", "bel", "uvi")]
 keep_names <- names(resFig1)
 print(keep_names)
 
-Fig1_pcas <- lapply(resFig1, `[[`, "pca") # extract per location pcas
-pca_grid <- plot_grid(plotlist = Fig1_pcas, ncol = 1, rel_widths = c(1, 1, 1), scale = 0.95) # bundle location pcas in one plot
+# Extract PCA and PERMANOVA plots
+Fig1_pcas <- lapply(resFig1, `[[`, "pca")
+Fig1_permanova <- lapply(resFig1, `[[`, "permanova")
 
+# Two columns: PCA on left, PERMANOVA on right
 figure1_top <- plot_grid(
-  results[["all"]][["pca"]],
-  pca_grid,
-  ncol =2,
-  rel_widths = c(2, 1)
+  plot_grid(plotlist = Fig1_pcas, ncol = 1),
+  plot_grid(plotlist = Fig1_permanova, ncol = 1),
+  ncol = 2,
+  rel_widths = c(1, 1)
 )
 
+# Add legend
 figure1 <- ggarrange(
   figure1_top,
   NULL,
@@ -219,41 +222,17 @@ figure1 <- ggarrange(
   nrow = 4,
   heights = c(8, 0.3, 1, 0.05)
 )
-  
+
 ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
   plot = figure1,
-  width = 16, 
-  height = 13, 
-  units = "in",      # inches
-  dpi = 150,         # moderate dpi to reduce file size but keep quality
-  type = "cairo-png" # better compression and anti-aliasing
+  width = 12, 
+  height = 17, 
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
 )
 
-
-########## FIGURE 2 ###################
-# PCA plots for all locations with legend
-# all_pcas <- lapply(results_no_overall, `[[`, "pca") # extract per location pcas
-# pca_grid <- plot_grid(plotlist = all_pcas, ncol = 2, rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
-# # Combine PCA grid with legend at the bottom
-# figure2 <- ggarrange(
-#   pca_grid,
-#   NULL,
-#   leg,
-#   NULL,
-#   nrow = 4,
-#   heights = c(9, 0.3, 1, 0.05)#, widths = c (3,1)
-#   )
-
-# # Save Figure 1 as A4 PNG, optimized for small file size
-# ggsave(filename = file.path(figure_path, "Fig2_pLocPCA.png"),
-#   plot = figure2,
-#   width = 12,    # A4 width in inches
-#   height = 17,  # A4 height in inches
-#   units = "in",
-#   dpi = 150,       # good quality but light (~1 MB)
-#   type = "cairo-png" # smoother text rendering, smaller file
-# )
 
 
 ########## FIGURE S3 ###################
@@ -271,36 +250,25 @@ ggsave(
 
 
 ########## FIGURE S4 ###################
-# Additional combined phenotypic space PCA and other locations
-resFigS4 <- results[names(results) %in% c("tob", "flo", "boc")]
-keep_names <- names(resFigS4)
-print(keep_names)
-
-FigS4_pcas <- lapply(resFigS4, `[[`, "pca") # extract per location pcas
-pca_grid <- plot_grid(plotlist = FigS4_pcas, ncol = 1, rel_widths = c(1, 1, 1), scale = 0.95) # bundle location pcas in one plot
-
-figureS4_top <- plot_grid(
-  results[["all"]][["sup_pca"]],
-  pca_grid,
-  ncol = 2,
-  rel_widths = c(2, 1)
-)
-
 figureS4 <- ggarrange(
-  figureS4_top,
+  results[["all"]][["sup_pca"]],
+  ggarrange(
+    results[["all"]][["heatmap"]],
+    results[["all"]][["hclust"]],
+    ncol = 2
+  ) 
   NULL,
   leg,
   NULL,
-  nrow = 4,
-  heights = c(8, 0.3, 1, 0.05)
+  nrow = 5,
+  heights = c(8, 4, 0.3, 1, 0.05)
 )
 
-# Save as PNG (A4 size)
 ggsave(
-  filename = file.path(figure_path, "FigS4_pPCA_sup.png"),
+  filename = file.path(figure_path, "FigS4_pPCA_all.png"),
   plot = figureS4,
-  width = 16,    # A4 width in inches
-  height = 13,  # A4 height in inches
+  width = 12,    # A4 width in inches
+  height = 17,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -308,6 +276,43 @@ ggsave(
 
 
 ########## FIGURE S5 ###################
+# Additional combined phenotypic space PCA and other locations
+resFigS5 <- results[names(results) %in% c("tob", "flo", "boc")]
+keep_names <- names(resFigS5)
+print(keep_names)
+
+FigS5_pcas <- lapply(resFigS5, `[[`, "pca") # extract per location pcas
+FigS5_permanova <- lapply(resFigS5, `[[`, "permanova")
+
+figureS5_top <- plot_grid(
+  plot_grid(plotlist = FigS5_pcas, ncol = 1),
+  plot_grid(plotlist = FigS5_permanova, ncol = 1),
+  ncol = 2,
+  rel_widths = c(1, 1)
+)
+
+# Add legend
+figureS5 <- ggarrange(
+  figureS5_top,
+  NULL,
+  leg,
+  NULL,
+  nrow = 4,
+  heights = c(8, 0.3, 1, 0.05)
+)
+
+ggsave(
+  filename = file.path(figure_path, "FigS5_pPCA_loc.png"),
+  plot = figureS5,
+  width = 12, 
+  height = 17, 
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
+
+
+########## FIGURE S6 ###################
 # Other PCs combination for phenotypes per location
 # Remove the overall entry before extracting plots
 results_no_overall <- results[!names(results) %in% c("all", "pue", "nig", "uni", "chl", "abe", "ind")]
@@ -317,7 +322,7 @@ print(keep_names)
 all_sup <- lapply(results_no_overall, `[[`, "sup_pca") # extract per location supplementary pcas
 sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
 # Combine supplementary PCA grid with legend at the bottom
-figureS5 <- ggarrange(
+figureS6 <- ggarrange(
   sup_grid,
   NULL,
   leg,
@@ -327,8 +332,8 @@ figureS5 <- ggarrange(
   )
 
 # Save Figure S5 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "FigS5_pPCA_loc.png"),
-  plot = figureS5,
+ggsave(filename = file.path(figure_path, "FigS6_pPCA_sup.png"),
+  plot = figureS6,
   width = 12,    # A4 width in inches
   height = 17,  # A4 height in inches
   units = "in",
@@ -337,147 +342,97 @@ ggsave(filename = file.path(figure_path, "FigS5_pPCA_loc.png"),
 )
 
 
-########## FIGURE S6 ###################
-# Combined phenotypic space: LDA
-all_lda <- results[["all"]][["lda"]]
-figureS6 <- ggarrange(
-  all_lda,
-  NULL,
-  leg,
-  NULL,
-  nrow = 4,
-  heights = c(9, 0.3, 1, 0.05)
-)
 
-ggsave(
-  filename = file.path(figure_path, "FigS6_pAllLDA.png"),
-  plot = figureS6,
-  width = 10, 
-  height = 12, 
-  units = "in",      # inches
-  dpi = 150,         # moderate dpi to reduce file size but keep quality
-  type = "cairo-png" # better compression and anti-aliasing
-)
+# ########## FIGURE S8 ###################
+# # Combined phenotypic space: PERMANOVA + hierarchical clustering + heatmaps
+# perm <- results[["all"]][["permanova"]]
+# hier <- results[["all"]][["hclust"]]
+# heat <- results[["all"]][["heatmap"]]
+
+# # # Bottom row: hier + heat
+# bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"), font.label=list(color="black",size=20))
+
+# # Combine top (perm) with bottom row
+# figureS8 <- ggarrange(perm, bottom_row, nrow = 2, ncol = 1)
+# figureS8 <- ggarrange(
+#   NULL,
+#   figureS8,
+#   NULL,
+#   leg,
+#   NULL,
+#   nrow = 5,
+#   heights = c(0.2, 9, 0.2, 1, 0.05) 
+# )
+
+
+# # Save as PNG (A4 size)
+# ggsave(
+#   filename = file.path(figure_path, "FigS8_pAll.png"),
+#   plot = figureS8,
+#   width = 12,    # A4 width in inches
+#   height = 16,  # A4 height in inches
+#   units = "in",
+#   dpi = 150,
+#   type = "cairo-png"
+# )
+
+
+# ########## FIGURE S9 ###################
+# # PERMANOVA heatmaps for each location
+# all_perm <- lapply(results_no_overall, `[[`, "permanova") # extract per location pcas
+# perm_grid <- plot_grid(plotlist = all_perm, ncol = 2, rel_widths = c(1, 1), scale=0.95) # bundle location permanovas in one plot
+# # Combine permanova grid with legend at the bottom
+# figureS9 <- ggarrange(
+#   perm_grid
+# )
+
+# # Save Figure S7 as A4 PNG, optimized for small file size
+# ggsave(filename = file.path(figure_path, "FigS9_pLocPERM.png"),
+#        plot = figureS9,
+#        width = 14.2,    # A4 width in inches
+#        height = 17,  # A4 height in inches
+#        units = "in",
+#        dpi = 150,       # good quality but light (~1 MB)
+#        type = "cairo-png" # smoother text rendering, smaller file
+# )
+
+# ########## FIGURE S10 ###################
+# # Hierarchical clustering plots for all locations with legend
+# all_hier <- lapply(results_no_overall, `[[`, "hclust") # extract per location pcas
+# hier_grid <- plot_grid(plotlist = all_hier, ncol = 2, rel_widths = c(1, 1), scale=0.95) # bundle location pcas in one plot
+# # Combine hierarchical clustering grid with legend at the bottom
+# figureS10 <- ggarrange(
+#   hier_grid,
+#   NULL,
+#   leg,
+#   NULL,
+#   nrow = 4,
+#   heights = c(8, 0.2, 1, 0.05)
+#   )
+
+# # Save Figure S8 as A4 PNG, optimized for small file size
+# ggsave(filename = file.path(figure_path, "FigS10_pLocHCLUST.png"),
+#        plot = figureS10,
+#        width = 12,    # A4 width in inches
+#        height = 14,  # A4 height in inches
+#        units = "in",
+#        dpi = 150,       # good quality but light (~1 MB)
+#        type = "cairo-png" # smoother text rendering, smaller file
+# )
 
 
 ########## FIGURE S7 ###################
-# Remove the overall entry before extracting plots
-results_no_overall <- results[!names(results) %in% c("all", "pue", "nig", "uni", "chl", "abe", "ind")]
-keep_names <- names(results_no_overall)
-print(keep_names)
-
-all_lda <- lapply(results_no_overall, `[[`, "lda") # extract per location supplementary pcas
-lda_grid <- plot_grid(plotlist = all_lda, ncol = 2, rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
-# Combine supplementary PCA grid with legend at the bottom
-figureS7 <- ggarrange(
-  lda_grid,
-  NULL,
-  leg,
-  NULL,
-  nrow = 4,
-  heights = c(9, 0.3, 1, 0.05)
-  )
-
-# Save Figure S5 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "FigS7_pLocLDA.png"),
-  plot = figureS7,
-  width = 12,    # A4 width in inches
-  height = 17,  # A4 height in inches
-  units = "in",
-  dpi = 150,       # good quality but light (~1 MB)
-  type = "cairo-png" # smoother text rendering, smaller file
-)
-
-########## FIGURE S8 ###################
-# Combined phenotypic space: PERMANOVA + hierarchical clustering + heatmaps
-perm <- results[["all"]][["permanova"]]
-hier <- results[["all"]][["hclust"]]
-heat <- results[["all"]][["heatmap"]]
-
-# # Bottom row: hier + heat
-bottom_row <- ggarrange(hier, heat, ncol = 2, labels=c("(b)","(c)"), font.label=list(color="black",size=20))
-
-# Combine top (perm) with bottom row
-figureS8 <- ggarrange(perm, bottom_row, nrow = 2, ncol = 1)
-figureS8 <- ggarrange(
-  NULL,
-  figureS8,
-  NULL,
-  leg,
-  NULL,
-  nrow = 5,
-  heights = c(0.2, 9, 0.2, 1, 0.05) 
-)
-
-
-# Save as PNG (A4 size)
-ggsave(
-  filename = file.path(figure_path, "FigS8_pAll.png"),
-  plot = figureS8,
-  width = 12,    # A4 width in inches
-  height = 16,  # A4 height in inches
-  units = "in",
-  dpi = 150,
-  type = "cairo-png"
-)
-
-
-########## FIGURE S9 ###################
-# PERMANOVA heatmaps for each location
-all_perm <- lapply(results_no_overall, `[[`, "permanova") # extract per location pcas
-perm_grid <- plot_grid(plotlist = all_perm, ncol = 2, rel_widths = c(1, 1), scale=0.95) # bundle location permanovas in one plot
-# Combine permanova grid with legend at the bottom
-figureS9 <- ggarrange(
-  perm_grid
-)
-
-# Save Figure S7 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "FigS9_pLocPERM.png"),
-       plot = figureS9,
-       width = 14.2,    # A4 width in inches
-       height = 17,  # A4 height in inches
-       units = "in",
-       dpi = 150,       # good quality but light (~1 MB)
-       type = "cairo-png" # smoother text rendering, smaller file
-)
-
-########## FIGURE S10 ###################
-# Hierarchical clustering plots for all locations with legend
-all_hier <- lapply(results_no_overall, `[[`, "hclust") # extract per location pcas
-hier_grid <- plot_grid(plotlist = all_hier, ncol = 2, rel_widths = c(1, 1), scale=0.95) # bundle location pcas in one plot
-# Combine hierarchical clustering grid with legend at the bottom
-figureS10 <- ggarrange(
-  hier_grid,
-  NULL,
-  leg,
-  NULL,
-  nrow = 4,
-  heights = c(8, 0.2, 1, 0.05)
-  )
-
-# Save Figure S8 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "FigS10_pLocHCLUST.png"),
-       plot = figureS10,
-       width = 12,    # A4 width in inches
-       height = 14,  # A4 height in inches
-       units = "in",
-       dpi = 150,       # good quality but light (~1 MB)
-       type = "cairo-png" # smoother text rendering, smaller file
-)
-
-
-########## FIGURE S11 ###################
 # Heatmap PC images for each location
 all_heat <- lapply(results_no_overall, `[[`, "heatmap") # extract per location pcas
 heat_grid <- plot_grid(plotlist = all_heat, ncol = 2, rel_widths = c(1, 1), scale=0.95) # bundle location pcas in one plot
 # Combine heatmaps grid with legend at the bottom
-figureS11 <- ggarrange(
+figureS7 <- ggarrange(
   heat_grid
   )
 
 # Save Figure S9 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "FigS11_pLocHEAT.png"),
-       plot = figureS11,
+ggsave(filename = file.path(figure_path, "FigS7_pLocHEAT.png"),
+       plot = figureS7,
        width = 14.2,    # A4 width in inches
        height = 17,  # A4 height in inches
        units = "in",
@@ -486,47 +441,47 @@ ggsave(filename = file.path(figure_path, "FigS11_pLocHEAT.png"),
 )
 
 
-########## FIGURE S12 ###################
+########## FIGURE S8 ###################
 # Per species phenotypic space: PCA + heatmaps + hierarchical clustering + PERMANOVA
 pca_pue <- results[["pue"]][["pca"]]
 heat_pue <- results[["pue"]][["heatmap"]]
 perm_pue <- results[["pue"]][["permanova"]]
 hier_pue <- results[["pue"]][["hclust"]]
-pue <- plot_grid(pca_pue, heat_pue, perm_pue, hier_pue, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
+pue <- plot_grid(pca_pue, perm_pue, heat_pue, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
 
 pca_nig <- results[["nig"]][["pca"]]
 heat_nig <- results[["nig"]][["heatmap"]]
 perm_nig <- results[["nig"]][["permanova"]]
 hier_nig <- results[["nig"]][["hclust"]]
-nig <- plot_grid(pca_nig, heat_nig, perm_nig, hier_nig, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
+nig <- plot_grid(pca_nig, perm_nig, heat_nig, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
 
 pca_uni <- results[["uni"]][["pca"]]
 heat_uni <- results[["uni"]][["heatmap"]]
 perm_uni <- results[["uni"]][["permanova"]]
 hier_uni <- results[["uni"]][["hclust"]]
-uni <- plot_grid(pca_uni, heat_uni, perm_uni, hier_uni, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
+uni <- plot_grid(pca_uni, perm_uni, heat_uni, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
 
 pca_chl <- results[["chl"]][["pca"]]
 heat_chl <- results[["chl"]][["heatmap"]]
 perm_chl <- results[["chl"]][["permanova"]]
 hier_chl <- results[["chl"]][["hclust"]]
-chl <- plot_grid(pca_chl, heat_chl, perm_chl, hier_chl, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
+chl <- plot_grid(pca_chl, perm_chl, heat_chl, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
 
 pca_abe <- results[["abe"]][["pca"]]
 heat_abe <- results[["abe"]][["heatmap"]]
 perm_abe <- results[["abe"]][["permanova"]]
 hier_abe <- results[["abe"]][["hclust"]]
-abe <- plot_grid(pca_abe, heat_abe, perm_abe, hier_abe, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
+abe <- plot_grid(pca_abe, perm_abe, heat_abe, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
 
 pca_ind <- results[["ind"]][["pca"]]
 heat_ind <- results[["ind"]][["heatmap"]]
 perm_ind <- results[["ind"]][["permanova"]]
 hier_ind <- results[["ind"]][["hclust"]]
-ind <- plot_grid(pca_ind, heat_ind, perm_ind, hier_ind, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
+ind <- plot_grid(pca_ind, perm_ind, heat_ind, ncol = 3, rel_widths = c(1, 1, 1), scale=0.95)
 
-figureS12 <- ggarrange(pue, NULL, nig, NULL, uni, NULL, chl, NULL, abe, NULL, ind, nrow = 11, heights = c(10, 0.3, 10, 0.3, 10, 0.3, 10, 0.3, 10, 0.3, 10))
-figureS12 <- ggarrange(
-  figureS12,
+figureS8 <- ggarrange(pue, NULL, nig, NULL, uni, NULL, chl, NULL, abe, NULL, ind, nrow = 11, heights = c(10, 0.3, 10, 0.3, 10, 0.3, 10, 0.3, 10, 0.3, 10))
+figureS8 <- ggarrange(
+  figureS8,
   leg_g,
   nrow = 2,
   heights = c(10, 0.5)
@@ -534,38 +489,11 @@ figureS12 <- ggarrange(
 
 # Save as PNG (A4 size)
 ggsave(
-  filename = file.path(figure_path, "FigS12_pSpe.png"),
-  plot = figureS12,
+  filename = file.path(figure_path, "FigS8_pSpe.png"),
+  plot = figureS8,
   width = 24,    # A4 width in inches
   height = 40,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
-)
-
-########## FIGURE S13 ###################
-# Per species phenotypic space: LDA
-# Remove the overall entry before extracting plots
-results_spec <- results[!names(results) %in% c("all", "ver", "tob", "flo", "bel", "boc", "uvi")]
-keep_names <- names(results_spec)
-print(results_spec)
-
-spe_lda <- lapply(results_spec, `[[`, "lda") # extract per location supplementary pcas
-speLda_grid <- plot_grid(plotlist = spe_lda, ncol = 2, rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
-# Combine supplementary PCA grid with legend at the bottom
-figureS13 <- ggarrange(
-  speLda_grid,
-  leg_g,
-  nrow = 2,
-  heights = c(10, 0.5)
-  )
-
-# Save Figure S5 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "FigS13_pSpeLDA.png"),
-  plot = figureS13,
-  width = 12,    # A4 width in inches
-  height = 17,  # A4 height in inches
-  units = "in",
-  dpi = 150,       # good quality but light (~1 MB)
-  type = "cairo-png" # smoother text rendering, smaller file
 )
