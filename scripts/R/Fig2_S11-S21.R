@@ -203,10 +203,10 @@ leg_g <- legend_geo(geo_table, gen = TRUE)
 ########## FIGURE 2 ###################
 all_pcas <- lapply(results_locations, `[[`, "pca_f") # extract per location pcas
 pca_grid <- plot_grid(plotlist = all_pcas,
-                      ncol = 4,
+                      ncol = 1,
                       align = "v",
                       axis = "tb",
-                      rel_widths = c(1, 1, 1, 1),
+                      labels = c("(a)", "(b)", "(c)", "(d)"),
                       scale = 0.95) # bundle location pcas in one plot
 
 ld_datasets <- c("bel", "boc", "hon", "pri")
@@ -219,10 +219,9 @@ ld_plots <- lapply(
 
 ld_grid <- plot_grid(
   plotlist = ld_plots,
-  ncol = 4,
+  ncol = 1,
   align = "v",
   axis = "tb",
-  rel_widths = c(1, 1, 1, 1),
   scale = 0.95
 )
 
@@ -323,35 +322,21 @@ print("AFTER pC")
 # print("AFTER pD")
 
 
-
-# # Combine PCA grid with legend at the bottom
-# figure2 <- ggarrange(
-#   pca_grid,
-#   NULL,
-#   leg,
-#   NULL,
-#   pC,
-#   NULL,
-#   ld_grid,
-#   NULL,
-#   nrow = 6, 
-#   heights = c(6, 0.3, 1.5, 0.3, 4, 0.3, 6, 0.05)
-# ) # adjust if legend is too big/small
-
-figure2 <- plot_grid(
-  pca_grid,
-  leg,
-  pC,
-  ld_grid,
-  labels = c("(a)", "", "(b)", "(c)"),
-  ncol = 1,
-  rel_heights = c(8, 1, 8, 8), align = "v" )
+# Final Figure 2
+figure2 <- ggarrange(
+  figure2_top,   # rows 1-4: PCA + LD
+  leg,           # row 5: legend
+  pC,            # row 6: FST
+  labels = c("", "", "(e)"),
+  nrow = 3,
+  heights = c(8, 1, 3)
+)
 
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
   plot = figure2,
-  width = 20,
-  height = 18,
+  width = 16,
+  height = 22,
   units = "in",
   dpi = 150,
   type = "cairo-png"

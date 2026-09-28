@@ -207,7 +207,7 @@ Fig1_permanova <- lapply(resFig1, `[[`, "permanova")
 
 # Two columns: PCA on left, PERMANOVA on right
 figure1_top <- plot_grid(
-  plot_grid(plotlist = Fig1_pcas, ncol = 1),
+  plot_grid(plotlist = Fig1_pcas, ncol = 1, labels = c("(a)", "(b)", "(c)", "(d)")),
   plot_grid(plotlist = Fig1_permanova, ncol = 1),
   ncol = 2,
   rel_widths = c(1, 1)
@@ -227,8 +227,8 @@ figure1 <- ggarrange(
 ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
   plot = figure1,
-  width = 12, 
-  height = 17, 
+  width = 14, 
+  height = 22, 
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -253,23 +253,19 @@ ggsave(
 ########## FIGURE S4 ###################
 figureS4 <- ggarrange(
   results[["all"]][["sup_pca"]],
-  ggarrange(
-    results[["all"]][["heatmap"]],
-    results[["all"]][["hclust"]],
-    ncol = 2
-  ), 
   NULL,
   leg,
   NULL,
+  results[["all"]][["heatmap"]],
   nrow = 5,
-  heights = c(8, 4, 0.3, 1, 0.05)
+  heights = c(8, 0.3, 1, 0.05, 4)
 )
 
 ggsave(
   filename = file.path(figure_path, "FigS4_pPCA_all.png"),
   plot = figureS4,
   width = 12,    # A4 width in inches
-  height = 17,  # A4 height in inches
+  height = 20,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -306,7 +302,7 @@ ggsave(
   filename = file.path(figure_path, "FigS5_pPCA_loc.png"),
   plot = figureS5,
   width = 12, 
-  height = 17, 
+  height = 20, 
   units = "in",
   dpi = 150,
   type = "cairo-png"
@@ -329,6 +325,7 @@ figureS6 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
+  labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)")
   heights = c(9, 0.3, 1, 0.05)
   )
 
