@@ -257,7 +257,6 @@ figureS4 <- ggarrange(
   leg,
   NULL,
   # results[["all"]][["heatmap"]],
-  labels = c("(a)", "", "", ""),
   nrow = 4,
   heights = c(8, 0.3, 1, 0.05)
 )
