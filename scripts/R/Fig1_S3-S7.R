@@ -503,7 +503,7 @@ ggsave(
   filename = file.path(figure_path, "FigS7_pSpe.png"),
   plot = figureS7,
   width = 24,    # A4 width in inches
-  height = 40,  # A4 height in inches
+  height = 24,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
