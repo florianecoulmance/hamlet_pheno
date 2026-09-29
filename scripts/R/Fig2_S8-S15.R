@@ -481,7 +481,11 @@ ggsave(filename = file.path(figure_path, "FigS14_gLocPERM.png"),
 ld_spe_datasets <- c(pue = "pue", nig = "nig", uni = "uni")
 ld_spe_plots <- lapply(
   ld_spe_datasets,
-  build_ld_plot
+  build_ld_plot,
+  setNames(
+    species_info$Color,
+    species_info$spec
+  )
 )
 
 pca_pue_f <- results[["pue"]][["pca_f"]]
