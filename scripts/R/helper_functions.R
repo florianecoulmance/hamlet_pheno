@@ -2166,7 +2166,7 @@ build_ld_plot <- function(
     size = 1,
     colour = "grey",
     comparisons = pairwise_comparisons(df_all, "dataset"),
-    vjust = 2
+    label.y = 0.10
   ) +
   # Exact p-values
   stat_compare_means(
@@ -2176,8 +2176,8 @@ build_ld_plot <- function(
     colour = "grey",
     bracket.size = 0.3,
     tip.length = 0.01,
-    vjust = 5,
-    hjust = 5
+    hjust = 5,
+    label.y = 0.10
   ) +
   scale_x_discrete(
     labels = c(
@@ -2835,10 +2835,10 @@ plot_pairwise_metric <- function(
         linewidth = 0.3
       ),
       legend.key = element_blank(),
-      legend.key.size = unit(0.8, "cm"),
+      legend.key.size = unit(0.5, "cm"),
       legend.spacing.y = unit(0.1, "cm"),
       legend.title = element_text(size = 18),
-      legend.text = element_text(size = 13.5),
+      legend.text = element_text(size = 13),
       legend.direction = "vertical",
       axis.text.x = element_text(
         size = 11,
