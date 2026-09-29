@@ -2175,6 +2175,7 @@ build_ld_plot <- function(
     colour = "grey",
     bracket.size = 0.3,
     tip.length = 0.01,
+    vjust = 5
     hjust = 5
   ) +
   scale_x_discrete(
@@ -2185,7 +2186,7 @@ build_ld_plot <- function(
       "LG12_1_LG12_2" = "LG12_1\nLG12_2"
     )
   ) +
-  coord_cartesian(ylim = c(0, 0.15)) +    
+  coord_cartesian(ylim = c(0, 0.12)) +    
   labs(
       x = NULL,
       y = expression(r^2),
@@ -2833,7 +2834,7 @@ plot_pairwise_metric <- function(
         linewidth = 0.3
       ),
       legend.key = element_blank(),
-      legend.key.size = unit(0.5, "cm"),
+      legend.key.size = unit(0.8, "cm"),
       legend.spacing.y = unit(0.1, "cm"),
       legend.title = element_text(size = 18),
       legend.text = element_text(size = 13.5),
