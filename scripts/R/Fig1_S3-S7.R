@@ -445,38 +445,38 @@ pca_pue <- results[["pue"]][["pca"]]
 heat_pue <- results[["pue"]][["heatmap"]]
 perm_pue <- results[["pue"]][["permanova"]]
 hier_pue <- results[["pue"]][["hclust"]]
-pue <- plot_grid(pca_pue, perm_pue, ncol = 2, rel_widths = c(1, 1), align = "h", axis = "tb")
+pue <- plot_grid(pca_pue, perm_pue, ncol = 2, rel_widths = c(1.5, 1), align = "h", axis = "tb")
 
 
 pca_nig <- results[["nig"]][["pca"]]
 heat_nig <- results[["nig"]][["heatmap"]]
 perm_nig <- results[["nig"]][["permanova"]]
 hier_nig <- results[["nig"]][["hclust"]]
-nig <- plot_grid(pca_nig, perm_nig, ncol = 2, rel_widths = c(1, 1), align = "h", axis = "tb")
+nig <- plot_grid(pca_nig, perm_nig, ncol = 2, rel_widths = c(1.5, 1), align = "h", axis = "tb")
 
 pca_uni <- results[["uni"]][["pca"]]
 heat_uni <- results[["uni"]][["heatmap"]]
 perm_uni <- results[["uni"]][["permanova"]]
 hier_uni <- results[["uni"]][["hclust"]]
-uni <- plot_grid(pca_uni, perm_uni, ncol = 2, rel_widths = c(1, 1), align = "h", axis = "tb")
+uni <- plot_grid(pca_uni, perm_uni, ncol = 2, rel_widths = c(1.5, 1), align = "h", axis = "tb")
 
 pca_chl <- results[["chl"]][["pca"]]
 heat_chl <- results[["chl"]][["heatmap"]]
 perm_chl <- results[["chl"]][["permanova"]]
 hier_chl <- results[["chl"]][["hclust"]]
-chl <- plot_grid(pca_chl, perm_chl, ncol = 2, rel_widths = c(1, 1), align = "h", axis = "tb")
+chl <- plot_grid(pca_chl, perm_chl, ncol = 2, rel_widths = c(1.5, 1), align = "h", axis = "tb")
 
 pca_abe <- results[["abe"]][["pca"]]
 heat_abe <- results[["abe"]][["heatmap"]]
 perm_abe <- results[["abe"]][["permanova"]]
 hier_abe <- results[["abe"]][["hclust"]]
-abe <- plot_grid(pca_abe, perm_abe, ncol = 2, rel_widths = c(1, 1), align = "h", axis = "tb")
+abe <- plot_grid(pca_abe, perm_abe, ncol = 2, rel_widths = c(1.5, 1), align = "h", axis = "tb")
 
 pca_ind <- results[["ind"]][["pca"]]
 heat_ind <- results[["ind"]][["heatmap"]]
 perm_ind <- results[["ind"]][["permanova"]]
 hier_ind <- results[["ind"]][["hclust"]]
-ind <- plot_grid(pca_ind, perm_ind, ncol = 2, rel_widths = c(1, 1), align = "h", axis = "tb")
+ind <- plot_grid(pca_ind, perm_ind, ncol = 2, rel_widths = c(1.5, 1), align = "h", axis = "tb")
 
 # Arrange all six species
 figureS7_top <- plot_grid(
@@ -494,7 +494,7 @@ figureS7 <- ggarrange(
   figureS7_top,
   leg_g,
   nrow = 2,
-  heights = c(10, 0.5)
+  heights = c(10, 2)
 )
 
 
@@ -503,7 +503,7 @@ ggsave(
   filename = file.path(figure_path, "FigS7_pSpe.png"),
   plot = figureS7,
   width = 24,    # A4 width in inches
-  height = 24,  # A4 height in inches
+  height = 26,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
