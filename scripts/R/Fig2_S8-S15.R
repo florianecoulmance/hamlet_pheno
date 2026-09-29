@@ -213,8 +213,7 @@ ld_datasets <- c("bel", "boc", "hon", "pri")
 
 ld_plots <- lapply(
   ld_datasets,
-  build_ld_plot,
-  location_colors = location_colors
+  build_ld_plot
 )
 
 ld_grid <- plot_grid(

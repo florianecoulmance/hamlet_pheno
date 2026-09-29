@@ -2111,8 +2111,7 @@ pairwise_comparisons <- function(df, grp) combn(unique(as.character(df[[grp]])),
 
 # Build LD plot
 build_ld_plot <- function(
-  ds,
-  location_colors) {
+  ds) {
 
   message("Processing:    ", ds)
   
@@ -2146,7 +2145,7 @@ build_ld_plot <- function(
     aes(x = dataset, y = r2, group = dataset)
   ) +
   geom_boxplot(
-    fill = location_colors[ds],
+    fill = geo_table$Color[location_name],
     colour = "black",
     outlier.shape = NA,
     linewidth = 0.2
