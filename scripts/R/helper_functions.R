@@ -2175,7 +2175,7 @@ build_ld_plot <- function(
     colour = "grey",
     bracket.size = 0.3,
     tip.length = 0.01,
-    vjust = -2.5
+    hjust = 5
   ) +
   scale_x_discrete(
     labels = c(
@@ -2185,7 +2185,7 @@ build_ld_plot <- function(
       "LG12_1_LG12_2" = "LG12_1\nLG12_2"
     )
   ) +
-  coord_cartesian(ylim = c(0, max(df_all$r2, na.rm = TRUE)*1.15)) +    
+  coord_cartesian(ylim = c(0, 0.15)) +    
   labs(
       x = NULL,
       y = expression(r^2),

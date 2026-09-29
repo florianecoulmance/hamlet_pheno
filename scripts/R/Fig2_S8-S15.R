@@ -321,11 +321,13 @@ print("AFTER pC")
 # Final Figure 2
 figure2 <- ggarrange(
   figure2_top,   # rows 1-4: PCA + LD
+  NULL,
   leg,           # row 5: legend
+  NULL,
   pC,            # row 6: FST
-  labels = c("", "", "(e)"),
-  nrow = 3,
-  heights = c(8, 1, 3)
+  labels = c("", "", "", "", "(e)"),
+  nrow = 5,
+  heights = c(8, 0.3, 1, 0.3, 3)
 )
 
 ggsave(
