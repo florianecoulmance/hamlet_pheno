@@ -211,9 +211,15 @@ pca_grid <- plot_grid(plotlist = all_pcas,
 
 ld_datasets <- c("bel", "boc", "hon", "pri")
 
+location_colors <- setNames(
+  geo_table$Color,
+  geo_table$geo
+)
+
 ld_plots <- lapply(
   ld_datasets,
-  build_ld_plot
+  build_ld_plot,
+  location_colors = location_colors
 )
 
 ld_grid <- plot_grid(
@@ -291,15 +297,6 @@ head(fst_plot)
 #   chromosome_info
 # )
 
-print(plot_pairwise_metric)
-typeof(plot_pairwise_metric)
-class(plot_pairwise_metric)
-
-location_colors <- setNames(
-  geo_table$Color,
-  geo_table$geo
-)
-
 print("BEFORE pC")
 # 6. PLOT C — FST boxplots
 pC <- plot_pairwise_metric(
@@ -335,7 +332,7 @@ ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
   plot = figure2,
   width = 17,
-  height = 22,
+  height = 30,
   units = "in",
   dpi = 150,
   type = "cairo-png"

@@ -2111,7 +2111,8 @@ pairwise_comparisons <- function(df, grp) combn(unique(as.character(df[[grp]])),
 
 # Build LD plot
 build_ld_plot <- function(
-  ds) {
+  ds,
+  location_colors) {
 
   message("Processing:    ", ds)
   
@@ -2145,7 +2146,7 @@ build_ld_plot <- function(
     aes(x = dataset, y = r2, group = dataset)
   ) +
   geom_boxplot(
-    fill = geo_table$Color[location_name],
+    fill = location_colors[ds],
     colour = "black",
     outlier.shape = NA,
     linewidth = 0.2
@@ -2176,18 +2177,26 @@ build_ld_plot <- function(
     tip.length = 0.01,
     vjust = -2.5
   ) +
-  coord_cartesian(ylim = c(0, 1)) +    
+  scale_x_discrete(
+    labels = c(
+      "global" = "Global",
+      "LG04_LG12_1" = "LG04\nLG12_1",
+      "LG04_LG12_2" = "LG04\nLG12_2",
+      "LG12_1_LG12_2" = "LG12_1\nLG12_2"
+    )
+  ) +
+  coord_cartesian(ylim = c(0, max(df_all$r2, na.rm = TRUE)*1.15)) +    
   labs(
       x = NULL,
       y = expression(r^2),
-      title = title_text
+      title = ""
   ) +
   theme_classic() +
   theme(
       legend.position = "none",
       axis.text.x = element_text(
-        size = 12,
-        angle = 60,
+        size = 10,
+        angle = 0,
       ),
       axis.text.y = element_text(
         size = 12
