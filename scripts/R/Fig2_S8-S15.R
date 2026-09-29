@@ -407,7 +407,7 @@ ggsave(
 
 ########## FIGURE S11 ###################
 # Combined genotypic space: LD
-figureS11 <- build_ld_plot("all", location_colors = location_colors)
+figureS11 <- build_ld_plot("all")
 
 # Save as PNG (A4 size)
 ggsave(
@@ -484,8 +484,7 @@ ggsave(filename = file.path(figure_path, "FigS14_gLocPERM.png"),
 ld_spe_datasets <- c(pue = "pue", nig = "nig", uni = "uni")
 ld_spe_plots <- lapply(
   ld_spe_datasets,
-  build_ld_plot,
-  location_colors = NULL
+  build_ld_plot
 )
 
 pca_pue_f <- results[["pue"]][["pca_f"]]
