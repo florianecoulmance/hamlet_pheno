@@ -2165,7 +2165,8 @@ build_ld_plot <- function(
     label = "p.signif",
     size = 1,
     colour = "grey",
-    comparisons = pairwise_comparisons(df_all, "dataset")
+    comparisons = pairwise_comparisons(df_all, "dataset"),
+    vjust = 2
   ) +
   # Exact p-values
   stat_compare_means(
@@ -2175,7 +2176,7 @@ build_ld_plot <- function(
     colour = "grey",
     bracket.size = 0.3,
     tip.length = 0.01,
-    vjust = 5
+    vjust = 5,
     hjust = 5
   ) +
   scale_x_discrete(
