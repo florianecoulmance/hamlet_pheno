@@ -2836,10 +2836,10 @@ plot_pairwise_metric <- function(
       legend.key.size = unit(0.5, "cm"),
       legend.spacing.y = unit(0.1, "cm"),
       legend.title = element_text(size = 18),
-      legend.text = element_text(size = 15),
+      legend.text = element_text(size = 13.5),
       legend.direction = "vertical",
       axis.text.x = element_text(
-        size = 12,
+        size = 11,
         angle = 60,
         hjust = 1
       ),
