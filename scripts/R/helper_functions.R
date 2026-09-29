@@ -2112,7 +2112,7 @@ pairwise_comparisons <- function(df, grp) combn(unique(as.character(df[[grp]])),
 # Build LD plot
 build_ld_plot <- function(
   ds,
-  location_colors) {
+  location_colors = location_colors) {
 
   message("Processing:    ", ds)
   

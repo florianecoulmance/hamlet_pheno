@@ -404,7 +404,7 @@ ggsave(
 
 ########## FIGURE S11 ###################
 # Combined genotypic space: LD
-figureS11 <- build_ld_plot("all")
+figureS11 <- build_ld_plot("all", location_colors)
 
 # Save as PNG (A4 size)
 ggsave(
