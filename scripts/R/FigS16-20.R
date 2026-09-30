@@ -1,6 +1,6 @@
 # by: Floriane Coulmance: 20/04/2026
 # usage:
-# Rscript FigS20.R
+# Rscript FigS16-20.R
 #___________________________________________________________________
 
 # Clear the work space
@@ -87,7 +87,7 @@ purrr::iwalk(seq_along(plots), function(i, ...) {
   ggsave(
     filename = file.path(
       fig_dir,
-      paste0("FigS", 21 + i, "_newHybrids_", loc, ".png")
+      paste0("FigS", 15 + i, "_newHybrids_", loc, ".png")
     ),
     plot = plots[[i]],
     height = 20,

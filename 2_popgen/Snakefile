@@ -610,7 +610,7 @@ rule plot_newhybrids:
     shell:
         r"""
         module load R/4.3.1-foss-2023a
-        Rscript {SCRIPTS_DIR}/R/FigS22-26.R {params.base_dir} {params.fig_dir}
+        Rscript {SCRIPTS_DIR}/R/FigS16-20.R {params.base_dir} {params.fig_dir}
         """
 
 
