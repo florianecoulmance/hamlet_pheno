@@ -2156,7 +2156,7 @@ build_ld_plot <- function(
     fun = mean,
     geom = "point",
     shape = 23,
-    size = 2.2,
+    size = 3,
     fill = "white",
     colour = "black"
   ) +
