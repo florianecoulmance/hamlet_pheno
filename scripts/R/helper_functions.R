@@ -2163,21 +2163,20 @@ build_ld_plot <- function(
   # Significance stars
   stat_compare_means(
     label = "p.signif",
-    size = 1,
+    size = 3,
     colour = "grey",
     comparisons = pairwise_comparisons(df_all, "dataset"),
-    label.y = seq(0.075, 0.09, length.out = length(pairwise_comparisons(df_all, "dataset")))
+    label.y = seq(0.060, 0.09, length.out = length(pairwise_comparisons(df_all, "dataset")))
   ) +
   # Exact p-values
   stat_compare_means(
     comparisons = pairwise_comparisons(df_all, "dataset"),
     label = "p.format",
-    size = 1,
+    size = 2.5,
     colour = "grey",
     bracket.size = 0.3,
-    tip.length = 0.01,
-    hjust = 5,
-    label.y = seq(0.075, 0.09, length.out = length(pairwise_comparisons(df_all, "dataset")))
+    tip.length = 0.005,
+    label.y = seq(0.050, 0.08, length.out = length(pairwise_comparisons(df_all, "dataset")))
   ) +
   scale_x_discrete(
     labels = c(
