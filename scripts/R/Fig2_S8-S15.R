@@ -327,7 +327,7 @@ figure2 <- ggarrange(
   pC,            # row 6: FST
   labels = c("", "", "", "", "(e)"),
   nrow = 5,
-  heights = c(8, 0.3, 1, 0.1, 3)
+  heights = c(9, 0.3, 0.8, 0.1, 3)
 )
 
 ggsave(

@@ -2163,10 +2163,8 @@ build_ld_plot <- function(
   # Exact p-values
   stat_compare_means(
     comparisons = pairwise_comparisons(df_all, "dataset"),
-    aes(
-      label = paste0(after_stat(p.format), '\n', after_stat(p.signif))
-    ),
-    size = 3,
+    label = "p.signif",
+    size = 4,
     color = "grey",
     bracket.size = 0.3,
     tip.length = 0.005,
