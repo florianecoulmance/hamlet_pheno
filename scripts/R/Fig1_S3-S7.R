@@ -202,16 +202,40 @@ keep_names <- names(resFig1)
 print(keep_names)
 
 # Extract PCA and PERMANOVA plots
-Fig1_pcas <- lapply(resFig1, `[[`, "pca")
-Fig1_permanova <- lapply(resFig1, `[[`, "permanova")
+# Fig1_pcas <- lapply(resFig1, `[[`, "pca")
+# Fig1_permanova <- lapply(resFig1, `[[`, "permanova")
 
 # Two columns: PCA on left, PERMANOVA on right
-figure1_top <- plot_grid(
-  plot_grid(plotlist = Fig1_pcas, ncol = 1, labels = c("(a)", "(b)", "(c)", "(d)")),
-  plot_grid(plotlist = Fig1_permanova, ncol = 1),
+figure1_top <- ggarrange(
+  results[["all"]][["pca"]],
+  ggarrange(
+    results[["ver"]][["sup_pca"]],
+    results[["bel"]][["sup_pca"]],
+    results[["uvi"]][["sup_pca"]],
+    nrow = 3
+  ),
   ncol = 2,
-  rel_widths = c(1, 1)
+  widths = c(2, 1)
 )
+
+figure1_bottom <- ggarrange(
+  results[["all"]][["permanova"]],
+  ggarrange(
+    results[["ver"]][["permanova"]],
+    results[["bel"]][["permanova"]],
+    results[["uvi"]][["permanova"]],
+    nrow = 3
+  ),
+  ncol = 2,
+  widths = c(2, 1)
+)
+
+# plot_grid(
+#   plot_grid(plotlist = Fig1_pcas, ncol = 1, labels = c("(a)", "(b)", "(c)", "(d)")),
+#   plot_grid(plotlist = Fig1_permanova, ncol = 1),
+#   ncol = 2,
+#   rel_widths = c(1, 1)
+# )
 
 # Add legend
 figure1 <- ggarrange(
@@ -219,9 +243,12 @@ figure1 <- ggarrange(
   NULL,
   leg,
   NULL,
-  nrow = 4,
+  figure1_bottom,
+  NULL,
+  nrow = 6,
   ncol = 1,
-  heights = c(8, 0.3, 0.75, 0.05)
+  heights = c(8, 0.3, 0.75, 0.3, 8, 0.05),
+  labels = c("(a)", "", "", "", "(b)", "")
 )
 
 ggsave(

@@ -71,11 +71,11 @@ rule all:
         expand(
             f"{FIGURES_DIR}/{{fig_name}}",
             fig_name=[
-                "FigS16_newhybrid_bel.png",
-                "FigS17_newhybrid_boc.png",
-                "FigS18_newhybrid_hon.png",
-                "FigS19_newhybrid_pri.png",
-                "FigS20_newhybrid_flk.png"
+                "FigS16_newHybrid_bel.png",
+                "FigS17_newHybrid_boc.png",
+                "FigS18_newHybrid_flk.png",
+                "FigS19_newHybrid_hon.png",
+                "FigS20_newHybrid_pri.png"
             ]
         ),
         "ld/LD.bed",
@@ -599,11 +599,11 @@ rule plot_newhybrids:
                dataset=locations,
                pair=PAIRS)
     output:
-        f"{FIGURES_DIR}/FigS16_newhybrid_bel.png",
-        f"{FIGURES_DIR}/FigS17_newhybrid_boc.png",
-        f"{FIGURES_DIR}/FigS18_newhybrid_hon.png",
-        f"{FIGURES_DIR}/FigS19_newhybrid_pri.png",
-        f"{FIGURES_DIR}/FigS20_newhybrid_flk.png"
+        f"{FIGURES_DIR}/FigS16_newHybrid_bel.png",
+        f"{FIGURES_DIR}/FigS17_newHybrid_boc.png",
+        f"{FIGURES_DIR}/FigS18_newHybrid_flk.png",
+        f"{FIGURES_DIR}/FigS19_newHybrid_hon.png",
+        f"{FIGURES_DIR}/FigS20_newHybrid_pri.png"
     params:
         base_dir = BASE_DIR,
         fig_dir = FIGURES_DIR
