@@ -33,7 +33,7 @@ library(vegan)
 library(knitr)
 library(plotly)
 library(base64enc)
-
+library(scatterplot3d)
 
 # ############################
 # CONFIG

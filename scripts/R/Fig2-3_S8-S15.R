@@ -319,14 +319,14 @@ print("AFTER pC")
 
 # Final Figure 2
 figure2 <- ggarrange(
-  pca_grid,   # rows 1-4: PCA + LD
-  NULL,
-  leg,           # row 5: legend
+  ld_grid,   # rows 1-4: PCA + LD
+  # NULL,
+  # leg,           # row 5: legend
   NULL,
   pC,            # row 6: FST
-  labels = c("(a)", "", "", "", "(b)"),
+  labels = c("(a)", "", "(b)"),
   nrow = 5,
-  heights = c(9, 0.3, 0.8, 0.1, 3)
+  heights = c(9, 0.3, 5)
 )
 
 ggsave(
@@ -340,18 +340,18 @@ ggsave(
 )
 
 
-########## FIGURE 3 ###################
-figure3 <- ld_grid
+# ########## FIGURE 3 ###################
+# figure3 <- ld_grid
 
-ggsave(
-  filename = file.path(figure_path, "Fig3_locLD.png"),
-  plot = figure3,
-  width = 14,
-  height = 14,
-  units = "in",
-  dpi = 150,
-  type = "cairo-png"
-)
+# ggsave(
+#   filename = file.path(figure_path, "Fig3_locLD.png"),
+#   plot = figure3,
+#   width = 14,
+#   height = 14,
+#   units = "in",
+#   dpi = 150,
+#   type = "cairo-png"
+# )
 
 # ########## FIGURE S8 ###################
 figureS8 <- plot_fst_categories(
@@ -450,27 +450,47 @@ ggsave(
 
 
 # ########## FIGURE S13 ###################
-# Other PCs combination for genotypes per location
-all_sup <- lapply(results_locations, `[[`, "pca_s") # extract per location pcas
-sup_grid <- plot_grid(plotlist = all_sup, ncol = 2,   labels = c("(a)", "(b)", "(c)", "(d)"), rel_widths = c(1, 1), scale = 0.95) # bundle location pcas in one plot
-# Combine PCA grid with legend at the bottom
+# PCA and PERMANOVA plots per location
+location_rows <- lapply(results_locations, function(res) {
+  
+  plot_grid(
+    res$pca_f,
+    res$pca_s,
+    res$permanova,
+    ncol = 3,
+    rel_widths = c(1, 1, 1),
+    scale = 0.95
+  )
+})
+
+# Combine the 4 location rows
+figureS13 <- plot_grid(
+  plotlist = location_rows,
+  ncol = 1,
+  labels = c("(a)", "(b)", "(c)", "(d)"),
+  label_x = 0,
+  rel_heights = c(1, 1, 1, 1)
+)
+
+# Add legend at bottom
 figureS13 <- ggarrange(
-  sup_grid,
+  figureS13,
   NULL,
   leg,
   NULL,
   nrow = 4,
   heights = c(8, 0.3, 1, 0.05)
-) # adjust if legend is too big/small
+)
 
-# Save Figure S12 as A4 PNG, optimized for small file size
-ggsave(filename = file.path(figure_path, "FigS13_gLocSUP.png"),
+# Save
+ggsave(
+  filename = file.path(figure_path, "FigS13_gLocSUP.png"),
   plot = figureS13,
-  width = 12,    # A4 width in inches
-  height = 14,  # A4 height in inches
+  width = 17,
+  height = 30,
   units = "in",
-  dpi = 150,       # good quality but light (~1 MB)
-  type = "cairo-png" # smoother text rendering, smaller file
+  dpi = 150,
+  type = "cairo-png"
 )
 
 

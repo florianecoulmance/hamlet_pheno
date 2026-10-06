@@ -5695,7 +5695,7 @@ plot_all_pairwise_correlations <- function(df) {
       
       geom_smooth(
         method = "lm",
-        se = TRUE,
+        se = FALSE,
         colour = colours["high"],
         fill = colours["low"],
         alpha = 0.3
