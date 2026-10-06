@@ -2115,6 +2115,13 @@ build_ld_plot <- function(
   location_colors = location_colors) {
 
   message("Processing:    ", ds)
+
+  n <- nrow(read.table(
+    file.path(base_path, "/2_popgen/ld/", paste0(ds, "_global.nosex")),
+    header = F
+  ))
+
+  expected_ld <- 1 / (2 * n)
   
   files <- list(
     global = file.path(base_path, "/2_popgen/ld/", paste0(ds, "_global.ld")),
@@ -2159,6 +2166,12 @@ build_ld_plot <- function(
     size = 4,
     fill = "white",
     colour = "black"
+  ) +
+  geom_hline(
+    yintercept = expected_ld,
+    colour = "red",
+    linetype = "dashed",
+    linewidth = 0.6
   ) +
   # Exact p-values
   stat_compare_means(

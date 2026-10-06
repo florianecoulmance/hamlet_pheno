@@ -203,10 +203,9 @@ leg_g <- legend_geo(geo_table, gen = TRUE)
 ########## FIGURE 2 ###################
 all_pcas <- lapply(results_locations, `[[`, "pca_f") # extract per location pcas
 pca_grid <- plot_grid(plotlist = all_pcas,
-                      ncol = 1,
+                      ncol = 2,
                       align = "v",
                       axis = "tb",
-                      labels = c("(a)", "(b)", "(c)", "(d)"),
                       scale = 0.95) # bundle location pcas in one plot
 
 ld_datasets <- c("bel", "boc", "hon", "pri")
@@ -224,19 +223,19 @@ ld_plots <- lapply(
 
 ld_grid <- plot_grid(
   plotlist = ld_plots,
-  ncol = 1,
+  ncol = 2,
   align = "v",
   axis = "tb",
   scale = 0.95
 )
 
 # PCA on left, LD on right
-figure2_top <- plot_grid(
-  pca_grid,
-  ld_grid,
-  ncol = 2,
-  rel_widths = c(1, 1)
-)
+# figure2_top <- plot_grid(
+#   pca_grid,
+#   ld_grid,
+#   ncol = 2,
+#   rel_widths = c(1, 1)
+# )
 
 # 1. READ PIXY OUTPUT
 fst <- read.table(
@@ -320,12 +319,12 @@ print("AFTER pC")
 
 # Final Figure 2
 figure2 <- ggarrange(
-  figure2_top,   # rows 1-4: PCA + LD
+  pca_grid,   # rows 1-4: PCA + LD
   NULL,
   leg,           # row 5: legend
   NULL,
   pC,            # row 6: FST
-  labels = c("", "", "", "", "(e)"),
+  labels = c("(a)", "", "", "", "(b)"),
   nrow = 5,
   heights = c(9, 0.3, 0.8, 0.1, 3)
 )
@@ -340,6 +339,19 @@ ggsave(
   type = "cairo-png"
 )
 
+
+########## FIGURE 3 ###################
+figure3 <- ld_grid
+
+ggsave(
+  filename = file.path(figure_path, "Fig3_locLD.png"),
+  plot = figure3,
+  width = 14,
+  height = 14,
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
 
 # ########## FIGURE S8 ###################
 figureS8 <- plot_fst_categories(

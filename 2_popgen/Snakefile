@@ -14,7 +14,7 @@ GXP_FILE=os.path.join(BASE_DIR, "metadata/color_gxp_peaks.txt")
 FIGURES_DIR = os.path.join(BASE_DIR, "figures")
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 PYTHON_SCRIPT = os.path.join(SCRIPTS_DIR, "python", "permanova.py")
-R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig2_S8-S15.R")
+R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig2-3_S8-S15.R")
 SPID_SCRIPT = os.path.join(SCRIPTS_DIR, "sh", "vcf2nh.spid")
 
 # Separate datasets into "location" and "species" groups
@@ -55,6 +55,7 @@ rule all:
             f"{FIGURES_DIR}/{{fig_name}}",
             fig_name=[
                 "Fig2_pairFST.png",
+                "Fig3_locLD.png",
                 "FigS8_gFSTviolin.png",
                 # "FigS9_gAllPCA.png",
                 "FigS10_gAllVAR.png",
@@ -874,6 +875,7 @@ rule pca_plot:
         ld_lg12_1_lg12_2 = expand("ld/{dataset}.LG12_1_LG12_2.ld", dataset=ld_datasets)
     output:
         f"{FIGURES_DIR}/Fig2_pairFST.png",
+        f"{FIGURES_DIR}/Fig3_locLD.png",
         f"{FIGURES_DIR}/FigS8_gFSTviolin.png",
         # f"{FIGURES_DIR}/FigS9_gAllPCA.png",
         f"{FIGURES_DIR}/FigS10_gAllVAR.png",
