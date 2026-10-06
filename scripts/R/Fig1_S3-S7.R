@@ -209,25 +209,29 @@ print(keep_names)
 figure1_top <- ggarrange(
   results[["all"]][["pca"]],
   ggarrange(
-    results[["ver"]][["sup_pca"]],
-    results[["bel"]][["sup_pca"]],
-    results[["uvi"]][["sup_pca"]],
+    results[["ver"]][["pca"]],
+    results[["bel"]][["pca"]],
+    results[["uvi"]][["pca"]],
     nrow = 3
   ),
   ncol = 2,
   widths = c(2, 1)
 )
 
-figure1_bottom <- ggarrange(
+right_permanova <- plot_grid(
+  results[["ver"]][["permanova"]],
+  results[["bel"]][["permanova"]],
+  results[["uvi"]][["permanova"]],
+  ncol = 1,
+  align = "v"
+)
+
+figure1_bottom <- plot_grid(
   results[["all"]][["permanova"]],
-  ggarrange(
-    results[["ver"]][["permanova"]],
-    results[["bel"]][["permanova"]],
-    results[["uvi"]][["permanova"]],
-    nrow = 3
-  ),
+  right_permanova,
   ncol = 2,
-  widths = c(2, 1)
+  rel_widths = c(2, 1),
+  align = "h"
 )
 
 # plot_grid(
@@ -247,7 +251,7 @@ figure1 <- ggarrange(
   NULL,
   nrow = 6,
   ncol = 1,
-  heights = c(8, 0.3, 0.75, 0.3, 8, 0.05),
+  heights = c(8, 0.3, 0.75, 0.1, 8, 0.05),
   labels = c("(a)", "", "", "", "(b)", "")
 )
 
