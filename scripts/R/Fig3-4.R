@@ -557,6 +557,17 @@ hypercube <- plot_speciation_hypercube(
 )
 print(hypercube)
 
+# A colour and a shape per species
+colors <- c("location" = "#D06495",
+            "all" = "#D09F64")
+shapes <- c("location" = 16,
+            "all" = 17)
+
+point_cols   <- colors[speciation_hypercube_data$level]
+point_shapes <- shapes[speciation_hypercube_data$level]
+
+scatterplot3d(speciation_hypercube_data[, 5:7], pch = point_shapes, color = point_cols, angle = 55)
+
 hypercube_paper <- plot_speciation_paper(
   speciation_hypercube_data,
   species_info
