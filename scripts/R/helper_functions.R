@@ -2195,7 +2195,7 @@ build_ld_plot <- function(
   labs(
       x = NULL,
       y = expression(r^2),
-      title = ""
+      title = location_name
   ) +
   theme_classic() +
   theme(
@@ -6769,13 +6769,16 @@ plot_speciation_hypercube <- function(
 plot_speciation_paper <- function(
     data,
     species_meta,
-    label_location = TRUE) {
+    label_location = TRUE,
+    panel = c("all", "location")) {
 
   library(dplyr)
   library(ggplot2)
   library(ggimage)
   library(patchwork)
   library(grid)
+
+  panel <- match.arg(panel)
 
   # ============================================================
   # 1. DATA
@@ -7402,7 +7405,11 @@ plot_speciation_paper <- function(
   )
 
 
-  return(p)
+  if (panel == "all") {
+    return(p_all)
+  } else {
+    return(p_location)
+  }
 }
 
 plot_speciation_paper2 <- function(

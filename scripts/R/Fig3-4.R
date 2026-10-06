@@ -552,27 +552,101 @@ correlation_figure
 message("\n========================================")
 message("HYPERCUBE")
 message("========================================")
-hypercube <- plot_speciation_hypercube(
-  speciation_hypercube_data
+# hypercube <- plot_speciation_hypercube(
+#   speciation_hypercube_data
+# )
+# print(hypercube)
+
+# # A colour and a shape per species
+# colors <- c("location" = "#D06495",
+#             "all" = "#D09F64")
+# shapes <- c("location" = 16,
+#             "all" = 17)
+# 
+# point_cols   <- colors[speciation_hypercube_data$level]
+# point_shapes <- shapes[speciation_hypercube_data$level]
+# 
+# scatterplot3d(
+#   speciation_hypercube_data[, c(5, 7, 6)],
+#   pch = point_shapes,
+#   color = point_cols,
+#   angle = 120,
+#   xlim = c(0, 1),
+#   ylim = c(0, 1),
+#   zlim = c(0, 1)
+# )
+
+# hypercube_paper <- plot_speciation_paper(
+#   speciation_hypercube_data,
+#   species_info
+# )
+# print(hypercube_paper)
+
+data_location <- speciation_hypercube_data %>%
+  filter(level == "location")
+
+scatter_location <- scatterplot3d(
+  data_location[, c(5, 7, 6)],
+  pch = 16,
+  color = "#D06495",
+  angle = 120,
+  xlim = c(0, 1),
+  ylim = c(0, 1),
+  zlim = c(0, 1)
 )
-print(hypercube)
+grid.echo()
+scatter_location <- grid.grab()
 
-# A colour and a shape per species
-colors <- c("location" = "#D06495",
-            "all" = "#D09F64")
-shapes <- c("location" = 16,
-            "all" = 17)
-
-point_cols   <- colors[speciation_hypercube_data$level]
-point_shapes <- shapes[speciation_hypercube_data$level]
-
-scatterplot3d(speciation_hypercube_data[, 5:7], pch = point_shapes, color = point_cols, angle = 55)
-
-hypercube_paper <- plot_speciation_paper(
+paper_location <- plot_speciation_paper(
   speciation_hypercube_data,
-  species_info
+  species_info,
+  panel = "location"
 )
-print(hypercube_paper)
+print(paper_location)
+
+figure_location <- plot_grid(
+  scatter_location,
+  paper_location,
+  nrow = 2,
+  labels = c("(a)", "(b)"),
+  rel_widths = c(1, 1)
+)
+
+
+data_all <- speciation_hypercube_data %>%
+  filter(level == "all")
+
+scatter_all <- 
+  scatterplot3d(
+    data_all[, c(5, 7, 6)],
+    pch = 17,
+    color = "#D09F64",
+    angle = 120,
+    xlim = c(0, 1),
+    ylim = c(0, 1),
+    zlim = c(0, 1)
+  )
+grid.echo()
+scatter_all <- grid.grab()
+
+
+paper_all <- plot_speciation_paper(
+  speciation_hypercube_data,
+  species_info,
+  panel = "all"
+)
+print(paper_all)
+
+figure_all <- plot_grid(
+  scatter_all,
+  paper_all,
+  nrow = 2,
+  labels = c("(a)", "(b)"),
+  rel_widths = c(1, 1)
+)
+
+
+
 
 
 # 

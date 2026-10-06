@@ -326,7 +326,7 @@ figure2 <- ggarrange(
   pC,            # row 6: FST
   labels = c("(a)", "", "(b)"),
   nrow = 5,
-  heights = c(9, 0.3, 5)
+  heights = c(12, 0.3, 5)
 )
 
 ggsave(
@@ -479,7 +479,7 @@ figureS13 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(8, 0.3, 1, 0.05)
+  heights = c(8, 0.3, 0.75, 0.05)
 )
 
 # Save
