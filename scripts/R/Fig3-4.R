@@ -557,7 +557,7 @@ message("========================================")
 hypercube <- plot_speciation_hypercube(
   speciation_hypercube_data %>% filter(level == "location")
 )
-print(hypercube)
+# print(hypercube)
 
 data_location <- speciation_hypercube_data %>%
   filter(level == "location")

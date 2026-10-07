@@ -6880,7 +6880,7 @@ plot_speciation_paper <- function(
       } else {
 
         x_offset <- 0
-        y_offset <- 0.006
+        y_offset <- 0.004
       }
 
       df_non1 <- df_non1 %>%
@@ -6921,7 +6921,7 @@ plot_speciation_paper <- function(
 
     if (nrow(df_one) > 0) {
 
-      right_x <- 1.14
+      right_x <- 1.12
 
       if (nrow(df_one) == 1) {
 
@@ -7020,7 +7020,7 @@ plot_speciation_paper <- function(
           box_x + box_width * 0.23,
 
         logo_y =
-          box_y + box_height * 0.18,
+          box_y + box_height * 0.13,
 
         name_y =
           box_y - box_height * 0.18,
@@ -7295,8 +7295,8 @@ plot_speciation_paper <- function(
       aes(
         xmin = box_xmin,
         xmax = box_xmax,
-        ymin = box_ymin - 0.001,
-        ymax = box_ymax + 0.001
+        ymin = box_ymin - 0.006,
+        ymax = box_ymax + 0.006
       ),
       inherit.aes = FALSE,
       fill = "white",
@@ -7316,7 +7316,7 @@ plot_speciation_paper <- function(
         image = link1
       ),
       inherit.aes = FALSE,
-      size = 0.042
+      size = 0.075
     ) +
 
     ggimage::geom_image(
@@ -7327,7 +7327,7 @@ plot_speciation_paper <- function(
         image = link2
       ),
       inherit.aes = FALSE,
-      size = 0.042
+      size = 0.075
     ) +
 
     # ----------------------------------------------------------
@@ -7389,17 +7389,17 @@ plot_speciation_paper <- function(
             x = box_x,
             y = ifelse(
               ri_one,
-              box_ymax + 0.004,
+              box_ymax + 0.002,
               ifelse(
                 box_y > distance_geno,
-                box_ymin + 0.004,   # annotation above point → location below
-                box_ymax - 0.004   # annotation below point → location above
+                box_ymin + 0.006,   # annotation above point → location below
+                box_ymax - 0.006   # annotation below point → location above
               )
             ),
             label = Location
           ),
           inherit.aes = FALSE,
-          size = 5,
+          size = 4,
           colour = "black",
           fontface = "bold"
         )
