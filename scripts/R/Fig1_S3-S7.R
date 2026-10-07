@@ -228,8 +228,7 @@ right_permanova <- plot_grid(
   results[["bel"]][["permanova"]],
   results[["uvi"]][["permanova"]],
   ncol = 1,
-  align = "v",
-  scale = 0.95
+  align = "v"
 )
 
 figure1_bottom <- plot_grid(
@@ -265,7 +264,7 @@ ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
   plot = figure1,
   width = 18, 
-  height = 29, 
+  height = 28, 
   units = "in",
   dpi = 150,
   type = "cairo-png"

@@ -6855,7 +6855,7 @@ plot_speciation_paper <- function(
           species2
         ),
 
-        ri_one = distance_asso >= 0.999
+        ri_one = distance_pheno >= 0.999
       )
 
 
@@ -6892,7 +6892,7 @@ plot_speciation_paper <- function(
           ),
 
           box_x =
-            distance_asso +
+            distance_pheno +
             x_direction * x_offset,
 
           box_y =
@@ -7010,7 +7010,7 @@ plot_speciation_paper <- function(
         segment_xend = ifelse(
           ri_one,
           box_xmin,
-          distance_asso
+          distance_pheno
         ),
 
         species1_x =
@@ -7290,19 +7290,19 @@ plot_speciation_paper <- function(
     # Boxes
     # ----------------------------------------------------------
 
-    # geom_rect(
-    #   data = labels_location,
-    #   aes(
-    #     xmin = box_xmin,
-    #     xmax = box_xmax,
-    #     ymin = box_ymin - 0.001,
-    #     ymax = box_ymax + 0.001
-    #   ),
-    #   inherit.aes = FALSE,
-    #   fill = "white",
-    #   colour = "grey45",
-    #   linewidth = 0.4
-    # ) +
+    geom_rect(
+      data = labels_location,
+      aes(
+        xmin = box_xmin,
+        xmax = box_xmax,
+        ymin = box_ymin - 0.001,
+        ymax = box_ymax + 0.001
+      ),
+      inherit.aes = FALSE,
+      fill = "white",
+      colour = "grey45",
+      linewidth = 0.4
+    ) +
 
     # ----------------------------------------------------------
     # Logos
@@ -7387,7 +7387,15 @@ plot_speciation_paper <- function(
           data = labels_location,
           aes(
             x = box_x,
-            y = box_ymax + 0.002,
+            y = ifelse(
+              ri_one,
+              box_ymax + 0.004,
+              ifelse(
+                box_y > distance_geno,
+                box_ymin + 0.004,   # annotation above point → location below
+                box_ymax - 0.004   # annotation below point → location above
+              )
+            ),
             label = Location
           ),
           inherit.aes = FALSE,
