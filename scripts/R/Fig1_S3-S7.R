@@ -257,7 +257,7 @@ figure1 <- ggarrange(
   NULL,
   nrow = 6,
   ncol = 1,
-  heights = c(8, 0.3, 0.75, 0.1, 6, 0.05),
+  heights = c(6, 0.3, 0.75, 0.1, 6, 0.05),
   labels = c("(a)", "", "", "", "(b)", "")
 )
 
@@ -265,7 +265,7 @@ ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
   plot = figure1,
   width = 18, 
-  height = 28, 
+  height = 29, 
   units = "in",
   dpi = 150,
   type = "cairo-png"

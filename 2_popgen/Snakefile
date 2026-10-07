@@ -14,7 +14,7 @@ GXP_FILE=os.path.join(BASE_DIR, "metadata/color_gxp_peaks.txt")
 FIGURES_DIR = os.path.join(BASE_DIR, "figures")
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 PYTHON_SCRIPT = os.path.join(SCRIPTS_DIR, "python", "permanova.py")
-R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig2-3_S8-S15.R")
+R_SCRIPT = os.path.join(SCRIPTS_DIR, "R", "Fig2_S8-S15.R")
 SPID_SCRIPT = os.path.join(SCRIPTS_DIR, "sh", "vcf2nh.spid")
 
 # Separate datasets into "location" and "species" groups
