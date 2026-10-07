@@ -459,7 +459,7 @@ pca_s_grid <- plot_grid(
   ncol = 2,
   rel_widths = c(1, 1),
   scale = 0.95,
-  labels = c("(a)", "(b)", "(c)", "(d)"),
+  labels = c("(a)", "(b)", "(c)", "(d)")
   )
 
 # Final Figure 2

@@ -7295,8 +7295,8 @@ plot_speciation_paper <- function(
       aes(
         xmin = box_xmin,
         xmax = box_xmax,
-        ymin = box_ymin - 0.006,
-        ymax = box_ymax + 0.006
+        ymin = box_ymin + 0.002,
+        ymax = box_ymax + 0.001
       ),
       inherit.aes = FALSE,
       fill = "white",
@@ -7316,7 +7316,7 @@ plot_speciation_paper <- function(
         image = link1
       ),
       inherit.aes = FALSE,
-      size = 0.075
+      size = 0.07
     ) +
 
     ggimage::geom_image(
@@ -7327,7 +7327,7 @@ plot_speciation_paper <- function(
         image = link2
       ),
       inherit.aes = FALSE,
-      size = 0.075
+      size = 0.07
     ) +
 
     # ----------------------------------------------------------
@@ -7392,8 +7392,8 @@ plot_speciation_paper <- function(
               box_ymax + 0.002,
               ifelse(
                 box_y > distance_geno,
-                box_ymin + 0.006,   # annotation above point → location below
-                box_ymax - 0.006   # annotation below point → location above
+                box_ymin + 0.002,   # annotation above point → location below
+                box_ymax - 0.002   # annotation below point → location above
               )
             ),
             label = Location
