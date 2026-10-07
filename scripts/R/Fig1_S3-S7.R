@@ -205,17 +205,22 @@ print(keep_names)
 # Fig1_pcas <- lapply(resFig1, `[[`, "pca")
 # Fig1_permanova <- lapply(resFig1, `[[`, "permanova")
 
+right_pca <- plot_grid(
+  results[["ver"]][["pca"]],
+  results[["bel"]][["pca"]],
+  results[["uvi"]][["pca"]],
+  ncol = 1,
+  align = "v",
+  scale = 0.95
+)
+
 # Two columns: PCA on left, PERMANOVA on right
 figure1_top <- ggarrange(
   results[["all"]][["pca"]],
-  ggarrange(
-    results[["ver"]][["pca"]],
-    results[["bel"]][["pca"]],
-    results[["uvi"]][["pca"]],
-    nrow = 3
-  ),
+  right_pca,
   ncol = 2,
-  widths = c(2, 1)
+  widths = c(2, 1),
+  align = "h"
 )
 
 right_permanova <- plot_grid(
@@ -223,7 +228,8 @@ right_permanova <- plot_grid(
   results[["bel"]][["permanova"]],
   results[["uvi"]][["permanova"]],
   ncol = 1,
-  align = "v"
+  align = "v",
+  scale = 0.95
 )
 
 figure1_bottom <- plot_grid(

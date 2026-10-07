@@ -545,62 +545,19 @@ speciation_hypercube_data <- pheno_distances_lda %>%
   )
 print(speciation_hypercube_data)
 
-correlation_figure <- plot_all_pairwise_correlations(
-  speciation_hypercube_data
-)
-correlation_figure
-
-# mod <- lmer(
-#   distance_pheno ~ distance_geno +
-#     (1 | species1) +
-#     (1 | species2),
-#   data = speciation_hypercube_data
+# correlation_figure <- plot_all_pairwise_correlations(
+#   speciation_hypercube_data
 # )
-# summary(mod)
-# 
-# p1 <- ggplot(speciation_hypercube_data, aes(x = distance_geno, y = distance_pheno)) +
-#   geom_point() +
-#   geom_smooth(method = "lm", se = F) +
-#   theme_classic()
-
-correlation_figure2 <- plot_all_pairwise_correlations_lmer(
-  speciation_hypercube_data
-)
-correlation_figure2
+# correlation_figure
 
 
 message("\n========================================")
 message("HYPERCUBE")
 message("========================================")
 hypercube <- plot_speciation_hypercube(
-  speciation_hypercube_data
+  speciation_hypercube_data %>% filter(level == "location")
 )
 print(hypercube)
-
-# # A colour and a shape per species
-# colors <- c("location" = "#D06495",
-#             "all" = "#D09F64")
-# shapes <- c("location" = 16,
-#             "all" = 17)
-# 
-# point_cols   <- colors[speciation_hypercube_data$level]
-# point_shapes <- shapes[speciation_hypercube_data$level]
-# 
-# scatterplot3d(
-#   speciation_hypercube_data[, c(5, 7, 6)],
-#   pch = point_shapes,
-#   color = point_cols,
-#   angle = 120,
-#   xlim = c(0, 1),
-#   ylim = c(0, 1),
-#   zlim = c(0, 1)
-# )
-
-# hypercube_paper <- plot_speciation_paper(
-#   speciation_hypercube_data,
-#   species_info
-# )
-# print(hypercube_paper)
 
 data_location <- speciation_hypercube_data %>%
   filter(level == "location")
@@ -628,85 +585,47 @@ paper_location <- plot_speciation_paper(
 )
 print(paper_location)
 
-figure_location <- plot_grid(
-  scatter_location,
-  paper_location,
-  nrow = 2,
-  labels = c("(a)", "(b)"),
-  rel_heights = c(0.5, 1),
-  rel_widths = c(1, 1)
-  # scale = c(0.5, 1)
+p_pheno_geno_location <- plot_pairwise_lmer(
+  speciation_hypercube_data,
+  data_level = "location",
+  x = "distance_pheno",
+  y = "distance_geno",
+  x_lab = "Phenotypic divergence",
+  y_lab = "Genetic differentiation (FST)"
 )
+
+p_pheno_asso_location <- plot_pairwise_lmer(
+  speciation_hypercube_data,
+  data_level = "location",
+  x = "distance_pheno",
+  y = "distance_asso",
+  x_lab = "Phenotypic divergence",
+  y_lab = "Reproductive isolation"
+)
+
+p_geno_asso_location <- plot_pairwise_lmer(
+  speciation_hypercube_data,
+  data_level = "location",
+  x = "distance_geno",
+  y = "distance_asso",
+  x_lab = "Genetic differentiation (FST)",
+  y_lab = "Reproductive isolation"
+)
+
+
 
 
 data_all <- speciation_hypercube_data %>%
   filter(level == "all")
 
-scatter_all <- 
-  scatterplot3d(
-    data_all[, c(5, 7, 6)],
-    pch = 17,
-    color = "#D09F64",
-    angle = 120,
-    xlim = c(0, 1),
-    ylim = c(0, 1),
-    zlim = c(0, 1),
-    xlab = "Phenotypic divergence",
-    ylab = "Genetic divergence (Fst)",
-    zlab = "Reproductive isolation"
-  )
-grid.echo()
-scatter_all <- grid.grab()
-
-
-paper_all <- plot_speciation_paper(
+p_pheno_geno_all <- plot_pairwise_lmer(
   speciation_hypercube_data,
-  species_info,
-  panel = "all"
+  data_level = "all",
+  x = "distance_pheno",
+  y = "distance_geno",
+  x_lab = "Phenotypic divergence",
+  y_lab = "Genetic differentiation (FST)"
 )
-print(paper_all)
-
-figure_all <- plot_grid(
-  scatter_all,
-  paper_all,
-  nrow = 2,
-  labels = c("(a)", "(b)"),
-  rel_widths = c(1, 1)
-)
-
-
-# speciation_hypercube_data2 <- pheno_distances %>%
-#   dplyr::inner_join(
-#     geno_distances,
-#     by = c(
-#       "level",
-#       "Location",
-#       "species1",
-#       "species2"
-#     )
-#   ) %>%
-#   dplyr::inner_join(
-#     asso_RI,
-#     by = c(
-#       "level",
-#       "Location",
-#       "species1",
-#       "species2"
-#     )
-#   )
-# 
-# print(speciation_hypercube_data2)
-# 
-# hypercube2 <- plot_speciation_hypercube(
-#   speciation_hypercube_data2
-# )
-# print(hypercube2)
-# 
-# hypercube_paper2 <- plot_speciation_paper2(
-#   speciation_hypercube_data2,
-#   species_info
-# )
-# print(hypercube_paper2)
 
 
 # ############################

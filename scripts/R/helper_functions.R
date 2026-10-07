@@ -668,9 +668,15 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   }
   
   # ---- Annotate with location title ----
-  p_annot <- annotate_figure(
-    p,
-    top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
+  p_annot <- p +
+    labs(title = title_val) +
+    theme(
+      plot.title = element_text(
+        hjust = 0,
+        face = "bold",
+        size = 20,
+        margin = margin(b = 5)
+    )
   )
   
   return(p_annot)
@@ -7095,14 +7101,14 @@ plot_speciation_paper <- function(
   p_all <- ggplot(
     data_all,
     aes(
-      x = distance_asso,
+      x = distance_pheno,
       y = distance_geno
     )
   ) +
 
     geom_point(
       aes(
-        colour = distance_pheno
+        colour = distance_asso
       ),
       size = 4
     ) +
@@ -7117,7 +7123,7 @@ plot_speciation_paper <- function(
         "#D09F64",
         "#8C5F2D"
       ),
-      name = "Phenotypic divergence"
+      name = "Reproductive isolation"
     ) +
 
     # ----------------------------------------------------------
@@ -7127,7 +7133,7 @@ plot_speciation_paper <- function(
     geom_segment(
       data = labels_all,
       aes(
-        x = distance_asso,
+        x = distance_pheno,
         y = distance_geno,
         xend = segment_xend,
         yend = box_y
@@ -7141,19 +7147,19 @@ plot_speciation_paper <- function(
     # Boxes
     # ----------------------------------------------------------
 
-    geom_rect(
-      data = labels_all,
-      aes(
-        xmin = box_xmin - 0.005,
-        xmax = box_xmax + 0.005,
-        ymin = box_ymin - 0.0025,
-        ymax = box_ymax + 0.0025
-      ),
-      inherit.aes = FALSE,
-      fill = "white",
-      colour = "grey45",
-      linewidth = 0.4
-    ) +
+    # geom_rect(
+    #   data = labels_all,
+    #   aes(
+    #     xmin = box_xmin - 0.005,
+    #     xmax = box_xmax + 0.005,
+    #     ymin = box_ymin - 0.0025,
+    #     ymax = box_ymax + 0.0025
+    #   ),
+    #   inherit.aes = FALSE,
+    #   fill = "white",
+    #   colour = "grey45",
+    #   linewidth = 0.4
+    # ) +
 
     # ----------------------------------------------------------
     # Logos
@@ -7185,41 +7191,41 @@ plot_speciation_paper <- function(
     # Species names
     # ----------------------------------------------------------
 
-    geom_text(
-      data = labels_all,
-      aes(
-        x = species1_x,
-        y = name_y - 0.0015,
-        label = name1
-      ),
-      inherit.aes = FALSE,
-      size = 2,
-      fontface = "italic"
-    ) +
+    # geom_text(
+    #   data = labels_all,
+    #   aes(
+    #     x = species1_x,
+    #     y = name_y - 0.0015,
+    #     label = name1
+    #   ),
+    #   inherit.aes = FALSE,
+    #   size = 2,
+    #   fontface = "italic"
+    # ) +
 
-    geom_text(
-      data = labels_all,
-      aes(
-        x = species2_x,
-        y = name_y - 0.0015,
-        label = name2
-      ),
-      inherit.aes = FALSE,
-      size = 2,
-      fontface = "italic"
+    # geom_text(
+    #   data = labels_all,
+    #   aes(
+    #     x = species2_x,
+    #     y = name_y - 0.0015,
+    #     label = name2
+    #   ),
+    #   inherit.aes = FALSE,
+    #   size = 2,
+    #   fontface = "italic"
 
-    ) +
+    # ) +
 
     labs(
       # title = "(a) Between species",
-      x = "Reproductive isolation",
-      y = "Genetic divergence (Fst)"
+      x = "Phenotypic divergence",
+      y = "Genetic divergence (FST)"
     ) +
 
     coord_cartesian(
       xlim = c(
-        0.45,
-        1.18
+        0.9,
+        1.12
       ),
       ylim = c(
         -0.1,
@@ -7238,14 +7244,14 @@ plot_speciation_paper <- function(
   p_location <- ggplot(
     data_location,
     aes(
-      x = distance_asso,
+      x = distance_pheno,
       y = distance_geno
     )
   ) +
 
     geom_point(
       aes(
-        colour = distance_pheno
+        colour = distance_asso
       ),
       size = 4
     ) +
@@ -7260,7 +7266,7 @@ plot_speciation_paper <- function(
         "#D06495",
         "#8F315D"
       ),
-      name = "Phenotypic divergence"
+      name = "Reproductive isolation"
     ) +
 
     # ----------------------------------------------------------
@@ -7270,7 +7276,7 @@ plot_speciation_paper <- function(
     geom_segment(
       data = labels_location,
       aes(
-        x = distance_asso,
+        x = distance_pheno,
         y = distance_geno,
         xend = segment_xend,
         yend = box_y
@@ -7284,19 +7290,19 @@ plot_speciation_paper <- function(
     # Boxes
     # ----------------------------------------------------------
 
-    geom_rect(
-      data = labels_location,
-      aes(
-        xmin = box_xmin,
-        xmax = box_xmax,
-        ymin = box_ymin - 0.001,
-        ymax = box_ymax + 0.001
-      ),
-      inherit.aes = FALSE,
-      fill = "white",
-      colour = "grey45",
-      linewidth = 0.4
-    ) +
+    # geom_rect(
+    #   data = labels_location,
+    #   aes(
+    #     xmin = box_xmin,
+    #     xmax = box_xmax,
+    #     ymin = box_ymin - 0.001,
+    #     ymax = box_ymax + 0.001
+    #   ),
+    #   inherit.aes = FALSE,
+    #   fill = "white",
+    #   colour = "grey45",
+    #   linewidth = 0.4
+    # ) +
 
     # ----------------------------------------------------------
     # Logos
@@ -7328,42 +7334,42 @@ plot_speciation_paper <- function(
     # Species names
     # ----------------------------------------------------------
 
-    geom_text(
-      data = labels_location,
-      aes(
-        x = species1_x,
-        y = name_y - 0.0006,
-        label = name1
-      ),
-      inherit.aes = FALSE,
-      size = 3,
-      fontface = "italic"
+    # geom_text(
+    #   data = labels_location,
+    #   aes(
+    #     x = species1_x,
+    #     y = name_y - 0.0006,
+    #     label = name1
+    #   ),
+    #   inherit.aes = FALSE,
+    #   size = 3,
+    #   fontface = "italic"
 
-    ) +
+    # ) +
 
-    geom_text(
-      data = labels_location,
-      aes(
-        x = species2_x,
-        y = name_y - 0.0006,
-        label = name2
-      ),
-      inherit.aes = FALSE,
-      size = 3,
-      fontface = "italic"
+    # geom_text(
+    #   data = labels_location,
+    #   aes(
+    #     x = species2_x,
+    #     y = name_y - 0.0006,
+    #     label = name2
+    #   ),
+    #   inherit.aes = FALSE,
+    #   size = 3,
+    #   fontface = "italic"
 
-    ) +
+    # ) +
 
     labs(
       # title = "(b) Between sympatric species",
-      x = "Reproductive isolation",
-      y = "Genetic divergence (Fst)"
+      x = "Phenotypic divergence",
+      y = "Genetic divergence (FST)"
     ) +
 
     coord_cartesian(
       xlim = c(
-        0.5,
-        1.18
+        0,
+        1.12
       ),
       ylim = c(
         0,
@@ -8265,279 +8271,106 @@ plot_speciation_paper2 <- function(
   return(p)
 }
 
-plot_all_pairwise_correlations_lmer <- function(df) {
+plot_pairwise_lmer <- function(
+  df,
+  data_level,
+  x,
+  y,
+  x_lab = x,
+  y_lab = y) {
   
-  # Colours
-  colours_all <- c(
-    low  = "#F2E4D0",
-    mid  = "#D09F64",
-    high = "#8C5F2D"
-  )
-  
-  colours_location <- c(
-    low  = "#F0D4E0",
-    mid  = "#D06495",
-    high = "#8F315D"
-  )
-  
-  
-  # ─────────────────────────────────────────────────────────────
-  # Function to fit one LMM and extract beta + p-value
-  # ─────────────────────────────────────────────────────────────
-  
-  get_lmer_stats <- function(data, x, y) {
-    
-    formula <- as.formula(
-      paste0(
-        y,
-        " ~ ",
-        x,
-        " + (1 | species1) + (1 | species2)"
-      )
+  colours <- if (data_level == "all") {
+    c(
+      low  = "#F2E4D0",
+      mid  = "#D09F64",
+      high = "#8C5F2D"
     )
-    
-    model <- lmer(
-      formula,
-      data = data
-    )
-    
-    model_summary <- summary(model)
-    
-    beta <- model_summary$coefficients[x, "Estimate"]
-    p_value <- model_summary$coefficients[x, "Pr(>|t|)"]
-    
-    list(
-      model = model,
-      beta = beta,
-      p = p_value
+  } else {
+    c(
+      low  = "#F0D4E0",
+      mid  = "#D06495",
+      high = "#8F315D"
     )
   }
   
   
-  # ─────────────────────────────────────────────────────────────
-  # Function for one correlation plot
-  # ─────────────────────────────────────────────────────────────
+  data <- df %>%
+    filter(level == data_level)
   
-  make_plot <- function(
-    data,
+  
+  formula <- as.formula(
+    paste0(
+      y,
+      " ~ ",
+      x,
+      " + (1 | species1) + (1 | species2)"
+    )
+  )
+  
+  model <- lmer(
+    formula,
+    data = data
+  )
+  
+  
+  model_summary <- summary(model)
+  
+  beta <- model_summary$coefficients[
     x,
-    y,
-    x_lab,
-    y_lab,
-    colours
-  ) {
-    
-    # Fit LMM
-    test <- get_lmer_stats(
-      data = data,
-      x = x,
-      y = y
+    "Estimate"
+  ]
+  
+  p_value <- model_summary$coefficients[
+    x,
+    "Pr(>|t|)"
+  ]
+  
+  
+  label <- sprintf(
+    "\u03b2 = %.2f, p = %.3g",
+    beta,
+    p_value
+  )
+  
+  
+  ggplot(
+    data,
+    aes(
+      x = .data[[x]],
+      y = .data[[y]]
     )
+  ) +
     
-    # Label
-    label <- sprintf(
-      "\u03b2 = %.2f, p = %.3g",
-      test$beta,
-      test$p
-    )
-    
-    # Plot
-    ggplot(
-      data,
-      aes(
-        x = .data[[x]],
-        y = .data[[y]]
-      )
+    geom_abline(
+      intercept = fixef(model)["(Intercept)"],
+      slope = fixef(model)[x],
+      colour = colours["high"]
     ) +
-      
-      geom_smooth(
-        method = "lm",
-        se = FALSE,
-        colour = colours["high"],
-        fill = colours["low"],
-        alpha = 0.3
-      ) +
-      
-      geom_point(
-        colour = colours["mid"],
-        size = 2.5
-      ) +
-      
-      annotate(
-        "text",
-        x = mean(
-          range(
-            data[[x]],
-            na.rm = TRUE
-          )
-        ),
-        y = -Inf,
-        label = label,
-        hjust = 0.5,
-        vjust = -0.8,
-        size = 3.5
-      ) +
-      
-      labs(
-        x = x_lab,
-        y = y_lab
-      ) +
-      
-      theme_classic() +
-      
-      theme(
-        plot.title = element_text(
-          hjust = 0.5,
-          face = "bold",
-          size = 12
+    
+    geom_point(
+      colour = colours["mid"],
+      size = 2.5
+    ) +
+    
+    annotate(
+      "text",
+      x = mean(
+        range(
+          data[[x]],
+          na.rm = TRUE
         )
-      )
-  }
-  
-  
-  # ─────────────────────────────────────────────────────────────
-  # Data for the two levels
-  # ─────────────────────────────────────────────────────────────
-  
-  data_all <- df %>%
-    filter(level == "all")
-  
-  data_location <- df %>%
-    filter(level == "location")
-  
-  
-  # ─────────────────────────────────────────────────────────────
-  # Row 1: Phenotype vs genotype
-  # ─────────────────────────────────────────────────────────────
-  
-  p1 <- make_plot(
-    data_all,
-    "distance_geno",
-    "distance_pheno",
-    "Genetic differentiation",
-    "Phenotypic distance",
-    colours_all
-  ) +
-    labs(title = "Between species")
-  
-  
-  p2 <- make_plot(
-    data_location,
-    "distance_geno",
-    "distance_pheno",
-    "Genetic differentiation",
-    "Phenotypic distance",
-    colours_location
-  ) +
-    labs(title = "Between sympatric species")
-  
-  
-  row1 <- annotate_figure(
-    ggarrange(
-      p1,
-      p2,
-      ncol = 2
-    ),
-    top = text_grob(
-      "(a)",
-      face = "bold",
-      size = 12,
-      hjust = 0,
-      x = 0
-    )
-  )
-  
-  
-  # ─────────────────────────────────────────────────────────────
-  # Row 2: Phenotype vs reproductive isolation
-  # ─────────────────────────────────────────────────────────────
-  
-  p3 <- make_plot(
-    data_all,
-    "distance_asso",
-    "distance_pheno",
-    "Reproductive isolation",
-    "Phenotypic distance",
-    colours_all
-  )
-  
-  
-  p4 <- make_plot(
-    data_location,
-    "distance_asso",
-    "distance_pheno",
-    "Reproductive isolation",
-    "Phenotypic distance",
-    colours_location
-  )
-  
-  
-  row2 <- annotate_figure(
-    ggarrange(
-      p3,
-      p4,
-      ncol = 2
-    ),
-    top = text_grob(
-      "(b)",
-      face = "bold",
-      size = 12,
-      hjust = 0,
-      x = 0
-    )
-  )
-  
-  
-  # ─────────────────────────────────────────────────────────────
-  # Row 3: Genotype vs reproductive isolation
-  # ─────────────────────────────────────────────────────────────
-  
-  p5 <- make_plot(
-    data_all,
-    "distance_asso",
-    "distance_geno",
-    "Reproductive isolation",
-    "Genetic differentiation",
-    colours_all
-  )
-  
-  
-  p6 <- make_plot(
-    data_location,
-    "distance_asso",
-    "distance_geno",
-    "Reproductive isolation",
-    "Genetic differentiation",
-    colours_location
-  )
-  
-  
-  row3 <- annotate_figure(
-    ggarrange(
-      p5,
-      p6,
-      ncol = 2
-    ),
-    top = text_grob(
-      "(c)",
-      face = "bold",
-      size = 12,
-      hjust = 0,
-      x = 0
-    )
-  )
-  
-  
-  # ─────────────────────────────────────────────────────────────
-  # Final figure
-  # ─────────────────────────────────────────────────────────────
-  
-  final_plot <- ggarrange(
-    row1,
-    row2,
-    row3,
-    ncol = 1
-  )
-  
-  final_plot
+      ),
+      y = -Inf,
+      label = label,
+      hjust = 0.5,
+      vjust = -0.8,
+      size = 3.5
+    ) +
+    
+    labs(
+      x = x_lab,
+      y = y_lab
+    ) +
+    
+    theme_classic()
 }
