@@ -257,7 +257,7 @@ figure1 <- ggarrange(
   NULL,
   nrow = 6,
   ncol = 1,
-  heights = c(8, 0.3, 0.75, 0.1, 8, 0.05),
+  heights = c(8, 0.3, 0.75, 0.1, 6, 0.05),
   labels = c("(a)", "", "", "", "(b)", "")
 )
 
