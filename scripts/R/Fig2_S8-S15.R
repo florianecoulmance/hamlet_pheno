@@ -321,14 +321,14 @@ print("AFTER pC")
 figure2 <- ggarrange(
   pca_grid,
   NULL,
-  leg,           # row 5: legend
+  leg,
   NULL,
   pC,
   NULL,
   ld_grid,
   labels = c("(a)", "", "", "", "(b)", "", "(c)"),
-  nrow = 5,
-  heights = c(12, 0.3, 5)
+  nrow = 7,
+  heights = c(6, 0.3, 0.75, 0.05, 5, 0.3, 6)
 )
 
 ggsave(

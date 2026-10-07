@@ -648,19 +648,19 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     geo_val <- unique(pc_table$geo)
     title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
     if (title_val=="Panama") {
-        title_val <- "Panama"
+        title_val <- ""
       } else if (title_val=="USVI") {
         title_val <- "USVI"
       } else if (title_val=="Belize") {
         title_val <- "Belize"
       } else if (title_val=="Florida Keys") {
-        title_val <- "Florida Keys"
+        title_val <- ""
       } else if (title_val=="Tobago") {
-        title_val <- "Tobago"
+        title_val <- ""
       } else if (title_val=="Mexico") {
         title_val <- "Mexico"
       } else {
-        title_val <- ""
+        title_val <- "All locations"
       }
   } else if (color_by == "location"){
     species_val <- unique(pc_table$spec)
@@ -670,7 +670,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   # ---- Annotate with location title ----
   p_annot <- annotate_figure(
     p,
-    top = text_grob("", color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
+    top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
   )
   
   return(p_annot)
