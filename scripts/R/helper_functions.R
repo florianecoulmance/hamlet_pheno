@@ -7211,7 +7211,7 @@ plot_speciation_paper <- function(
     ) +
 
     labs(
-      title = "(a) Between species",
+      # title = "(a) Between species",
       x = "Reproductive isolation",
       y = "Genetic divergence (Fst)"
     ) +
@@ -7355,7 +7355,7 @@ plot_speciation_paper <- function(
     ) +
 
     labs(
-      title = "(b) Between sympatric species",
+      # title = "(b) Between sympatric species",
       x = "Reproductive isolation",
       y = "Genetic divergence (Fst)"
     ) +
@@ -8263,4 +8263,281 @@ plot_speciation_paper2 <- function(
   # ============================================================
 
   return(p)
+}
+
+plot_all_pairwise_correlations_lmer <- function(df) {
+  
+  # Colours
+  colours_all <- c(
+    low  = "#F2E4D0",
+    mid  = "#D09F64",
+    high = "#8C5F2D"
+  )
+  
+  colours_location <- c(
+    low  = "#F0D4E0",
+    mid  = "#D06495",
+    high = "#8F315D"
+  )
+  
+  
+  # ─────────────────────────────────────────────────────────────
+  # Function to fit one LMM and extract beta + p-value
+  # ─────────────────────────────────────────────────────────────
+  
+  get_lmer_stats <- function(data, x, y) {
+    
+    formula <- as.formula(
+      paste0(
+        y,
+        " ~ ",
+        x,
+        " + (1 | species1) + (1 | species2)"
+      )
+    )
+    
+    model <- lmer(
+      formula,
+      data = data
+    )
+    
+    model_summary <- summary(model)
+    
+    beta <- model_summary$coefficients[x, "Estimate"]
+    p_value <- model_summary$coefficients[x, "Pr(>|t|)"]
+    
+    list(
+      model = model,
+      beta = beta,
+      p = p_value
+    )
+  }
+  
+  
+  # ─────────────────────────────────────────────────────────────
+  # Function for one correlation plot
+  # ─────────────────────────────────────────────────────────────
+  
+  make_plot <- function(
+    data,
+    x,
+    y,
+    x_lab,
+    y_lab,
+    colours
+  ) {
+    
+    # Fit LMM
+    test <- get_lmer_stats(
+      data = data,
+      x = x,
+      y = y
+    )
+    
+    # Label
+    label <- sprintf(
+      "\u03b2 = %.2f, p = %.3g",
+      test$beta,
+      test$p
+    )
+    
+    # Plot
+    ggplot(
+      data,
+      aes(
+        x = .data[[x]],
+        y = .data[[y]]
+      )
+    ) +
+      
+      geom_smooth(
+        method = "lm",
+        se = FALSE,
+        colour = colours["high"],
+        fill = colours["low"],
+        alpha = 0.3
+      ) +
+      
+      geom_point(
+        colour = colours["mid"],
+        size = 2.5
+      ) +
+      
+      annotate(
+        "text",
+        x = mean(
+          range(
+            data[[x]],
+            na.rm = TRUE
+          )
+        ),
+        y = -Inf,
+        label = label,
+        hjust = 0.5,
+        vjust = -0.8,
+        size = 3.5
+      ) +
+      
+      labs(
+        x = x_lab,
+        y = y_lab
+      ) +
+      
+      theme_classic() +
+      
+      theme(
+        plot.title = element_text(
+          hjust = 0.5,
+          face = "bold",
+          size = 12
+        )
+      )
+  }
+  
+  
+  # ─────────────────────────────────────────────────────────────
+  # Data for the two levels
+  # ─────────────────────────────────────────────────────────────
+  
+  data_all <- df %>%
+    filter(level == "all")
+  
+  data_location <- df %>%
+    filter(level == "location")
+  
+  
+  # ─────────────────────────────────────────────────────────────
+  # Row 1: Phenotype vs genotype
+  # ─────────────────────────────────────────────────────────────
+  
+  p1 <- make_plot(
+    data_all,
+    "distance_geno",
+    "distance_pheno",
+    "Genetic differentiation",
+    "Phenotypic distance",
+    colours_all
+  ) +
+    labs(title = "Between species")
+  
+  
+  p2 <- make_plot(
+    data_location,
+    "distance_geno",
+    "distance_pheno",
+    "Genetic differentiation",
+    "Phenotypic distance",
+    colours_location
+  ) +
+    labs(title = "Between sympatric species")
+  
+  
+  row1 <- annotate_figure(
+    ggarrange(
+      p1,
+      p2,
+      ncol = 2
+    ),
+    top = text_grob(
+      "(a)",
+      face = "bold",
+      size = 12,
+      hjust = 0,
+      x = 0
+    )
+  )
+  
+  
+  # ─────────────────────────────────────────────────────────────
+  # Row 2: Phenotype vs reproductive isolation
+  # ─────────────────────────────────────────────────────────────
+  
+  p3 <- make_plot(
+    data_all,
+    "distance_asso",
+    "distance_pheno",
+    "Reproductive isolation",
+    "Phenotypic distance",
+    colours_all
+  )
+  
+  
+  p4 <- make_plot(
+    data_location,
+    "distance_asso",
+    "distance_pheno",
+    "Reproductive isolation",
+    "Phenotypic distance",
+    colours_location
+  )
+  
+  
+  row2 <- annotate_figure(
+    ggarrange(
+      p3,
+      p4,
+      ncol = 2
+    ),
+    top = text_grob(
+      "(b)",
+      face = "bold",
+      size = 12,
+      hjust = 0,
+      x = 0
+    )
+  )
+  
+  
+  # ─────────────────────────────────────────────────────────────
+  # Row 3: Genotype vs reproductive isolation
+  # ─────────────────────────────────────────────────────────────
+  
+  p5 <- make_plot(
+    data_all,
+    "distance_asso",
+    "distance_geno",
+    "Reproductive isolation",
+    "Genetic differentiation",
+    colours_all
+  )
+  
+  
+  p6 <- make_plot(
+    data_location,
+    "distance_asso",
+    "distance_geno",
+    "Reproductive isolation",
+    "Genetic differentiation",
+    colours_location
+  )
+  
+  
+  row3 <- annotate_figure(
+    ggarrange(
+      p5,
+      p6,
+      ncol = 2
+    ),
+    top = text_grob(
+      "(c)",
+      face = "bold",
+      size = 12,
+      hjust = 0,
+      x = 0
+    )
+  )
+  
+  
+  # ─────────────────────────────────────────────────────────────
+  # Final figure
+  # ─────────────────────────────────────────────────────────────
+  
+  final_plot <- ggarrange(
+    row1,
+    row2,
+    row3,
+    ncol = 1
+  )
+  
+  final_plot
 }

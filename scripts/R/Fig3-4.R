@@ -34,6 +34,9 @@ library(knitr)
 library(plotly)
 library(base64enc)
 library(scatterplot3d)
+library(nlme)
+library(lme4)
+library(lmerTest)
 
 # ############################
 # CONFIG
@@ -545,17 +548,34 @@ print(speciation_hypercube_data)
 correlation_figure <- plot_all_pairwise_correlations(
   speciation_hypercube_data
 )
-
 correlation_figure
+
+# mod <- lmer(
+#   distance_pheno ~ distance_geno +
+#     (1 | species1) +
+#     (1 | species2),
+#   data = speciation_hypercube_data
+# )
+# summary(mod)
+# 
+# p1 <- ggplot(speciation_hypercube_data, aes(x = distance_geno, y = distance_pheno)) +
+#   geom_point() +
+#   geom_smooth(method = "lm", se = F) +
+#   theme_classic()
+
+correlation_figure2 <- plot_all_pairwise_correlations_lmer(
+  speciation_hypercube_data
+)
+correlation_figure2
 
 
 message("\n========================================")
 message("HYPERCUBE")
 message("========================================")
-# hypercube <- plot_speciation_hypercube(
-#   speciation_hypercube_data
-# )
-# print(hypercube)
+hypercube <- plot_speciation_hypercube(
+  speciation_hypercube_data
+)
+print(hypercube)
 
 # # A colour and a shape per species
 # colors <- c("location" = "#D06495",
@@ -589,10 +609,14 @@ scatter_location <- scatterplot3d(
   data_location[, c(5, 7, 6)],
   pch = 16,
   color = "#D06495",
-  angle = 120,
+  angle = 135,
+  aspect = c(1, 1, 1),
   xlim = c(0, 1),
   ylim = c(0, 1),
-  zlim = c(0, 1)
+  zlim = c(0, 1),
+  xlab = "Phenotypic divergence",
+  ylab = "Reproductive isolation",
+  zlab = "Genetic divergence (Fst)"
 )
 grid.echo()
 scatter_location <- grid.grab()
@@ -609,7 +633,9 @@ figure_location <- plot_grid(
   paper_location,
   nrow = 2,
   labels = c("(a)", "(b)"),
+  rel_heights = c(0.5, 1),
   rel_widths = c(1, 1)
+  # scale = c(0.5, 1)
 )
 
 
@@ -624,7 +650,10 @@ scatter_all <-
     angle = 120,
     xlim = c(0, 1),
     ylim = c(0, 1),
-    zlim = c(0, 1)
+    zlim = c(0, 1),
+    xlab = "Phenotypic divergence",
+    ylab = "Genetic divergence (Fst)",
+    zlab = "Reproductive isolation"
   )
 grid.echo()
 scatter_all <- grid.grab()
@@ -646,10 +675,6 @@ figure_all <- plot_grid(
 )
 
 
-
-
-
-# 
 # speciation_hypercube_data2 <- pheno_distances %>%
 #   dplyr::inner_join(
 #     geno_distances,
@@ -687,13 +712,31 @@ figure_all <- plot_grid(
 # ############################
 # FINAL PLOTS
 # ############################
-
-########## FIGURE 3 ###################
-figure3 <- correlation_figure
+########## FIGURE 3 #################### 
+figure3 <- figure_location
 
 ggsave(
-  filename = file.path(figure_path, "Fig3_correlations.png"),
+  filename = file.path(figure_path, "Fig3_speciationLOC.png"),
   plot = figure3,
+  width = 10,
+  height = 12,
+  units = "in",
+  dpi = 300,
+  type = "cairo-png"
+)
+
+htmlwidgets::saveWidget(
+  hypercube,
+  file.path(figure_path, "Fig3_speciation3D.html"),
+  selfcontained = FALSE
+)
+
+########## FIGURE S21 ###################
+figureS21 <- correlation_figure
+
+ggsave(
+  filename = file.path(figure_path, "FigS21_correlations.png"),
+  plot = figureS21,
   width = 9,
   height = 12,
   units = "in",
@@ -701,37 +744,12 @@ ggsave(
   type = "cairo-png"
 )
 
-
-########## FIGURE 4 #################### 
-htmlwidgets::saveWidget(
-  hypercube,
-  file.path(figure_path, "Fig4_interactiveCUBE_v2.html"),
-  selfcontained = FALSE
-)
-
-figure4 <- hypercube_paper
+########## FIGURE S22 #################### 
+figureS22 <- figure_all
 
 ggsave(
-  filename = file.path(figure_path, "Fig4_2dCUBE_v2.png"),
-  plot = figure4,
-  width = 12,
-  height = 19,
-  units = "in",
-  dpi = 300,
-  type = "cairo-png"
-)
-
-htmlwidgets::saveWidget(
-  hypercube2,
-  file.path(figure_path, "Fig4_interactiveCUBE_v1.html"),
-  selfcontained = FALSE
-)
-
-figure4 <- hypercube_paper2
-
-ggsave(
-  filename = file.path(figure_path, "Fig4_2dCUBE_v1.png"),
-  plot = figure4,
+  filename = file.path(figure_path, "FigS22_speciationALL.png"),
+  plot = figureS22,
   width = 12,
   height = 19,
   units = "in",
