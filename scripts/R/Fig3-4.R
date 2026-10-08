@@ -587,36 +587,44 @@ p_pheno_geno_location <- plot_speciation_paper(
   x_label = "Phenotypic divergence",
   y_label = "Genetic divergence (FST)",
   colour_label = "Reproductive isolation",
+  label_species_pair = TRUE,
+  label_location = TRUE,
+  legend_bottom_right = FALSE,
   panel = "location"
 )
+p_pheno_geno_location
 
-p_pheno_geno_location <- plot_pairwise_lmer(
+p_pheno_asso_location <- plot_speciation_paper(
   speciation_hypercube_data,
-  data_level = "location",
-  x = "distance_pheno",
-  y = "distance_geno",
-  x_lab = "Phenotypic divergence",
-  y_lab = "Genetic differentiation (FST)"
-)
-
-p_pheno_asso_location <- plot_pairwise_lmer(
-  speciation_hypercube_data,
-  data_level = "location",
+  species_meta = species_info,
   x = "distance_pheno",
   y = "distance_asso",
-  x_lab = "Phenotypic divergence",
-  y_lab = "Reproductive isolation"
+  colour = "distance_geno",
+  x_label = "Phenotypic divergence",
+  y_label = "Reproductive isolation",
+  colour_label = "Genetic divergence (FST)",
+  label_species_pair = FALSE,
+  label_location = FALSE,
+  legend_bottom_right = FALSE,
+  panel = "location"
 )
+p_pheno_asso_location
 
-p_geno_asso_location <- plot_pairwise_lmer(
+p_geno_asso_location <- plot_speciation_paper(
   speciation_hypercube_data,
-  data_level = "location",
+  species_meta = species_info,
   x = "distance_geno",
   y = "distance_asso",
-  x_lab = "Genetic differentiation (FST)",
-  y_lab = "Reproductive isolation"
+  colour = "distance_pheno",
+  x_label = "Genetic differentiation (FST)",
+  y_label = "Reproductive isolation",
+  colour_label = "Phenotypic divergence",
+  label_species_pair = FALSE,
+  label_location = FALSE,
+  legend_bottom_right = TRUE,
+  panel = "location"
 )
-
+p_geno_asso_location
 
 
 

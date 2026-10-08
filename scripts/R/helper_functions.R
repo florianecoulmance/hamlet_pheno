@@ -2661,7 +2661,8 @@ plot_pairwise_metric <- function(
       legend.key = element_blank(),
       legend.key.size = unit(0.65, "cm"),
       legend.spacing.y = unit(0.2, "cm"),
-      legend.title = element_text(size = 18, font = "bold"),
+      legend.title.position = "top",
+      legend.title = element_text(size = 18, face = "bold", hjust = 1),
       legend.text = element_text(size = 14),
       legend.direction = "horizontal",
       axis.text.x = element_text(
@@ -6596,6 +6597,7 @@ plot_speciation_paper <- function(
     x_label = NULL,
     y_label = NULL,
     colour_label = NULL,
+    label_species_pair = TRUE,
     label_location = TRUE,
     panel = c("all", "location")) {
 
@@ -6675,7 +6677,9 @@ plot_speciation_paper <- function(
   ]
   
   model_label <- sprintf(
-    "\u03b2 = %.2f, p = %.3g",
+    "%s\n~\n%s\n\n\u03b2 = %.2f,\np = %.3g",
+    y_label,
+    x_label,
     beta,
     p_value
   )
@@ -6956,136 +6960,135 @@ plot_speciation_paper <- function(
   # ============================================================
 
   p_all <- ggplot(
-    data_all,
-    aes(
-      x = .data[[x]],
-      y = .data[[y]]
-    )
-  ) +
+      data_all,
+      aes(
+        x = .data[[x]],
+        y = .data[[y]]
+      )
+    ) +
 
     geom_abline(
       intercept = fixef(model)["(Intercept)"],
       slope = fixef(model)[x],
-      colour = colours["high"]
-    ) +
+      colour = "black",
+      linetype = "dashed",
+      alpha = 0.75
+    )
 
     # ----------------------------------------------------------
     # Pointers
     # ----------------------------------------------------------
+    if (label_species_pair) {
+      p_all <- p_all +
+        geom_segment(
+          data = labels_all,
+          aes(
+            x = .data[[x]],
+            y = .data[[y]],
+            xend = segment_xend,
+            yend = box_y
+          ),
+          inherit.aes = FALSE,
+          linewidth = 0.3,
+          colour = "grey45"
+        ) +
 
-    geom_segment(
-      data = labels_all,
-      aes(
-        x = .data[[x]],
-        y = .data[[y]],
-        xend = segment_xend,
-        yend = box_y
-      ),
-      inherit.aes = FALSE,
-      linewidth = 0.3,
-      colour = "grey45"
-    ) +
+        # ----------------------------------------------------------
+        # Boxes
+        # ----------------------------------------------------------
 
-    # ----------------------------------------------------------
-    # Boxes
-    # ----------------------------------------------------------
+        # geom_rect(
+        #   data = labels_all,
+        #   aes(
+        #     xmin = box_xmin - 0.005,
+        #     xmax = box_xmax + 0.005,
+        #     ymin = box_ymin - 0.0025,
+        #     ymax = box_ymax + 0.0025
+        #   ),
+        #   inherit.aes = FALSE,
+        #   fill = "white",
+        #   colour = "grey45",
+        #   linewidth = 0.4
+        # ) +
 
-    # geom_rect(
-    #   data = labels_all,
-    #   aes(
-    #     xmin = box_xmin - 0.005,
-    #     xmax = box_xmax + 0.005,
-    #     ymin = box_ymin - 0.0025,
-    #     ymax = box_ymax + 0.0025
-    #   ),
-    #   inherit.aes = FALSE,
-    #   fill = "white",
-    #   colour = "grey45",
-    #   linewidth = 0.4
-    # ) +
+        # ----------------------------------------------------------
+        # Logos
+        # ----------------------------------------------------------
 
-    # ----------------------------------------------------------
-    # Logos
-    # ----------------------------------------------------------
+        ggimage::geom_image(
+          data = labels_all,
+          aes(
+            x = species1_x,
+            y = logo_y,
+            image = link1
+          ),
+          inherit.aes = FALSE,
+          size = 0.042
+        ) +
 
-    ggimage::geom_image(
-      data = labels_all,
-      aes(
-        x = species1_x,
-        y = logo_y,
-        image = link1
-      ),
-      inherit.aes = FALSE,
-      size = 0.042
-    ) +
+        ggimage::geom_image(
+          data = labels_all,
+          aes(
+            x = species2_x,
+            y = logo_y,
+            image = link2
+          ),
+          inherit.aes = FALSE,
+          size = 0.042
+        )
 
-    ggimage::geom_image(
-      data = labels_all,
-      aes(
-        x = species2_x,
-        y = logo_y,
-        image = link2
-      ),
-      inherit.aes = FALSE,
-      size = 0.042
-    ) +
+        # ----------------------------------------------------------
+        # Species names
+        # ----------------------------------------------------------
 
-    # ----------------------------------------------------------
-    # Species names
-    # ----------------------------------------------------------
+        # geom_text(
+        #   data = labels_all,
+        #   aes(
+        #     x = species1_x,
+        #     y = name_y - 0.0015,
+        #     label = name1
+        #   ),
+        #   inherit.aes = FALSE,
+        #   size = 2,
+        #   fontface = "italic"
+        # ) +
 
-    # geom_text(
-    #   data = labels_all,
-    #   aes(
-    #     x = species1_x,
-    #     y = name_y - 0.0015,
-    #     label = name1
-    #   ),
-    #   inherit.aes = FALSE,
-    #   size = 2,
-    #   fontface = "italic"
-    # ) +
+        # geom_text(
+        #   data = labels_all,
+        #   aes(
+        #     x = species2_x,
+        #     y = name_y - 0.0015,
+        #     label = name2
+        #   ),
+        #   inherit.aes = FALSE,
+        #   size = 2,
+        #   fontface = "italic"
 
-    # geom_text(
-    #   data = labels_all,
-    #   aes(
-    #     x = species2_x,
-    #     y = name_y - 0.0015,
-    #     label = name2
-    #   ),
-    #   inherit.aes = FALSE,
-    #   size = 2,
-    #   fontface = "italic"
+        # )
+    }
 
-    # ) +
+    p_all <- p_all +
+      annotate( "text",
+        x = min(range(data_all[[x]], na.rm = TRUE )),
+        y = mean(range(data_all[[y]], na.rm = TRUE )), 
+        label = model_label, 
+        hjust = 0.5,
+        vjust = -2,
+        size = 4
+      ) +
 
-    annotate( "text",
-      x = mean(range(data_all[[x]], na.rm = TRUE )),
-      y = -Inf, 
-      label = model_label, 
-      hjust = 0.5,
-      vjust = -0.8,
-      size = 3.5
-    ) +
+      labs(
+        x = x_label,
+        y = y_label
+      ) +
 
-    labs(
-      x = x_label,
-      y = y_label
-    ) +
+      coord_cartesian(
+        xlim = range(data_all[[x]], na.rm = TRUE) + c(-1, 1) * diff(range(data_all[[x]], na.rm = TRUE)) * 0.05,
+        ylim = range(data_all[[y]], na.rm = TRUE) + c(-1, 1) * diff(range(data_all[[y]], na.rm = TRUE)) * 0.05,
+        clip = "off"
+      ) +
 
-    coord_cartesian(
-      xlim = c(
-        0.9,
-        1.12
-      ),
-      ylim = c(
-        -0.1,
-        0.15
-      ),
-      clip = "off"
-    ) +
-
-    paper_theme
+      paper_theme
 
     if (!is.null(colour)) {
       p_all <- p_all + 
@@ -7120,141 +7123,126 @@ plot_speciation_paper <- function(
       intercept = fixef(model)["(Intercept)"],
       slope = fixef(model)[x],
       colour = "black",
-      linetype = "dashed"
-    ) +
+      linetype = "dashed",
+      alpha = 0.75
+    )
 
     # ----------------------------------------------------------
     # Pointers
     # ----------------------------------------------------------
+    if (label_species_pair) {
+      p_location <- p_location +
+        geom_segment(
+          data = labels_location,
+          aes(
+            x = .data[[x]],
+            y = .data[[y]],
+            xend = segment_xend,
+            yend = box_y
+          ),
+          inherit.aes = FALSE,
+          linewidth = 0.3,
+          colour = "grey45"
+        ) +
 
-    geom_segment(
-      data = labels_location,
-      aes(
-        x = .data[[x]],
-        y = .data[[y]],
-        xend = segment_xend,
-        yend = box_y
-      ),
-      inherit.aes = FALSE,
-      linewidth = 0.3,
-      colour = "grey45"
-    ) +
+        # ----------------------------------------------------------
+        # Boxes
+        # ----------------------------------------------------------
 
-    # ----------------------------------------------------------
-    # Boxes
-    # ----------------------------------------------------------
+        geom_rect(
+          data = labels_location,
+          aes(
+            xmin = box_xmin - 0.001,
+            xmax = box_xmax + 0.001,
+            ymin = box_ymin,
+            ymax = box_ymax + 0.001
+          ),
+          inherit.aes = FALSE,
+          fill = "white",
+          colour = "grey45",
+          linewidth = 0.4
+        ) +
 
-    geom_rect(
-      data = labels_location,
-      aes(
-        xmin = box_xmin - 0.001,
-        xmax = box_xmax + 0.001,
-        ymin = box_ymin,
-        ymax = box_ymax + 0.001
-      ),
-      inherit.aes = FALSE,
-      fill = "white",
-      colour = "grey45",
-      linewidth = 0.4
-    ) +
+        # ----------------------------------------------------------
+        # Logos
+        # ----------------------------------------------------------
 
-    # ----------------------------------------------------------
-    # Logos
-    # ----------------------------------------------------------
+        ggimage::geom_image(
+          data = labels_location,
+          aes(
+            x = species1_x,
+            y = logo_y,
+            image = link1
+          ),
+          inherit.aes = FALSE,
+          size = 0.06
+        ) +
 
-    ggimage::geom_image(
-      data = labels_location,
-      aes(
-        x = species1_x,
-        y = logo_y,
-        image = link1
-      ),
-      inherit.aes = FALSE,
-      size = 0.06
-    ) +
+        ggimage::geom_image(
+          data = labels_location,
+          aes(
+            x = species2_x,
+            y = logo_y,
+            image = link2
+          ),
+          inherit.aes = FALSE,
+          size = 0.06
+        )
 
-    ggimage::geom_image(
-      data = labels_location,
-      aes(
-        x = species2_x,
-        y = logo_y,
-        image = link2
-      ),
-      inherit.aes = FALSE,
-      size = 0.06
-    ) +
+        # ----------------------------------------------------------
+        # Species names
+        # ----------------------------------------------------------
 
-    # ----------------------------------------------------------
-    # Species names
-    # ----------------------------------------------------------
+        # geom_text(
+        #   data = labels_location,
+        #   aes(
+        #     x = species1_x,
+        #     y = name_y - 0.0006,
+        #     label = name1
+        #   ),
+        #   inherit.aes = FALSE,
+        #   size = 3,
+        #   fontface = "italic"
 
-    # geom_text(
-    #   data = labels_location,
-    #   aes(
-    #     x = species1_x,
-    #     y = name_y - 0.0006,
-    #     label = name1
-    #   ),
-    #   inherit.aes = FALSE,
-    #   size = 3,
-    #   fontface = "italic"
+        # ) +
 
-    # ) +
+        # geom_text(
+        #   data = labels_location,
+        #   aes(
+        #     x = species2_x,
+        #     y = name_y - 0.0006,
+        #     label = name2
+        #   ),
+        #   inherit.aes = FALSE,
+        #   size = 3,
+        #   fontface = "italic"
 
-    # geom_text(
-    #   data = labels_location,
-    #   aes(
-    #     x = species2_x,
-    #     y = name_y - 0.0006,
-    #     label = name2
-    #   ),
-    #   inherit.aes = FALSE,
-    #   size = 3,
-    #   fontface = "italic"
+        # )
+    }
 
-    # ) +
+    p_location <- p_location +
+      annotate(
+        "text",
+        x = min(range(data_location[[x]], na.rm = TRUE)),
+        y = mean(range(data_location[[y]], na.rm = TRUE)) - 0.001,
+        label = model_label,
+        hjust = 0.5,
+        vjust = -0.8,
+        size = 4
+      ) +
 
-    # ----------------------------------------------------------
-    # Phenotypic divergence legend — pink
-    # ----------------------------------------------------------
+      labs(
+        x = x_label,
+        y = y_label
+      ) +
 
-    # scale_colour_gradientn(
-    #   colours = c(
-    #     "#F0D4E0",
-    #     "#D06495",
-    #     "#8F315D"
-    #   ),
-    #   name = "Reproductive isolation"
-    # ) +
+      coord_cartesian(
+        xlim = range(data_location[[x]], na.rm = TRUE) + c(-1, 1) * diff(range(data_location[[x]], na.rm = TRUE)) * 0.07,
+        ylim = range(data_location[[y]], na.rm = TRUE) + c(-1, 1) * diff(range(data_location[[y]], na.rm = TRUE)) * 0.07,
+        clip = "off"
+      ) +
 
-    annotate(
-      "text",
-      x = mean(range(data_location[[x]], na.rm = TRUE)),
-      y = -Inf,
-      label = model_label,
-      hjust = 0.5,
-      vjust = -0.8,
-      size = 6
-    ) +
-
-    labs(
-      x = x_label,
-      y = y_label
-    ) +
-
-    coord_cartesian(
-      xlim = c(
-        0,
-        1.12
-      ),
-      ylim = c(
-        0,
-        0.075
-      ),
-      clip = "off"
-    ) +
-
-    paper_theme
+      paper_theme
 
     if (!is.null(colour)) {
       p_location <- p_location +
