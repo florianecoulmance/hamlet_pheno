@@ -6775,6 +6775,12 @@ plot_speciation_hypercube <- function(
 plot_speciation_paper <- function(
     data,
     species_meta,
+    x,
+    y,
+    colour = NULL,
+    x_label = NULL,
+    y_label = NULL,
+    colour_label = NULL,
     label_location = TRUE,
     panel = c("all", "location")) {
 
@@ -6809,7 +6815,7 @@ plot_speciation_paper <- function(
 
 
   # ============================================================
-  # 2. LOGOS
+  # 2. LOGOS and COLOURS
   # ============================================================
 
   logo_map <- setNames(
@@ -6817,18 +6823,54 @@ plot_speciation_paper <- function(
     species_meta$Species
   )
 
+  colours <- if (panel == "all") {
+    c(
+      low = "#F2E4D0",
+      mid = "#D09F64",
+      high = "#8C5F2D"
+    )
+  } else {
+    c( low = "#F0D4E0",
+    mid = "#D06495",
+    high = "#8F315D")
+  }
+
+  formula <- as.formula(
+    paste0(
+      y,
+      " ~ ",
+      x,
+      " + (1 | species1) + (1 | species2)"
+    )
+  )
+  
+  model <- lmer(
+    formula,
+    data = data %>% filter(level == panel)
+  )
+  
+  model_summary <- summary(model)
+  beta <- model_summary$coefficients[
+    x,
+    "Estimate"
+  ]
+  
+  p_value <- model_summary$coefficients[
+    x, "Pr(>|t|)"
+  ]
+  
+  model_label <- sprintf(
+    "\u03b2 = %.2f, p = %.3g",
+    beta,
+    p_value
+  )
+
 
   # ============================================================
-  # 3. FIXED BOX SIZE
+  # LABEL POSITION FUNCTION
   # ============================================================
-
   box_width  <- 0.1
   box_height <- 0.003
-
-
-  # ============================================================
-  # 4. LABEL POSITION FUNCTION
-  # ============================================================
 
   make_labels <- function(
       df,
@@ -6841,7 +6883,7 @@ plot_speciation_paper <- function(
     }
 
     df <- df %>%
-      arrange(distance_geno) %>%
+      arrange(.data[[y]]) %>%
       mutate(
         point_id = row_number(),
 
@@ -6855,7 +6897,7 @@ plot_speciation_paper <- function(
           species2
         ),
 
-        ri_one = distance_pheno >= 0.999
+        ri_one = .data[[x]] >= 0.999
       )
 
 
@@ -6865,7 +6907,7 @@ plot_speciation_paper <- function(
 
     df_non1 <- df %>%
       filter(!ri_one) %>%
-      arrange(distance_geno) %>%
+      arrange(.data[[y]]) %>%
       mutate(
         label_id = row_number()
       )
@@ -6892,11 +6934,11 @@ plot_speciation_paper <- function(
           ),
 
           box_x =
-            distance_pheno +
+            .data[[x]] +
             x_direction * x_offset,
 
           box_y =
-            distance_geno +
+            .data[[y]] +
             ifelse(
               label_id %% 2 == 1,
               y_offset,
@@ -6913,7 +6955,7 @@ plot_speciation_paper <- function(
 
     df_one <- df %>%
       filter(ri_one) %>%
-      arrange(distance_geno) %>%
+      arrange(.data[[y]]) %>%
       mutate(
         label_id = row_number()
       )
@@ -6925,7 +6967,7 @@ plot_speciation_paper <- function(
 
       if (nrow(df_one) == 1) {
 
-        box_y <- df_one$distance_geno
+        box_y <- df_one[[y]]
 
       } else {
 
@@ -6938,8 +6980,8 @@ plot_speciation_paper <- function(
           0.007
         }
 
-        y_min <- min(df_one$distance_geno)
-        y_max <- max(df_one$distance_geno)
+        y_min <- min(df_one[[y]])
+        y_max <- max(df_one[[y]])
 
         box_y <- seq(
           y_min,
@@ -7010,7 +7052,7 @@ plot_speciation_paper <- function(
         segment_xend = ifelse(
           ri_one,
           box_xmin,
-          distance_pheno
+          .data[[x]]
         ),
 
         species1_x =
@@ -7101,140 +7143,169 @@ plot_speciation_paper <- function(
   p_all <- ggplot(
     data_all,
     aes(
-      x = distance_pheno,
-      y = distance_geno
+      x = .data[[x]],
+      y = .data[[y]]
     )
+  )
+
+  if (!is.null(colour)) {
+    p_all <- p_all + 
+      geom_point(
+        aes(
+          colour = .data[[colour]]
+        ),
+        size = ifelse(panel == "all", 4, 9)
+      ) + 
+      scale_colour_gradientn(
+        colours = unname(colours), 
+        name = colour 
+      )
+  } else {
+    p_all <- p_all +
+      geom_point(
+        colour = colours["mid"], 
+        size = ifelse( panel == "all", 4, 9 )
+      )
+  }
+
+  # ----------------------------------------------------------
+  # Phenotypic divergence legend — orange
+  # ----------------------------------------------------------
+
+  # scale_colour_gradientn(
+  #   colours = c(
+  #     "#F2E4D0",
+  #     "#D09F64",
+  #     "#8C5F2D"
+  #   ),
+  #   name = "Reproductive isolation"
+  # ) +
+
+  p_all <- p_all + 
+    geom_abline(
+      intercept = fixef(model)["(Intercept)"],
+      slope = fixef(model)[x],
+      colour = colours["high"]
+    ) +
+
+  # ----------------------------------------------------------
+  # Pointers
+  # ----------------------------------------------------------
+
+  geom_segment(
+    data = labels_all,
+    aes(
+      x = .data[[x]],
+      y = .data[[y]],
+      xend = segment_xend,
+      yend = box_y
+    ),
+    inherit.aes = FALSE,
+    linewidth = 0.3,
+    colour = "grey45"
   ) +
 
-    geom_point(
-      aes(
-        colour = distance_asso
-      ),
-      size = 4
-    ) +
+  # ----------------------------------------------------------
+  # Boxes
+  # ----------------------------------------------------------
 
-    # ----------------------------------------------------------
-    # Phenotypic divergence legend — orange
-    # ----------------------------------------------------------
+  # geom_rect(
+  #   data = labels_all,
+  #   aes(
+  #     xmin = box_xmin - 0.005,
+  #     xmax = box_xmax + 0.005,
+  #     ymin = box_ymin - 0.0025,
+  #     ymax = box_ymax + 0.0025
+  #   ),
+  #   inherit.aes = FALSE,
+  #   fill = "white",
+  #   colour = "grey45",
+  #   linewidth = 0.4
+  # ) +
 
-    scale_colour_gradientn(
-      colours = c(
-        "#F2E4D0",
-        "#D09F64",
-        "#8C5F2D"
-      ),
-      name = "Reproductive isolation"
-    ) +
+  # ----------------------------------------------------------
+  # Logos
+  # ----------------------------------------------------------
 
-    # ----------------------------------------------------------
-    # Pointers
-    # ----------------------------------------------------------
+  ggimage::geom_image(
+    data = labels_all,
+    aes(
+      x = species1_x,
+      y = logo_y,
+      image = link1
+    ),
+    inherit.aes = FALSE,
+    size = 0.042
+  ) +
 
-    geom_segment(
-      data = labels_all,
-      aes(
-        x = distance_pheno,
-        y = distance_geno,
-        xend = segment_xend,
-        yend = box_y
-      ),
-      inherit.aes = FALSE,
-      linewidth = 0.3,
-      colour = "grey45"
-    ) +
+  ggimage::geom_image(
+    data = labels_all,
+    aes(
+      x = species2_x,
+      y = logo_y,
+      image = link2
+    ),
+    inherit.aes = FALSE,
+    size = 0.042
+  ) +
 
-    # ----------------------------------------------------------
-    # Boxes
-    # ----------------------------------------------------------
+  # ----------------------------------------------------------
+  # Species names
+  # ----------------------------------------------------------
 
-    # geom_rect(
-    #   data = labels_all,
-    #   aes(
-    #     xmin = box_xmin - 0.005,
-    #     xmax = box_xmax + 0.005,
-    #     ymin = box_ymin - 0.0025,
-    #     ymax = box_ymax + 0.0025
-    #   ),
-    #   inherit.aes = FALSE,
-    #   fill = "white",
-    #   colour = "grey45",
-    #   linewidth = 0.4
-    # ) +
+  # geom_text(
+  #   data = labels_all,
+  #   aes(
+  #     x = species1_x,
+  #     y = name_y - 0.0015,
+  #     label = name1
+  #   ),
+  #   inherit.aes = FALSE,
+  #   size = 2,
+  #   fontface = "italic"
+  # ) +
 
-    # ----------------------------------------------------------
-    # Logos
-    # ----------------------------------------------------------
+  # geom_text(
+  #   data = labels_all,
+  #   aes(
+  #     x = species2_x,
+  #     y = name_y - 0.0015,
+  #     label = name2
+  #   ),
+  #   inherit.aes = FALSE,
+  #   size = 2,
+  #   fontface = "italic"
 
-    ggimage::geom_image(
-      data = labels_all,
-      aes(
-        x = species1_x,
-        y = logo_y,
-        image = link1
-      ),
-      inherit.aes = FALSE,
-      size = 0.042
-    ) +
+  # ) +
 
-    ggimage::geom_image(
-      data = labels_all,
-      aes(
-        x = species2_x,
-        y = logo_y,
-        image = link2
-      ),
-      inherit.aes = FALSE,
-      size = 0.042
-    ) +
+  annotate( "text",
+    x = mean(range( data_panel[[x]], na.rm = TRUE )),
+    y = -Inf, 
+    label = model_label, 
+    hjust = 0.5,
+    vjust = -0.8,
+    size = 3.5
+  ) +
 
-    # ----------------------------------------------------------
-    # Species names
-    # ----------------------------------------------------------
+  labs(
+    x = x_label,
+    y = y_label,
+    colour = colour_label
+  ) +
 
-    # geom_text(
-    #   data = labels_all,
-    #   aes(
-    #     x = species1_x,
-    #     y = name_y - 0.0015,
-    #     label = name1
-    #   ),
-    #   inherit.aes = FALSE,
-    #   size = 2,
-    #   fontface = "italic"
-    # ) +
+  coord_cartesian(
+    xlim = c(
+      0.9,
+      1.12
+    ),
+    ylim = c(
+      -0.1,
+      0.15
+    ),
+    clip = "off"
+  ) +
 
-    # geom_text(
-    #   data = labels_all,
-    #   aes(
-    #     x = species2_x,
-    #     y = name_y - 0.0015,
-    #     label = name2
-    #   ),
-    #   inherit.aes = FALSE,
-    #   size = 2,
-    #   fontface = "italic"
-
-    # ) +
-
-    labs(
-      # title = "(a) Between species",
-      x = "Phenotypic divergence",
-      y = "Genetic divergence (FST)"
-    ) +
-
-    coord_cartesian(
-      xlim = c(
-        0.9,
-        1.12
-      ),
-      ylim = c(
-        -0.1,
-        0.15
-      ),
-      clip = "off"
-    ) +
-
-    paper_theme
+  paper_theme
 
 
   # ============================================================
@@ -7244,180 +7315,195 @@ plot_speciation_paper <- function(
   p_location <- ggplot(
     data_location,
       aes(
-        x = distance_pheno,
-        y = distance_geno
+        x = .data[[x]],
+        y = .data[[y]]
       )
     ) +
 
-    # ----------------------------------------------------------
-    # Pointers
-    # ----------------------------------------------------------
+  if (!is.null(colour)) {
+    p_location <- p_location +
+      geom_point(
+        aes(
+          colour = .data[[colour]]
+        ),
+        size = ifelse(panel == "all", 4, 9 )
+      ) + 
+      scale_colour_gradientn(
+        colours = unname(colours),
+        name = colour
+      )
+  } else {
+    p_location <- p_location +
+      geom_point(
+        colour = colours["mid"],
+        size = ifelse(panel == "all", 4, 9 )
+      )
+  }
 
-    geom_segment(
-      data = labels_location,
-      aes(
-        x = distance_pheno,
-        y = distance_geno,
-        xend = segment_xend,
-        yend = box_y
-      ),
-      inherit.aes = FALSE,
-      linewidth = 0.3,
-      colour = "grey45"
+  p_location <- p_location +
+    geom_abline( 
+      intercept = fixef(model)["(Intercept)"],
+      slope = fixef(model)[x],
+      colour = colours["high"]
     ) +
 
-    # ----------------------------------------------------------
-    # Boxes
-    # ----------------------------------------------------------
+  # ----------------------------------------------------------
+  # Pointers
+  # ----------------------------------------------------------
 
-    geom_rect(
-      data = labels_location,
-      aes(
-        xmin = box_xmin - 0.001,
-        xmax = box_xmax + 0.001,
-        ymin = box_ymin,
-        ymax = box_ymax + 0.001
-      ),
-      inherit.aes = FALSE,
-      fill = "white",
-      colour = "grey45",
-      linewidth = 0.4
-    ) +
+  geom_segment(
+    data = labels_location,
+    aes(
+      x = .data[[x]],
+      y = .data[[y]],
+      xend = segment_xend,
+      yend = box_y
+    ),
+    inherit.aes = FALSE,
+    linewidth = 0.3,
+    colour = "grey45"
+  ) +
 
-    # ----------------------------------------------------------
-    # Logos
-    # ----------------------------------------------------------
+  # ----------------------------------------------------------
+  # Boxes
+  # ----------------------------------------------------------
 
-    ggimage::geom_image(
-      data = labels_location,
-      aes(
-        x = species1_x,
-        y = logo_y,
-        image = link1
-      ),
-      inherit.aes = FALSE,
-      size = 0.06
-    ) +
+  geom_rect(
+    data = labels_location,
+    aes(
+      xmin = box_xmin - 0.001,
+      xmax = box_xmax + 0.001,
+      ymin = box_ymin,
+      ymax = box_ymax + 0.001
+    ),
+    inherit.aes = FALSE,
+    fill = "white",
+    colour = "grey45",
+    linewidth = 0.4
+  ) +
 
-    ggimage::geom_image(
-      data = labels_location,
-      aes(
-        x = species2_x,
-        y = logo_y,
-        image = link2
-      ),
-      inherit.aes = FALSE,
-      size = 0.06
-    ) +
+  # ----------------------------------------------------------
+  # Logos
+  # ----------------------------------------------------------
 
-    # ----------------------------------------------------------
-    # Species names
-    # ----------------------------------------------------------
+  ggimage::geom_image(
+    data = labels_location,
+    aes(
+      x = species1_x,
+      y = logo_y,
+      image = link1
+    ),
+    inherit.aes = FALSE,
+    size = 0.06
+  ) +
 
-    # geom_text(
-    #   data = labels_location,
-    #   aes(
-    #     x = species1_x,
-    #     y = name_y - 0.0006,
-    #     label = name1
-    #   ),
-    #   inherit.aes = FALSE,
-    #   size = 3,
-    #   fontface = "italic"
+  ggimage::geom_image(
+    data = labels_location,
+    aes(
+      x = species2_x,
+      y = logo_y,
+      image = link2
+    ),
+    inherit.aes = FALSE,
+    size = 0.06
+  ) +
 
-    # ) +
+  # ----------------------------------------------------------
+  # Species names
+  # ----------------------------------------------------------
 
-    # geom_text(
-    #   data = labels_location,
-    #   aes(
-    #     x = species2_x,
-    #     y = name_y - 0.0006,
-    #     label = name2
-    #   ),
-    #   inherit.aes = FALSE,
-    #   size = 3,
-    #   fontface = "italic"
+  # geom_text(
+  #   data = labels_location,
+  #   aes(
+  #     x = species1_x,
+  #     y = name_y - 0.0006,
+  #     label = name1
+  #   ),
+  #   inherit.aes = FALSE,
+  #   size = 3,
+  #   fontface = "italic"
 
-    # ) +
+  # ) +
 
-    geom_point(
-      aes(
-        colour = distance_asso
-      ),
-      size = 9
-    ) +
+  # geom_text(
+  #   data = labels_location,
+  #   aes(
+  #     x = species2_x,
+  #     y = name_y - 0.0006,
+  #     label = name2
+  #   ),
+  #   inherit.aes = FALSE,
+  #   size = 3,
+  #   fontface = "italic"
 
-    # ----------------------------------------------------------
-    # Phenotypic divergence legend — pink
-    # ----------------------------------------------------------
+  # ) +
 
-    scale_colour_gradientn(
-      colours = c(
-        "#F0D4E0",
-        "#D06495",
-        "#8F315D"
-      ),
-      name = "Reproductive isolation"
-    ) +
+  # ----------------------------------------------------------
+  # Phenotypic divergence legend — pink
+  # ----------------------------------------------------------
 
-    labs(
-      # title = "(b) Between sympatric species",
-      x = "Phenotypic divergence",
-      y = "Genetic divergence (FST)"
-    ) +
+  # scale_colour_gradientn(
+  #   colours = c(
+  #     "#F0D4E0",
+  #     "#D06495",
+  #     "#8F315D"
+  #   ),
+  #   name = "Reproductive isolation"
+  # ) +
 
-    coord_cartesian(
-      xlim = c(
-        0,
-        1.12
-      ),
-      ylim = c(
-        0,
-        0.075
-      ),
-      clip = "off"
-    ) +
+  annotate(
+    "text",
+    x = mean(range( data_panel[[x]], na.rm = TRUE)),
+    y = -Inf,
+    label = model_label,
+    hjust = 0.5,
+    vjust = -0.8,
+    size = 3.5
+  ) +
 
-    paper_theme
+  labs(
+    x = x_label,
+    y = y_label,
+    colour = colour_label
+  ) +
 
-    if (label_location) {
+  coord_cartesian(
+    xlim = c(
+      0,
+      1.12
+    ),
+    ylim = c(
+      0,
+      0.075
+    ),
+    clip = "off"
+  ) +
 
-      p_location <- p_location +
-        geom_text(
-          data = labels_location,
-          aes(
-            x = box_x,
-            y = ifelse(
-              ri_one,
-              box_ymax + 0.002,
-              ifelse(
-                box_y > distance_geno,
-                box_ymin + 0.005,   # annotation above point → location below
-                box_ymax - 0.004   # annotation below point → location above
-              )
-            ),
-            label = Location
+  paper_theme
+
+  if (label_location) {
+    p_location <- p_location +
+      geom_text(
+        data = labels_location,
+        aes(
+          x = box_x,
+          y = ifelse(
+            ri_one,
+            box_ymax + 0.002,
+            ifelse(
+              box_y > .data[[y]],
+              box_ymin + 0.005,   # annotation above point → location below
+              box_ymax - 0.004   # annotation below point → location above
+            )
           ),
-          inherit.aes = FALSE,
-          size = 5,
-          colour = "black",
-          fontface = "bold"
-        )
-    }
-
-
-  # ============================================================
-  # 11. STACK PANELS
-  # ============================================================
-
-  p <- plot_grid(
-    p_all,
-    p_location,
-    ncol = 1,
-    nrow = 2,
-    align = "v"
-  )
-
+          label = Location
+        ),
+        inherit.aes = FALSE,
+        size = 5,
+        colour = "black",
+        fontface = "bold"
+      )
+  }
 
   if (panel == "all") {
     return(p_all)
@@ -8284,6 +8370,7 @@ plot_pairwise_lmer <- function(
   data_level,
   x,
   y,
+  colour = NULL,
   x_lab = x,
   y_lab = y) {
   

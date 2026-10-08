@@ -578,12 +578,17 @@ scatter_location <- scatterplot3d(
 grid.echo()
 scatter_location <- grid.grab()
 
-paper_location <- plot_speciation_paper(
-  speciation_hypercube_data,
-  species_info,
+p_pheno_geno_location <- plot_speciation_paper(
+  data = speciation_hypercube_data,
+  species_meta = species_info,
+  x = "distance_pheno",
+  y = "distance_geno",
+  colour = "distance_asso",
+  x_label = "Phenotypic divergence",
+  y_label = "Genetic divergence (FST)",
+  colour_label = "Reproductive isolation",
   panel = "location"
 )
-print(paper_location)
 
 p_pheno_geno_location <- plot_pairwise_lmer(
   speciation_hypercube_data,
