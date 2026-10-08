@@ -328,7 +328,7 @@ figure2 <- ggarrange(
   ld_grid,
   labels = c("(a)", "", "", "", "(b)", "", "(c)"),
   nrow = 7,
-  heights = c(6, 0.2, 0.75, 0.2, 4, 0.3, 6)
+  heights = c(7, 0.2, 0.65, 0.2, 3, 0.3, 7)
 )
 
 ggsave(
