@@ -632,13 +632,20 @@ p_pheno_geno_all <- plot_pairwise_lmer(
 # FINAL PLOTS
 # ############################
 ########## FIGURE 3 #################### 
-figure3 <- figure_location
+figure3 <- ggarrange(
+  scatter_location,
+  paper_location,
+  nrow = 2,
+  labels = c("(a)", "(b)"),
+  heights = c(3.5, 5),
+  widths = c(2.5, 4)
+  )
 
 ggsave(
   filename = file.path(figure_path, "Fig3_speciationLOC.png"),
   plot = figure3,
-  width = 10,
-  height = 12,
+  width = 16,
+  height = 19,
   units = "in",
   dpi = 300,
   type = "cairo-png"

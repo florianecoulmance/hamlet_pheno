@@ -7243,30 +7243,10 @@ plot_speciation_paper <- function(
 
   p_location <- ggplot(
     data_location,
-    aes(
-      x = distance_pheno,
-      y = distance_geno
-    )
-  ) +
-
-    geom_point(
       aes(
-        colour = distance_asso
-      ),
-      size = 4
-    ) +
-
-    # ----------------------------------------------------------
-    # Phenotypic divergence legend — pink
-    # ----------------------------------------------------------
-
-    scale_colour_gradientn(
-      colours = c(
-        "#F0D4E0",
-        "#D06495",
-        "#8F315D"
-      ),
-      name = "Reproductive isolation"
+        x = distance_pheno,
+        y = distance_geno
+      )
     ) +
 
     # ----------------------------------------------------------
@@ -7293,9 +7273,9 @@ plot_speciation_paper <- function(
     geom_rect(
       data = labels_location,
       aes(
-        xmin = box_xmin,
-        xmax = box_xmax,
-        ymin = box_ymin + 0.002,
+        xmin = box_xmin - 0.001,
+        xmax = box_xmax + 0.001,
+        ymin = box_ymin,
         ymax = box_ymax + 0.001
       ),
       inherit.aes = FALSE,
@@ -7316,7 +7296,7 @@ plot_speciation_paper <- function(
         image = link1
       ),
       inherit.aes = FALSE,
-      size = 0.07
+      size = 0.06
     ) +
 
     ggimage::geom_image(
@@ -7327,7 +7307,7 @@ plot_speciation_paper <- function(
         image = link2
       ),
       inherit.aes = FALSE,
-      size = 0.07
+      size = 0.06
     ) +
 
     # ----------------------------------------------------------
@@ -7359,6 +7339,26 @@ plot_speciation_paper <- function(
     #   fontface = "italic"
 
     # ) +
+
+    geom_point(
+      aes(
+        colour = distance_asso
+      ),
+      size = 9
+    ) +
+
+    # ----------------------------------------------------------
+    # Phenotypic divergence legend — pink
+    # ----------------------------------------------------------
+
+    scale_colour_gradientn(
+      colours = c(
+        "#F0D4E0",
+        "#D06495",
+        "#8F315D"
+      ),
+      name = "Reproductive isolation"
+    ) +
 
     labs(
       # title = "(b) Between sympatric species",
@@ -7392,14 +7392,14 @@ plot_speciation_paper <- function(
               box_ymax + 0.002,
               ifelse(
                 box_y > distance_geno,
-                box_ymin + 0.002,   # annotation above point → location below
-                box_ymax - 0.002   # annotation below point → location above
+                box_ymin + 0.005,   # annotation above point → location below
+                box_ymax - 0.004   # annotation below point → location above
               )
             ),
             label = Location
           ),
           inherit.aes = FALSE,
-          size = 4,
+          size = 5,
           colour = "black",
           fontface = "bold"
         )

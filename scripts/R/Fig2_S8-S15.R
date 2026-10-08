@@ -463,7 +463,7 @@ pca_s_grid <- plot_grid(
   )
 
 # Final Figure 2
-figure2 <- ggarrange(
+figureS13 <- ggarrange(
   pca_s_grid,
   NULL,
   leg,
