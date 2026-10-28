@@ -2128,6 +2128,9 @@ build_ld_plot <- function(
   ))
 
   expected_ld <- 1 / (2 * n)
+
+  message("Number of samples:    ", n)
+
   
   files <- list(
     global = file.path(base_path, "/2_popgen/ld/", paste0(ds, "_global.ld")),
@@ -2180,18 +2183,18 @@ build_ld_plot <- function(
     linewidth = 0.6
   ) +
   # Exact p-values
-  stat_compare_means(
-    comparisons = pairwise_comparisons(df_all, "dataset"),
-    label = "p.signif",
-    size = 4,
-    color = "grey",
-    bracket.size = 0.3,
-    tip.length = 0.005,
-    label.y = seq(0.050, 0.08, length.out = length(pairwise_comparisons(df_all, "dataset")))
-  ) +
+  # stat_compare_means(
+  #   comparisons = pairwise_comparisons(df_all, "dataset"),
+  #   label = "p.signif",
+  #   size = 4,
+  #   color = "grey",
+  #   bracket.size = 0.3,
+  #   tip.length = 0.005,
+  #   label.y = seq(0.050, 0.08, length.out = length(pairwise_comparisons(df_all, "dataset")))
+  # ) +
   scale_x_discrete(
     labels = c(
-      "global" = "Global",
+      "global" = "Genome-wide",
       "LG04_LG12_1" = "LG04\nLG12_1",
       "LG04_LG12_2" = "LG04\nLG12_2",
       "LG12_1_LG12_2" = "LG12_1\nLG12_2"
@@ -2379,16 +2382,30 @@ aggregate_fst_by_window <- function(fst) {
 # ============================================================
 # genome wide fst plots
 # ============================================================
-plot_genome_fst <- function(fst, chromosome_info) {
+plot_genome_fst <- function(fst, chromosome_info, percentile = 0.99) {
 
   print(fst)
   print(chromosome_info)
+
+  # Calculate percentile threshold
+  fst_threshold <- quantile(
+    fst$fst,
+    probs = percentile,
+    na.rm = TRUE
+  )
+
+  # Flag outlier windows
+  fst <- fst %>%
+    mutate(
+      outlier = fst > fst_threshold
+    )
 
   ggplot(
     fst,
     aes(
       x = genome_pos,
-      y = fst
+      y = fst,
+      colour = outlier
     )
   ) +
 
@@ -2404,6 +2421,11 @@ plot_genome_fst <- function(fst, chromosome_info) {
       colour = "grey70"
     ) +
 
+    scale_colour_manual(
+      values = c("FALSE" = "black", "TRUE" = "red"),
+      guide = "none"
+    ) +
+
     scale_x_continuous(
       breaks = chromosome_info$centre,
       labels = levels(chromosome_info$chromosome),
@@ -2414,7 +2436,7 @@ plot_genome_fst <- function(fst, chromosome_info) {
 
     labs(
       x = "Linkage group",
-      y = "FST"
+      y = expression(F[ST])
     )
 }
 
@@ -2585,7 +2607,7 @@ plot_pairwise_metric <- function(
       ),
       .groups = "drop"
     ) %>%
-    arrange(desc(mean_metric)) %>%
+    arrange(mean_metric) %>%
     pull(pair_location)
 
   df <- df %>%
@@ -2682,7 +2704,7 @@ plot_pairwise_metric <- function(
     ) +
     guides(
       fill = guide_legend(
-        ncol = 3
+        ncol = 9
       )
     )
     
@@ -3130,13 +3152,15 @@ calculate_expected_spawning <- function(
 }
 
 calculate_RI <- function(
+  spec1,
+  spec2,
   observed,
   expected) {
 
   ifelse(
-    expected > 0,
-    1 - observed / expected,
-    NA_real_
+    spec1 == spec2,
+    1 - (expected / observed),
+    1 - (observed / expected)
   )
 }
 
@@ -3201,7 +3225,6 @@ calculate_global_RI <- function(
       expected = expected_proportion * N_pairing_total
     )
 
-
   # ============================================================
   # 5. Calculate RI
   # ============================================================
@@ -3209,10 +3232,14 @@ calculate_global_RI <- function(
   spawning <- spawning %>%
     dplyr::mutate(
       RI = calculate_RI(
+        spec1 = species1,
+        spec2 = species2,
         observed = observed,
         expected = expected
       )
     )
+  print(spawning)
+
 
 
   # ============================================================
@@ -4646,15 +4673,15 @@ create_permanova_table <- function(
             return(NA_character_)
         }
 
-        location_code <- substr(x, 4, 6)
+        # location_code <- substr(x, 4, 6)
 
         name <- geo_table$Locations[
-            geo_table$geo == location_code
+            geo_table$geo == x
         ]
 
         # If lookup fails, retain 3-letter code
         if (length(name) == 0 || is.na(name[1])) {
-            return(location_code)
+            return(x)
         }
 
         name[1]
@@ -5743,7 +5770,7 @@ calculate_pheno_distance_lda <- function(
     transmute(
       species1 = species_1,
       species2 = species_2,
-      distance_pheno = phenotypic_divergence
+      distance_pheno = mean_p_correct
     )
   
   pheno_distance <- pheno_distance %>%
@@ -6599,6 +6626,7 @@ plot_speciation_paper <- function(
     colour_label = NULL,
     label_species_pair = TRUE,
     label_location = TRUE,
+    legend_bottom_right = FALSE,
     panel = c("all", "location")) {
 
   library(dplyr)
@@ -6623,12 +6651,12 @@ plot_speciation_paper <- function(
     )
 
   data_all <- data %>%
-    filter(level == "all") %>%
-    arrange(distance_geno)
-
+    filter(level == "all") #%>%
+    # arrange(distance_geno)
+  
   data_location <- data %>%
-    filter(level == "location") %>%
-    arrange(distance_geno)
+    filter(level == "location") #%>%
+    # arrange(distance_geno)
 
 
   # ============================================================
@@ -6677,9 +6705,10 @@ plot_speciation_paper <- function(
   ]
   
   model_label <- sprintf(
-    "%s\n~\n%s\n\n\u03b2 = %.2f,\np = %.3g",
-    y_label,
-    x_label,
+    # "%s\n~\n%s\n\n"
+    "\u03b2 = %.2f\np = %.3g",
+    # y_label,
+    # x_label,
     beta,
     p_value
   )
@@ -6688,7 +6717,7 @@ plot_speciation_paper <- function(
   # ============================================================
   # LABEL POSITION FUNCTION
   # ============================================================
-  box_width  <- 0.1
+  box_width  <- 0.065
   box_height <- 0.003
 
   make_labels <- function(
@@ -6736,7 +6765,7 @@ plot_speciation_paper <- function(
       if (panel == "all") {
 
         x_offset <- 0
-        y_offset <- 0.009
+        y_offset <- 0
 
       } else {
 
@@ -6767,7 +6796,6 @@ plot_speciation_paper <- function(
         )
     }
 
-
     # ==========================================================
     # RI = 1
     # ==========================================================
@@ -6779,51 +6807,38 @@ plot_speciation_paper <- function(
         label_id = row_number()
       )
 
-
     if (nrow(df_one) > 0) {
 
-      right_x <- 1.12
-
-      if (nrow(df_one) == 1) {
-
-        box_y <- df_one[[y]]
-
+      right_x <- if(panel == "all") {
+        1.01
       } else {
+        1.043
+      }
 
-        # Spread boxes vertically with a minimum separation
-        # while preserving the order of the points
+      # Minimum vertical spacing between labels
+      min_spacing <- if (panel == "all") {
+        0
+      } else {
+        0.008
+      }
 
-        min_spacing <- if (panel == "all") {
-          0.01
-        } else {
-          0.007
+      y_values <- df_one[[y]]
+
+      # Keep labels aligned with points when possible,
+      # but spread them if they are too close together
+      box_y <- y_values
+
+      if (length(y_values) > 1) {
+
+        for (i in 2:length(box_y)) {
+          if (box_y[i] < box_y[i - 1] + min_spacing) {
+            box_y[i] <- box_y[i - 1] + min_spacing
+          }
         }
 
-        y_min <- min(df_one[[y]])
-        y_max <- max(df_one[[y]])
-
-        box_y <- seq(
-          y_min,
-          y_max,
-          length.out = nrow(df_one)
-        )
-
-        # If the range is too small, expand it
-        # around the centre so boxes do not overlap
-
-        required_range <-
-          min_spacing * (nrow(df_one) - 1)
-
-        if ((y_max - y_min) < required_range) {
-
-          y_mid <- mean(c(y_min, y_max))
-
-          box_y <- seq(
-            y_mid - required_range / 2,
-            y_mid + required_range / 2,
-            length.out = nrow(df_one)
-          ) - ifelse(panel == "all", 0.04, 0)
-        }
+        # Centre the labels around their original positions
+        shift <- mean(box_y - y_values)
+        box_y <- box_y - shift
       }
 
       df_one <- df_one %>%
@@ -6832,7 +6847,6 @@ plot_speciation_paper <- function(
           box_y = box_y
         )
     }
-
 
     # ==========================================================
     # 5. COMBINE LABELS
@@ -6875,13 +6889,13 @@ plot_speciation_paper <- function(
         ),
 
         species1_x =
-          box_x - box_width * 0.23,
+          box_x - box_width * 0.2,
 
         species2_x =
-          box_x + box_width * 0.23,
+          box_x + box_width * 0.2,
 
-        logo_y =
-          box_y + box_height * 0.13,
+        logo_y = 
+          box_y + box_height * 0.1,
 
         name_y =
           box_y - box_height * 0.18,
@@ -6898,19 +6912,124 @@ plot_speciation_paper <- function(
   }
 
 
-  # ============================================================
-  # 7. CREATE LABELS
-  # ============================================================
-
-  labels_all <- make_labels(
-    data_all,
-    panel = "all"
-  )
-
   labels_location <- make_labels(
     data_location,
     panel = "location"
   )
+
+
+  # ============================================================
+  # 7. CREATE LABELS
+  # ============================================================
+
+
+
+  make_labels_all <- function(df) {
+
+    if (nrow(df) == 0) {
+      return(df)
+    }
+
+    # ----------------------------------------------------------
+    # 1. Prepare data
+    # ----------------------------------------------------------
+
+    df <- df %>%
+      arrange(.data[[y]]) %>%
+      mutate(
+        point_id = row_number(),
+        name1 = paste0("H. ", species1),
+        name2 = paste0("H. ", species2),
+        ri_one = .data[[x]] >= 0.99998
+      )
+
+    # ----------------------------------------------------------
+    # 2. Position each logo pair above its corresponding point
+    # ----------------------------------------------------------
+
+    labels <- df %>%
+      mutate(
+        label_id = row_number(),
+        box_x = .data[[x]],
+        box_y = ifelse(
+          ri_one,
+          .data[[y]] - 0.003,
+          .data[[y]] + 0.003
+        )
+      )
+
+    # ----------------------------------------------------------
+    # 3. Move labels upward only when they overlap other points
+    # ----------------------------------------------------------
+
+    if (nrow(labels) > 1) {
+
+      for (i in seq_len(nrow(labels))) {
+
+        attempts <- 0
+
+        repeat {
+
+          xmin <- labels$box_x[i] - box_width / 2
+          xmax <- labels$box_x[i] + box_width / 2
+          ymin <- labels$box_y[i] - box_height / 2
+          ymax <- labels$box_y[i] + box_height / 2
+
+          overlaps <- (
+            df[[x]] >= xmin &
+            df[[x]] <= xmax &
+            df[[y]] >= ymin &
+            df[[y]] <= ymax
+          )
+
+          # Ignore the point belonging to this label
+          overlaps[i] <- FALSE
+
+          if (!any(overlaps) || attempts >= 50) {
+            break
+          }
+
+          # Small vertical adjustment
+          labels$box_y[i] <- labels$box_y[i] + 0.002
+          attempts <- attempts + 1
+        }
+      }
+    }
+
+    # ----------------------------------------------------------
+    # 4. Calculate box geometry and logo positions
+    # ----------------------------------------------------------
+
+    labels <- labels %>%
+      mutate(
+        box_xmin = box_x - box_width / 2,
+        box_xmax = box_x + box_width / 2,
+        box_ymin = box_y - box_height / 2,
+        box_ymax = box_y + box_height / 2,
+
+        segment_xend = .data[[x]],
+
+        # Keep the two logos horizontally aligned
+        species1_x = box_x - box_width * 0.009,
+
+        species2_x = box_x + box_width * 0.009,
+
+        # Logo pair position
+        logo_y = box_y + box_height * 0.02,
+
+        name_y = box_y - box_height * 0.18,
+
+        link1 = unname(logo_map[species1]),
+        link2 = unname(logo_map[species2])
+      )
+
+    return(labels)
+  }
+
+  labels_all <- make_labels_all(
+    data_all
+  )
+
 
 
   # ============================================================
@@ -6931,9 +7050,17 @@ plot_speciation_paper <- function(
       8, 55, 8, 8
     ),
 
-    # Legend
-    legend.position = c(0.04, 0.96),
-    legend.justification = c(0, 1),
+    legend.position = if (legend_bottom_right) {
+      c(0.96, 0.04)
+    } else {
+      c(0.04, 0.96)
+    },
+
+    legend.justification = if (legend_bottom_right) {
+      c(1, 0)
+    } else {
+      c(0, 1)
+    },
 
     legend.background = element_rect(
       fill = "white",
@@ -6972,7 +7099,7 @@ plot_speciation_paper <- function(
       slope = fixef(model)[x],
       colour = "black",
       linetype = "dashed",
-      alpha = 0.75
+      alpha = 0.7
     )
 
     # ----------------------------------------------------------
@@ -6985,31 +7112,36 @@ plot_speciation_paper <- function(
           aes(
             x = .data[[x]],
             y = .data[[y]],
-            xend = segment_xend,
-            yend = box_y
+            xend = box_x,
+            yend = ifelse(
+              box_y >= .data[[y]],
+              box_ymin - 0.0025,
+              box_ymax + 0.0025
+            )
           ),
           inherit.aes = FALSE,
           linewidth = 0.3,
-          colour = "grey45"
+          alpha = 0.6,
+          colour = colours["mid"]
         ) +
 
         # ----------------------------------------------------------
         # Boxes
         # ----------------------------------------------------------
 
-        # geom_rect(
-        #   data = labels_all,
-        #   aes(
-        #     xmin = box_xmin - 0.005,
-        #     xmax = box_xmax + 0.005,
-        #     ymin = box_ymin - 0.0025,
-        #     ymax = box_ymax + 0.0025
-        #   ),
-        #   inherit.aes = FALSE,
-        #   fill = "white",
-        #   colour = "grey45",
-        #   linewidth = 0.4
-        # ) +
+        geom_rect(
+          data = labels_all,
+          aes(
+            xmin = box_xmin - 0.005,
+            xmax = box_xmax + 0.005,
+            ymin = box_ymin - 0.0025,
+            ymax = box_ymax + 0.0025
+          ),
+          inherit.aes = FALSE,
+          fill = "white",
+          colour = "grey45",
+          linewidth = 0
+        ) +
 
         # ----------------------------------------------------------
         # Logos
@@ -7023,7 +7155,7 @@ plot_speciation_paper <- function(
             image = link1
           ),
           inherit.aes = FALSE,
-          size = 0.042
+          size = 0.07
         ) +
 
         ggimage::geom_image(
@@ -7034,7 +7166,7 @@ plot_speciation_paper <- function(
             image = link2
           ),
           inherit.aes = FALSE,
-          size = 0.042
+          size = 0.07
         )
 
         # ----------------------------------------------------------
@@ -7068,13 +7200,22 @@ plot_speciation_paper <- function(
     }
 
     p_all <- p_all +
-      annotate( "text",
-        x = min(range(data_all[[x]], na.rm = TRUE )),
-        y = mean(range(data_all[[y]], na.rm = TRUE )), 
-        label = model_label, 
-        hjust = 0.5,
-        vjust = -2,
-        size = 4
+      annotate(
+        "text",
+        x = if (legend_bottom_right) {
+          max(data_all[[x]], na.rm = TRUE)
+        } else {
+          min(range(data_all[[x]], na.rm = TRUE))
+        },
+        y = if (legend_bottom_right) {
+          min(data_all[[y]], na.rm = TRUE)
+        } else {
+          mean(range(data_all[[y]], na.rm = TRUE)) - 0.06
+        },
+        label = model_label,
+        hjust = if (legend_bottom_right) 1 else 0.5,
+        vjust = if (legend_bottom_right) 0 else -2,
+        size = 7
       ) +
 
       labs(
@@ -7083,8 +7224,8 @@ plot_speciation_paper <- function(
       ) +
 
       coord_cartesian(
-        xlim = range(data_all[[x]], na.rm = TRUE) + c(-1, 1) * diff(range(data_all[[x]], na.rm = TRUE)) * 0.05,
-        ylim = range(data_all[[y]], na.rm = TRUE) + c(-1, 1) * diff(range(data_all[[y]], na.rm = TRUE)) * 0.05,
+        xlim = range(data_all[[x]], na.rm = TRUE) + c(-1, 1) * diff(range(data_all[[x]], na.rm = TRUE)) * 0.04,
+        ylim = range(data_all[[y]], na.rm = TRUE) + c(-1, 1) * diff(range(data_all[[y]], na.rm = TRUE)) * 0.03,
         clip = "off"
       ) +
 
@@ -7096,7 +7237,8 @@ plot_speciation_paper <- function(
           aes(
             colour = .data[[colour]]
           ),
-          size = ifelse(panel == "all", 4, 9)
+          alpha = 0.6,
+          size = ifelse(panel == "all", 4, 4)
         ) + 
         scale_colour_gradientn(
           colours = unname(colours), 
@@ -7106,7 +7248,8 @@ plot_speciation_paper <- function(
       p_all <- p_all +
         geom_point(
           colour = colours["mid"], 
-          size = ifelse( panel == "all", 4, 9 )
+          alpha = 0.6,
+          size = ifelse( panel == "all", 4, 4)
         )
     }
 
@@ -7124,7 +7267,7 @@ plot_speciation_paper <- function(
       slope = fixef(model)[x],
       colour = "black",
       linetype = "dashed",
-      alpha = 0.75
+      alpha = 0.7
     )
 
     # ----------------------------------------------------------
@@ -7138,11 +7281,12 @@ plot_speciation_paper <- function(
             x = .data[[x]],
             y = .data[[y]],
             xend = segment_xend,
-            yend = box_y
+            yend = box_y,
           ),
           inherit.aes = FALSE,
           linewidth = 0.3,
-          colour = "grey45"
+          alpha = 0.6,
+          colour = colours["mid"]
         ) +
 
         # ----------------------------------------------------------
@@ -7152,15 +7296,15 @@ plot_speciation_paper <- function(
         geom_rect(
           data = labels_location,
           aes(
-            xmin = box_xmin - 0.001,
-            xmax = box_xmax + 0.001,
+            xmin = box_xmin - 0.0001,
+            xmax = box_xmax + 0.0001,
             ymin = box_ymin,
             ymax = box_ymax + 0.001
           ),
           inherit.aes = FALSE,
           fill = "white",
           colour = "grey45",
-          linewidth = 0.4
+          linewidth = 0
         ) +
 
         # ----------------------------------------------------------
@@ -7175,7 +7319,7 @@ plot_speciation_paper <- function(
             image = link1
           ),
           inherit.aes = FALSE,
-          size = 0.06
+          size = 0.07
         ) +
 
         ggimage::geom_image(
@@ -7186,7 +7330,7 @@ plot_speciation_paper <- function(
             image = link2
           ),
           inherit.aes = FALSE,
-          size = 0.06
+          size = 0.07
         )
 
         # ----------------------------------------------------------
@@ -7223,12 +7367,20 @@ plot_speciation_paper <- function(
     p_location <- p_location +
       annotate(
         "text",
-        x = min(range(data_location[[x]], na.rm = TRUE)),
-        y = mean(range(data_location[[y]], na.rm = TRUE)) - 0.001,
+        x = if (legend_bottom_right) {
+          max(data_location[[x]], na.rm = TRUE)
+        } else {
+          min(range(data_location[[x]], na.rm = TRUE)) + 0.05
+        },
+        y = if (legend_bottom_right) {
+          mean(range(data_location[[y]], na.rm = TRUE)) 
+        } else {
+          mean(range(data_location[[y]], na.rm = TRUE)) - 0.04
+        },
         label = model_label,
-        hjust = 0.5,
-        vjust = -0.8,
-        size = 4
+        hjust = if (legend_bottom_right) 1 else 0.5,
+        vjust = if (legend_bottom_right) 0 else -0.8,
+        size = 6
       ) +
 
       labs(
@@ -7237,8 +7389,8 @@ plot_speciation_paper <- function(
       ) +
 
       coord_cartesian(
-        xlim = range(data_location[[x]], na.rm = TRUE) + c(-1, 1) * diff(range(data_location[[x]], na.rm = TRUE)) * 0.07,
-        ylim = range(data_location[[y]], na.rm = TRUE) + c(-1, 1) * diff(range(data_location[[y]], na.rm = TRUE)) * 0.07,
+        xlim = range(data_location[[x]], na.rm = TRUE) + c(-1, 1) * diff(range(data_location[[x]], na.rm = TRUE)) * 0.045,
+        ylim = range(data_location[[y]], na.rm = TRUE) + c(-1, 1) * diff(range(data_location[[y]], na.rm = TRUE)) * 0.03,
         clip = "off"
       ) +
 
@@ -7248,9 +7400,10 @@ plot_speciation_paper <- function(
       p_location <- p_location +
         geom_point(
           aes(
-            colour = .data[[colour]],
+            colour = .data[[colour]]
           ),
-          size = ifelse(panel == "all", 4, 8 )
+          alpha = 0.6,
+          size = ifelse(panel == "all", 4, 8)
         ) + 
         scale_colour_gradientn(
           colours = unname(colours),
@@ -7260,7 +7413,8 @@ plot_speciation_paper <- function(
       p_location <- p_location +
         geom_point(
           colour = colours["mid"],
-          size = ifelse(panel == "all", 4, 9 )
+          alpha = 0.6,
+          size = ifelse(panel == "all", 4, 4)
         )
     }
 
@@ -7282,7 +7436,7 @@ plot_speciation_paper <- function(
             label = Location
           ),
           inherit.aes = FALSE,
-          size = 5,
+          size = 6,
           colour = "black",
           fontface = "bold"
         )

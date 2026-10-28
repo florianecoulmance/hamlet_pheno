@@ -255,20 +255,20 @@ head(fst)
 # head(dxy)
 
 # # 2. AGGREGATE FST AND DXY BY WINDOW
-# fst_window <- aggregate_fst_by_window(fst)
+fst_window <- aggregate_fst_by_window(fst)
 # head(fst_window)
 # dxy_window <- aggregate_dxy_by_window(dxy)
 # head(dxy_window)
 
 
 # # 3. CREATE GENOMIC COORDINATES
-# fst_genome <- add_genome_position(fst_window)
+fst_genome <- add_genome_position(fst_window)
 # head(fst_genome)
-# fst_window <- fst_genome$data
+fst_window <- fst_genome$data
 # head(fst_window)
 
 
-# chromosome_info <- fst_genome$chromosomes
+chromosome_info <- fst_genome$chromosomes
 # head(chromosome_info)
 
 # dxy_genome <- add_genome_position(dxy_window)
@@ -285,10 +285,10 @@ head(fst_plot)
 
 
 # # 4. PLOT A — FST
-# pA <- plot_genome_fst(
-#   fst_window,
-#   chromosome_info
-# )
+pA <- plot_genome_fst(
+  fst_window,
+  chromosome_info
+)
 
 # # 5. PLOT B — DXY
 # pB <- plot_genome_dxy(
@@ -420,7 +420,15 @@ ggsave(
 
 ########## FIGURE S11 ###################
 # Combined genotypic space: LD
-figureS11 <- build_ld_plot("all", location_colors)
+figureS11b <- build_ld_plot("all", location_colors)
+
+figureS11 <- ggarrange(
+  pA,
+  figureS11b,
+  nrow = 2,
+  labels = c("(a)", "(b)"),
+  heights = c(2, 5)
+)
 
 # Save as PNG (A4 size)
 ggsave(

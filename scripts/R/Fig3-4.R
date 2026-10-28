@@ -37,6 +37,7 @@ library(scatterplot3d)
 library(nlme)
 library(lme4)
 library(lmerTest)
+library(openxlsx)
 
 # ############################
 # CONFIG
@@ -412,6 +413,8 @@ asso_RI_global <- RI_global$results %>%
   select(
     species1,
     species2,
+    observed,
+    expected,
     RI
   ) %>%
   rename(
@@ -422,8 +425,18 @@ asso_RI_global <- RI_global$results %>%
     Location = "all"
   )
 
-
+asso_prop_global <- RI_global$species_proportions %>%
+  mutate(
+    level = "all",
+    Location = "all"
+  )
+  
 asso_RI_location <- vector(
+  "list",
+  length(locations)
+)
+
+asso_prop_location <- vector(
   "list",
   length(locations)
 )
@@ -496,6 +509,8 @@ for (i in seq_along(locations)) {
     select(
       species1,
       species2,
+      observed,
+      expected,
       RI
     ) %>%
     rename(
@@ -505,21 +520,142 @@ for (i in seq_along(locations)) {
       level = "location",
       Location = loc
     )
+  
+  asso_prop_location[[i]] <- 
+    RI$species_proportions %>%
+    mutate(
+      level = "location",
+      Location = loc
+    )
 }
 
+# asso_prop_location
 
 asso_RI <- bind_rows(
   asso_RI_global,
   bind_rows(
     asso_RI_location
   ) 
-) %>%mutate(
-  Location = recode(
+) %>% mutate(
+  Location = dplyr::recode(
     Location,
     "Bocas del Toro" = "Panama"
   )
 )
 
+asso_RI %>% filter(species1 == "aberrans", species2 == "puella")
+
+# Within-species RI
+RI_within <- asso_RI %>%
+  group_by(level, Location) %>%
+  filter(species1 == species2) %>%
+  select(species = species1, RI_within = distance_asso)
+
+# Between-species RI
+RI_between <- asso_RI %>%
+  group_by(level, Location) %>%
+  filter(species1 != species2) %>%
+  select(species1, species2, RI_between = distance_asso)
+
+# Calculate mean RI for each inter-species pair
+RI_inter_species <- RI_between %>%
+  left_join(
+    RI_within %>% rename(species1 = species, RI_species1 = RI_within),
+    by = c("species1", "level", "Location")
+  ) %>%
+  left_join(
+    RI_within %>% rename(species2 = species, RI_species2 = RI_within),
+    by = c("species2", "level", "Location")
+  ) %>%
+  mutate(
+    RI_mean = (RI_species1 + RI_species2 + RI_between) / 3
+  )
+
+RI_inter_species <- RI_inter_species %>%
+  filter(!(Location %in% c("all", "Jamaica - Guna Yala"))) %>%
+  rename(RI = RI_mean,
+         component_species1 = RI_species1,
+         component_species2 = RI_species2,
+         component_inter = RI_between) %>%
+  ungroup() %>%
+  select(Location, species1, species2, RI, component_species1, component_species2, component_inter)
+
+write.xlsx(RI_inter_species, file.path(figure_path, "TableS8.xlsx"))
+writeLines(
+  knitr::kable(
+    RI_inter_species,
+    format = "latex",
+    booktabs = TRUE,
+    row.names = FALSE,
+    escape = TRUE
+  ),
+  con = file.path(
+    figure_path,
+    "TableS8.tex"
+  )
+)
+
+asso_RI <- asso_RI %>% filter(!(Location %in% c("all", "Jamaica - Guna Yala"))) %>%
+  rename(observed_pairing = observed,
+         expected_pairing = expected) %>%
+  ungroup() %>%
+  select(Location, species1, species2, expected_pairing, observed_pairing)
+
+write.xlsx(asso_RI, file.path(figure_path, "TableS9.xlsx"))
+writeLines(
+  knitr::kable(
+    asso_RI,
+    format = "latex",
+    booktabs = TRUE,
+    row.names = FALSE,
+    escape = TRUE
+  ),
+  con = file.path(
+    figure_path,
+    "TableS9.tex"
+  )
+)
+
+
+RI_inter_species <- RI_inter_species %>%
+  mutate(level = "location") %>%
+  select(level, Location, species1, species2, RI, component_species1, component_species2, component_inter)
+
+species_pairs <- tibble::tribble(
+  ~species1,    ~species2,
+  "aberrans",   "indigo",
+  "indigo",     "puella",
+  "indigo",     "unicolor",
+  "nigricans",  "unicolor",
+  "aberrans",   "unicolor",
+  "indigo",     "nigricans",
+  "nigricans",  "puella",
+  "puella",     "unicolor",
+  "aberrans",   "nigricans",
+  "aberrans",   "puella"
+)
+
+RI_all <- RI_inter_species %>%
+  filter(level == "location") %>%
+  filter(is.finite(RI)) %>%
+  inner_join(species_pairs, by = c("species1", "species2")) %>%
+  group_by(species1, species2) %>%
+  summarise(
+    RI = mean(RI),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    level = "all",
+    Location = "all"
+  ) %>%
+  select(level, Location, species1, species2, RI)
+
+RI <- bind_rows(
+  RI_inter_species,
+  bind_rows(
+    RI_all
+  ) 
+)
 
 message("\n========================================")
 message("INTERSECTIONS")
@@ -535,20 +671,93 @@ speciation_hypercube_data <- pheno_distances_lda %>%
     )
   ) %>%
   dplyr::inner_join(
-    asso_RI,
+    RI,
     by = c(
       "level",
       "Location",
       "species1",
       "species2"
     )
-  )
+  ) %>%
+  mutate(distance_asso = RI)
 print(speciation_hypercube_data)
 
-# correlation_figure <- plot_all_pairwise_correlations(
-#   speciation_hypercube_data
-# )
-# correlation_figure
+pheno_geno_data_all <- pheno_distances_lda %>%
+  dplyr::inner_join(
+    geno_distances_fst,
+    by = c(
+      "level",
+      "Location",
+      "species1",
+      "species2"
+    )
+  ) %>%
+  filter(level == "all")
+
+pheno_geno_data_location <- pheno_distances_lda %>%
+  dplyr::inner_join(
+    geno_distances_fst,
+    by = c(
+      "level",
+      "Location",
+      "species1",
+      "species2"
+    )
+  ) %>%
+  filter(level == "location")
+
+pheno_asso_data_all <- pheno_distances_lda %>%
+  dplyr::inner_join(
+    RI,
+    by = c(
+      "level",
+      "Location",
+      "species1",
+      "species2"
+    )
+  ) %>%
+  filter(level == "all") %>%
+  mutate(distance_asso = RI)
+
+pheno_asso_data_location <- pheno_distances_lda %>%
+  dplyr::inner_join(
+    RI,
+    by = c(
+      "level",
+      "Location",
+      "species1",
+      "species2"
+    )
+  ) %>%
+  filter(level == "location") %>%
+  mutate(distance_asso = RI)
+
+geno_asso_data_all <- geno_distances_fst %>%
+  dplyr::inner_join(
+    RI,
+    by = c(
+      "level",
+      "Location",
+      "species1",
+      "species2"
+    )
+  ) %>%
+  filter(level == "all") %>%
+  mutate(distance_asso = RI)
+
+geno_asso_data_location <- geno_distances_fst %>%
+  dplyr::inner_join(
+    RI,
+    by = c(
+      "level",
+      "Location",
+      "species1",
+      "species2"
+    )
+  ) %>%
+  filter(level == "location",
+         RI != "-Inf") %>%
+  mutate(distance_asso = RI)
 
 
 message("\n========================================")
@@ -557,36 +766,174 @@ message("========================================")
 hypercube <- plot_speciation_hypercube(
   speciation_hypercube_data %>% filter(level == "location")
 )
-# print(hypercube)
+print(hypercube)
 
 data_location <- speciation_hypercube_data %>%
   filter(level == "location")
 
+data_all <- speciation_hypercube_data %>%
+  filter(level == "all")
+
+# # Assign colours based on level
+# point_colors <- ifelse(
+#   speciation_hypercube_data$level == "location",
+#   "#D06495",
+#   "#D09F64"
+# )
+# 
+# point_shapes <- ifelse(
+#   speciation_hypercube_data$level == "location",
+#   16,
+#   15
+# )
+
 scatter_location <- scatterplot3d(
-  data_location[, c(5, 7, 6)],
+  data_location[, c(5, 6, 7)],
   pch = 16,
   color = "#D06495",
-  angle = 135,
+  angle = 40,
+  cex.symbols = 2,
+  type = "h",
   aspect = c(1, 1, 1),
   xlim = c(0, 1),
   ylim = c(0, 1),
   zlim = c(0, 1),
   xlab = "Phenotypic divergence",
-  ylab = "Reproductive isolation",
-  zlab = "Genetic divergence (Fst)"
+  ylab = "",
+  zlab = "Reproductive isolation",
+  lab = c(3, 3, 3),
+  x.ticklabs = c(0, 0.5, 1),
+  y.ticklabs = c(0, 0.5, 1),
+  z.ticklabs = c(0, 0.5, 1),
+  font.lab = 2
 )
+# title(main = "Between sympatric species", font.main = 2, cex.main = 1.3)
 grid.echo()
+
+grid.gedit("graphics-plot-1-lines-4",
+           gp = gpar(lwd = 0))
+
+grid.gedit("graphics-plot-1-lines-6",
+           gp = gpar(lwd = 0))
+
+grid.gedit("graphics-plot-1-lines-10",
+           gp = gpar(lwd = 0.2, lty = 2))
+grid.gedit("graphics-plot-1-lines-11",
+           gp = gpar(lwd = 0.2, lty = 2))
+grid.gedit("graphics-plot-1-lines-12",
+           gp = gpar(lwd = 0.2, lty = 2))
+grid.gedit(
+  "graphics-plot-1-lines-8",
+  gp = gpar(lwd = 0.2, lty = 2)
+)
+
+grid.gedit("graphics-plot-1-lines-2", gp = gpar(lwd = 3))
+grid.gedit("graphics-plot-1-lines-3", gp = gpar(lwd = 3))
+g <- grid.get("graphics-plot-1-lines-1")
+g$gp$lwd[1] <- 3
+grid.set("graphics-plot-1-lines-1", g)
+
+g_p <- grid.get("graphics-plot-1-points-1")
+g_p$gp$fontsize <- 18
+g_p$gp$alpha[1] <- 0.75
+grid.set("graphics-plot-1-points-1", g_p)
+
+grid.text(
+  "Genetic divergence (FST)",
+  x = unit(0.76, "npc"),
+  y = unit(0.23, "npc"),
+  rot = 33,
+  gp = gpar(fontface = "bold")
+)
 scatter_location <- grid.grab()
+png(
+  file.path(figure_path, "scatter_location.png"),
+  width = 2200,
+  height = 2000,
+  res = 300
+)
+grid.draw(scatter_location)
+dev.off()
+dev.off()
+
+scatter_all <- scatterplot3d(
+  data_all[, c(5, 6, 7)],
+  pch = 15,
+  color = "#D09F64",
+  angle = 40,
+  cex.symbols = 2,
+  type = "h",
+  aspect = c(1, 1, 1),
+  xlim = c(0, 1),
+  ylim = c(0, 1),
+  zlim = c(0, 1),
+  xlab = "Phenotypic divergence",
+  ylab = "",
+  zlab = "Reproductive isolation",
+  lab = c(3, 3, 3),
+  x.ticklabs = c(0, 0.5, 1),
+  y.ticklabs = c(0, 0.5, 1),
+  z.ticklabs = c(0, 0.5, 1),
+  font.lab = 2
+)
+# title(main = "Between species", font.main = 2, cex.main = 1.3)
+grid.echo()
+
+grid.gedit("graphics-plot-1-lines-4",
+           gp = gpar(lwd = 0))
+
+grid.gedit("graphics-plot-1-lines-6",
+           gp = gpar(lwd = 0))
+
+grid.gedit("graphics-plot-1-lines-10",
+           gp = gpar(lwd = 0.2, lty = 2))
+grid.gedit("graphics-plot-1-lines-11",
+           gp = gpar(lwd = 0.2, lty = 2))
+grid.gedit("graphics-plot-1-lines-12",
+           gp = gpar(lwd = 0.2, lty = 2))
+grid.gedit(
+  "graphics-plot-1-lines-8",
+  gp = gpar(lwd = 0.2, lty = 2)
+)
+
+grid.gedit("graphics-plot-1-lines-2", gp = gpar(lwd = 3))
+grid.gedit("graphics-plot-1-lines-3", gp = gpar(lwd = 3))
+g <- grid.get("graphics-plot-1-lines-1")
+g$gp$lwd[1] <- 3
+grid.set("graphics-plot-1-lines-1", g)
+
+g_p <- grid.get("graphics-plot-1-points-1")
+g_p$gp$fontsize <- 18
+g_p$gp$alpha[1] <- 0.75
+grid.set("graphics-plot-1-points-1", g_p)
+grid.text(
+  "Genetic divergence (FST)",
+  x = unit(0.76, "npc"),
+  y = unit(0.23, "npc"),
+  rot = 33,
+  gp = gpar(fontface = "bold")
+)
+scatter_all <- grid.grab()
+png(
+  file.path(figure_path, "scatter_all.png"),
+  width = 2200,
+  height = 2000,
+  res = 300
+)
+grid.draw(scatter_all)
+dev.off()
+dev.off()
+
 
 p_pheno_geno_location <- plot_speciation_paper(
   data = speciation_hypercube_data,
   species_meta = species_info,
   x = "distance_pheno",
   y = "distance_geno",
-  colour = "distance_asso",
+  colour = NULL,
   x_label = "Phenotypic divergence",
   y_label = "Genetic divergence (FST)",
-  colour_label = "Reproductive isolation",
+  colour_label = NULL,
   label_species_pair = TRUE,
   label_location = TRUE,
   legend_bottom_right = FALSE,
@@ -599,10 +946,10 @@ p_pheno_asso_location <- plot_speciation_paper(
   species_meta = species_info,
   x = "distance_pheno",
   y = "distance_asso",
-  colour = "distance_geno",
+  colour = NULL,
   x_label = "Phenotypic divergence",
   y_label = "Reproductive isolation",
-  colour_label = "Genetic divergence (FST)",
+  colour_label = NULL,
   label_species_pair = FALSE,
   label_location = FALSE,
   legend_bottom_right = FALSE,
@@ -615,10 +962,10 @@ p_geno_asso_location <- plot_speciation_paper(
   species_meta = species_info,
   x = "distance_geno",
   y = "distance_asso",
-  colour = "distance_pheno",
+  colour = NULL,
   x_label = "Genetic differentiation (FST)",
   y_label = "Reproductive isolation",
-  colour_label = "Phenotypic divergence",
+  colour_label = NULL,
   label_species_pair = FALSE,
   label_location = FALSE,
   legend_bottom_right = TRUE,
@@ -628,37 +975,81 @@ p_geno_asso_location
 
 
 
-data_all <- speciation_hypercube_data %>%
-  filter(level == "all")
-
-p_pheno_geno_all <- plot_pairwise_lmer(
+p_pheno_geno_all <- plot_speciation_paper(
   speciation_hypercube_data,
-  data_level = "all",
+  species_meta = species_info,
   x = "distance_pheno",
   y = "distance_geno",
-  x_lab = "Phenotypic divergence",
-  y_lab = "Genetic differentiation (FST)"
+  colour = NULL,
+  x_label = "Phenotypic divergence",
+  y_label = "Genetic divergence (FST)",
+  colour_label = NULL,
+  label_species_pair = TRUE,
+  label_location = FALSE,
+  legend_bottom_right = FALSE,
+  panel = "all"
 )
+p_pheno_geno_all
+
+p_pheno_asso_all <- plot_speciation_paper(
+  speciation_hypercube_data,
+  species_meta = species_info,
+  x = "distance_pheno",
+  y = "distance_asso",
+  colour = NULL,
+  x_label = "Phenotypic divergence",
+  y_label = "Reproductive isolation",
+  colour_label = NULL,
+  label_species_pair = FALSE,
+  label_location = FALSE,
+  legend_bottom_right = FALSE,
+  panel = "all"
+)
+p_pheno_asso_all
+
+p_geno_asso_all <- plot_speciation_paper(
+  speciation_hypercube_data,
+  species_meta = species_info,
+  x = "distance_geno",
+  y = "distance_asso",
+  colour = NULL,
+  x_label = "Genetic divergence (FST)",
+  y_label = "Reproductive isolation",
+  colour_label = NULL,
+  label_species_pair = FALSE,
+  label_location = FALSE,
+  legend_bottom_right = TRUE,
+  panel = "all"
+)
+p_geno_asso_all
 
 
 # ############################
 # FINAL PLOTS
 # ############################
 ########## FIGURE 3 #################### 
+figure3_bottom <- plot_grid(
+  p_pheno_asso_location,
+  p_geno_asso_location,
+  ncol = 2,
+  labels = c("(b)", "(c)"),
+  scale = 0.95
+)
+
 figure3 <- ggarrange(
-  scatter_location,
-  paper_location,
-  nrow = 2,
-  labels = c("(a)", "(b)"),
-  heights = c(3.5, 5),
-  widths = c(2.5, 4)
-  )
+  p_pheno_geno_location,
+  NULL,
+  figure3_bottom,
+  nrow = 3,
+  heights = c(10, 0.2, 5),
+  labels = c("(a)", "", "")
+)
 
 ggsave(
-  filename = file.path(figure_path, "Fig3_speciationLOC.png"),
+  filename = file.path(figure_path, "Fig3_speciationLOC_raw.png"),
   plot = figure3,
-  width = 16,
-  height = 19,
+  width = 17,
+  height = 18,
   units = "in",
   dpi = 300,
   type = "cairo-png"
@@ -671,26 +1062,160 @@ htmlwidgets::saveWidget(
 )
 
 ########## FIGURE S21 ###################
-figureS21 <- correlation_figure
+figureS21_bottom <- plot_grid(
+  p_pheno_asso_all,
+  p_geno_asso_all,
+  ncol = 2,
+  labels = c("(b)", "(c)"),
+  scale = 0.95
+)
+
+figureS21 <- ggarrange(
+  p_pheno_geno_all,
+  NULL,
+  figureS21_bottom,
+  nrow = 3,
+  heights = c(10, 0.2, 5),
+  labels = c("(a)", "", "")
+)
 
 ggsave(
-  filename = file.path(figure_path, "FigS21_correlations.png"),
+  filename = file.path(figure_path, "FigS21_speciationALL.png"),
   plot = figureS21,
-  width = 9,
-  height = 12,
+  width = 17,
+  height = 18,
   units = "in",
   dpi = 300,
   type = "cairo-png"
 )
 
-########## FIGURE S22 #################### 
-figureS22 <- figure_all
+
+########## FIGURE S22 ###################
+p_pheno_geno_all_2 <- plot_speciation_paper(
+  pheno_geno_data_all,
+  species_meta = species_info,
+  x = "distance_pheno",
+  y = "distance_geno",
+  colour = NULL,
+  x_label = "Phenotypic divergence",
+  y_label = "Genetic divergence (FST)",
+  colour_label = NULL,
+  label_species_pair = FALSE,
+  label_location = FALSE,
+  legend_bottom_right = FALSE,
+  panel = "all"
+)
+p_pheno_geno_all_2
+
+p_pheno_asso_all_2 <- plot_speciation_paper(
+  pheno_asso_data_all,
+  species_meta = species_info,
+  x = "distance_pheno",
+  y = "distance_asso",
+  colour = NULL,
+  x_label = "Phenotypic divergence",
+  y_label = "Reproductive isolation",
+  colour_label = NULL,
+  label_species_pair = FALSE,
+  label_location = FALSE,
+  legend_bottom_right = FALSE,
+  panel = "all"
+)
+p_pheno_asso_all_2
+
+p_geno_asso_all_2 <- plot_speciation_paper(
+  geno_asso_data_all,
+  species_meta = species_info,
+  x = "distance_geno",
+  y = "distance_asso",
+  colour = NULL,
+  x_label = "Genetic divergence (FST)",
+  y_label = "Reproductive isolation",
+  colour_label = NULL,
+  label_species_pair = FALSE,
+  label_location = FALSE,
+  legend_bottom_right = TRUE,
+  panel = "all"
+)
+p_geno_asso_all_2
+
+all <- plot_grid(
+  p_pheno_geno_all_2,
+  p_pheno_asso_all_2,
+  p_geno_asso_all_2,
+  nrow = 3,
+  labels = c("(a)", "(b)", "(c)")
+)
+all
+
+p_pheno_geno_loc_2 <- plot_speciation_paper(
+  pheno_geno_data_location,
+  species_meta = species_info,
+  x = "distance_pheno",
+  y = "distance_geno",
+  colour = NULL,
+  x_label = "Phenotypic divergence",
+  y_label = "Genetic divergence (FST)",
+  colour_label = NULL,
+  label_species_pair = FALSE,
+  label_location = FALSE,
+  legend_bottom_right = FALSE,
+  panel = "location"
+)
+p_pheno_geno_loc_2
+
+p_pheno_asso_loc_2 <- plot_speciation_paper(
+  pheno_asso_data_location,
+  species_meta = species_info,
+  x = "distance_pheno",
+  y = "distance_asso",
+  colour = NULL,
+  x_label = "Phenotypic divergence",
+  y_label = "Reproductive isolation",
+  colour_label = NULL,
+  label_species_pair = FALSE,
+  label_location = FALSE,
+  legend_bottom_right = FALSE,
+  panel = "location"
+)
+p_pheno_asso_loc_2
+
+p_geno_asso_loc_2 <- plot_speciation_paper(
+  geno_asso_data_location,
+  species_meta = species_info,
+  x = "distance_geno",
+  y = "distance_asso",
+  colour = NULL,
+  x_label = "Genetic divergence (FST)",
+  y_label = "Reproductive isolation",
+  colour_label = NULL,
+  label_species_pair = FALSE,
+  label_location = FALSE,
+  legend_bottom_right = TRUE,
+  panel = "location"
+)
+p_geno_asso_loc_2
+
+loc <- plot_grid(
+  p_pheno_geno_loc_2,
+  p_pheno_asso_loc_2,
+  p_geno_asso_loc_2,
+  nrow = 3
+)
+loc
+
+figureS22 <- ggarrange(
+  all,
+  loc,
+  ncol = 2,
+  widths = c(1, 1)
+)
 
 ggsave(
-  filename = file.path(figure_path, "FigS22_speciationALL.png"),
+  filename = file.path(figure_path, "FigS22_correlations.png"),
   plot = figureS22,
-  width = 12,
-  height = 19,
+  width = 17,
+  height = 22,
   units = "in",
   dpi = 300,
   type = "cairo-png"
