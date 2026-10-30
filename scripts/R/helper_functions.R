@@ -2794,7 +2794,7 @@ plot_fst_categories <- function(
         location1 != location2
       ) %>%
       mutate(
-        comparison = "Within-species"
+        comparison = "Within species"
       )
 
 
@@ -2828,7 +2828,7 @@ plot_fst_categories <- function(
       .groups = "drop"
     ) %>%
     mutate(
-      comparison = "Between-species"
+      comparison = "Between species"
     )
 
   fst_same_species <- fst_same_species %>%
@@ -2936,9 +2936,9 @@ plot_fst_categories <- function(
         comparison = factor(
           comparison,
           levels = c(
-            "Within-species",
+            "Within species",
             "Between sympatric species",
-            "Between-species"
+            "Between species"
           )
         )
       )

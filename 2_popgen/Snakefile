@@ -62,8 +62,8 @@ rule all:
                 "FigS11_gAllLD.png",
                 "FigS12_gAllPERM.png",
                 "FigS13_gLocSUP.png",
-                "FigS14_gLocPERM.png",
-                "FigS15_gSpe.png"
+                "FigS14_gLocPERM.png"
+                # "FigS15_gSpe.png"
             ]
         ),
         f"{FIGURES_DIR}/Fig3_cube.png",
@@ -883,8 +883,8 @@ rule pca_plot:
         f"{FIGURES_DIR}/FigS11_gAllLD.png",
         f"{FIGURES_DIR}/FigS12_gAllPERM.png",
         f"{FIGURES_DIR}/FigS13_gLocSUP.png",
-        f"{FIGURES_DIR}/FigS14_gLocPERM.png",
-        f"{FIGURES_DIR}/FigS15_gSpe.png"
+        # f"{FIGURES_DIR}/FigS15_gSpe.png",
+        f"{FIGURES_DIR}/FigS14_gLocPERM.png"
     params:
         base_path = BASE_DIR,
         figure_path = FIGURES_DIR,
