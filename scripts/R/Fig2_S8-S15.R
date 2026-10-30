@@ -267,7 +267,6 @@ fst_genome <- add_genome_position(fst_window)
 fst_window <- fst_genome$data
 # head(fst_window)
 
-
 chromosome_info <- fst_genome$chromosomes
 # head(chromosome_info)
 
@@ -301,7 +300,7 @@ print("BEFORE pC")
 pC <- plot_pairwise_metric(
   fst_plot,
   metric = "avg_wc_fst",
-  xlab = "Pairwise FST",
+  xlab = expression(Pairwise~F[ST]),
   location_colors = location_colors
 )
 print("AFTER pC")
@@ -508,76 +507,76 @@ ggsave(filename = file.path(figure_path, "FigS14_gLocPERM.png"),
 )
 
 
-########## FIGURE S15 ###################
-# Per species genotypic space: PCA + PERMANOVA + PERMDISP
-ld_spe_datasets <- c(pue = "pue", nig = "nig", uni = "uni")
-ld_spe_plots <- lapply(
-  ld_spe_datasets,
-  build_ld_plot,
-  setNames(
-    species_info$Color,
-    species_info$spec
-  )
-)
+# ########## FIGURE S15 ###################
+# # Per species genotypic space: PCA + PERMANOVA + PERMDISP
+# ld_spe_datasets <- c(pue = "pue", nig = "nig", uni = "uni")
+# ld_spe_plots <- lapply(
+#   ld_spe_datasets,
+#   build_ld_plot,
+#   setNames(
+#     species_info$Color,
+#     species_info$spec
+#   )
+# )
 
-pca_pue_f <- results[["pue"]][["pca_f"]]
-pca_pue_s <- results[["pue"]][["pca_s"]] %>% annotate_figure(., top=NULL)
-ld_pue <- ld_spe_plots[["pue"]]
-perm_pue <- results[["pue"]][["permanova"]]
-pue <- plot_grid(pca_pue_f, pca_pue_s, ld_pue, perm_pue, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
-
-
-pca_nig_f <- results[["nig"]][["pca_f"]]
-pca_nig_s <- results[["nig"]][["pca_s"]]
-ld_nig <- ld_spe_plots[["nig"]]
-perm_nig <- results[["nig"]][["permanova"]]
-nig <- plot_grid(pca_nig_f, pca_nig_s, ld_nig, perm_nig, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
-
-pca_uni_f <- results[["uni"]][["pca_f"]]
-pca_uni_s <- results[["uni"]][["pca_s"]]
-ld_uni <- ld_spe_plots[["uni"]]
-perm_uni <- results[["uni"]][["permanova"]]
-uni <- plot_grid(pca_uni_f, pca_uni_s, ld_uni, perm_uni, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
-
-figureS15 <- plot_grid(
-  pue,
-  NULL,
-  nig,
-  NULL,
-  uni,
-  NULL,
-  leg_g,
-  NULL,
-  ncol = 1,
-  nrow = 8,
-  rel_heights = c(6, 0.2, 6, 0.2, 6, 0.2, 2, 0.05),
-  rel_widths = c(20, 20, 20, 20, 20, 20, 16, 20)
-  )
-
-# Save as PNG (A4 size)
-ggsave(
-  filename = file.path(figure_path, "FigS15_gSpe.png"),
-  plot = figureS15,
-  width = 18,    # A4 width in inches
-  height = 18,  # A4 height in inches
-  units = "in",
-  dpi = 150,
-  type = "cairo-png"
-)
+# pca_pue_f <- results[["pue"]][["pca_f"]]
+# pca_pue_s <- results[["pue"]][["pca_s"]] %>% annotate_figure(., top=NULL)
+# ld_pue <- ld_spe_plots[["pue"]]
+# perm_pue <- results[["pue"]][["permanova"]]
+# pue <- plot_grid(pca_pue_f, pca_pue_s, ld_pue, perm_pue, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
 
 
-########## TABLE S6 ###################
-create_ld_summary_table(
-  datasets = c("bel", "boc", "hon", "pri", "all", "pue", "nig", "uni")
-)
+# pca_nig_f <- results[["nig"]][["pca_f"]]
+# pca_nig_s <- results[["nig"]][["pca_s"]]
+# ld_nig <- ld_spe_plots[["nig"]]
+# perm_nig <- results[["nig"]][["permanova"]]
+# nig <- plot_grid(pca_nig_f, pca_nig_s, ld_nig, perm_nig, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
 
-########## TABLE S7 ###################
-create_permanova_table(
-    base_path = base_path,
-    species_info = species_info,
-    geo_table = geo_table,
-    output_file = file.path(
-      figure_path,
-      "TableS7.csv"
-    ) 
-)
+# pca_uni_f <- results[["uni"]][["pca_f"]]
+# pca_uni_s <- results[["uni"]][["pca_s"]]
+# ld_uni <- ld_spe_plots[["uni"]]
+# perm_uni <- results[["uni"]][["permanova"]]
+# uni <- plot_grid(pca_uni_f, pca_uni_s, ld_uni, perm_uni, ncol = 4, rel_widths = c(1, 1, 1, 1), scale=0.95)
+
+# figureS15 <- plot_grid(
+#   pue,
+#   NULL,
+#   nig,
+#   NULL,
+#   uni,
+#   NULL,
+#   leg_g,
+#   NULL,
+#   ncol = 1,
+#   nrow = 8,
+#   rel_heights = c(6, 0.2, 6, 0.2, 6, 0.2, 2, 0.05),
+#   rel_widths = c(20, 20, 20, 20, 20, 20, 16, 20)
+#   )
+
+# # Save as PNG (A4 size)
+# ggsave(
+#   filename = file.path(figure_path, "FigS15_gSpe.png"),
+#   plot = figureS15,
+#   width = 18,    # A4 width in inches
+#   height = 18,  # A4 height in inches
+#   units = "in",
+#   dpi = 150,
+#   type = "cairo-png"
+# )
+
+
+# ########## TABLE S6 ###################
+# create_ld_summary_table(
+#   datasets = c("bel", "boc", "hon", "pri", "all", "pue", "nig", "uni")
+# )
+
+# ########## TABLE S7 ###################
+# create_permanova_table(
+#     base_path = base_path,
+#     species_info = species_info,
+#     geo_table = geo_table,
+#     output_file = file.path(
+#       figure_path,
+#       "TableS7.csv"
+#     ) 
+# )

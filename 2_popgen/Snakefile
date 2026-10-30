@@ -66,7 +66,8 @@ rule all:
                 "FigS15_gSpe.png"
             ]
         ),
-        f"{FIGURES_DIR}/Fig3_correlations.png",
+        f"{FIGURES_DIR}/Fig3_cube.png",
+        f"{FIGURES_DIR}/FigS21_correlations.png",
         expand("newhyb/{dataset}/{pair}/done.txt", dataset=locations, pair=PAIRS),
         expand("newhyb/{dataset}/{pair}/done1.txt", dataset=locations, pair=PAIRS),
         expand(
@@ -915,9 +916,10 @@ rule corr_plot:
             ["byALL/all.agg.ld_pruned_gtmat.traw"]
         )
     output:
-        f"{FIGURES_DIR}/Fig3_correlations.png"
+        f"{FIGURES_DIR}/Fig3_cube.png",
+        f"{FIGURES_DIR}/FigS21_correlations.png"
     params:
-        R_code = os.path.join(SCRIPTS_DIR, "R", "Fig3-4.R"),
+        R_code = os.path.join(SCRIPTS_DIR, "R", "Fig3_S21.R"),
         base_path = BASE_DIR,
         figure_path = FIGURES_DIR,
         path_phenotypes = PHENO_DIR,

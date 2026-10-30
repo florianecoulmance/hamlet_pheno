@@ -2354,6 +2354,30 @@ plot_distance_correlation <- function(df,
 # ============================================================
 # FST aggregation across all population pairs from pixy output
 # ============================================================
+# aggregate_fst_by_window <- function(fst) {
+
+#   fst %>%
+#     group_by(
+#       chromosome,
+#       window_pos_1,
+#       window_pos_2
+#     ) %>%
+#     summarise(
+
+#       # Correct WC84 aggregation
+#       fst = sum(wc_fst_a, na.rm = TRUE) /
+#         (
+#           sum(wc_fst_a, na.rm = TRUE) +
+#           sum(wc_fst_b, na.rm = TRUE) +
+#           sum(wc_fst_c, na.rm = TRUE)
+#         ),
+
+#       no_snps = sum(no_snps, na.rm = TRUE),
+
+#       .groups = "drop"
+#     )
+# }
+
 aggregate_fst_by_window <- function(fst) {
 
   fst %>%
@@ -2364,15 +2388,11 @@ aggregate_fst_by_window <- function(fst) {
     ) %>%
     summarise(
 
-      # Correct WC84 aggregation
-      fst = sum(wc_fst_a, na.rm = TRUE) /
-        (
-          sum(wc_fst_a, na.rm = TRUE) +
-          sum(wc_fst_b, na.rm = TRUE) +
-          sum(wc_fst_c, na.rm = TRUE)
-        ),
+      fst = mean(avg_wc_fst, na.rm = TRUE),
 
       no_snps = sum(no_snps, na.rm = TRUE),
+
+      n_pop_pairs = n(),
 
       .groups = "drop"
     )
@@ -2415,7 +2435,7 @@ plot_genome_fst <- function(fst, chromosome_info, percentile = 0.99) {
     ) +
 
     geom_vline(
-      data = chromosome_info,
+      data = chromosome_info %>% filter(offset > 0),
       aes(xintercept = offset),
       linewidth = 0.3,
       colour = "grey70"
@@ -2428,7 +2448,7 @@ plot_genome_fst <- function(fst, chromosome_info, percentile = 0.99) {
 
     scale_x_continuous(
       breaks = chromosome_info$centre,
-      labels = levels(chromosome_info$chromosome),
+      labels = levels(chromosome_info$chr_number),
       expand = expansion(mult = c(0.01, 0.01))
     ) +
 
@@ -2513,25 +2533,28 @@ plot_genome_dxy <- function(dxy, chromosome_info) {
 add_genome_position <- function(df) {
   
   chromosome_info <- df %>%
+    mutate(chromosome = as.character(chromosome)) %>%
     group_by(chromosome) %>%
     summarise(
       chr_length = max(window_pos_2, na.rm = TRUE),
       .groups = "drop"
     ) %>%
-    arrange(chromosome) %>%
+    arrange(as.numeric(gsub("[^0-9]", "", chromosome))) %>%
     mutate(
       offset = lag(cumsum(chr_length), default = 0),
-      centre = offset + chr_length / 2
+      centre = offset + chr_length / 2,
+      chr_number = as.numeric(gsub("[^0-9]", "", chromosome))
     )
   
   df <- df %>%
+    mutate(chromosome = as.character(chromosome)) %>%
     left_join(
       chromosome_info %>%
         select(chromosome, offset),
       by = "chromosome"
     ) %>%
     mutate(
-      genome_pos = window_pos_1 + offset
+      genome_pos = (window_pos_1 + window_pos_2) / 2 + offset
     )
   
   list(
@@ -2823,7 +2846,7 @@ plot_fst_categories <- function(
       Fst = sum_a / (sum_a + sum_b + sum_c)
     )
 
-  # TABLE S5 # Pairwise FST within species between locations
+  # TABLE S3 # Pairwise FST within species between locations
   tableS3 <- fst_same_species %>%
     select(
       Species = species1,
@@ -2832,22 +2855,22 @@ plot_fst_categories <- function(
       Fst) %>%
       arrange(Species, Location1, Location2)
   
-  writeLines(
-    knitr::kable(
-      tableS3,
-      format = "latex",
-      booktabs = TRUE,
-      digits = 4,
-      row.names = FALSE,
-      escape = TRUE 
-    ),
-    con = file.path(
-      figure_path,
-      "TableS3.tex"
-    )
-  )
+  # writeLines(
+  #   knitr::kable(
+  #     tableS3,
+  #     format = "latex",
+  #     booktabs = TRUE,
+  #     digits = 4,
+  #     row.names = FALSE,
+  #     escape = TRUE 
+  #   ),
+  #   con = file.path(
+  #     figure_path,
+  #     "TableS3.tex"
+  #   )
+  # )
 
-  # TABLE S6 # Pairwise FST between sympatric species
+  # TABLE S4 # Pairwise FST between sympatric species
   tableS4 <- fst_same_location %>%
     mutate(
       Species1 = pmin(species1, species2),
@@ -2861,22 +2884,22 @@ plot_fst_categories <- function(
     ) %>%
     arrange(Location, Species1, Species2)
   
-  writeLines(
-    knitr::kable(
-      tableS4,
-      format = "latex",
-      booktabs = TRUE,
-      digits = 4,
-      row.names = FALSE,
-      escape = TRUE
-    ),
-    con = file.path(
-      figure_path,
-      "TableS4.tex"
-    )
-  )
+  # writeLines(
+  #   knitr::kable(
+  #     tableS4,
+  #     format = "latex",
+  #     booktabs = TRUE,
+  #     digits = 4,
+  #     row.names = FALSE,
+  #     escape = TRUE
+  #   ),
+  #   con = file.path(
+  #     figure_path,
+  #     "TableS4.tex"
+  #   )
+  # )
 
-  # TABLE S7 # Pairwise FST between species regardless of location
+  # TABLE S5 # Pairwise FST between species regardless of location
   tableS5 <- fst_species %>%
     select(
       Species_pair = species_pair,
@@ -2884,20 +2907,20 @@ plot_fst_categories <- function(
     ) %>%
     arrange(Species_pair)
   
-  writeLines(
-    knitr::kable(
-      tableS5,
-      format = "latex",
-      booktabs = TRUE,
-      digits = 4,
-      row.names = FALSE,
-      escape = TRUE
-    ),
-    con = file.path(
-      figure_path,
-      "TableS5.tex"
-    )
-  )
+  # writeLines(
+  #   knitr::kable(
+  #     tableS5,
+  #     format = "latex",
+  #     booktabs = TRUE,
+  #     digits = 4,
+  #     row.names = FALSE,
+  #     escape = TRUE
+  #   ),
+  #   con = file.path(
+  #     figure_path,
+  #     "TableS5.tex"
+  #   )
+  # )
 
   fst_plot <- bind_rows(
       fst_same_species %>%
@@ -2982,7 +3005,7 @@ plot_fst_categories <- function(
 
     labs(
       x = NULL,
-      y = "Pairwise FST"
+      y = expression(Pairwise~F[ST])
     ) +
 
     theme_minimal() +
@@ -7010,9 +7033,9 @@ plot_speciation_paper <- function(
         segment_xend = .data[[x]],
 
         # Keep the two logos horizontally aligned
-        species1_x = box_x - box_width * 0.009,
+        species1_x = box_x - box_width * 0.01,
 
-        species2_x = box_x + box_width * 0.009,
+        species2_x = box_x + box_width * 0.01,
 
         # Logo pair position
         logo_y = box_y + box_height * 0.02,
@@ -7092,15 +7115,15 @@ plot_speciation_paper <- function(
         x = .data[[x]],
         y = .data[[y]]
       )
-    ) +
+    ) #+
 
-    geom_abline(
-      intercept = fixef(model)["(Intercept)"],
-      slope = fixef(model)[x],
-      colour = "black",
-      linetype = "dashed",
-      alpha = 0.7
-    )
+    # geom_abline(
+    #   intercept = fixef(model)["(Intercept)"],
+    #   slope = fixef(model)[x],
+    #   colour = "black",
+    #   linetype = "dashed",
+    #   alpha = 0.7
+    # )
 
     # ----------------------------------------------------------
     # Pointers
@@ -7200,23 +7223,23 @@ plot_speciation_paper <- function(
     }
 
     p_all <- p_all +
-      annotate(
-        "text",
-        x = if (legend_bottom_right) {
-          max(data_all[[x]], na.rm = TRUE)
-        } else {
-          min(range(data_all[[x]], na.rm = TRUE))
-        },
-        y = if (legend_bottom_right) {
-          min(data_all[[y]], na.rm = TRUE)
-        } else {
-          mean(range(data_all[[y]], na.rm = TRUE)) - 0.06
-        },
-        label = model_label,
-        hjust = if (legend_bottom_right) 1 else 0.5,
-        vjust = if (legend_bottom_right) 0 else -2,
-        size = 7
-      ) +
+      # annotate(
+      #   "text",
+      #   x = if (legend_bottom_right) {
+      #     max(data_all[[x]], na.rm = TRUE)
+      #   } else {
+      #     min(range(data_all[[x]], na.rm = TRUE))
+      #   },
+      #   y = if (legend_bottom_right) {
+      #     min(data_all[[y]], na.rm = TRUE)
+      #   } else {
+      #     mean(range(data_all[[y]], na.rm = TRUE)) - 0.06
+      #   },
+      #   label = model_label,
+      #   hjust = if (legend_bottom_right) 1 else 0.5,
+      #   vjust = if (legend_bottom_right) 0 else -2,
+      #   size = 7
+      # ) +
 
       labs(
         x = x_label,
@@ -7238,18 +7261,28 @@ plot_speciation_paper <- function(
             colour = .data[[colour]]
           ),
           alpha = 0.6,
-          size = ifelse(panel == "all", 4, 4)
+          size = ifelse(panel == "all", 8, 8)
         ) + 
         scale_colour_gradientn(
           colours = unname(colours), 
-          name = colour_label
+          name = colour_label,
+          guide = guide_colourbar(
+            direction = "horizontal",
+            title.position = "top",
+            title.hjust = 0
+          )
+        ) +
+        theme(
+          legend.position = "bottom",
+          legend.justification = "left",
+          legend.box.just = "left"
         )
     } else {
       p_all <- p_all +
         geom_point(
           colour = colours["mid"], 
           alpha = 0.6,
-          size = ifelse( panel == "all", 4, 4)
+          size = ifelse( panel == "all", 8, 8)
         )
     }
 
@@ -7260,15 +7293,15 @@ plot_speciation_paper <- function(
         x = .data[[x]],
         y = .data[[y]]
       )
-    ) +
+    ) #+
     
-    geom_abline( 
-      intercept = fixef(model)["(Intercept)"],
-      slope = fixef(model)[x],
-      colour = "black",
-      linetype = "dashed",
-      alpha = 0.7
-    )
+    # geom_abline( 
+    #   intercept = fixef(model)["(Intercept)"],
+    #   slope = fixef(model)[x],
+    #   colour = "black",
+    #   linetype = "dashed",
+    #   alpha = 0.7
+    # )
 
     # ----------------------------------------------------------
     # Pointers
@@ -7365,23 +7398,23 @@ plot_speciation_paper <- function(
     }
 
     p_location <- p_location +
-      annotate(
-        "text",
-        x = if (legend_bottom_right) {
-          max(data_location[[x]], na.rm = TRUE)
-        } else {
-          min(range(data_location[[x]], na.rm = TRUE)) + 0.05
-        },
-        y = if (legend_bottom_right) {
-          mean(range(data_location[[y]], na.rm = TRUE)) 
-        } else {
-          mean(range(data_location[[y]], na.rm = TRUE)) - 0.04
-        },
-        label = model_label,
-        hjust = if (legend_bottom_right) 1 else 0.5,
-        vjust = if (legend_bottom_right) 0 else -0.8,
-        size = 6
-      ) +
+      # annotate(
+      #   "text",
+      #   x = if (legend_bottom_right) {
+      #     max(data_location[[x]], na.rm = TRUE)
+      #   } else {
+      #     min(range(data_location[[x]], na.rm = TRUE)) + 0.05
+      #   },
+      #   y = if (legend_bottom_right) {
+      #     mean(range(data_location[[y]], na.rm = TRUE)) 
+      #   } else {
+      #     mean(range(data_location[[y]], na.rm = TRUE)) - 0.04
+      #   },
+      #   label = model_label,
+      #   hjust = if (legend_bottom_right) 1 else 0.5,
+      #   vjust = if (legend_bottom_right) 0 else -0.8,
+      #   size = 6
+      # ) +
 
       labs(
         x = x_label,
@@ -7407,14 +7440,24 @@ plot_speciation_paper <- function(
         ) + 
         scale_colour_gradientn(
           colours = unname(colours),
-          name = colour_label
+          name = colour_label,
+          guide = guide_colourbar(
+            direction = "horizontal",
+            title.position = "top",
+            title.hjust = 0
+          )
+        ) +
+        theme(
+          legend.position = "bottom",
+          legend.justification = "left",
+          legend.box.just = "left"
         )
     } else {
       p_location <- p_location +
         geom_point(
           colour = colours["mid"],
           alpha = 0.6,
-          size = ifelse(panel == "all", 4, 4)
+          size = ifelse(panel == "all", 4, 8)
         )
     }
 
