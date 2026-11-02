@@ -2402,14 +2402,18 @@ aggregate_fst_by_window <- function(fst) {
 # ============================================================
 # genome wide fst plots
 # ============================================================
-plot_genome_fst <- function(fst, chromosome_info, percentile = 0.99) {
+plot_genome_fst <- function(
+  fst,
+  chromosome_info,
+  percentile = 0.99,
+  fst_column = "weight_fst") {
 
   print(fst)
   print(chromosome_info)
 
   # Calculate percentile threshold
   fst_threshold <- quantile(
-    fst$fst,
+    fst[[fst_column]],
     probs = percentile,
     na.rm = TRUE
   )
@@ -2417,14 +2421,14 @@ plot_genome_fst <- function(fst, chromosome_info, percentile = 0.99) {
   # Flag outlier windows
   fst <- fst %>%
     mutate(
-      outlier = fst > fst_threshold
+      outlier = .data[[fst_column]] > fst_threshold
     )
 
   ggplot(
     fst,
     aes(
       x = genome_pos,
-      y = fst,
+      y = .data[[fst_column]],
       colour = outlier
     )
   ) +

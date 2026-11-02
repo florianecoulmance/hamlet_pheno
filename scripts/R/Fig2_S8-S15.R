@@ -246,54 +246,11 @@ fst <- read.table(
 )
 head(fst)
 
-# dxy <- read.table(
-#   file.path(base_path, "2_popgen", "byALL", "all.flt_dxy.min3.txt"),
-#   header = TRUE,
-#   sep = "\t",
-#   stringsAsFactors = FALSE
-# )
-# head(dxy)
-
-# # 2. AGGREGATE FST AND DXY BY WINDOW
-fst_window <- aggregate_fst_by_window(fst)
-# head(fst_window)
-# dxy_window <- aggregate_dxy_by_window(dxy)
-# head(dxy_window)
-
-
-# # 3. CREATE GENOMIC COORDINATES
-fst_genome <- add_genome_position(fst_window)
-# head(fst_genome)
-fst_window <- fst_genome$data
-# head(fst_window)
-
-chromosome_info <- fst_genome$chromosomes
-# head(chromosome_info)
-
-# dxy_genome <- add_genome_position(dxy_window)
-# head(dxy_genome)
-# dxy_window <- dxy_genome$data
-# head(dxy_window)
 
 fst_plot <- fst %>%
   select(pop1, pop2, avg_wc_fst)
 head(fst_plot)
-# dxy_plot <- dxy %>%
-#   select(pop1, pop2, avg_dxy)
-# head(dxy_plot)
 
-
-# # 4. PLOT A — FST
-pA <- plot_genome_fst(
-  fst_window,
-  chromosome_info
-)
-
-# # 5. PLOT B — DXY
-# pB <- plot_genome_dxy(
-#   dxy_window,
-#   chromosome_info
-# )
 
 print("BEFORE pC")
 # 6. PLOT C — FST boxplots
@@ -304,16 +261,6 @@ pC <- plot_pairwise_metric(
   location_colors = location_colors
 )
 print("AFTER pC")
-
-# # 7. PLOT D — DXY boxplots
-# print("BEFORE pD")
-# pD <- plot_pairwise_metric(
-#   dxy_plot,
-#   metric = "avg_dxy",
-#   xlab = "Pairwise DXY",
-#   location_colors = location_colors
-# )
-# print("AFTER pD")
 
 
 # Final Figure 2
@@ -418,6 +365,43 @@ ggsave(
 
 
 ########## FIGURE S11 ###################
+# 1. READ VCFTOOLS FST OUTPUT
+fst_gen <- read.table(
+  file.path(base_path, "2_popgen", "byALL", "all.flt.fst.50kb.tsv"),
+  header = TRUE,
+  sep = "\t",
+  stringsAsFactors = FALSE
+)
+head(fst_gen)
+
+fst_gen <- fst_gen %>%
+  rename(
+    chromosome = CHROM,
+    window_pos_1 = BIN_START,
+    window_pos_2 = BIN_END,
+    n_variants = N_VARIANTS,
+    weight_fst = WEIGHTED_FST,
+    mean_fst = MEAN_FST
+  )
+head(fst_gen)
+
+# Add genomic coordinates
+fst_genome <- add_genome_position(fst_gen)
+
+fst_window <- fst_genome$data
+chromosome_info <- fst_genome$chromosomes
+
+# Plot weighted FST
+pA <- plot_genome_fst(
+  fst_window,
+  chromosome_info,
+  percentile = 0.99,
+  fst_column = "weight_fst"
+)
+
+pA
+
+
 # Combined genotypic space: LD
 figureS11b <- build_ld_plot("all", location_colors)
 

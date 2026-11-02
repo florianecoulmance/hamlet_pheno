@@ -391,7 +391,7 @@ rule multi_fst_windowed_weir_cockerham:
                     print individuals[i]
             }}
         }}
-        ' {input.popu} > all.spe.min3.pop
+        ' {input.popu} > byALL/all.spe.min3.pop
 
         # ------------------------------------------------------------
         # 2. Calculate FST
@@ -399,8 +399,8 @@ rule multi_fst_windowed_weir_cockerham:
 
         vcftools \
             --gzvcf {input.vcf} \
-            --weir-fst-pop all.spe.min3.pop \
-            --weir-fst-pop all.spe.min3.pop \
+            --weir-fst-pop byALL/all.spe.min3.pop \
+            --weir-fst-pop byALL/all.spe.min3.pop \
             --fst-window-size {params.window} \
             --fst-window-step {params.step} \
             --out {params.prefix}.weir_cockerham \
