@@ -2989,17 +2989,17 @@ plot_fst_categories <- function(
 
     scale_fill_manual(
       values = c(
-        "Within-species" = "#64CAD0",
+        "Within species" = "#64CAD0",
         "Between sympatric species" = "#D06495",
-        "Between-species" = "#D09F64"
+        "Between species" = "#D09F64"
       )
     ) +
 
     scale_colour_manual(
       values = c(
-        "Within-species" = "#1b4042ff",
+        "Within species" = "#1b4042ff",
         "Between sympatric species" = "#5b2a40ff",
-        "Between-species" = "#4e3a21ff"
+        "Between species" = "#4e3a21ff"
       )
     ) +
 

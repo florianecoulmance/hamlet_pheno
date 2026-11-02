@@ -356,6 +356,59 @@ rule multi_fst_windowed_filtered:
         """
 
 
+rule multi_fst_windowed_weir_cockerham:
+    input:
+        vcf = "byALL/all.flt.vcf.gz",
+        popu = "byALL/all.pop"
+    output:
+        fst = "byALL/all.flt.fst.50kb.tsv"
+    params:
+        prefix = "byALL/all.flt",
+        window = 50000,
+        step = 5000
+    resources:
+        mem_mb=68000,
+        runtime=720
+    threads: 16
+    shell:
+        r"""
+        module load VCFtools/0.1.16-GCC-13.1.0
+
+        # ------------------------------------------------------------
+        # 1. Keep individuals from populations with >= 3 individuals
+        # ------------------------------------------------------------
+
+        awk '
+        {
+            species = substr($2, 1, 3)
+            count[species]++
+            individuals[NR] = $1
+            species_id[NR] = species
+        }
+        END {
+            for (i = 1; i <= NR; i++) {
+                if (count[species_id[i]] >= 3)
+                    print individuals[i]
+            }
+        }
+        ' {input.popu} > all.spe.min3.pop
+
+        # ------------------------------------------------------------
+        # 2. Calculate FST
+        # ------------------------------------------------------------
+
+        vcftools \
+            --gzvcf {input.vcf} \
+            --weir-fst-pop all.spe.min3.pop \
+            --fst-window-size {params.window} \
+            --fst-window-step {params.step} \
+            --out {params.prefix}.weir_cockerham \
+            2> {params.prefix}.weir_cockerham.log
+
+        cp {params.prefix}.weir_cockerham.windowed.weir.fst {output.fst}
+        """
+
+
 rule filter_dxy_min3:
     input:
         dxy = "byALL/all.flt_dxy.txt",
