@@ -374,33 +374,38 @@ rule multi_fst_windowed_weir_cockerham:
         r"""
         module load VCFtools/0.1.16-GCC-13.1.0
 
-        # ------------------------------------------------------------
-        # 1. Keep individuals from populations with >= 3 individuals
-        # ------------------------------------------------------------
+        # Remove previous species population files
+        rm -f byALL/species.*.pop
 
+        # Create one population file per species
+        # Retain species with at least 3 individuals
         awk '
         {{
             species = substr($2, 1, 3)
             count[species]++
-            individuals[NR] = $1
-            species_id[NR] = species
+            individuals[species] = individuals[species] $1 "\n"
         }}
         END {{
-            for (i = 1; i <= NR; i++) {{
-                if (count[species_id[i]] >= 3)
-                    print individuals[i]
+            for (species in count) {{
+                if (count[species] >= 3) {{
+                    file = "byALL/species." species ".pop"
+                    printf "%s", individuals[species] > file
+                    close(file)
+                }}
             }}
         }}
-        ' {input.popu} > byALL/all.spe.min3.pop
+        ' {input.popu}
 
-        # ------------------------------------------------------------
-        # 2. Calculate FST
-        # ------------------------------------------------------------
+        # Build VCFtools population arguments
+        POP=""
+        for popfile in byALL/species.*.pop; do
+            POP="$POP --weir-fst-pop $popfile"
+        done
 
+        # Calculate windowed FST
         vcftools \
             --gzvcf {input.vcf} \
-            --weir-fst-pop byALL/all.spe.min3.pop \
-            --weir-fst-pop byALL/all.spe.min3.pop \
+            $POP \
             --fst-window-size {params.window} \
             --fst-window-step {params.step} \
             --out {params.prefix}.weir_cockerham \
