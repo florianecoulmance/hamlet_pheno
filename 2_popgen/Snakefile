@@ -379,18 +379,18 @@ rule multi_fst_windowed_weir_cockerham:
         # ------------------------------------------------------------
 
         awk '
-        {
+        {{
             species = substr($2, 1, 3)
             count[species]++
             individuals[NR] = $1
             species_id[NR] = species
-        }
-        END {
-            for (i = 1; i <= NR; i++) {
+        }}
+        END {{
+            for (i = 1; i <= NR; i++) {{
                 if (count[species_id[i]] >= 3)
                     print individuals[i]
-            }
-        }
+            }}
+        }}
         ' {input.popu} > all.spe.min3.pop
 
         # ------------------------------------------------------------
