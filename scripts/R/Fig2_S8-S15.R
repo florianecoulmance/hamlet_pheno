@@ -399,9 +399,6 @@ pA <- plot_genome_fst(
   fst_column = "weight_fst"
 )
 
-pA
-
-
 # Combined genotypic space: LD
 figureS11b <- build_ld_plot("all", location_colors)
 
