@@ -2157,6 +2157,12 @@ build_ld_plot <- function(
     ""
   }
 
+  y_limits <- if (ds == "all") {
+    c(0, 0.05)
+  } else {
+    c(0, 0.12)
+  }
+
   ggplot(
     df_all,
     aes(x = dataset, y = r2, group = dataset)
@@ -2200,11 +2206,11 @@ build_ld_plot <- function(
       "LG12_1_LG12_2" = "LG12_1\nLG12_2"
     )
   ) +
-  coord_cartesian(ylim = c(0, 0.12)) +    
+  coord_cartesian(ylim = y_limits) +    
   labs(
       x = NULL,
       y = expression(r^2),
-      title = location_name
+      title = title_text
   ) +
   theme_classic() +
   theme(
