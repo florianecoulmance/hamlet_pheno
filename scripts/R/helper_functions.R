@@ -2428,8 +2428,8 @@ plot_genome_fst <- function(
     fst,
     aes(
       x = genome_pos,
-      y = .data[[fst_column]],
-      colour = outlier
+      y = .data[[fst_column]]#,
+      # colour = outlier
     )
   ) +
 
@@ -2445,18 +2445,24 @@ plot_genome_fst <- function(
       colour = "grey70"
     ) +
 
-    scale_colour_manual(
-      values = c("FALSE" = "black", "TRUE" = "red"),
-      guide = "none"
-    ) +
+    # scale_colour_manual(
+    #   values = c("FALSE" = "black", "TRUE" = "red"),
+    #   guide = "none"
+    # ) +
 
     scale_x_continuous(
       breaks = chromosome_info$centre,
-      labels = levels(chromosome_info$chr_number),
+      labels = chromosome_info$chr_number,
+      position = "top",
       expand = expansion(mult = c(0.01, 0.01))
     ) +
 
     theme_classic() +
+
+    theme(
+      axis.title.x.top = element_text(),
+      axis.title.x.bottom = element_blank()
+    ) +    
 
     labs(
       x = "Linkage group",
