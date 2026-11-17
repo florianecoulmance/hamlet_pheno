@@ -332,11 +332,11 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       legend.position = if (extract_legend) "bottom" else "none",
       legend.box = "horizontal",
       legend.title = element_blank(),
-      legend.text = element_markdown(size = 15),
+      legend.text = element_markdown(size = 20),
       panel.background = element_blank(),
       panel.border = element_rect(color = "black", fill = NA, size = 1),
-      axis.text = element_text(size = 12),
-      axis.title = element_text(size = 18),
+      axis.text = element_text(size = 17),
+      axis.title = element_text(size = 20),
       plot.margin = margin(5,3,0,0)
     ) +
     scale_x_continuous(position = "bottom",labels = unit_format(unit = "k", scale = 1e-3)) +
@@ -390,7 +390,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
         title_val <- ""
       }
     } else {
-      title_val <- "All locations"
+      title_val <- "Greater Caribbean"
     }
   } else if (color_by == "location") {
     # if coloring by location, title is the species name
@@ -415,7 +415,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       }
     }
   } else {
-    title_val <- "All locations"
+    title_val <- "Greater Caribbean"
   }
   print(title_val)
 
@@ -425,17 +425,17 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
   if (color_by == "species") {
     p_annot <- annotate_figure(
       p,
-      top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(2, "lines"), vjust=0.5, hjust=0)#, fig.lab.pos = "top.left"
+      top = text_grob(title_val, color = "black", face = "bold", size = 30, x = unit(2, "lines"), vjust=0.5, hjust=0)#, fig.lab.pos = "top.left"
     )
   } else if (color_by == "location" && pc_first=="PC1") {
       p_annot <- annotate_figure(
       p,
-      top = text_grob(title_val, color = "black", face = "bold.italic", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
+      top = text_grob(title_val, color = "black", face = "bold.italic", size = 30, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
     )
   } else {
     p_annot <- annotate_figure(
       p,
-      top = text_grob("   ",color = "black", face = "bold.italic", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)
+      top = text_grob("   ",color = "black", face = "bold.italic", size = 30, x = unit(0, "lines"), vjust=0, hjust=0)
     )
   }
     

@@ -219,7 +219,7 @@ figure1_top <- ggarrange(
   results[["all"]][["pca"]],
   right_pca,
   ncol = 2,
-  widths = c(2, 1),
+  widths = c(1, 1),
   align = "h"
 )
 
@@ -235,7 +235,7 @@ figure1_bottom <- plot_grid(
   results[["all"]][["permanova"]],
   right_permanova,
   ncol = 2,
-  rel_widths = c(2, 1),
+  rel_widths = c(1, 1),
   align = "h"
 )
 
@@ -250,23 +250,22 @@ figure1_bottom <- plot_grid(
 figure1 <- ggarrange(
   figure1_top,
   NULL,
-  leg,
-  NULL,
   figure1_bottom,
   NULL,
+  leg,
   nrow = 6,
   ncol = 1,
-  heights = c(6, 0.3, 0.75, 0.1, 5, 0.05),
+  heights = c(6, 0.75, 0.2, 0.75, 4, 0.05),
   labels = c("(a)", "", "", "", "(b)", "")
 )
 
 ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
   plot = figure1,
-  width = 18, 
-  height = 27, 
+  width = 8.27, 
+  height = 11.69, 
   units = "in",
-  dpi = 150,
+  dpi = 300,
   type = "cairo-png"
 )
 
