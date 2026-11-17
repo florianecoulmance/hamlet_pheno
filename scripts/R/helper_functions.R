@@ -687,7 +687,6 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
 
 
 
-
 perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species") {
 
   # ---- Choose grouping mode ----
@@ -698,7 +697,8 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
     mutate(
       spec = ifelse(
         images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
-        "flo", spec
+        "flo",
+        spec
       )
     )
 
@@ -715,7 +715,7 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
     pc_table <- pc_table %>%
       filter(spec %in% keep)
 
-    pc_table$group <- factor(pc_table$spec)
+    pc_table$group <- droplevels(factor(pc_table$spec))
 
   } else {
 
@@ -725,7 +725,7 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
     pc_table <- pc_table %>%
       filter(geo %in% keep)
 
-    pc_table$group <- factor(pc_table$geo)
+    pc_table$group <- droplevels(factor(pc_table$geo))
   }
 
   # ---- Prepare data ----
@@ -753,21 +753,43 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
 
   print(pairwise_result)
 
+  # ---- Check pairwise results ----
+  pairwise_result <- as.data.frame(pairwise_result)
+
+  required_columns <- c("pairs", "F.Model", "p.adjusted")
+
+  if (!all(required_columns %in% colnames(pairwise_result))) {
+    stop("Pairwise PERMANOVA results are missing required columns.")
+  }
+
+  if (nrow(pairwise_result) == 0) {
+    stop("Pairwise PERMANOVA returned no comparisons.")
+  }
+
   # ---- Extract F and adjusted p-values ----
-  vis_FP <- pairwise_result %>%
-    tidyr::separate(
-      pairs,
-      into = c("group1", "group2"),
-      sep = " vs ",
-      extra = "merge",
-      fill = "right"
+  vis_FP <- data.frame(
+    pairs = as.character(pairwise_result$pairs),
+    F = as.numeric(as.character(pairwise_result$F.Model)),
+    p = as.numeric(as.character(pairwise_result$p.adjusted))
+  ) %>%
+    mutate(
+      group1 = sub(" vs .*", "", pairs),
+      group2 = sub("^.* vs ", "", pairs)
     ) %>%
-    transmute(
-      group1 = as.character(group1),
-      group2 = as.character(group2),
-      F = as.numeric(as.character(F.Model)),
-      p = as.numeric(as.character(p.adjusted))
+    select(group1, group2, F, p)
+
+  # ---- Check group names ----
+  unmatched_groups <- setdiff(
+    unique(c(vis_FP$group1, vis_FP$group2)),
+    group_levels
+  )
+
+  if (length(unmatched_groups) > 0) {
+    stop(
+      "The following groups in the pairwise results do not match the data: ",
+      paste(unmatched_groups, collapse = ", ")
     )
+  }
 
   # ---- Mirror results ----
   vis_FP_sym <- bind_rows(
@@ -781,22 +803,31 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
       )
   )
 
-  # ---- Retain only lower triangle ----
+  # ---- Retain lower triangle ----
+  # Use explicit matching to determine group positions
   melt_FP <- vis_FP_sym %>%
+    mutate(
+      i = match(group1, group_levels),
+      j = match(group2, group_levels)
+    ) %>%
+    filter(
+      !is.na(i),
+      !is.na(j),
+      !is.na(F),
+      !is.na(p),
+      i > j
+    ) %>%
     mutate(
       group1 = factor(group1, levels = group_levels),
       group2 = factor(group2, levels = group_levels)
     ) %>%
-    filter(
-      !is.na(group1),
-      !is.na(group2),
-      !is.na(F),
-      !is.na(p),
-      as.integer(group1) > as.integer(group2)
-    )
+    select(group1, group2, F, p)
 
   if (nrow(melt_FP) == 0) {
-    stop("No pairwise comparisons available for plotting. Check the pairwise.adonis results and group names.")
+    stop(
+      "No pairwise comparisons remain after filtering. ",
+      "Check the group names and pairwise PERMANOVA results."
+    )
   }
 
   # ---- Prepare species colour strips ----
@@ -804,8 +835,7 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
 
     info_table <- species_info %>%
       mutate(spec = as.character(spec)) %>%
-      distinct(spec, .keep_all = TRUE) %>%
-      filter(spec %in% group_levels)
+      distinct(spec, .keep_all = TRUE)
 
     missing_species <- setdiff(group_levels, info_table$spec)
 
@@ -816,7 +846,7 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
       )
     }
 
-    # Colours in exactly the same order as the heatmap groups
+    # Match colours to the exact order of the heatmap groups
     axis_cols <- info_table$Color[
       match(group_levels, info_table$spec)
     ]
@@ -825,49 +855,49 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
       stop("Missing colours for one or more species.")
     }
 
-    # Extra factor levels for the coloured strips
+    # Additional factor levels for the coloured rectangles
     strip_x <- ".x_strip"
     strip_y <- ".y_strip"
 
-    x_levels <- c(strip_y, group_levels)
-    y_levels <- c(strip_x, group_levels)
+    x_levels <- c(strip_x, group_levels)
+    y_levels <- c(strip_y, group_levels)
 
-    # Add the extra levels to the heatmap data
+    # Coloured rectangles below the heatmap
+    x_strip_data <- data.frame(
+      group1 = factor(group_levels, levels = x_levels),
+      group2 = factor(rep(strip_y, length(group_levels)),
+                      levels = y_levels),
+      Color = axis_cols
+    )
+
+    # Coloured rectangles to the left of the heatmap
+    y_strip_data <- data.frame(
+      group1 = factor(rep(strip_x, length(group_levels)),
+                      levels = x_levels),
+      group2 = factor(group_levels, levels = y_levels),
+      Color = axis_cols
+    )
+
+    # Extend heatmap factors to include strip positions
     melt_FP <- melt_FP %>%
       mutate(
         group1 = factor(as.character(group1), levels = x_levels),
         group2 = factor(as.character(group2), levels = y_levels)
       )
 
-    # Coloured rectangles along the x-axis
-    x_strip_data <- data.frame(
-      group1 = factor(group_levels, levels = x_levels),
-      group2 = factor(rep(strip_x, length(group_levels)),
-                      levels = y_levels),
-      Color = axis_cols
-    )
-
-    # Coloured rectangles along the y-axis
-    y_strip_data <- data.frame(
-      group1 = factor(rep(strip_y, length(group_levels)),
-                      levels = x_levels),
-      group2 = factor(group_levels, levels = y_levels),
-      Color = axis_cols
-    )
-
   } else {
 
-    # Location labels
+    # ---- Location labels ----
     location_map <- setNames(
       as.character(geo_map$Locations),
       as.character(geo_map$geo)
     )
 
-    axis_labels <- unname(location_map[group_levels])
+    axis_labels <- location_map[group_levels]
 
-    # Fall back to group names if a location is not mapped
-    axis_labels[is.na(axis_labels)] <-
-      group_levels[is.na(axis_labels)]
+    # Use group names if a location is not mapped
+    missing_labels <- is.na(axis_labels)
+    axis_labels[missing_labels] <- group_levels[missing_labels]
   }
 
   # ---- Initialise plot ----
@@ -901,7 +931,7 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
   # ---- Add PERMANOVA heatmap ----
   p <- p +
 
-    # Non-significant comparisons: full squares
+    # Non-significant comparisons: squares
     geom_tile(
       data = melt_FP %>% filter(p >= 0.05),
       aes(x = group1, y = group2, fill = F),
@@ -958,13 +988,15 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
         limits = x_levels,
         breaks = group_levels,
         labels = rep("", length(group_levels)),
-        drop = FALSE
+        drop = FALSE,
+        expand = expansion(add = 0)
       ) +
       scale_y_discrete(
         limits = y_levels,
         breaks = group_levels,
         labels = rep("", length(group_levels)),
-        drop = FALSE
+        drop = FALSE,
+        expand = expansion(add = 0)
       ) +
       theme(
         axis.text.x = element_blank(),
@@ -977,13 +1009,13 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
       scale_x_discrete(
         limits = group_levels,
         breaks = group_levels,
-        labels = axis_labels,
+        labels = unname(axis_labels),
         drop = FALSE
       ) +
       scale_y_discrete(
         limits = group_levels,
         breaks = group_levels,
-        labels = axis_labels,
+        labels = unname(axis_labels),
         drop = FALSE
       ) +
       theme(
@@ -1001,7 +1033,7 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
 
       title_val <- as.character(
         geo_map$Locations[
-          match(geo_val, geo_map$geo)
+          match(as.character(geo_val), as.character(geo_map$geo))
         ]
       )
 
