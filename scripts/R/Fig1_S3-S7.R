@@ -255,8 +255,8 @@ p_greater_combined <- ggdraw(p_greater) +
     p_perm_greater,
     x = 0.75,
     y = 0.70,
-    width = 0.35,
-    height = 0.37
+    width = 0.60,
+    height = 0.60
   )
 
 
@@ -290,7 +290,7 @@ figure1 <- ggarrange(
   leg,
   nrow = 4,
   ncol = 1,
-  heights = c(2, 1, 1, 0.5),
+  heights = c(2, 1, 1, 0.4),
   labels = c("(a)", "", "", ""),
   align = "v"
 )

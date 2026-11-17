@@ -1040,10 +1040,10 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         direction = "horizontal",
         position = "top",
         theme = theme(
-          legend.justification = c(0.7, 0.5),
+          legend.justification = c(0.9, 0.5),
           legend.title.position = "left",
           legend.title = element_text(hjust = 0.5),
-          legend.key.width = unit(3, "cm"),
+          legend.key.width = unit(5, "cm"),
           legend.key.height = unit(0.6, "cm")
         )
       )
