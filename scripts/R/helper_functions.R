@@ -686,7 +686,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
 }
 
 
-perm_f_logos <- function(pc_table, species_info, geo_map, color_by = "species") {
+
+perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species") {
 
   # ---- Choose grouping mode ----
   color_by <- match.arg(color_by, c("species", "location"))
@@ -707,11 +708,8 @@ perm_f_logos <- function(pc_table, species_info, geo_map, color_by = "species") 
     pc_table <- pc_table %>% filter(spec %in% keep)
     pc_table$group <- factor(pc_table$spec)
 
-    # Check species information
-    required_cols <- c("Species", "spec", "Color", "link")
-
-    if (!all(required_cols %in% colnames(species_info))) {
-      stop("species_info must contain Species, spec, Color and link columns.")
+    if (!all(c("spec", "Color") %in% colnames(species_info))) {
+      stop("species_info must contain spec and Color columns.")
     }
 
   } else if (color_by == "location") {
@@ -758,7 +756,7 @@ perm_f_logos <- function(pc_table, species_info, geo_map, color_by = "species") 
       p = as.numeric(as.character(p.adjusted))
     )
 
-  # ---- Mirror results to obtain symmetric comparisons ----
+  # ---- Mirror results ----
   vis_FP_sym <- bind_rows(
     vis_FP,
     vis_FP %>%
@@ -799,31 +797,22 @@ perm_f_logos <- function(pc_table, species_info, geo_map, color_by = "species") 
       )
     }
 
-    # Logos + italicised species names in species colours
-    label_map <- setNames(
+    # Coloured square blocks only (no text)
+    axis_labels <- setNames(
       paste0(
-        "<img src='", info_table$link, "' width='50' />",
-        "<br><span style='color:", info_table$Color, ";'>",
-        "<i>H. ", info_table$Species, "</i>",
-        "</span>"
+        "<span style='color:", info_table$Color, ";'>&#9632;</span>"
       ),
       info_table$spec
     )
 
-    axis_labels <- label_map[group_levels]
-
   } else {
 
-    # Location labels
     location_map <- setNames(
       as.character(geo_map$Locations),
       as.character(geo_map$geo)
     )
 
-    axis_labels <- location_map[group_levels]
-
-    # Keep original codes if no location name is available
-    axis_labels[is.na(axis_labels)] <- group_levels[is.na(axis_labels)]
+    axis_labels <- location_map
 
   }
 
@@ -865,7 +854,7 @@ perm_f_logos <- function(pc_table, species_info, geo_map, color_by = "species") 
       position = "bottom",
       limits = group_levels,
       breaks = group_levels,
-      labels = axis_labels,
+      labels = function(x) unname(axis_labels[x]),
       drop = FALSE
     ) +
 
@@ -873,7 +862,7 @@ perm_f_logos <- function(pc_table, species_info, geo_map, color_by = "species") 
     scale_y_discrete(
       limits = group_levels,
       breaks = group_levels,
-      labels = axis_labels,
+      labels = function(x) unname(axis_labels[x]),
       drop = FALSE
     ) +
 
@@ -892,13 +881,13 @@ perm_f_logos <- function(pc_table, species_info, geo_map, color_by = "species") 
       panel.grid.minor = element_blank(),
 
       axis.text.x = ggtext::element_markdown(
-        size = 10,
+        size = 16,
         hjust = 0.5,
         margin = margin(t = 5)
       ),
 
       axis.text.y = ggtext::element_markdown(
-        size = 10,
+        size = 16,
         hjust = 1,
         margin = margin(r = 5)
       ),
