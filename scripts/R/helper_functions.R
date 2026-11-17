@@ -1038,7 +1038,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       ),
       guide = guide_colorbar(
         direction = "horizontal",
-        position = "outside",
+        position = "top",
         theme = theme(
           legend.title.position = "left",
           legend.title = element_text(hjust = 0.5),
