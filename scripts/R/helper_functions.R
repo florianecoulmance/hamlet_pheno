@@ -993,13 +993,13 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         aes(x = group1, y = group2, fill = Color),
         inherit.aes = FALSE,
         width = 1,
-        height = 1
+        height = 0.3
       ) +
       geom_tile(
         data = y_strip,
         aes(x = group1, y = group2, fill = Color),
         inherit.aes = FALSE,
-        width = 1,
+        width = 0.3,
         height = 1
       ) +
       scale_fill_identity(guide = "none") +
@@ -1031,7 +1031,21 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       low = "#ffead1",
       high = "#fdae53",
       na.value = "transparent",
-      name = "R²"
+      name = "R²",
+      labels = scales::label_number(
+        accuracy = 0.1,
+        decimal.mark = ","
+      ),
+      guide = guide_colorbar(
+        direction = "horizontal",
+        position = "inside",
+        theme = theme(
+          legend.title.position = "left",
+          legend.title = element_text(hjust = 0.5),
+          legend.key.width = unit(2.5, "cm"),
+          legend.key.height = unit(0.3, "cm")
+        )
+      )
     ) +
 
     ggnewscale::new_scale_fill()
@@ -1113,8 +1127,9 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     labs(x = "", y = "") +
     theme_minimal() +
     theme(
+      legend.position = "right",
       legend.direction = "vertical",
-      legend.box = "horizontal",
+      legend.box = "vertical",
       legend.text = element_text(size = 10),
       legend.title = element_text(size = 20),
       legend.key.height = unit(1, "cm"),
