@@ -1023,7 +1023,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         filter(!is.na(value), !is.na(p), p < 0.05),
       aes(x = group1, y = group2, fill = value),
       shape = 21,
-      size = 8,
+      size = 10,
       stroke = 0
     ) +
 
@@ -1038,12 +1038,12 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       ),
       guide = guide_colorbar(
         direction = "horizontal",
-        position = "inside",
+        position = "outside",
         theme = theme(
           legend.title.position = "left",
           legend.title = element_text(hjust = 0.5),
-          legend.key.width = unit(2.5, "cm"),
-          legend.key.height = unit(0.3, "cm")
+          legend.key.width = unit(1, "cm"),
+          legend.key.height = unit(0.5, "cm")
         )
       )
     ) +
@@ -1067,7 +1067,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         filter(!is.na(value), !is.na(p), p < 0.05),
       aes(x = group1, y = group2, fill = value),
       shape = 21,
-      size = 8,
+      size = 10,
       stroke = 0
     ) +
 
@@ -1130,8 +1130,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       legend.position = "right",
       legend.direction = "vertical",
       legend.box = "vertical",
-      legend.text = element_text(size = 10),
-      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20),
+      legend.title = element_text(size = 30),
       legend.key.height = unit(1, "cm"),
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank(),
@@ -1167,7 +1167,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     } else if (title_val == "Mexico") {
       title_val <- "Mexico"
     } else {
-      title_val <- "All locations"
+      title_val <- "Greater Caribbean"
     }
 
   } else if (color_by == "location") {
@@ -1183,7 +1183,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       plot.title = element_text(
         hjust = 0,
         face = "bold",
-        size = 20,
+        size = 30,
         margin = margin(b = 5)
       )
     )
