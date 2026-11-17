@@ -250,16 +250,13 @@ p_greater <- results[["all"]][["pca"]]
 p_perm_greater <- results[["all"]][["permanova"]]
 
 # Add Greater Caribbean PERMANOVA as an inset
-p_greater_combined <- p_greater +
-  inset_element(
+p_greater_combined <- ggdraw(p_greater) +
+  draw_plot(
     p_perm_greater,
-    left = 0.63,
-    bottom = 0.60,
-    right = 0.98,
-    top = 0.97,
-    align_to = "panel",
-    on_top = TRUE,
-    clip = FALSE
+    x = 0.63,
+    y = 0.60,
+    width = 0.35,
+    height = 0.37
   )
 
 
