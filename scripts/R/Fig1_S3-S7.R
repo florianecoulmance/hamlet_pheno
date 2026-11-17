@@ -253,8 +253,8 @@ p_perm_greater <- results[["all"]][["permanova"]]
 p_greater_combined <- ggdraw(p_greater) +
   draw_plot(
     p_perm_greater,
-    x = 0.63,
-    y = 0.60,
+    x = 0.75,
+    y = 0.70,
     width = 0.35,
     height = 0.37
   )
@@ -290,7 +290,7 @@ figure1 <- ggarrange(
   leg,
   nrow = 4,
   ncol = 1,
-  heights = c(2, 1, 1, 0.2),
+  heights = c(2, 1, 1, 0.5),
   labels = c("(a)", "", "", ""),
   align = "v"
 )
@@ -299,7 +299,7 @@ ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
   plot = figure1,
   width = 18, 
-  height = 25.44, 
+  height = 28, 
   units = "in",
   dpi = 300,
   type = "cairo-png"

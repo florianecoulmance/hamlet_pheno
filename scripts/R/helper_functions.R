@@ -1040,10 +1040,11 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         direction = "horizontal",
         position = "top",
         theme = theme(
+          legend.justification = c(0.7, 0.5),
           legend.title.position = "left",
           legend.title = element_text(hjust = 0.5),
-          legend.key.width = unit(1, "cm"),
-          legend.key.height = unit(0.5, "cm")
+          legend.key.width = unit(3, "cm"),
+          legend.key.height = unit(0.6, "cm")
         )
       )
     ) +
@@ -1157,17 +1158,17 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     if (title_val == "Panama") {
       title_val <- ""
     } else if (title_val == "USVI") {
-      title_val <- "USVI"
-    } else if (title_val == "Belize") {
+      title_val <- ""
+    } else if (title_val == "") {
       title_val <- "Belize"
     } else if (title_val == "Florida Keys") {
       title_val <- ""
     } else if (title_val == "Tobago") {
       title_val <- ""
     } else if (title_val == "Mexico") {
-      title_val <- "Mexico"
+      title_val <- ""
     } else {
-      title_val <- "Greater Caribbean"
+      title_val <- ""
     }
 
   } else if (color_by == "location") {
