@@ -274,8 +274,8 @@ p_greater_combined <- ggdraw() +
     p_perm_greater,
     x = 0.50,
     y = 0.45,
-    width = 0.60,
-    height = 0.60
+    width = 0.55,
+    height = 0.55
   )
 
 # Row 2: Three regional PCAs side by side
@@ -286,7 +286,7 @@ pca_row <- plot_grid(
   ncol = 3,
   align = "hv",
   labels = c("(b)", "(c)", "(d)"),
-  scale = 0.98
+  scale = 0.90
 )
 
 
@@ -308,7 +308,7 @@ figure1 <- ggarrange(
   leg,
   nrow = 4,
   ncol = 1,
-  heights = c(2, 1, 1, 0.35),
+  heights = c(2.5, 1, 1, 0.35),
   labels = c("(a)", "", "", ""),
   align = "v"
 )

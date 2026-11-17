@@ -336,6 +336,7 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       panel.background = element_blank(),
       # panel.border = element_rect(color = "black", fill = NA, size = 1),
       panel.border = element_blank(),
+      axis.line = element_line(color = "black", linewidth = 0.8),
       axis.text = element_text(size = 17),
       axis.title = element_text(size = 20),
       plot.margin = margin(5,3,0,0)
@@ -1044,7 +1045,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         theme = theme(
           legend.justification = c(0.9, 0.5),
           legend.title.position = "left",
-          legend.title = element_text(),
+          legend.title = element_text(vjust=0.5),
           legend.key.width = unit(5, "cm"),
           legend.key.height = unit(0.6, "cm")
         )
