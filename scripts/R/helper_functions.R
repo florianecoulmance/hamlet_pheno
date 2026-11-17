@@ -491,258 +491,234 @@ plot_variance <- function(var, loc_name) {
 # Output  :
 #   - Annotated ggplot2 heatmap of PERMANOVA R² (upper) and F.Model (lower)
 # ============================================================
+# perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
+
+#   color_by <- match.arg(color_by, c("species", "location"))
+
+#   pc_table <- pc_table %>%
+#   mutate(
+#     # Fix specific naming error
+#     spec = ifelse(images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
+#                     "flo", spec)
+#   )
+  
+#   # ---- Filter groups with <5 individuals ----
+#   if(color_by == "species") {
+#     keep <- names(table(pc_table$spec)[table(pc_table$spec) >= 5])
+#     pc_table <- pc_table %>% filter(spec %in% keep)
+#     pc_table$group <- factor(pc_table$spec)
+#   } else if(color_by == "location") {
+#     keep <- names(table(pc_table$geo)[table(pc_table$geo) >= 5])
+#     pc_table <- pc_table %>% filter(geo %in% keep)
+#     pc_table$group <- factor(pc_table$geo)
+#   }
+  
+#   # ---- Prepare data ----
+#   PC_table_ordered <- pc_table[order(pc_table$group), ]
+#   rownames(PC_table_ordered) <- PC_table_ordered$sample
+  
+#   # ---- Compute Euclidean distance ----
+#   dist_t <- dist(PC_table_ordered[,1:15], method = "euclidean")
+  
+#   # ---- Pairwise PERMANOVA ----
+#   pairwise_result <- pairwise.adonis(dist_t, PC_table_ordered$group, perm = 10000)
+#   print(pairwise_result)
+
+#   # ---- Reshape R² (upper triangle) ----
+#   vis_R <- pairwise_result %>%
+#     separate(pairs, into = c("group1","group2"), sep = " vs ") %>%
+#     select(group1, group2, R2)
+
+#   # Mirror the table so it’s symmetric
+#   vis_R_sym <- bind_rows(
+#     vis_R,
+#     vis_R %>% rename(group1 = group2, group2 = group1)
+#   )
+
+#   # Make sure all combinations exist
+#   all_R_groups <- unique(c(vis_R$group1, vis_R$group2))
+#   vis_R_complete <- vis_R_sym %>%
+#     complete(group1 = all_R_groups, group2 = all_R_groups, fill = list(R2 = NA))
+
+#   visH_R <- dcast(vis_R_complete, group1 ~ group2, value.var = "R2") %>%
+#     complete(group1 = levels(pc_table$group), fill = list()) %>%
+#     select(group1, intersect(levels(pc_table$group), colnames(.)))
+  
+#   # ---- Reshape F.Model (lower triangle) ----
+#   vis_F <- pairwise_result %>%
+#     separate(pairs, into = c("group1","group2"), sep = " vs ") %>%
+#     select(group1, group2, F.Model)
+
+#   # Mirror the table so it’s symmetric
+#   vis_F_sym <- bind_rows(
+#     vis_F,
+#     vis_F %>% rename(group1 = group2, group2 = group1)
+#   )
+
+#   # Make sure all combinations exist
+#   all_F_groups <- unique(c(vis_F$group1, vis_F$group2))
+#   vis_F_complete <- vis_F_sym %>%
+#     complete(group1 = all_F_groups, group2 = all_F_groups, fill = list(F.Model = NA))
+
+#   visH_F <- dcast(vis_F_complete, group1 ~ group2, value.var = "F.Model") %>%
+#     complete(group1 = levels(pc_table$group), fill = list()) %>%
+#     select(group1, intersect(levels(pc_table$group), colnames(.))) #%>%
+#     # arrange(desc(group1))
+  
+#   # ---- Reshape p-values (overlay text) ----
+#   vis_p <- pairwise_result %>%
+#     separate(pairs, into = c("group1","group2"), sep = " vs ") %>%
+#     select(group1, group2, p.adjusted)
+  
+#   # Mirror the table so it’s symmetric
+#   vis_p_sym <- bind_rows(
+#     vis_p,
+#     vis_p %>% rename(group1 = group2, group2 = group1)
+#   )
+
+#   # Make sure all combinations exist
+#   all_p_groups <- unique(c(vis_p$group1, vis_p$group2))
+#   vis_p_complete <- vis_p_sym %>%
+#     complete(group1 = all_p_groups, group2 = all_p_groups, fill = list(p.adjusted = NA))
+
+#   visH_p <- dcast(vis_p_complete, group1 ~ group2, value.var = "p.adjusted") %>%
+#     complete(group1 = levels(pc_table$group), fill = list()) %>%
+#     select(group1, intersect(levels(pc_table$group), colnames(.))) #%>%
+#     # arrange(desc(group1))
+
+#   # ensure all matrices have same row/column order
+#   visH_R <- visH_R[match(visH_F$group1, visH_R$group1), c("group1", visH_F$group1)]
+#   visH_F <- visH_F[match(visH_R$group1, visH_F$group1), c("group1", visH_R$group1)]
+#   visH_p <- visH_p[match(visH_R$group1, visH_p$group1), c("group1", visH_R$group1)]
+  
+#   # ---- Blank lower triangle (keep only upper) ----
+#   mat_R <- as.matrix(visH_R[,-1])
+#   rownames(mat_R) <- visH_R$group1
+#   mat_R[lower.tri(mat_R, diag = TRUE)] <- NA
+#   visH_R[,-1] <- mat_R
+
+#   melt_R <- melt(visH_R, id.vars = "group1")
+#   melt_R$value <- as.numeric(melt_R$value)
+
+#   mat_F <- as.matrix(visH_F[,-1])
+#   rownames(mat_F) <- visH_F$group1
+#   mat_F[upper.tri(mat_F, diag = TRUE)] <- NA
+#   visH_F[,-1] <- mat_F
+
+#   melt_F <- melt(visH_F, id.vars = "group1")
+#   melt_F$value <- as.numeric(melt_F$value)
+
+#   mat_p <- as.matrix(visH_p[,-1])
+#   rownames(mat_p) <- visH_p$group1
+#   mat_p[upper.tri(mat_p, diag = TRUE)] <- NA
+#   visH_p[,-1] <- mat_p
+
+#   melt_p <- melt(visH_p, id.vars = "group1")
+#   melt_p$value <- as.numeric(melt_p$value)
+    
+#   # ---- Plot heatmap ----
+#   p <- ggplot() +
+#     geom_tile(data = melt_R, aes(x = group1, y = variable, fill = value), color = "transparent") +
+#     scale_fill_gradient(low = "#ffead1", high = "#fdae53", na.value = "transparent", name = "R²") +
+#     new_scale_fill() +
+#     geom_tile(data = melt_F, aes(x = group1, y = variable, fill = value), color = "transparent") +
+#     scale_fill_gradient(low = "#ffedec", high = "#ff5c52", na.value = "transparent", name = "F") +
+#     geom_text(data = melt_p, aes(x = group1, y = variable,
+#           label = ifelse(is.na(value), "", ifelse(value < 0.001, "***", ifelse(value < 0.01, "**", ifelse(value < 0.05, "*", "ns"))))),
+#       size = 10, color = "black", fontface="bold") +
+#     labs(x = "", y = "", fill = "F") +
+#     scale_x_discrete(position = "bottom") +
+#     labs(x = "", y = "") +
+#     theme_minimal() +
+#     theme(
+#       legend.direction = "vertical",
+#       legend.box = "horizontal",
+#       legend.text = element_text(size = 10),
+#       legend.title = element_text(size = 20),
+#       legend.key.height = unit(1, "cm"),
+#       panel.grid.major = element_blank(),
+#       panel.grid.minor = element_blank(),
+#       axis.text.x = element_text(angle = 0, size = 12),
+#       axis.text.y = element_text(size = 12),
+#       axis.ticks = element_blank(),
+#       aspect.ratio = 1
+#     ) +
+#     guides(color = guide_legend(ncol = 1))
+  
+#   # ---- Get title ----
+#   if(color_by == "species"){
+#     geo_val <- unique(pc_table$geo)
+#     title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
+#     if (title_val=="Panama") {
+#         title_val <- ""
+#       } else if (title_val=="USVI") {
+#         title_val <- "USVI"
+#       } else if (title_val=="Belize") {
+#         title_val <- "Belize"
+#       } else if (title_val=="Florida Keys") {
+#         title_val <- ""
+#       } else if (title_val=="Tobago") {
+#         title_val <- ""
+#       } else if (title_val=="Mexico") {
+#         title_val <- "Mexico"
+#       } else {
+#         title_val <- "All locations"
+#       }
+#   } else if (color_by == "location"){
+#     species_val <- unique(pc_table$spec)
+#     title_val <- "" #if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
+#   }
+  
+#   # ---- Annotate with location title ----
+#   p_annot <- p +
+#     labs(title = title_val) +
+#     theme(
+#       plot.title = element_text(
+#         hjust = 0,
+#         face = "bold",
+#         size = 20,
+#         margin = margin(b = 5)
+#     )
+#   )
+  
+#   return(p_annot)
+  
+# }
+
+
+
+
 perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
 
   color_by <- match.arg(color_by, c("species", "location"))
 
   pc_table <- pc_table %>%
-  mutate(
-    # Fix specific naming error
-    spec = ifelse(images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
-                    "flo", spec)
-  )
-  
-  # ---- Filter groups with <5 individuals ----
-  if(color_by == "species") {
-    keep <- names(table(pc_table$spec)[table(pc_table$spec) >= 5])
-    pc_table <- pc_table %>% filter(spec %in% keep)
-    pc_table$group <- factor(pc_table$spec)
-  } else if(color_by == "location") {
-    keep <- names(table(pc_table$geo)[table(pc_table$geo) >= 5])
-    pc_table <- pc_table %>% filter(geo %in% keep)
-    pc_table$group <- factor(pc_table$geo)
-  }
-  
-  # ---- Prepare data ----
-  PC_table_ordered <- pc_table[order(pc_table$group), ]
-  rownames(PC_table_ordered) <- PC_table_ordered$sample
-  
-  # ---- Compute Euclidean distance ----
-  dist_t <- dist(PC_table_ordered[,1:15], method = "euclidean")
-  
-  # ---- Pairwise PERMANOVA ----
-  pairwise_result <- pairwise.adonis(dist_t, PC_table_ordered$group, perm = 10000)
-  print(pairwise_result)
-
-  # ---- Reshape R² (upper triangle) ----
-  vis_R <- pairwise_result %>%
-    separate(pairs, into = c("group1","group2"), sep = " vs ") %>%
-    select(group1, group2, R2)
-
-  # Mirror the table so it’s symmetric
-  vis_R_sym <- bind_rows(
-    vis_R,
-    vis_R %>% rename(group1 = group2, group2 = group1)
-  )
-
-  # Make sure all combinations exist
-  all_R_groups <- unique(c(vis_R$group1, vis_R$group2))
-  vis_R_complete <- vis_R_sym %>%
-    complete(group1 = all_R_groups, group2 = all_R_groups, fill = list(R2 = NA))
-
-  visH_R <- dcast(vis_R_complete, group1 ~ group2, value.var = "R2") %>%
-    complete(group1 = levels(pc_table$group), fill = list()) %>%
-    select(group1, intersect(levels(pc_table$group), colnames(.)))
-  
-  # ---- Reshape F.Model (lower triangle) ----
-  vis_F <- pairwise_result %>%
-    separate(pairs, into = c("group1","group2"), sep = " vs ") %>%
-    select(group1, group2, F.Model)
-
-  # Mirror the table so it’s symmetric
-  vis_F_sym <- bind_rows(
-    vis_F,
-    vis_F %>% rename(group1 = group2, group2 = group1)
-  )
-
-  # Make sure all combinations exist
-  all_F_groups <- unique(c(vis_F$group1, vis_F$group2))
-  vis_F_complete <- vis_F_sym %>%
-    complete(group1 = all_F_groups, group2 = all_F_groups, fill = list(F.Model = NA))
-
-  visH_F <- dcast(vis_F_complete, group1 ~ group2, value.var = "F.Model") %>%
-    complete(group1 = levels(pc_table$group), fill = list()) %>%
-    select(group1, intersect(levels(pc_table$group), colnames(.))) #%>%
-    # arrange(desc(group1))
-  
-  # ---- Reshape p-values (overlay text) ----
-  vis_p <- pairwise_result %>%
-    separate(pairs, into = c("group1","group2"), sep = " vs ") %>%
-    select(group1, group2, p.adjusted)
-  
-  # Mirror the table so it’s symmetric
-  vis_p_sym <- bind_rows(
-    vis_p,
-    vis_p %>% rename(group1 = group2, group2 = group1)
-  )
-
-  # Make sure all combinations exist
-  all_p_groups <- unique(c(vis_p$group1, vis_p$group2))
-  vis_p_complete <- vis_p_sym %>%
-    complete(group1 = all_p_groups, group2 = all_p_groups, fill = list(p.adjusted = NA))
-
-  visH_p <- dcast(vis_p_complete, group1 ~ group2, value.var = "p.adjusted") %>%
-    complete(group1 = levels(pc_table$group), fill = list()) %>%
-    select(group1, intersect(levels(pc_table$group), colnames(.))) #%>%
-    # arrange(desc(group1))
-
-  # ensure all matrices have same row/column order
-  visH_R <- visH_R[match(visH_F$group1, visH_R$group1), c("group1", visH_F$group1)]
-  visH_F <- visH_F[match(visH_R$group1, visH_F$group1), c("group1", visH_R$group1)]
-  visH_p <- visH_p[match(visH_R$group1, visH_p$group1), c("group1", visH_R$group1)]
-  
-  # ---- Blank lower triangle (keep only upper) ----
-  mat_R <- as.matrix(visH_R[,-1])
-  rownames(mat_R) <- visH_R$group1
-  mat_R[lower.tri(mat_R, diag = TRUE)] <- NA
-  visH_R[,-1] <- mat_R
-
-  melt_R <- melt(visH_R, id.vars = "group1")
-  melt_R$value <- as.numeric(melt_R$value)
-
-  mat_F <- as.matrix(visH_F[,-1])
-  rownames(mat_F) <- visH_F$group1
-  mat_F[upper.tri(mat_F, diag = TRUE)] <- NA
-  visH_F[,-1] <- mat_F
-
-  melt_F <- melt(visH_F, id.vars = "group1")
-  melt_F$value <- as.numeric(melt_F$value)
-
-  mat_p <- as.matrix(visH_p[,-1])
-  rownames(mat_p) <- visH_p$group1
-  mat_p[upper.tri(mat_p, diag = TRUE)] <- NA
-  visH_p[,-1] <- mat_p
-
-  melt_p <- melt(visH_p, id.vars = "group1")
-  melt_p$value <- as.numeric(melt_p$value)
-  
-  # ---- Plot heatmap ----
-  p <- ggplot() +
-    geom_tile(data = melt_R, aes(x = group1, y = variable, fill = value), color = "transparent") +
-    scale_fill_gradient(low = "#ffead1", high = "#fdae53", na.value = "transparent", name = "R²") +
-    new_scale_fill() +
-    geom_tile(data = melt_F, aes(x = group1, y = variable, fill = value), color = "transparent") +
-    scale_fill_gradient(low = "#ffedec", high = "#ff5c52", na.value = "transparent", name = "F") +
-    geom_text(data = melt_p, aes(x = group1, y = variable,
-          label = ifelse(is.na(value), "", ifelse(value < 0.001, "***", ifelse(value < 0.01, "**", ifelse(value < 0.05, "*", "ns"))))),
-      size = 10, color = "black", fontface="bold") +
-    labs(x = "", y = "", fill = "F") +
-    scale_x_discrete(position = "bottom") +
-    labs(x = "", y = "") +
-    theme_minimal() +
-    theme(
-      legend.direction = "vertical",
-      legend.box = "horizontal",
-      legend.text = element_text(size = 10),
-      legend.title = element_text(size = 20),
-      legend.key.height = unit(1, "cm"),
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank(),
-      axis.text.x = element_text(angle = 0, size = 12),
-      axis.text.y = element_text(size = 12),
-      axis.ticks = element_blank(),
-      aspect.ratio = 1
-    ) +
-    guides(color = guide_legend(ncol = 1))
-  
-  # ---- Get title ----
-  if(color_by == "species"){
-    geo_val <- unique(pc_table$geo)
-    title_val <- if(length(geo_val) == 1) geo_map$Locations[geo_map$geo == geo_val] else ""
-    if (title_val=="Panama") {
-        title_val <- ""
-      } else if (title_val=="USVI") {
-        title_val <- "USVI"
-      } else if (title_val=="Belize") {
-        title_val <- "Belize"
-      } else if (title_val=="Florida Keys") {
-        title_val <- ""
-      } else if (title_val=="Tobago") {
-        title_val <- ""
-      } else if (title_val=="Mexico") {
-        title_val <- "Mexico"
-      } else {
-        title_val <- "All locations"
-      }
-  } else if (color_by == "location"){
-    species_val <- unique(pc_table$spec)
-    title_val <- "" #if (length(species_val) == 1) paste0("H. ", species_col$Species[species_col$spec == species_val]) else ""
-  }
-  
-  # ---- Annotate with location title ----
-  p_annot <- p +
-    labs(title = title_val) +
-    theme(
-      plot.title = element_text(
-        hjust = 0,
-        face = "bold",
-        size = 20,
-        margin = margin(b = 5)
-    )
-  )
-  
-  return(p_annot)
-  
-}
-
-
-
-perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species") {
-
-  # ---- Choose grouping mode ----
-  color_by <- match.arg(color_by, c("species", "location"))
-
-  # ---- Fix specific naming error ----
-  pc_table <- pc_table %>%
     mutate(
+      # Fix specific naming error
       spec = ifelse(
         images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
-        "flo",
-        spec
+        "flo", spec
       )
     )
 
   # ---- Filter groups with <5 individuals ----
   if (color_by == "species") {
+    keep <- names(table(pc_table$spec)[table(pc_table$spec) >= 5])
+    pc_table <- pc_table %>% filter(spec %in% keep)
+    pc_table$group <- factor(pc_table$spec)
 
-    if (!all(c("spec", "Color") %in% colnames(species_info))) {
-      stop("species_info must contain 'spec' and 'Color' columns.")
-    }
-
-    group_counts <- table(pc_table$spec)
-    keep <- names(group_counts[group_counts >= 5])
-
-    pc_table <- pc_table %>%
-      filter(spec %in% keep)
-
-    pc_table$group <- droplevels(factor(pc_table$spec))
-
-  } else {
-
-    group_counts <- table(pc_table$geo)
-    keep <- names(group_counts[group_counts >= 5])
-
-    pc_table <- pc_table %>%
-      filter(geo %in% keep)
-
-    pc_table$group <- droplevels(factor(pc_table$geo))
+  } else if (color_by == "location") {
+    keep <- names(table(pc_table$geo)[table(pc_table$geo) >= 5])
+    pc_table <- pc_table %>% filter(geo %in% keep)
+    pc_table$group <- factor(pc_table$geo)
   }
 
   # ---- Prepare data ----
-  group_levels <- levels(pc_table$group)
-
-  if (length(group_levels) < 2) {
-    stop("At least two groups with >=5 individuals are required.")
-  }
-
   PC_table_ordered <- pc_table[order(pc_table$group), ]
   rownames(PC_table_ordered) <- PC_table_ordered$sample
 
   # ---- Compute Euclidean distance ----
-  dist_t <- dist(
-    PC_table_ordered[, 1:15],
-    method = "euclidean"
-  )
+  dist_t <- dist(PC_table_ordered[, 1:15], method = "euclidean")
 
   # ---- Pairwise PERMANOVA ----
   pairwise_result <- pairwise.adonis(
@@ -753,203 +729,334 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
 
   print(pairwise_result)
 
-  # ---- Check pairwise results ----
-  pairwise_result <- as.data.frame(pairwise_result)
+  # ---- Reshape R² (upper triangle) ----
+  vis_R <- pairwise_result %>%
+    separate(pairs, into = c("group1", "group2"), sep = " vs ") %>%
+    select(group1, group2, R2)
 
-  required_columns <- c("pairs", "F.Model", "p.adjusted")
+  # Mirror the table so it is symmetric
+  vis_R_sym <- bind_rows(
+    vis_R,
+    vis_R %>% rename(group1 = group2, group2 = group1)
+  )
 
-  if (!all(required_columns %in% colnames(pairwise_result))) {
-    stop("Pairwise PERMANOVA results are missing required columns.")
-  }
+  # Make sure all combinations exist
+  all_R_groups <- unique(c(vis_R$group1, vis_R$group2))
 
-  if (nrow(pairwise_result) == 0) {
-    stop("Pairwise PERMANOVA returned no comparisons.")
-  }
+  vis_R_complete <- vis_R_sym %>%
+    complete(
+      group1 = all_R_groups,
+      group2 = all_R_groups,
+      fill = list(R2 = NA)
+    )
 
-  # ---- Extract F and adjusted p-values ----
-  vis_FP <- data.frame(
-    pairs = as.character(pairwise_result$pairs),
-    F = as.numeric(as.character(pairwise_result$F.Model)),
-    p = as.numeric(as.character(pairwise_result$p.adjusted))
+  visH_R <- dcast(
+    vis_R_complete,
+    group1 ~ group2,
+    value.var = "R2"
   ) %>%
-    mutate(
-      group1 = sub(" vs .*", "", pairs),
-      group2 = sub("^.* vs ", "", pairs)
-    ) %>%
-    select(group1, group2, F, p)
+    complete(group1 = levels(pc_table$group), fill = list()) %>%
+    select(group1, intersect(levels(pc_table$group), colnames(.)))
 
-  # ---- Check group names ----
-  unmatched_groups <- setdiff(
-    unique(c(vis_FP$group1, vis_FP$group2)),
-    group_levels
+  # ---- Reshape F.Model (lower triangle) ----
+  vis_F <- pairwise_result %>%
+    separate(pairs, into = c("group1", "group2"), sep = " vs ") %>%
+    select(group1, group2, F.Model)
+
+  # Mirror the table so it is symmetric
+  vis_F_sym <- bind_rows(
+    vis_F,
+    vis_F %>% rename(group1 = group2, group2 = group1)
   )
 
-  if (length(unmatched_groups) > 0) {
-    stop(
-      "The following groups in the pairwise results do not match the data: ",
-      paste(unmatched_groups, collapse = ", ")
-    )
-  }
+  # Make sure all combinations exist
+  all_F_groups <- unique(c(vis_F$group1, vis_F$group2))
 
-  # ---- Mirror results ----
-  vis_FP_sym <- bind_rows(
-    vis_FP,
-    vis_FP %>%
-      transmute(
-        group1 = group2,
-        group2 = group1,
-        F = F,
-        p = p
-      )
+  vis_F_complete <- vis_F_sym %>%
+    complete(
+      group1 = all_F_groups,
+      group2 = all_F_groups,
+      fill = list(F.Model = NA)
+    )
+
+  visH_F <- dcast(
+    vis_F_complete,
+    group1 ~ group2,
+    value.var = "F.Model"
+  ) %>%
+    complete(group1 = levels(pc_table$group), fill = list()) %>%
+    select(group1, intersect(levels(pc_table$group), colnames(.)))
+
+  # ---- Reshape p-values ----
+  vis_p <- pairwise_result %>%
+    separate(pairs, into = c("group1", "group2"), sep = " vs ") %>%
+    select(group1, group2, p.adjusted)
+
+  # Mirror the table so it is symmetric
+  vis_p_sym <- bind_rows(
+    vis_p,
+    vis_p %>% rename(group1 = group2, group2 = group1)
   )
 
-  # ---- Retain lower triangle ----
-  # Use explicit matching to determine group positions
-  melt_FP <- vis_FP_sym %>%
-    mutate(
-      i = match(group1, group_levels),
-      j = match(group2, group_levels)
-    ) %>%
-    filter(
-      !is.na(i),
-      !is.na(j),
-      !is.na(F),
-      !is.na(p),
-      i > j
-    ) %>%
-    mutate(
-      group1 = factor(group1, levels = group_levels),
-      group2 = factor(group2, levels = group_levels)
-    ) %>%
-    select(group1, group2, F, p)
+  # Make sure all combinations exist
+  all_p_groups <- unique(c(vis_p$group1, vis_p$group2))
 
-  if (nrow(melt_FP) == 0) {
-    stop(
-      "No pairwise comparisons remain after filtering. ",
-      "Check the group names and pairwise PERMANOVA results."
+  vis_p_complete <- vis_p_sym %>%
+    complete(
+      group1 = all_p_groups,
+      group2 = all_p_groups,
+      fill = list(p.adjusted = NA)
     )
-  }
 
-  # ---- Prepare species colour strips ----
+  visH_p <- dcast(
+    vis_p_complete,
+    group1 ~ group2,
+    value.var = "p.adjusted"
+  ) %>%
+    complete(group1 = levels(pc_table$group), fill = list()) %>%
+    select(group1, intersect(levels(pc_table$group), colnames(.)))
+
+  # ---- Ensure all matrices have same row/column order ----
+  visH_R <- visH_R[
+    match(visH_F$group1, visH_R$group1),
+    c("group1", visH_F$group1)
+  ]
+
+  visH_F <- visH_F[
+    match(visH_R$group1, visH_F$group1),
+    c("group1", visH_R$group1)
+  ]
+
+  visH_p <- visH_p[
+    match(visH_R$group1, visH_p$group1),
+    c("group1", visH_R$group1)
+  ]
+
+  # ---- Blank lower triangle for R² (keep upper) ----
+  mat_R <- as.matrix(visH_R[, -1])
+  rownames(mat_R) <- visH_R$group1
+  mat_R[lower.tri(mat_R, diag = TRUE)] <- NA
+  visH_R[, -1] <- mat_R
+
+  melt_R <- melt(visH_R, id.vars = "group1")
+  melt_R$value <- as.numeric(melt_R$value)
+
+  # ---- Blank upper triangle for F (keep lower) ----
+  mat_F <- as.matrix(visH_F[, -1])
+  rownames(mat_F) <- visH_F$group1
+  mat_F[upper.tri(mat_F, diag = TRUE)] <- NA
+  visH_F[, -1] <- mat_F
+
+  melt_F <- melt(visH_F, id.vars = "group1")
+  melt_F$value <- as.numeric(melt_F$value)
+
+  # ---- Blank upper triangle for p-values ----
+  mat_p <- as.matrix(visH_p[, -1])
+  rownames(mat_p) <- visH_p$group1
+  mat_p[upper.tri(mat_p, diag = TRUE)] <- NA
+  visH_p[, -1] <- mat_p
+
+  melt_p <- melt(visH_p, id.vars = "group1")
+  melt_p$value <- as.numeric(melt_p$value)
+
+  # ==========================================================
+  # ---- PLOT DATA ----
+  # ==========================================================
+
+  group_levels <- levels(pc_table$group)
+
+  # Get symmetric p-value lookup for both triangles
+  p_lookup <- vis_p_sym %>%
+    mutate(
+      group1 = as.character(group1),
+      group2 = as.character(group2),
+      p = as.numeric(as.character(p.adjusted))
+    ) %>%
+    select(group1, group2, p) %>%
+    distinct()
+
+  # Add p-values to R² data
+  melt_R_plot <- melt_R %>%
+    transmute(
+      group1 = as.character(group1),
+      group2 = as.character(variable),
+      value = as.numeric(value)
+    ) %>%
+    left_join(p_lookup, by = c("group1", "group2"))
+
+  # Add p-values to F data
+  melt_F_plot <- melt_F %>%
+    transmute(
+      group1 = as.character(group1),
+      group2 = as.character(variable),
+      value = as.numeric(value)
+    ) %>%
+    left_join(p_lookup, by = c("group1", "group2"))
+
+  # ==========================================================
+  # ---- SPECIES COLOUR BLOCKS ----
+  # ==========================================================
+
   if (color_by == "species") {
 
-    info_table <- species_info %>%
-      mutate(spec = as.character(spec)) %>%
-      distinct(spec, .keep_all = TRUE)
+    # Match species codes to their colours
+    species_colors <- setNames(
+      as.character(species_col$Color),
+      as.character(species_col$spec)
+    )
 
-    missing_species <- setdiff(group_levels, info_table$spec)
+    axis_cols <- species_colors[group_levels]
 
-    if (length(missing_species) > 0) {
+    if (any(is.na(axis_cols))) {
       stop(
-        "Missing species in species_info: ",
-        paste(missing_species, collapse = ", ")
+        "Missing species colours in species_col for: ",
+        paste(group_levels[is.na(axis_cols)], collapse = ", ")
       )
     }
 
-    # Match colours to the exact order of the heatmap groups
-    axis_cols <- info_table$Color[
-      match(group_levels, info_table$spec)
-    ]
+    # Add one extra column and row for the colour blocks
+    strip_left <- ".strip_left"
+    strip_bottom <- ".strip_bottom"
 
-    if (any(is.na(axis_cols))) {
-      stop("Missing colours for one or more species.")
-    }
+    x_levels <- c(strip_left, group_levels)
+    y_levels <- c(strip_bottom, group_levels)
 
-    # Additional factor levels for the coloured rectangles
-    strip_x <- ".x_strip"
-    strip_y <- ".y_strip"
-
-    x_levels <- c(strip_x, group_levels)
-    y_levels <- c(strip_y, group_levels)
-
-    # Coloured rectangles below the heatmap
-    x_strip_data <- data.frame(
+    # Colour blocks along the x-axis
+    x_strip <- data.frame(
       group1 = factor(group_levels, levels = x_levels),
-      group2 = factor(rep(strip_y, length(group_levels)),
-                      levels = y_levels),
-      Color = axis_cols
+      group2 = factor(
+        rep(strip_bottom, length(group_levels)),
+        levels = y_levels
+      ),
+      Color = unname(axis_cols)
     )
 
-    # Coloured rectangles to the left of the heatmap
-    y_strip_data <- data.frame(
-      group1 = factor(rep(strip_x, length(group_levels)),
-                      levels = x_levels),
+    # Colour blocks along the y-axis
+    y_strip <- data.frame(
+      group1 = factor(
+        rep(strip_left, length(group_levels)),
+        levels = x_levels
+      ),
       group2 = factor(group_levels, levels = y_levels),
-      Color = axis_cols
+      Color = unname(axis_cols)
     )
 
-    # Extend heatmap factors to include strip positions
-    melt_FP <- melt_FP %>%
+    # Set factor levels for heatmap data
+    melt_R_plot <- melt_R_plot %>%
       mutate(
-        group1 = factor(as.character(group1), levels = x_levels),
-        group2 = factor(as.character(group2), levels = y_levels)
+        group1 = factor(group1, levels = x_levels),
+        group2 = factor(group2, levels = y_levels)
+      )
+
+    melt_F_plot <- melt_F_plot %>%
+      mutate(
+        group1 = factor(group1, levels = x_levels),
+        group2 = factor(group2, levels = y_levels)
       )
 
   } else {
 
-    # ---- Location labels ----
+    # Location labels
     location_map <- setNames(
       as.character(geo_map$Locations),
       as.character(geo_map$geo)
     )
 
     axis_labels <- location_map[group_levels]
+    axis_labels[is.na(axis_labels)] <- group_levels[is.na(axis_labels)]
 
-    # Use group names if a location is not mapped
-    missing_labels <- is.na(axis_labels)
-    axis_labels[missing_labels] <- group_levels[missing_labels]
+    melt_R_plot <- melt_R_plot %>%
+      mutate(
+        group1 = factor(group1, levels = group_levels),
+        group2 = factor(group2, levels = group_levels)
+      )
+
+    melt_F_plot <- melt_F_plot %>%
+      mutate(
+        group1 = factor(group1, levels = group_levels),
+        group2 = factor(group2, levels = group_levels)
+      )
   }
 
-  # ---- Initialise plot ----
+  # ==========================================================
+  # ---- PLOT ----
+  # ==========================================================
+
   p <- ggplot()
 
-  # ---- Add coloured species rectangles ----
+  # ---- Add species colour blocks ----
   if (color_by == "species") {
 
     p <- p +
       geom_tile(
-        data = x_strip_data,
+        data = x_strip,
         aes(x = group1, y = group2, fill = Color),
         inherit.aes = FALSE,
         width = 1,
         height = 1
       ) +
-
       geom_tile(
-        data = y_strip_data,
+        data = y_strip,
         aes(x = group1, y = group2, fill = Color),
         inherit.aes = FALSE,
         width = 1,
         height = 1
       ) +
-
-      scale_fill_identity() +
-
+      scale_fill_identity(guide = "none") +
       ggnewscale::new_scale_fill()
   }
 
-  # ---- Add PERMANOVA heatmap ----
-  p <- p +
+  # ---- R²: upper triangle ----
 
-    # Non-significant comparisons: squares
+  # Non-significant comparisons: squares
+  p <- p +
     geom_tile(
-      data = melt_FP %>% filter(p >= 0.05),
-      aes(x = group1, y = group2, fill = F),
-      width = 1,
-      height = 1,
-      color = NA
+      data = melt_R_plot %>%
+        filter(!is.na(value), !is.na(p), p >= 0.05),
+      aes(x = group1, y = group2, fill = value),
+      color = "transparent"
     ) +
 
     # Significant comparisons: circles
     geom_point(
-      data = melt_FP %>% filter(p < 0.05),
-      aes(x = group1, y = group2, fill = F),
+      data = melt_R_plot %>%
+        filter(!is.na(value), !is.na(p), p < 0.05),
+      aes(x = group1, y = group2, fill = value),
       shape = 21,
       size = 8,
       stroke = 0
     ) +
 
-    # F-value colour scale
+    scale_fill_gradient(
+      low = "#ffead1",
+      high = "#fdae53",
+      na.value = "transparent",
+      name = "R²"
+    ) +
+
+    ggnewscale::new_scale_fill()
+
+  # ---- F: lower triangle ----
+
+  # Non-significant comparisons: squares
+  p <- p +
+    geom_tile(
+      data = melt_F_plot %>%
+        filter(!is.na(value), !is.na(p), p >= 0.05),
+      aes(x = group1, y = group2, fill = value),
+      color = "transparent"
+    ) +
+
+    # Significant comparisons: circles
+    geom_point(
+      data = melt_F_plot %>%
+        filter(!is.na(value), !is.na(p), p < 0.05),
+      aes(x = group1, y = group2, fill = value),
+      shape = 21,
+      size = 8,
+      stroke = 0
+    ) +
+
     scale_fill_gradient(
       low = "#ffedec",
       high = "#ff5c52",
@@ -959,28 +1066,9 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
         accuracy = 0.1,
         decimal.mark = ","
       )
-    ) +
-
-    labs(x = "", y = "") +
-
-    theme_minimal() +
-
-    theme(
-      legend.direction = "vertical",
-      legend.box = "horizontal",
-      legend.text = element_text(size = 10),
-      legend.title = element_text(size = 20),
-      legend.key.height = unit(1, "cm"),
-
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank(),
-
-      axis.ticks = element_blank(),
-      aspect.ratio = 1,
-      plot.margin = margin(10, 10, 10, 10)
     )
 
-  # ---- Configure axes ----
+  # ---- Axes ----
   if (color_by == "species") {
 
     p <- p +
@@ -988,15 +1076,13 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
         limits = x_levels,
         breaks = group_levels,
         labels = rep("", length(group_levels)),
-        drop = FALSE,
-        expand = expansion(add = 0)
+        drop = FALSE
       ) +
       scale_y_discrete(
         limits = y_levels,
         breaks = group_levels,
         labels = rep("", length(group_levels)),
-        drop = FALSE,
-        expand = expansion(add = 0)
+        drop = FALSE
       ) +
       theme(
         axis.text.x = element_blank(),
@@ -1008,51 +1094,70 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
     p <- p +
       scale_x_discrete(
         limits = group_levels,
-        breaks = group_levels,
         labels = unname(axis_labels),
         drop = FALSE
       ) +
       scale_y_discrete(
         limits = group_levels,
-        breaks = group_levels,
         labels = unname(axis_labels),
         drop = FALSE
       ) +
       theme(
-        axis.text.x = element_text(size = 12, angle = 0),
+        axis.text.x = element_text(angle = 0, size = 12),
         axis.text.y = element_text(size = 12)
       )
   }
 
-  # ---- Get title ----
+  # ---- General plot formatting ----
+  p <- p +
+    labs(x = "", y = "") +
+    theme_minimal() +
+    theme(
+      legend.direction = "vertical",
+      legend.box = "horizontal",
+      legend.text = element_text(size = 10),
+      legend.title = element_text(size = 20),
+      legend.key.height = unit(1, "cm"),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.ticks = element_blank(),
+      aspect.ratio = 1
+    ) +
+    guides(color = guide_legend(ncol = 1))
+
+  # ==========================================================
+  # ---- TITLE ----
+  # ==========================================================
+
   if (color_by == "species") {
 
     geo_val <- unique(pc_table$geo)
 
-    if (length(geo_val) == 1) {
-
-      title_val <- as.character(
-        geo_map$Locations[
-          match(as.character(geo_val), as.character(geo_map$geo))
-        ]
-      )
-
-      if (length(title_val) == 0 || is.na(title_val)) {
-        title_val <- "All locations"
-      } else if (title_val %in% c("Panama", "Florida Keys", "Tobago")) {
-        title_val <- ""
-      } else if (title_val %in% c("USVI", "Belize", "Mexico")) {
-        title_val <- title_val
-      } else {
-        title_val <- "All locations"
-      }
-
+    title_val <- if (length(geo_val) == 1) {
+      geo_map$Locations[geo_map$geo == geo_val]
     } else {
-      title_val <- ""
+      ""
     }
 
-  } else {
+    if (title_val == "Panama") {
+      title_val <- ""
+    } else if (title_val == "USVI") {
+      title_val <- "USVI"
+    } else if (title_val == "Belize") {
+      title_val <- "Belize"
+    } else if (title_val == "Florida Keys") {
+      title_val <- ""
+    } else if (title_val == "Tobago") {
+      title_val <- ""
+    } else if (title_val == "Mexico") {
+      title_val <- "Mexico"
+    } else {
+      title_val <- "All locations"
+    }
 
+  } else if (color_by == "location") {
+
+    species_val <- unique(pc_table$spec)
     title_val <- ""
   }
 
