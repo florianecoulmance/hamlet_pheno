@@ -133,7 +133,7 @@ for(dat in names(dataset)) {
   #-----------------------------------
   # PERMANOVA (filter <5 inds per species inside perm_f)
   #-----------------------------------
-  p_perm <- perm_f(pc_table, species_info, geo_table, color_by = color)
+  p_perm <- perm_f_logos(pc_table, species_info, geo_table, color_by = color)
   
   #-----------------------------------
   # Hierarchical clustering

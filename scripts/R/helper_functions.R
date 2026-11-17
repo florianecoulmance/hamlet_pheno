@@ -493,6 +493,8 @@ plot_variance <- function(var, loc_name) {
 # ============================================================
 perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
 
+  color_by <- match.arg(color_by, c("species", "location"))
+
   pc_table <- pc_table %>%
   mutate(
     # Fix specific naming error
@@ -681,6 +683,274 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
   
   return(p_annot)
   
+}
+
+
+perm_f_logos <- function(pc_table, species_info, geo_map, color_by = "species") {
+
+  # ---- Choose grouping mode ----
+  color_by <- match.arg(color_by, c("species", "location"))
+
+  # ---- Fix specific naming error ----
+  pc_table <- pc_table %>%
+    mutate(
+      spec = ifelse(
+        images == "PL17_160pueflo-l1-s4-f4-c2-d1.png",
+        "flo", spec
+      )
+    )
+
+  # ---- Filter groups with <5 individuals ----
+  if (color_by == "species") {
+
+    keep <- names(table(pc_table$spec)[table(pc_table$spec) >= 5])
+    pc_table <- pc_table %>% filter(spec %in% keep)
+    pc_table$group <- factor(pc_table$spec)
+
+    # Check species information
+    required_cols <- c("Species", "spec", "Color", "link")
+
+    if (!all(required_cols %in% colnames(species_info))) {
+      stop("species_info must contain Species, spec, Color and link columns.")
+    }
+
+  } else if (color_by == "location") {
+
+    keep <- names(table(pc_table$geo)[table(pc_table$geo) >= 5])
+    pc_table <- pc_table %>% filter(geo %in% keep)
+    pc_table$group <- factor(pc_table$geo)
+
+  }
+
+  # ---- Prepare data ----
+  PC_table_ordered <- pc_table[order(pc_table$group), ]
+  rownames(PC_table_ordered) <- PC_table_ordered$sample
+
+  group_levels <- levels(pc_table$group)
+
+  if (length(group_levels) < 2) {
+    stop("At least two groups with >=5 individuals are required.")
+  }
+
+  # ---- Compute Euclidean distance ----
+  dist_t <- dist(PC_table_ordered[, 1:15], method = "euclidean")
+
+  # ---- Pairwise PERMANOVA ----
+  pairwise_result <- pairwise.adonis(
+    dist_t,
+    PC_table_ordered$group,
+    perm = 10000
+  )
+
+  print(pairwise_result)
+
+  # ---- Extract F and adjusted p-values ----
+  vis_FP <- pairwise_result %>%
+    tidyr::separate(
+      pairs,
+      into = c("group1", "group2"),
+      sep = " vs "
+    ) %>%
+    transmute(
+      group1 = as.character(group1),
+      group2 = as.character(group2),
+      F = as.numeric(as.character(F.Model)),
+      p = as.numeric(as.character(p.adjusted))
+    )
+
+  # ---- Mirror results to obtain symmetric comparisons ----
+  vis_FP_sym <- bind_rows(
+    vis_FP,
+    vis_FP %>%
+      transmute(
+        group1 = group2,
+        group2 = group1,
+        F = F,
+        p = p
+      )
+  )
+
+  # ---- Retain only lower triangle ----
+  melt_FP <- vis_FP_sym %>%
+    mutate(
+      group1 = factor(group1, levels = group_levels),
+      group2 = factor(group2, levels = group_levels)
+    ) %>%
+    filter(
+      !is.na(group1),
+      !is.na(group2),
+      !is.na(F),
+      !is.na(p),
+      as.integer(group1) > as.integer(group2)
+    )
+
+  # ---- Prepare axis labels ----
+  if (color_by == "species") {
+
+    info_table <- species_info %>%
+      filter(spec %in% group_levels)
+
+    missing_species <- setdiff(group_levels, info_table$spec)
+
+    if (length(missing_species) > 0) {
+      stop(
+        "Missing species in species_info: ",
+        paste(missing_species, collapse = ", ")
+      )
+    }
+
+    # Logos + italicised species names in species colours
+    label_map <- setNames(
+      paste0(
+        "<img src='", info_table$link, "' width='50' />",
+        "<br><span style='color:", info_table$Color, ";'>",
+        "<i>H. ", info_table$Species, "</i>",
+        "</span>"
+      ),
+      info_table$spec
+    )
+
+    axis_labels <- label_map[group_levels]
+
+  } else {
+
+    # Location labels
+    location_map <- setNames(
+      as.character(geo_map$Locations),
+      as.character(geo_map$geo)
+    )
+
+    axis_labels <- location_map[group_levels]
+
+    # Keep original codes if no location name is available
+    axis_labels[is.na(axis_labels)] <- group_levels[is.na(axis_labels)]
+
+  }
+
+  # ---- Plot heatmap ----
+  p <- ggplot() +
+
+    # Non-significant comparisons: full squares
+    geom_tile(
+      data = melt_FP %>% filter(p >= 0.05),
+      aes(x = group1, y = group2, fill = F),
+      width = 1,
+      height = 1,
+      color = NA
+    ) +
+
+    # Significant comparisons: circles
+    geom_point(
+      data = melt_FP %>% filter(p < 0.05),
+      aes(x = group1, y = group2, fill = F),
+      shape = 21,
+      size = 8,
+      stroke = 0
+    ) +
+
+    # F-value colour scale
+    scale_fill_gradient(
+      low = "#ffedec",
+      high = "#ff5c52",
+      na.value = "transparent",
+      name = "F",
+      labels = scales::label_number(
+        accuracy = 0.1,
+        decimal.mark = ","
+      )
+    ) +
+
+    # X-axis
+    scale_x_discrete(
+      position = "bottom",
+      limits = group_levels,
+      breaks = group_levels,
+      labels = axis_labels,
+      drop = FALSE
+    ) +
+
+    # Y-axis
+    scale_y_discrete(
+      limits = group_levels,
+      breaks = group_levels,
+      labels = axis_labels,
+      drop = FALSE
+    ) +
+
+    labs(x = "", y = "") +
+
+    theme_minimal() +
+
+    theme(
+      legend.direction = "vertical",
+      legend.box = "horizontal",
+      legend.text = element_text(size = 10),
+      legend.title = element_text(size = 20),
+      legend.key.height = unit(1, "cm"),
+
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+
+      axis.text.x = ggtext::element_markdown(
+        size = 10,
+        hjust = 0.5,
+        margin = margin(t = 5)
+      ),
+
+      axis.text.y = ggtext::element_markdown(
+        size = 10,
+        hjust = 1,
+        margin = margin(r = 5)
+      ),
+
+      axis.ticks = element_blank(),
+      aspect.ratio = 1,
+      plot.margin = margin(10, 10, 10, 10)
+    )
+
+  # ---- Get title ----
+  if (color_by == "species") {
+
+    geo_val <- unique(pc_table$geo)
+
+    title_val <- if (length(geo_val) == 1) {
+      geo_map$Locations[geo_map$geo == geo_val]
+    } else {
+      ""
+    }
+
+    if (length(title_val) == 0 || is.na(title_val)) {
+      title_val <- ""
+    }
+
+    if (title_val %in% c("Panama", "Florida Keys", "Tobago")) {
+      title_val <- ""
+    } else if (title_val %in% c("USVI", "Belize", "Mexico")) {
+      title_val <- title_val
+    } else {
+      title_val <- "All locations"
+    }
+
+  } else if (color_by == "location") {
+
+    title_val <- ""
+
+  }
+
+  # ---- Annotate with location title ----
+  p_annot <- p +
+    labs(title = title_val) +
+    theme(
+      plot.title = element_text(
+        hjust = 0,
+        face = "bold",
+        size = 20,
+        margin = margin(b = 5)
+      )
+    )
+
+  return(p_annot)
+
 }
 
 
