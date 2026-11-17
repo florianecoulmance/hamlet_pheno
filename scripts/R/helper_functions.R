@@ -687,6 +687,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
 
 
 
+
 perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species") {
 
   # ---- Choose grouping mode ----
@@ -704,34 +705,44 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
   # ---- Filter groups with <5 individuals ----
   if (color_by == "species") {
 
-    keep <- names(table(pc_table$spec)[table(pc_table$spec) >= 5])
-    pc_table <- pc_table %>% filter(spec %in% keep)
-    pc_table$group <- factor(pc_table$spec)
-
     if (!all(c("spec", "Color") %in% colnames(species_info))) {
-      stop("species_info must contain spec and Color columns.")
+      stop("species_info must contain 'spec' and 'Color' columns.")
     }
 
-  } else if (color_by == "location") {
+    group_counts <- table(pc_table$spec)
+    keep <- names(group_counts[group_counts >= 5])
 
-    keep <- names(table(pc_table$geo)[table(pc_table$geo) >= 5])
-    pc_table <- pc_table %>% filter(geo %in% keep)
+    pc_table <- pc_table %>%
+      filter(spec %in% keep)
+
+    pc_table$group <- factor(pc_table$spec)
+
+  } else {
+
+    group_counts <- table(pc_table$geo)
+    keep <- names(group_counts[group_counts >= 5])
+
+    pc_table <- pc_table %>%
+      filter(geo %in% keep)
+
     pc_table$group <- factor(pc_table$geo)
-
   }
 
   # ---- Prepare data ----
-  PC_table_ordered <- pc_table[order(pc_table$group), ]
-  rownames(PC_table_ordered) <- PC_table_ordered$sample
-
   group_levels <- levels(pc_table$group)
 
   if (length(group_levels) < 2) {
     stop("At least two groups with >=5 individuals are required.")
   }
 
+  PC_table_ordered <- pc_table[order(pc_table$group), ]
+  rownames(PC_table_ordered) <- PC_table_ordered$sample
+
   # ---- Compute Euclidean distance ----
-  dist_t <- dist(PC_table_ordered[, 1:15], method = "euclidean")
+  dist_t <- dist(
+    PC_table_ordered[, 1:15],
+    method = "euclidean"
+  )
 
   # ---- Pairwise PERMANOVA ----
   pairwise_result <- pairwise.adonis(
@@ -747,7 +758,9 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
     tidyr::separate(
       pairs,
       into = c("group1", "group2"),
-      sep = " vs "
+      sep = " vs ",
+      extra = "merge",
+      fill = "right"
     ) %>%
     transmute(
       group1 = as.character(group1),
@@ -782,10 +795,16 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
       as.integer(group1) > as.integer(group2)
     )
 
-  # ---- Prepare axis labels ----
+  if (nrow(melt_FP) == 0) {
+    stop("No pairwise comparisons available for plotting. Check the pairwise.adonis results and group names.")
+  }
+
+  # ---- Prepare species colour strips ----
   if (color_by == "species") {
 
     info_table <- species_info %>%
+      mutate(spec = as.character(spec)) %>%
+      distinct(spec, .keep_all = TRUE) %>%
       filter(spec %in% group_levels)
 
     missing_species <- setdiff(group_levels, info_table$spec)
@@ -797,27 +816,90 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
       )
     }
 
-    # Coloured square blocks only (no text)
-    axis_labels <- setNames(
-      paste0(
-        "<span style='color:", info_table$Color, ";'>&#9632;</span>"
-      ),
-      info_table$spec
+    # Colours in exactly the same order as the heatmap groups
+    axis_cols <- info_table$Color[
+      match(group_levels, info_table$spec)
+    ]
+
+    if (any(is.na(axis_cols))) {
+      stop("Missing colours for one or more species.")
+    }
+
+    # Extra factor levels for the coloured strips
+    strip_x <- ".x_strip"
+    strip_y <- ".y_strip"
+
+    x_levels <- c(strip_y, group_levels)
+    y_levels <- c(strip_x, group_levels)
+
+    # Add the extra levels to the heatmap data
+    melt_FP <- melt_FP %>%
+      mutate(
+        group1 = factor(as.character(group1), levels = x_levels),
+        group2 = factor(as.character(group2), levels = y_levels)
+      )
+
+    # Coloured rectangles along the x-axis
+    x_strip_data <- data.frame(
+      group1 = factor(group_levels, levels = x_levels),
+      group2 = factor(rep(strip_x, length(group_levels)),
+                      levels = y_levels),
+      Color = axis_cols
+    )
+
+    # Coloured rectangles along the y-axis
+    y_strip_data <- data.frame(
+      group1 = factor(rep(strip_y, length(group_levels)),
+                      levels = x_levels),
+      group2 = factor(group_levels, levels = y_levels),
+      Color = axis_cols
     )
 
   } else {
 
+    # Location labels
     location_map <- setNames(
       as.character(geo_map$Locations),
       as.character(geo_map$geo)
     )
 
-    axis_labels <- location_map
+    axis_labels <- unname(location_map[group_levels])
 
+    # Fall back to group names if a location is not mapped
+    axis_labels[is.na(axis_labels)] <-
+      group_levels[is.na(axis_labels)]
   }
 
-  # ---- Plot heatmap ----
-  p <- ggplot() +
+  # ---- Initialise plot ----
+  p <- ggplot()
+
+  # ---- Add coloured species rectangles ----
+  if (color_by == "species") {
+
+    p <- p +
+      geom_tile(
+        data = x_strip_data,
+        aes(x = group1, y = group2, fill = Color),
+        inherit.aes = FALSE,
+        width = 1,
+        height = 1
+      ) +
+
+      geom_tile(
+        data = y_strip_data,
+        aes(x = group1, y = group2, fill = Color),
+        inherit.aes = FALSE,
+        width = 1,
+        height = 1
+      ) +
+
+      scale_fill_identity() +
+
+      ggnewscale::new_scale_fill()
+  }
+
+  # ---- Add PERMANOVA heatmap ----
+  p <- p +
 
     # Non-significant comparisons: full squares
     geom_tile(
@@ -849,23 +931,6 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
       )
     ) +
 
-    # X-axis
-    scale_x_discrete(
-      position = "bottom",
-      limits = group_levels,
-      breaks = group_levels,
-      labels = function(x) unname(axis_labels[x]),
-      drop = FALSE
-    ) +
-
-    # Y-axis
-    scale_y_discrete(
-      limits = group_levels,
-      breaks = group_levels,
-      labels = function(x) unname(axis_labels[x]),
-      drop = FALSE
-    ) +
-
     labs(x = "", y = "") +
 
     theme_minimal() +
@@ -880,50 +945,83 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank(),
 
-      axis.text.x = ggtext::element_markdown(
-        size = 16,
-        hjust = 0.5,
-        margin = margin(t = 5)
-      ),
-
-      axis.text.y = ggtext::element_markdown(
-        size = 16,
-        hjust = 1,
-        margin = margin(r = 5)
-      ),
-
       axis.ticks = element_blank(),
       aspect.ratio = 1,
       plot.margin = margin(10, 10, 10, 10)
     )
+
+  # ---- Configure axes ----
+  if (color_by == "species") {
+
+    p <- p +
+      scale_x_discrete(
+        limits = x_levels,
+        breaks = group_levels,
+        labels = rep("", length(group_levels)),
+        drop = FALSE
+      ) +
+      scale_y_discrete(
+        limits = y_levels,
+        breaks = group_levels,
+        labels = rep("", length(group_levels)),
+        drop = FALSE
+      ) +
+      theme(
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank()
+      )
+
+  } else {
+
+    p <- p +
+      scale_x_discrete(
+        limits = group_levels,
+        breaks = group_levels,
+        labels = axis_labels,
+        drop = FALSE
+      ) +
+      scale_y_discrete(
+        limits = group_levels,
+        breaks = group_levels,
+        labels = axis_labels,
+        drop = FALSE
+      ) +
+      theme(
+        axis.text.x = element_text(size = 12, angle = 0),
+        axis.text.y = element_text(size = 12)
+      )
+  }
 
   # ---- Get title ----
   if (color_by == "species") {
 
     geo_val <- unique(pc_table$geo)
 
-    title_val <- if (length(geo_val) == 1) {
-      geo_map$Locations[geo_map$geo == geo_val]
-    } else {
-      ""
-    }
+    if (length(geo_val) == 1) {
 
-    if (length(title_val) == 0 || is.na(title_val)) {
+      title_val <- as.character(
+        geo_map$Locations[
+          match(geo_val, geo_map$geo)
+        ]
+      )
+
+      if (length(title_val) == 0 || is.na(title_val)) {
+        title_val <- "All locations"
+      } else if (title_val %in% c("Panama", "Florida Keys", "Tobago")) {
+        title_val <- ""
+      } else if (title_val %in% c("USVI", "Belize", "Mexico")) {
+        title_val <- title_val
+      } else {
+        title_val <- "All locations"
+      }
+
+    } else {
       title_val <- ""
     }
 
-    if (title_val %in% c("Panama", "Florida Keys", "Tobago")) {
-      title_val <- ""
-    } else if (title_val %in% c("USVI", "Belize", "Mexico")) {
-      title_val <- title_val
-    } else {
-      title_val <- "All locations"
-    }
-
-  } else if (color_by == "location") {
+  } else {
 
     title_val <- ""
-
   }
 
   # ---- Annotate with location title ----
@@ -939,7 +1037,6 @@ perm_f_blocks <- function(pc_table, species_info, geo_map, color_by = "species")
     )
 
   return(p_annot)
-
 }
 
 
