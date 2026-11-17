@@ -253,8 +253,8 @@ p_perm_greater <- results[["all"]][["permanova"]]
 p_greater_combined <- ggdraw(p_greater) +
   draw_plot(
     p_perm_greater,
-    x = 0.75,
-    y = 0.70,
+    x = 0.65,
+    y = 0.55,
     width = 0.60,
     height = 0.60
   )
@@ -279,7 +279,7 @@ permanova_row <- plot_grid(
   results[["uvi"]][["permanova"]],
   ncol = 3,
   align = "hv",
-  scale = 0.98
+  scale = 0.80
 )
 
 # Add legend
@@ -290,7 +290,7 @@ figure1 <- ggarrange(
   leg,
   nrow = 4,
   ncol = 1,
-  heights = c(2, 1, 1, 0.4),
+  heights = c(2, 1, 1, 0.35),
   labels = c("(a)", "", "", ""),
   align = "v"
 )
