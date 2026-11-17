@@ -245,25 +245,64 @@ figure1_bottom <- plot_grid(
 #   ncol = 2,
 #   rel_widths = c(1, 1)
 # )
+# Greater Caribbean PCA and PERMANOVA
+p_greater <- results[["all"]][["pca"]]
+p_perm_greater <- results[["all"]][["permanova"]]
+
+# Add Greater Caribbean PERMANOVA as an inset
+p_greater_combined <- p_greater +
+  inset_element(
+    p_perm_greater,
+    left = 0.63,
+    bottom = 0.60,
+    right = 0.98,
+    top = 0.97,
+    align_to = "panel",
+    on_top = TRUE,
+    clip = FALSE
+  )
+
+
+# Row 2: Three regional PCAs side by side
+pca_row <- plot_grid(
+  results[["ver"]][["pca"]],
+  results[["bel"]][["pca"]],
+  results[["uvi"]][["pca"]],
+  ncol = 3,
+  align = "hv",
+  labels = c("(b)", "(c)", "(d)"),
+  scale = 0.98
+)
+
+
+# Row 3: Three regional PERMANOVAs side by side
+permanova_row <- plot_grid(
+  results[["ver"]][["permanova"]],
+  results[["bel"]][["permanova"]],
+  results[["uvi"]][["permanova"]],
+  ncol = 3,
+  align = "hv",
+  scale = 0.98
+)
 
 # Add legend
 figure1 <- ggarrange(
-  figure1_top,
-  NULL,
-  figure1_bottom,
-  NULL,
+  p_greater_combined,
+  pca_row,
+  permanova_row,
   leg,
-  nrow = 6,
+  nrow = 4,
   ncol = 1,
-  heights = c(6, 0.75, 0.2, 0.75, 4, 0.05),
-  labels = c("(a)", "", "", "", "(b)", "")
+  heights = c(2, 1, 1, 0.2),
+  labels = c("(a)", "", "", ""),
+  align = "v"
 )
 
 ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
   plot = figure1,
-  width = 8.27, 
-  height = 11.69, 
+  width = 18, 
+  height = 25.44, 
   units = "in",
   dpi = 300,
   type = "cairo-png"
