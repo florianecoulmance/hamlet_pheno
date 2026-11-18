@@ -3396,7 +3396,7 @@ plot_pairwise_metric <- function(
       ) +
       scale_x_discrete(
         limits = pair_location_order,
-        expand = expansion(add = 0.6)
+        expand = expansion(add = 0)
       ) +
       scale_y_continuous(
         limits = c(0.5, 1.5),
