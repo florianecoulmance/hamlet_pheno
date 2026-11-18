@@ -278,26 +278,19 @@ p_greater_combined <- ggdraw() +
     height = 0.50
   )
 
-# Row 2: Three regional PCAs side by side
-pca_row <- plot_grid(
+# Regional plots: 3 columns x 2 rows
+regional_grid <- plot_grid(
   results[["ver"]][["pca"]],
   results[["bel"]][["pca"]],
   results[["uvi"]][["pca"]],
-  ncol = 3,
-  align = "hv",
-  labels = c("(b)", "(c)", "(d)"),
-  label_size = 24,
-  scale = 0.90
-)
-
-
-# Row 3: Three regional PERMANOVAs side by side
-permanova_row <- plot_grid(
   results[["ver"]][["permanova"]],
   results[["bel"]][["permanova"]],
   results[["uvi"]][["permanova"]],
   ncol = 3,
+  nrow = 2,
   align = "hv",
+  labels = c("(b)", "(c)", "(d)", "", "", ""),
+  label_size = 24,
   scale = 0.90
 )
 
@@ -305,8 +298,7 @@ permanova_row <- plot_grid(
 figure1 <- ggarrange(
   p_greater_combined,
   NULL,
-  pca_row,
-  permanova_row,
+  regional_grid,
   leg,
   nrow = 5,
   ncol = 1,
@@ -350,7 +342,7 @@ figureS4 <- ggarrange(
   NULL,
   # results[["all"]][["heatmap"]],
   nrow = 4,
-  heights = c(8, 0.3, 1, 0.05)
+  heights = c(8, 0.3, 0.7, 0.05)
 )
 
 ggsave(
@@ -387,7 +379,7 @@ figureS5 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(8, 0.3, 0.6, 0.05)
+  heights = c(8, 0.3, 0.5, 0.05)
 )
 
 ggsave(
@@ -417,7 +409,7 @@ figureS6 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(9, 0.3, 0.8, 0.05)
+  heights = c(9, 0.3, 0.7, 0.05)
   )
 
 # Save Figure S5 as A4 PNG, optimized for small file size
