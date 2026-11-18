@@ -266,14 +266,14 @@ p_greater_combined <- ggdraw() +
     p_greater,
     x = 0,
     y = 0,
-    width = 0.80,
+    width = 0.90,
     height = 1
   ) +
   # PERMANOVA inset can extend beyond the PCA
   draw_plot(
     p_perm_greater,
-    x = 0.50,
-    y = 0.55,
+    x = 0.52,
+    y = 0.53,
     width = 0.50,
     height = 0.50
   )
@@ -286,6 +286,7 @@ pca_row <- plot_grid(
   ncol = 3,
   align = "hv",
   labels = c("(b)", "(c)", "(d)"),
+  label_size = 24,
   scale = 0.90
 )
 
@@ -309,8 +310,9 @@ figure1 <- ggarrange(
   leg,
   nrow = 5,
   ncol = 1,
-  heights = c(2.5, 0.1, 1, 1, 0.37),
+  heights = c(2, 0.1, 1, 1, 0.38),
   labels = c("(a)", "", "", ""),
+  font.label = list(size = 24, face = "bold"),
   align = "v"
 )
 
