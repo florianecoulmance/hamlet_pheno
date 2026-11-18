@@ -3330,7 +3330,7 @@ plot_pairwise_metric <- function(
     ) +
     theme_minimal() +
     theme(
-      legend.position = "top",
+      legend.position = "bottom",
       legend.justification = "center",
       legend.box = "horizontal",
       legend.key = element_blank(),
@@ -3372,51 +3372,71 @@ plot_pairwise_metric <- function(
   # Species colour strips
   # ------------------------------------------------------------
 
-  species_strip <- ggplot(
-    strip_df,
-    aes(
-      x = pair_location,
-      y = species_row,
-      fill = species
-    )
-  ) +
-    geom_tile(
-      width = 0.75,
-      colour = "black",
-      linewidth = 0.2
+  make_species_strip <- function(row_label) {
+
+    ggplot(
+      strip_df %>% filter(species_row == row_label),
+      aes(
+        x = pair_location,
+        y = species_row,
+        fill = species
+      )
     ) +
-    scale_fill_manual(
-      values = species_colors,
-      guide = "none"
-    ) +
-    scale_x_discrete(
-      limits = pair_location_order,
-      expand = expansion(add = 0.6)
-    ) +
-    scale_y_discrete(
-      expand = c(0, 0)
-    ) +
-    theme_minimal() +
-    theme(
-      axis.title = element_blank(),
-      axis.text.x = element_blank(),
-      axis.ticks = element_blank(),
-      axis.text.y = element_text(size = 12),
-      panel.grid = element_blank(),
-      plot.margin = margin(0, 5, 5, 5)
-    )
+      geom_tile(
+        width = 0.75,
+        colour = "black",
+        linewidth = 0.2
+      ) +
+      scale_fill_manual(
+        values = species_colors,
+        guide = "none"
+      ) +
+      scale_x_discrete(
+        limits = pair_location_order,
+        expand = expansion(add = 0.6)
+      ) +
+      scale_y_discrete(
+        limits = row_label,
+        expand = c(0, 0)
+      ) +
+      theme_minimal() +
+      theme(
+        axis.title = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_text(size = 20),
+        panel.grid = element_blank(),
+        plot.margin = margin(0, 5, 0, 5)
+      )
+  }
+
+  species_strip_top <- make_species_strip("Species 1")
+  species_strip_bottom <- make_species_strip("Species 2")
+
+
+  # ------------------------------------------------------------
+  # Extract location legend
+  # ------------------------------------------------------------
+
+  location_legend <- cowplot::get_legend(final_plot)
+
+  final_plot <- final_plot +
+    theme(legend.position = "none")
+
 
   # ------------------------------------------------------------
   # Combine
   # ------------------------------------------------------------
 
   final_combined <- cowplot::plot_grid(
+    species_strip_top,
     final_plot,
-    species_strip,
+    species_strip_bottom,
+    location_legend,
     ncol = 1,
     align = "v",
     axis = "lr",
-    rel_heights = c(1, 0.13)
+    rel_heights = c(0.10, 1, 0.10, 0.20)
   )
 
   return(final_combined)

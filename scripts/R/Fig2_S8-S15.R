@@ -277,11 +277,11 @@ figure2 <- ggarrange(
   NULL,
   pC,
   NULL,
-  ld_grid,
-  labels = c("(a)", "", "", "", "(b)", "", "(c)"),
+  # ld_grid,
+  labels = c("(a)", "", "", "", "(b)", ""),
   font.label = list(size = 24, face = "bold"),
-  nrow = 7,
-  heights = c(10, 0.3, 3, 0.3, 5, 0.3, 7)
+  nrow = 6,
+  heights = c(15, 0.3, 3, 0.3, 7, 0.3)
 )
 
 ggsave(
