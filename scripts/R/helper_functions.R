@@ -995,13 +995,13 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         aes(x = group1, y = group2, fill = Color),
         inherit.aes = FALSE,
         width = 1,
-        height = 0.4
+        height = 0.3
       ) +
       geom_tile(
         data = y_strip,
         aes(x = group1, y = group2, fill = Color),
         inherit.aes = FALSE,
-        width = 0.4,
+        width = 0.3,
         height = 1
       ) +
       scale_fill_identity(guide = "none") +
