@@ -3379,7 +3379,7 @@ plot_pairwise_metric <- function(
       strip_df %>% filter(species_row == row_label),
       aes(
         x = pair_location,
-        y = species_row,
+        y = 1,
         fill = species
       )
     ) +

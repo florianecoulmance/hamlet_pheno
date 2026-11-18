@@ -231,7 +231,9 @@ ld_grid <- plot_grid(
   ncol = 2,
   align = "v",
   axis = "tb",
-  scale = 0.95
+  labels = c("(a)", "(b)", "(c)", "(d)"),
+  label_size = 24,
+  scale = 1
 )
 
 # PCA on left, LD on right
@@ -281,32 +283,32 @@ figure2 <- ggarrange(
   labels = c("(a)", "", "", "", "(b)", ""),
   font.label = list(size = 24, face = "bold"),
   nrow = 6,
-  heights = c(15, 0.3, 3, 0.3, 7, 0.3)
+  heights = c(4, 0.3, 1, 0.3, 3, 0.3)
 )
 
 ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
   plot = figure2,
   width = 20,
-  height = 30,
+  height = 28,
   units = "in",
   dpi = 150,
   type = "cairo-png"
 )
 
 
-# ########## FIGURE 3 ###################
-# figure3 <- ld_grid
+########## FIGURE 3 ###################
+figure3 <- ld_grid
 
-# ggsave(
-#   filename = file.path(figure_path, "Fig3_locLD.png"),
-#   plot = figure3,
-#   width = 14,
-#   height = 14,
-#   units = "in",
-#   dpi = 150,
-#   type = "cairo-png"
-# )
+ggsave(
+  filename = file.path(figure_path, "Fig3_locLD.png"),
+  plot = figure3,
+  width = 14,
+  height = 14,
+  units = "in",
+  dpi = 150,
+  type = "cairo-png"
+)
 
 # ########## FIGURE S8 ###################
 figureS8 <- plot_fst_categories(
