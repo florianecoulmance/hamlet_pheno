@@ -257,7 +257,7 @@ print("BEFORE pC")
 pC <- plot_pairwise_metric(
   fst_plot,
   metric = "avg_wc_fst",
-  xlab = expression(Pairwise~F[ST]),
+  xlab = expression(F[ST]),
   location_colors = location_colors
 )
 print("AFTER pC")
@@ -273,8 +273,9 @@ figure2 <- ggarrange(
   NULL,
   ld_grid,
   labels = c("(a)", "", "", "", "(b)", "", "(c)"),
+  font.label = list(size = 24, face = "bold"),
   nrow = 7,
-  heights = c(7, 0.3, 0.85, 0.3, 3, 0.3, 7)
+  heights = c(8, 0.3, 0.85, 0.3, 3, 0.3, 7)
 )
 
 ggsave(
@@ -447,7 +448,8 @@ pca_s_grid <- plot_grid(
   ncol = 2,
   rel_widths = c(1, 1),
   scale = 0.95,
-  labels = c("(a)", "(b)", "(c)", "(d)")
+  labels = c("(a)", "(b)", "(c)", "(d)"),
+  label_size = 24
   )
 
 # Final Figure 2

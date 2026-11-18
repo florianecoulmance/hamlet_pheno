@@ -1868,7 +1868,7 @@ plot_permanova_permdisp <- function(pair_file, species_col, geo_map, color_by = 
     # ---- Annotate with location title ----
     p_annot <- annotate_figure(
       p_allLoc,
-      top = text_grob(title_val, color = "black", face = "bold", size = 20, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
+      top = text_grob(title_val, color = "black", face = "bold", size = 30, x = unit(0, "lines"), vjust=0, hjust=0)#, fig.lab.pos = "top.left"
     )
 
     return(
@@ -2771,7 +2771,7 @@ build_ld_plot <- function(
     fun = mean,
     geom = "point",
     shape = 23,
-    size = 4,
+    size = 6,
     fill = "white",
     colour = "black"
   ) +
@@ -2779,7 +2779,7 @@ build_ld_plot <- function(
     yintercept = expected_ld,
     colour = "red",
     linetype = "dashed",
-    linewidth = 0.6
+    linewidth = 1
   ) +
   # Exact p-values
   # stat_compare_means(
@@ -2799,6 +2799,9 @@ build_ld_plot <- function(
       "LG12_1_LG12_2" = "LG12_1\nLG12_2"
     )
   ) +
+  scale_y_continuous(
+    labels = scales::label_number(accuracy = 0.01)
+  ) +
   coord_cartesian(ylim = y_limits) +    
   labs(
       x = NULL,
@@ -2809,17 +2812,17 @@ build_ld_plot <- function(
   theme(
       legend.position = "none",
       axis.text.x = element_text(
-        size = 10,
+        size = 20,
         angle = 0,
       ),
       axis.text.y = element_text(
-        size = 12
+        size = 20
       ),
       axis.title.y = element_text(
-        size = 18
+        size = 30
       ),
       plot.title = element_text(
-        size = 20,
+        size = 30,
         face = "bold",
         colour = "black"
       )
@@ -3288,8 +3291,7 @@ plot_pairwise_metric <- function(
           geo_table$geo
         )
       ],
-      drop = FALSE,
-      name = "Location"
+      drop = FALSE
     ) +
     scale_x_discrete(
       labels = function(x) { sub( " \\| .*", "", x ) }
@@ -3301,7 +3303,7 @@ plot_pairwise_metric <- function(
     ) +
     labs(
       x = NULL,
-      y = xlab
+      y = expression(F[ST])
     ) +
     theme_minimal() +
     theme(
@@ -3316,8 +3318,7 @@ plot_pairwise_metric <- function(
       legend.key.size = unit(0.65, "cm"),
       legend.spacing.y = unit(0.2, "cm"),
       legend.title.position = "top",
-      legend.title = element_text(size = 18, face = "bold", hjust = 1),
-      legend.text = element_text(size = 14),
+      legend.text = element_text(size = 20),
       legend.direction = "horizontal",
       axis.text.x = element_text(
         size = 11,
@@ -3325,10 +3326,10 @@ plot_pairwise_metric <- function(
         hjust = 1
       ),
       axis.text.y = element_text(
-        size = 12
+        size = 20
       ),
       axis.title.y = element_text(
-        size = 18
+        size = 30
       ),
       plot.margin = margin(
         5, 5, 5, 5
@@ -3623,11 +3624,15 @@ plot_fst_categories <- function(
       legend.position = "none",
 
       axis.text.x = element_text(
-        size = 10
+        size = 11
+      ),
+
+      axis.text.y = element_text(
+        size = 11
       ),
 
       axis.title.y = element_text(
-        size = 11
+        size = 30
       )
     )
 }
