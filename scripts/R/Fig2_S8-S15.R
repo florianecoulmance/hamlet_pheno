@@ -206,7 +206,7 @@ pca_grid <- plot_grid(plotlist = all_pcas,
                       ncol = 2,
                       align = "v",
                       axis = "tb",
-                      scale = 0.95) # bundle location pcas in one plot
+                      scale = 1) # bundle location pcas in one plot
 
 ld_datasets <- c("bel", "boc", "hon", "pri")
 
