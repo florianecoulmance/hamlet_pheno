@@ -1029,14 +1029,15 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       size = 10
     ) +
 
-    # geom_text(
-    #   data = melt_R_plot %>%
-    #     filter(!is.na(value), !is.na(p), p < 0.05),
-    #   aes(x = group1, y = group2, colour = value, fill = value),
-    #   label = "✱",
-    #   fontface = "bold",
-    #   size = 7
-    # ) +
+    geom_text(
+      data = melt_R_plot %>%
+        filter(!is.na(value), !is.na(p), p >= 0.05),
+      aes(x = group1, y = group2),
+      label = "ns",
+      color = "black",
+      fontface = "bold",
+      size = 4
+    ) +
 
     scale_fill_gradient(
       low = "#ffead1",
@@ -1095,14 +1096,15 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       size = 10
     ) +
 
-    # geom_text(
-    #   data = melt_F_plot %>%
-    #     filter(!is.na(value), !is.na(p), p < 0.05),
-    #   aes(x = group1, y = group2, colour = value, fill = value),
-    #   label = "✱",
-    #   fontface = "bold",
-    #   size = 7
-    # ) +
+    geom_text(
+      data = melt_F_plot %>%
+        filter(!is.na(value), !is.na(p), p >= 0.05),
+      aes(x = group1, y = group2),
+      label = "ns",
+      color = "black",
+      fontface = "bold",
+      size = 4
+    ) +
 
     scale_fill_gradient(
       low = "#ffedec",
