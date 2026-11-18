@@ -290,8 +290,7 @@ regional_grid <- plot_grid(
   nrow = 2,
   align = "hv",
   labels = c("(b)", "(c)", "(d)", "", "", ""),
-  label_size = 24,
-  scale = 0.90
+  label_size = 24
 )
 
 # Add legend
