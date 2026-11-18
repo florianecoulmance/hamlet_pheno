@@ -3316,7 +3316,9 @@ plot_pairwise_metric <- function(
       name = NULL
     ) +
     scale_x_discrete(
-      labels = function(x) { sub( " \\| .*", "", x ) }
+      limits = pair_location_order,
+      labels = function(x) sub(" \\| .*", "", x),
+      expand = expansion(add = 0.6)
     ) +
     scale_y_continuous(
       limits = c(-0.2, 0.5),
@@ -3367,7 +3369,6 @@ plot_pairwise_metric <- function(
         keywidth = unit(1, "null")
       )
     )
-    
 
   # ------------------------------------------------------------
   # Species colour strips
@@ -3405,9 +3406,8 @@ plot_pairwise_metric <- function(
       theme_minimal() +
       theme(
         axis.title = element_blank(),
-        axis.text.x = element_blank(),
+        axis.text = element_blank(),
         axis.ticks = element_blank(),
-        axis.text.y = element_blank(),
         panel.grid = element_blank(),
         plot.margin = margin(0, 5, 0, 5)
       )
@@ -3416,45 +3416,31 @@ plot_pairwise_metric <- function(
   species_strip_top <- make_species_strip("Species 1")
   species_strip_bottom <- make_species_strip("Species 2")
 
-  make_strip_label <- function(label) {
-    ggplot() +
-      annotate(
-        "text",
-        x = 1,
-        y = 0.5,
-        label = label,
-        hjust = 1,
-        size = 5
-      ) +
-      xlim(0, 1) +
-      ylim(0, 1) +
-      theme_void() +
-      theme(
-        plot.margin = margin(0, 5, 3, 5)
-      )
-  }
-
-  label_top <- make_strip_label("Species 1")
-  label_bottom <- make_strip_label("Species 2")
-
-
   # ------------------------------------------------------------
   # Combine
   # ------------------------------------------------------------
 
-  final_combined <- cowplot::plot_grid(
+  species_strips <- cowplot::plot_grid(
     species_strip_top,
-    label_top,
-    final_plot,
     species_strip_bottom,
-    label_bottom,
     ncol = 1,
     align = "v",
     axis = "lr",
-    rel_heights = c(0.10, 0.035, 1, 0.10, 0.035)
+    rel_heights = c(1, 1)
+  )
+
+  final_combined <- cowplot::plot_grid(
+    species_strips,
+    final_plot,
+    ncol = 1,
+    align = "v",
+    axis = "lr",
+    rel_heights = c(0.18, 1)
   )
 
   return(final_combined)
+
+
 }
 
 # ============================================================

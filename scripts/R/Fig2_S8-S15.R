@@ -283,7 +283,7 @@ figure2 <- ggarrange(
   labels = c("(a)", "", "", "", "(b)", ""),
   font.label = list(size = 24, face = "bold"),
   nrow = 6,
-  heights = c(4, 0.3, 1, 0.3, 3, 0.3)
+  heights = c(6, 0.3, 1, 0.3, 3, 0.3)
 )
 
 ggsave(
@@ -303,7 +303,7 @@ figure3 <- ld_grid
 ggsave(
   filename = file.path(figure_path, "Fig3_locLD.png"),
   plot = figure3,
-  width = 14,
+  width = 16,
   height = 14,
   units = "in",
   dpi = 150,
