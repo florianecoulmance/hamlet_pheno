@@ -266,7 +266,7 @@ p_greater_combined <- ggdraw() +
     p_greater,
     x = 0,
     y = 0,
-    width = 0.90,
+    width = 1,
     height = 1
   ) +
   # PERMANOVA inset can extend beyond the PCA
@@ -327,7 +327,7 @@ figure1 <- ggarrange(
   NULL,
   nrow = 5,
   ncol = 1,
-  heights = c(2, 0.1, 2, 0.35, 0.05),
+  heights = c(2.5, 0.1, 2, 0.35, 0.05),
   labels = c("(a)", "", "", "", ""),
   font.label = list(size = 24, face = "bold"),
   align = "v"
@@ -337,7 +337,7 @@ ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
   plot = figure1,
   width = 18, 
-  height = 24, 
+  height = 27, 
   units = "in",
   dpi = 300,
   type = "cairo-png"
