@@ -1029,15 +1029,15 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       size = 10
     ) +
 
-    geom_text(
-      data = melt_R_plot %>%
-        filter(!is.na(value), !is.na(p), p >= 0.05),
-      aes(x = group1, y = group2),
-      label = "ns",
-      color = "black",
-      fontface = "bold",
-      size = 4
-    ) +
+    # geom_text(
+    #   data = melt_R_plot %>%
+    #     filter(!is.na(value), !is.na(p), p < 0.05),
+    #   aes(x = group1, y = group2),
+    #   label = "*",
+    #   color = "black",
+    #   fontface = "bold",
+    #   size = 7
+    # ) +
 
     scale_fill_gradient(
       low = "#ffead1",
@@ -1096,15 +1096,15 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       size = 10
     ) +
 
-    geom_text(
-      data = melt_F_plot %>%
-        filter(!is.na(value), !is.na(p), p >= 0.05),
-      aes(x = group1, y = group2),
-      label = "ns",
-      color = "black",
-      fontface = "bold",
-      size = 4
-    ) +
+    # geom_text(
+    #   data = melt_F_plot %>%
+    #     filter(!is.na(value), !is.na(p), p < 0.05),
+    #   aes(x = group1, y = group2),
+    #   label = "*",
+    #   color = "black",
+    #   fontface = "bold",
+    #   size = 7
+    # ) +
 
     scale_fill_gradient(
       low = "#ffedec",
@@ -1124,6 +1124,48 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       high = "#ff5c52",
       limits = range(melt_F_plot$value, na.rm = TRUE),
       guide = "none"
+    )
+
+    # ---- Significance legend ----
+
+  legend_data <- data.frame(
+    group1 = factor(
+      rep(group_levels[1], 2),
+      levels = levels(melt_F_plot$group1)
+    ),
+    group2 = factor(
+      rep(group_levels[1], 2),
+      levels = levels(melt_F_plot$group2)
+    ),
+    significance = factor(
+      c("ns", "*"),
+      levels = c("ns", "*")
+    )
+  )
+
+  p <- p +
+    geom_point(
+      data = legend_data,
+      aes(x = group1, y = group2, shape = significance),
+      inherit.aes = FALSE,
+      colour = "black",
+      fill = "white",
+      size = 5,
+      alpha = 0,
+      show.legend = TRUE
+    ) +
+    scale_shape_manual(
+      name = "",
+      values = c("ns" = 22, "*" = 21),
+      guide = guide_legend(
+        order = 1,
+        override.aes = list(
+          alpha = 1,
+          colour = "black",
+          fill = c("white", "black"),
+          size = 5
+        )
+      )
     )
 
   # ---- Axes ----

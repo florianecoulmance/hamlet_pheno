@@ -337,7 +337,7 @@ ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
   plot = figure1,
   width = 18, 
-  height = 28, 
+  height = 24, 
   units = "in",
   dpi = 300,
   type = "cairo-png"
