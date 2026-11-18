@@ -284,7 +284,7 @@ p_greater_combined <- plot_grid(
   ncol = 2,
   align = "none",
   rel_widths = c(1.5, 1),
-  rel_heights = c(1, 1.5),
+  axis = "tblr",
   scale = 1
 )
 
