@@ -1025,7 +1025,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       data = melt_R_plot %>%
         filter(!is.na(value), !is.na(p), p < 0.05),
       aes(x = group1, y = group2, fill = value),
-      shape = 21,
+      shape = 8,
       size = 10,
       stroke = 0
     ) +
@@ -1072,7 +1072,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       data = melt_F_plot %>%
         filter(!is.na(value), !is.na(p), p < 0.05),
       aes(x = group1, y = group2, fill = value),
-      shape = 21,
+      shape = 8,
       size = 10,
       stroke = 0
     ) +
