@@ -3342,6 +3342,7 @@ plot_pairwise_metric <- function(
         fill = "white",
         linewidth = 0.3
       ),
+      legend.margin = margin(t = 2, b = 2),
       # axis.text.x = element_text(
       #   size = 11,
       #   angle = 60,
@@ -3356,7 +3357,7 @@ plot_pairwise_metric <- function(
         size = 30
       ),
       plot.margin = margin(
-        5, 5, 5, 5
+        5, 5, 20, 5
       )
     ) +
     guides(
@@ -3384,7 +3385,8 @@ plot_pairwise_metric <- function(
     ) +
       geom_tile(
         width = 0.75,
-        colour = "black",
+        height = 0.5,
+        colour = "transparent",
         linewidth = 0.2
       ) +
       scale_fill_manual(
@@ -3395,16 +3397,17 @@ plot_pairwise_metric <- function(
         limits = pair_location_order,
         expand = expansion(add = 0.6)
       ) +
-      scale_y_discrete(
-        limits = row_label,
+      scale_y_continuous(
+        limits = c(0.5, 1.5),
         expand = c(0, 0)
       ) +
+      labs(y = NULL),
       theme_minimal() +
       theme(
         axis.title = element_blank(),
         axis.text.x = element_blank(),
         axis.ticks = element_blank(),
-        axis.text.y = element_text(size = 20),
+        axis.text.y = element_blank(),
         panel.grid = element_blank(),
         plot.margin = margin(0, 5, 0, 5)
       )
@@ -3413,15 +3416,26 @@ plot_pairwise_metric <- function(
   species_strip_top <- make_species_strip("Species 1")
   species_strip_bottom <- make_species_strip("Species 2")
 
+  make_strip_label <- function(label) {
+    ggplot() +
+      annotate(
+        "text",
+        x = 1,
+        y = 0.5,
+        label = label,
+        hjust = 1,
+        size = 5
+      ) +
+      xlim(0, 1) +
+      ylim(0, 1) +
+      theme_void() +
+      theme(
+        plot.margin = margin(0, 5, 3, 5)
+      )
+  }
 
-  # ------------------------------------------------------------
-  # Extract location legend
-  # ------------------------------------------------------------
-
-  location_legend <- cowplot::get_legend(final_plot)
-
-  final_plot <- final_plot +
-    theme(legend.position = "none")
+  label_top <- make_strip_label("Species 1")
+  label_bottom <- make_strip_label("Species 2")
 
 
   # ------------------------------------------------------------
@@ -3430,13 +3444,14 @@ plot_pairwise_metric <- function(
 
   final_combined <- cowplot::plot_grid(
     species_strip_top,
+    label_top,
     final_plot,
     species_strip_bottom,
-    location_legend,
+    label_bottom,
     ncol = 1,
     align = "v",
     axis = "lr",
-    rel_heights = c(0.10, 1, 0.10, 0.20)
+    rel_heights = c(0.10, 0.035, 1, 0.10, 0.035)
   )
 
   return(final_combined)
