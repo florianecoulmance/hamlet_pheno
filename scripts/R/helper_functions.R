@@ -1024,10 +1024,9 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     geom_point(
       data = melt_R_plot %>%
         filter(!is.na(value), !is.na(p), p < 0.05),
-      aes(x = group1, y = group2, fill = value),
+      aes(x = group1, y = group2, colour = value, fill = value),
       shape = 8,
-      size = 10,
-      stroke = 0
+      size = 10
     ) +
 
     scale_fill_gradient(
@@ -1045,7 +1044,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         position = "top",
         theme = theme(
           legend.justification = c(0.9, 0.5),
-          legend.title.position = "left",
+          legend.title.position = "right",
           legend.title = element_text(vjust=1.5),
           legend.key.width = unit(5, "cm"),
           legend.key.height = unit(0.6, "cm")
@@ -1053,7 +1052,15 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       )
     ) +
 
-    ggnewscale::new_scale_fill()
+    scale_colour_gradient(
+      low = "#ffead1",
+      high = "#fdae53",
+      limits = range(melt_R_plot$value, na.rm = TRUE),
+      guide = "none"
+    ) +
+
+    ggnewscale::new_scale_fill() +
+    ggnewscale::new_scale_color()
 
   # ---- F: lower triangle ----
 
@@ -1071,10 +1078,9 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     geom_point(
       data = melt_F_plot %>%
         filter(!is.na(value), !is.na(p), p < 0.05),
-      aes(x = group1, y = group2, fill = value),
+      aes(x = group1, y = group2, colour = value, fill = value),
       shape = 8,
-      size = 10,
-      stroke = 0
+      size = 10
     ) +
 
     scale_fill_gradient(
@@ -1087,6 +1093,13 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         accuracy = 0.1,
         decimal.mark = ","
       )
+    ) +
+
+    scale_colour_gradient(
+      low = "#ffedec",
+      high = "#ff5c52",
+      limits = range(melt_F_plot$value, na.rm = TRUE),
+      guide = "none"
     )
 
   # ---- Axes ----
