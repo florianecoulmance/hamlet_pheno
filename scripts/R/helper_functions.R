@@ -1016,7 +1016,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       data = melt_R_plot %>%
         filter(!is.na(value), !is.na(p), p >= 0.05),
       aes(x = group1, y = group2, fill = value),
-      color = "transparent"
+      color = "transparent",
+      stroke = 2
     ) +
 
     # Significant comparisons: circles
@@ -1045,7 +1046,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         theme = theme(
           legend.justification = c(0.9, 0.5),
           legend.title.position = "left",
-          legend.title = element_text(vjust=0.8),
+          legend.title = element_text(vjust=1),
           legend.key.width = unit(5, "cm"),
           legend.key.height = unit(0.6, "cm")
         )
@@ -1062,7 +1063,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       data = melt_F_plot %>%
         filter(!is.na(value), !is.na(p), p >= 0.05),
       aes(x = group1, y = group2, fill = value),
-      color = "transparent"
+      color = "transparent",
+      stroke = 2
     ) +
 
     # Significant comparisons: circles

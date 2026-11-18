@@ -272,7 +272,7 @@ p_greater_combined <- ggdraw() +
   # PERMANOVA inset can extend beyond the PCA
   draw_plot(
     p_perm_greater,
-    x = 0.52,
+    x = 0.60,
     y = 0.53,
     width = 0.50,
     height = 0.50
@@ -298,7 +298,7 @@ permanova_row <- plot_grid(
   results[["uvi"]][["permanova"]],
   ncol = 3,
   align = "hv",
-  scale = 0.80
+  scale = 0.85
 )
 
 # Add legend
@@ -310,7 +310,7 @@ figure1 <- ggarrange(
   leg,
   nrow = 5,
   ncol = 1,
-  heights = c(2, 0.1, 1, 1, 0.38),
+  heights = c(2, 0.1, 1, 1, 0.4),
   labels = c("(a)", "", "", ""),
   font.label = list(size = 24, face = "bold"),
   align = "v"
@@ -320,7 +320,7 @@ ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
   plot = figure1,
   width = 18, 
-  height = 28, 
+  height = 27, 
   units = "in",
   dpi = 300,
   type = "cairo-png"
