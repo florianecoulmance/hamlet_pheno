@@ -266,7 +266,7 @@ p_greater_combined <- ggdraw() +
     p_greater,
     x = 0,
     y = 0,
-    width = 0.80,
+    width = 0.90,
     height = 1
   ) +
   # PERMANOVA inset can extend beyond the PCA
@@ -274,8 +274,8 @@ p_greater_combined <- ggdraw() +
     p_perm_greater,
     x = 0.5,
     y = 0.4,
-    width = 0.70,
-    height = 0.70
+    width = 0.65,
+    height = 0.65
   )
 
 # p_greater_combined <- plot_grid(
