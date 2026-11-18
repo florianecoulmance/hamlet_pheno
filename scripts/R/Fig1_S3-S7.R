@@ -284,6 +284,7 @@ p_greater_combined <- plot_grid(
   ncol = 2,
   align = "none",
   rel_widths = c(1.5, 1),
+  rel_heights = c(1, 1.5),
   scale = 1
 )
 
@@ -336,7 +337,7 @@ ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
   plot = figure1,
   width = 18, 
-  height = 22, 
+  height = 28, 
   units = "in",
   dpi = 300,
   type = "cairo-png"
