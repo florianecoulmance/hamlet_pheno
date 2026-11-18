@@ -45,9 +45,9 @@ exc_legend <- function(pca_file, species_col, num_row = 2) {
   p1 <- ggplot(pca_file,aes(x=PC1,y=PC2,color=spec)) + geom_point(size = 15, alpha = 0.5) 
   p1 <- p1 + scale_color_manual(values=spec_colors, labels = logos_spec) +
     scale_x_continuous(position = "bottom") +
-    theme(legend.position="bottom",legend.title=element_blank(),legend.box = "horizontal",legend.text =  element_markdown(size = 15),
+    theme(legend.position="bottom",legend.title=element_blank(),legend.box = "horizontal",legend.text =  element_markdown(size = 20),
           panel.background = element_blank(), panel.border = element_rect(colour = "black", fill=NA, size=0.9),
-          text = element_text(size=30), legend.key=element_blank()) +
+          text = element_text(size=40), legend.key=element_blank()) +
     guides(color = guide_legend(nrow = num_row))
   
   
@@ -332,13 +332,13 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       legend.position = if (extract_legend) "bottom" else "none",
       legend.box = "horizontal",
       legend.title = element_blank(),
-      legend.text = element_markdown(size = 20),
+      legend.text = element_markdown(size = 30),
       panel.background = element_blank(),
       # panel.border = element_rect(color = "black", fill = NA, size = 1),
       panel.border = element_blank(),
       axis.line = element_line(color = "black", linewidth = 0.8),
-      axis.text = element_text(size = 17),
-      axis.title = element_text(size = 20),
+      axis.text = element_text(size = 20),
+      axis.title = element_text(size = 30),
       plot.margin = margin(5,3,0,0)
     ) +
     scale_x_continuous(position = "bottom",labels = unit_format(unit = "k", scale = 1e-3)) +
@@ -1046,7 +1046,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         theme = theme(
           legend.justification = c(0.9, 0.5),
           legend.title.position = "left",
-          legend.title = element_text(vjust=1),
+          legend.title = element_text(vjust=1.5),
           legend.key.width = unit(5, "cm"),
           legend.key.height = unit(0.6, "cm")
         )
