@@ -1055,8 +1055,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         position = "top",
         theme = theme(
           legend.justification = c(0.9, 0.5),
-          legend.title.position = "right",
-          legend.title = element_text(vjust=-1.5),
+          legend.title.position = "left",
+          legend.title = element_text(vjust=1.5),
           legend.key.width = unit(5, "cm"),
           legend.key.height = unit(0.6, "cm")
         )
@@ -1148,7 +1148,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         inherit.aes = FALSE,
         colour = "black",
         fill = "white",
-        size = 5,
+        size = 10,
         alpha = 0,
         show.legend = TRUE
       ) +
@@ -1161,7 +1161,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
             alpha = 1,
             colour = "black",
             fill = c("white", "black"),
-            size = 5
+            size = 10
           )
         )
       )
