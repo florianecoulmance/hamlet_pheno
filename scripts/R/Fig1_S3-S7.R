@@ -273,7 +273,7 @@ p_greater_combined <- ggdraw() +
   draw_plot(
     p_perm_greater,
     x = 0.55,
-    y = 0.52,
+    y = 0.515,
     width = 0.52,
     height = 0.52
   )
