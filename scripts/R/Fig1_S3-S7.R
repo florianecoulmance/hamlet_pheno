@@ -272,7 +272,7 @@ p_greater_combined <- ggdraw() +
   # PERMANOVA inset can extend beyond the PCA
   draw_plot(
     p_perm_greater,
-    x = 0.5,
+    x = 0.6,
     y = 0.5,
     width = 0.53,
     height = 0.53
