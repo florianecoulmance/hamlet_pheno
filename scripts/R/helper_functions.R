@@ -344,8 +344,8 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
     scale_x_continuous(position = "bottom",labels = unit_format(unit = "k", scale = 1e-3)) +
     scale_y_continuous(labels = unit_format(unit = "k", scale = 1e-3)) +
     labs(
-      x = paste0(pc_first," (", format(round(var$X0[as.numeric(str_sub(pc_first, 3, -1))] * 100, 1), nsmall = 1), " %)"),
-      y = paste0(pc_second," (", format(round(var$X0[as.numeric(str_sub(pc_second, 3, -1))] * 100, 1), nsmall = 1), " %)")
+      x = paste0(pc_first," (", format(round(var$X0[as.numeric(str_sub(pc_first, 3, -1))] * 100, 1), nsmall = 1), "%)"),
+      y = paste0(pc_second," (", format(round(var$X0[as.numeric(str_sub(pc_second, 3, -1))] * 100, 1), nsmall = 1), "%)")
     ) +
     guides(color = guide_legend(nrow = legend_rows))
 

@@ -300,9 +300,9 @@ figure1 <- ggarrange(
   NULL,
   regional_grid,
   leg,
-  nrow = 5,
+  nrow = 4,
   ncol = 1,
-  heights = c(2, 0.1, 1, 1, 0.4),
+  heights = c(2, 0.1, 1, 0.4),
   labels = c("(a)", "", "", ""),
   font.label = list(size = 24, face = "bold"),
   align = "v"
@@ -342,7 +342,7 @@ figureS4 <- ggarrange(
   NULL,
   # results[["all"]][["heatmap"]],
   nrow = 4,
-  heights = c(8, 0.3, 0.7, 0.05)
+  heights = c(8, 0.3, 0.6, 0.05)
 )
 
 ggsave(
@@ -379,7 +379,7 @@ figureS5 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(8, 0.3, 0.5, 0.05)
+  heights = c(8, 0.3, 0.4, 0.05)
 )
 
 ggsave(
@@ -409,7 +409,7 @@ figureS6 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(9, 0.3, 0.7, 0.05)
+  heights = c(9, 0.3, 0.6, 0.05)
   )
 
 # Save Figure S5 as A4 PNG, optimized for small file size
