@@ -278,19 +278,34 @@ p_greater_combined <- ggdraw() +
     height = 0.50
   )
 
-# Regional plots: 3 columns x 2 rows
-regional_grid <- plot_grid(
+# Row 1: Regional PCAs (larger)
+pca_row <- plot_grid(
   results[["ver"]][["pca"]],
   results[["bel"]][["pca"]],
   results[["uvi"]][["pca"]],
+  ncol = 3,
+  align = "hv",
+  labels = c("(b)", "(c)", "(d)"),
+  label_size = 24,
+  scale = 0.95
+)
+
+# Row 2: Regional PERMANOVAs (smaller)
+permanova_row <- plot_grid(
   results[["ver"]][["permanova"]],
   results[["bel"]][["permanova"]],
   results[["uvi"]][["permanova"]],
   ncol = 3,
-  nrow = 2,
   align = "hv",
-  labels = c("(b)", "(c)", "(d)", "", "", ""),
-  label_size = 24
+  scale = 0.85
+)
+
+# Stack the two rows
+regional_grid <- plot_grid(
+  pca_row,
+  permanova_row,
+  ncol = 1,
+  rel_heights = c(1.5, 1)
 )
 
 # Add legend
