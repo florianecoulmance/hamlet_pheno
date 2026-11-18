@@ -305,7 +305,7 @@ regional_grid <- plot_grid(
   pca_row,
   permanova_row,
   ncol = 1,
-  rel_heights = c(1.5, 1)
+  rel_heights = c(1, 1)
 )
 
 # Add legend
