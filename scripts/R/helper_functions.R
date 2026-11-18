@@ -1036,7 +1036,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       label = "✱",
       fontface = "bold",
       size = 7
-    )
+    ) +
 
     scale_fill_gradient(
       low = "#ffead1",
@@ -1099,7 +1099,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       label = "✱",
       fontface = "bold",
       size = 7
-    )
+    ) +
 
     scale_fill_gradient(
       low = "#ffedec",
