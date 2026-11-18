@@ -3183,7 +3183,8 @@ plot_pairwise_metric <- function(
     "bel", "boc", "hon", "pri", "arc",
     "gun", "flk", "qui", "bar"
   ),
-  location_colors) {
+  location_colors,
+  species_colors) {
 
   print("ENTERED plot_pairwise_metric")
   print("Rows:")
@@ -3253,6 +3254,26 @@ plot_pairwise_metric <- function(
       )
     )
 
+  strip_df <- df %>%
+  transmute(
+    pair_location,
+    species1 = pmin(species1, species2),
+    species2 = pmax(species1, species2)
+  ) %>%
+  distinct() %>%
+  tidyr::pivot_longer(
+    cols = c(species1, species2),
+    names_to = "species_row",
+    values_to = "species"
+  ) %>%
+  mutate(
+    species_row = factor(
+      species_row,
+      levels = c("species1", "species2"),
+      labels = c("Species 1", "Species 2")
+    )
+  )
+
 
   # ------------------------------------------------------------
   # Plot
@@ -3313,7 +3334,7 @@ plot_pairwise_metric <- function(
       legend.justification = "center",
       legend.box = "horizontal",
       legend.key = element_blank(),
-      legend.key.height = unit(0.8, "cm"),
+      legend.key.height = unit(1.2, "cm"),
       legend.text = element_text(size = 20),
       legend.spacing.x = unit(0.3, "cm"),
       legend.background = element_rect(
@@ -3321,11 +3342,13 @@ plot_pairwise_metric <- function(
         fill = "white",
         linewidth = 0.3
       ),
-      axis.text.x = element_text(
-        size = 11,
-        angle = 60,
-        hjust = 1
-      ),
+      # axis.text.x = element_text(
+      #   size = 11,
+      #   angle = 60,
+      #   hjust = 1
+      # ),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
       axis.text.y = element_text(
         size = 20
       ),
@@ -3345,7 +3368,58 @@ plot_pairwise_metric <- function(
     )
     
 
-  return(final_plot)
+  # ------------------------------------------------------------
+  # Species colour strips
+  # ------------------------------------------------------------
+
+  species_strip <- ggplot(
+    strip_df,
+    aes(
+      x = pair_location,
+      y = species_row,
+      fill = species
+    )
+  ) +
+    geom_tile(
+      width = 0.75,
+      colour = "black",
+      linewidth = 0.2
+    ) +
+    scale_fill_manual(
+      values = species_colors,
+      guide = "none"
+    ) +
+    scale_x_discrete(
+      limits = pair_location_order,
+      expand = expansion(add = 0.6)
+    ) +
+    scale_y_discrete(
+      expand = c(0, 0)
+    ) +
+    theme_minimal() +
+    theme(
+      axis.title = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks = element_blank(),
+      axis.text.y = element_text(size = 12),
+      panel.grid = element_blank(),
+      plot.margin = margin(0, 5, 5, 5)
+    )
+
+  # ------------------------------------------------------------
+  # Combine
+  # ------------------------------------------------------------
+
+  final_combined <- cowplot::plot_grid(
+    final_plot,
+    species_strip,
+    ncol = 1,
+    align = "v",
+    axis = "lr",
+    rel_heights = c(1, 0.13)
+  )
+
+  return(final_combined)
 }
 
 # ============================================================

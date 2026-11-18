@@ -215,6 +215,11 @@ location_colors <- setNames(
   geo_table$geo
 )
 
+species_colors <- setNames(
+  as.character(species_info$Color),
+  as.character(species_info$spec)
+)
+
 ld_plots <- lapply(
   ld_datasets,
   build_ld_plot,
@@ -258,7 +263,8 @@ pC <- plot_pairwise_metric(
   fst_plot,
   metric = "avg_wc_fst",
   xlab = expression(F[ST]),
-  location_colors = location_colors
+  location_colors = location_colors,
+  species_colors = species_colors
 )
 print("AFTER pC")
 
@@ -275,7 +281,7 @@ figure2 <- ggarrange(
   labels = c("(a)", "", "", "", "(b)", "", "(c)"),
   font.label = list(size = 24, face = "bold"),
   nrow = 7,
-  heights = c(10, 0.3, 1.5, 0.3, 5, 0.3, 7)
+  heights = c(10, 0.3, 3, 0.3, 5, 0.3, 7)
 )
 
 ggsave(
