@@ -3401,7 +3401,7 @@ plot_pairwise_metric <- function(
         limits = c(0.5, 1.5),
         expand = c(0, 0)
       ) +
-      labs(y = NULL),
+      labs(y = NULL) +
       theme_minimal() +
       theme(
         axis.title = element_blank(),
