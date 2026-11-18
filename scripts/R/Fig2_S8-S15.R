@@ -275,7 +275,7 @@ figure2 <- ggarrange(
   labels = c("(a)", "", "", "", "(b)", "", "(c)"),
   font.label = list(size = 24, face = "bold"),
   nrow = 7,
-  heights = c(8, 0.3, 0.85, 0.3, 3, 0.3, 7)
+  heights = c(7, 0.3, 1, 0.3, 4, 0.3, 7)
 )
 
 ggsave(
@@ -459,7 +459,7 @@ figureS13 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(12, 0.3, 0.75, 0.05)
+  heights = c(12, 0.3, 1, 0.05)
 )
 
 # Save
@@ -467,9 +467,9 @@ ggsave(
   filename = file.path(figure_path, "FigS13_gLocSUP.png"),
   plot = figureS13,
   width = 14,
-  height = 16,
+  height = 17,
   units = "in",
-  dpi = 150,
+  dpi = 300,
   type = "cairo-png"
 )
 

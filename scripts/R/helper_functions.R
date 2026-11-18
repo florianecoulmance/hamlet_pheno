@@ -3291,19 +3291,21 @@ plot_pairwise_metric <- function(
           geo_table$geo
         )
       ],
-      drop = FALSE
+      drop = FALSE,
+      name = NULL
     ) +
     scale_x_discrete(
       labels = function(x) { sub( " \\| .*", "", x ) }
     ) +
     scale_y_continuous(
       limits = c(-0.2, 0.5),
-      breaks = seq(-0.2, 0.5, 0.1),
+      breaks = seq(-0.2, 0.4, by = 0.2),
       expand = c(0, 0)
     ) +
     labs(
       x = NULL,
-      y = expression(F[ST])
+      y = expression(F[ST]),
+      fill = NULL
     ) +
     theme_minimal() +
     theme(
