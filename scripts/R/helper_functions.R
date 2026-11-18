@@ -1063,8 +1063,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       data = melt_F_plot %>%
         filter(!is.na(value), !is.na(p), p >= 0.05),
       aes(x = group1, y = group2, fill = value),
-      color = "transparent",
-      stroke = 2
+      color = "black",
+      linewidth = 1
     ) +
 
     # Significant comparisons: circles

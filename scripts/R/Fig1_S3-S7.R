@@ -298,7 +298,7 @@ permanova_row <- plot_grid(
   results[["uvi"]][["permanova"]],
   ncol = 3,
   align = "hv",
-  scale = 0.85
+  scale = 0.90
 )
 
 # Add legend
@@ -320,7 +320,7 @@ ggsave(
   filename = file.path(figure_path, "Fig1_pPCA.png"),
   plot = figure1,
   width = 18, 
-  height = 27, 
+  height = 26, 
   units = "in",
   dpi = 300,
   type = "cairo-png"
@@ -374,7 +374,7 @@ FigS5_pcas <- lapply(resFigS5, `[[`, "pca") # extract per location pcas
 FigS5_permanova <- lapply(resFigS5, `[[`, "permanova")
 
 figureS5_top <- plot_grid(
-  plot_grid(plotlist = FigS5_pcas, ncol = 1, labels = c("(a)", "(b)", "(c)")),
+  plot_grid(plotlist = FigS5_pcas, ncol = 1, labels = c("(a)", "(b)", "(c)"), label_size = 24),
   plot_grid(plotlist = FigS5_permanova, ncol = 1),
   ncol = 2,
   rel_widths = c(1, 1)
@@ -387,7 +387,7 @@ figureS5 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(8, 0.3, 0.75, 0.05)
+  heights = c(8, 0.3, 0.6, 0.05)
 )
 
 ggsave(
@@ -409,7 +409,7 @@ keep_names <- names(results_no_overall)
 print(keep_names)
 
 all_sup <- lapply(results_no_overall, `[[`, "sup_pca") # extract per location supplementary pcas
-sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, rel_widths = c(1, 1), scale = 0.95, labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)")) # bundle location pcas in one plot
+sup_grid <- plot_grid(plotlist = all_sup, ncol = 2, rel_widths = c(1, 1), scale = 0.95, labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)"), label_size = 24) # bundle location pcas in one plot
 # Combine supplementary PCA grid with legend at the bottom
 figureS6 <- ggarrange(
   sup_grid,
@@ -417,7 +417,7 @@ figureS6 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(9, 0.3, 1, 0.05)
+  heights = c(9, 0.3, 0.8, 0.05)
   )
 
 # Save Figure S5 as A4 PNG, optimized for small file size
