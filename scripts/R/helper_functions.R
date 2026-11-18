@@ -1032,7 +1032,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     geom_text(
       data = melt_R_plot %>%
         filter(!is.na(value), !is.na(p), p < 0.05),
-      aes(x = group1, y = group2, colour = value),
+      aes(x = group1, y = group2, colour = value, fill = value),
       label = "✱",
       fontface = "bold",
       size = 7
@@ -1043,6 +1043,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       high = "#fdae53",
       na.value = "transparent",
       name = "R²",
+      limits = range(melt_R_plot$value, na.rm = TRUE),
       breaks = function(limits) limits,
       labels = scales::label_number(
         accuracy = 0.1,
@@ -1095,7 +1096,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     geom_text(
       data = melt_F_plot %>%
         filter(!is.na(value), !is.na(p), p < 0.05),
-      aes(x = group1, y = group2, colour = value),
+      aes(x = group1, y = group2, colour = value, fill = value),
       label = "✱",
       fontface = "bold",
       size = 7
@@ -1106,6 +1107,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       high = "#ff5c52",
       na.value = "transparent",
       name = "F",
+      limits = range(melt_F_plot$value, na.rm = TRUE),
       breaks = function(limits) limits,
       labels = scales::label_number(
         accuracy = 0.1,
@@ -1175,8 +1177,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       panel.grid.minor = element_blank(),
       axis.ticks = element_blank(),
       aspect.ratio = 1
-    ) +
-    guides(colour = "none")
+    )
 
   # ==========================================================
   # ---- TITLE ----
