@@ -282,9 +282,9 @@ p_greater_combined <- plot_grid(
   p_greater,
   p_perm_greater,
   ncol = 2,
-  align = "hv",
-  rel_heights = c(1, 1),
-  rel_widths = c(1, 1)
+  align = "none",
+  rel_widths = c(1, 1),
+  scale = 1
 )
 
 # Row 1: Regional PCAs (larger)
