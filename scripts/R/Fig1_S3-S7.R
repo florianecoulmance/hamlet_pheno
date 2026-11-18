@@ -266,7 +266,7 @@ p_greater_combined <- ggdraw() +
     p_greater,
     x = 0,
     y = 0,
-    width = 1,
+    width = 0.95,
     height = 1
   ) +
   # PERMANOVA inset can extend beyond the PCA
@@ -274,8 +274,8 @@ p_greater_combined <- ggdraw() +
     p_perm_greater,
     x = 0.5,
     y = 0.4,
-    width = 0.65,
-    height = 0.65
+    width = 0.55,
+    height = 0.55
   )
 
 # p_greater_combined <- plot_grid(
@@ -307,7 +307,7 @@ permanova_row <- plot_grid(
   results[["uvi"]][["permanova"]],
   ncol = 3,
   align = "hv",
-  scale = 0.85
+  scale = 0.95
 )
 
 # Stack the two rows
