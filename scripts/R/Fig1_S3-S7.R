@@ -273,9 +273,9 @@ p_greater_combined <- ggdraw() +
   draw_plot(
     p_perm_greater,
     x = 0.55,
-    y = 0.5,
-    width = 0.53,
-    height = 0.53
+    y = 0.51,
+    width = 0.52,
+    height = 0.52
   )
 
 # p_greater_combined <- plot_grid(
