@@ -161,7 +161,7 @@ legend_plot <- function(info_table, gen = FALSE) {
   # logo
   geom_image(aes(x = col, y = y_logo, image = link), size = 0.6, asp = 1.1) +
   # species name
-  geom_text(aes(x = col - 0.1, y = y_text, label = paste0("H. ", Species)), size = 4.5, vjust = 1, fontface = "italic") +
+  geom_text(aes(x = col - 0.1, y = y_text, label = paste0("H. ", Species)), size = 6, vjust = 1, fontface = "italic") +
   theme_void() +
   theme(plot.margin = margin(0.3,0,5,0)) +
   coord_cartesian(clip = "off")
@@ -227,7 +227,7 @@ legend_geo <- function(info_table, gen = FALSE) {
   # logo
   # geom_image(aes(x = col, y = y_logo, image = link), size = 0.8, asp = 1.1) +
   # species name
-  geom_text(aes(x = col, y = y_text, label = Locations), size = 4, hjust = 1, vjust = 2, fontface = "bold") +
+  geom_text(aes(x = col, y = y_text, label = Locations), size = 8, hjust = 1, vjust = 2, fontface = "bold") +
   theme_void() +
   theme(plot.margin = margin(0.3,0,3,0)) +
   coord_cartesian(clip = "off")
@@ -332,20 +332,20 @@ pca_plot <- function(pca_data, pc_first, pc_second, species_info, geo_info, var,
       legend.position = if (extract_legend) "bottom" else "none",
       legend.box = "horizontal",
       legend.title = element_blank(),
-      legend.text = element_markdown(size = 30),
+      legend.text = element_markdown(size = 40),
       panel.background = element_blank(),
       # panel.border = element_rect(color = "black", fill = NA, size = 1),
       panel.border = element_blank(),
       axis.line = element_line(color = "black", linewidth = 0.8),
-      axis.text = element_text(size = 20),
-      axis.title = element_text(size = 30),
+      axis.text = element_text(size = 22),
+      axis.title = element_text(size = 27),
       plot.margin = margin(5,3,0,0)
     ) +
     scale_x_continuous(position = "bottom",labels = unit_format(unit = "k", scale = 1e-3)) +
     scale_y_continuous(labels = unit_format(unit = "k", scale = 1e-3)) +
     labs(
-      x = paste0(pc_first,", variance =  ", format(round(var$X0[as.numeric(str_sub(pc_first, 3, -1))] * 100, 1), nsmall = 1), " %"),
-      y = paste0(pc_second,", variance = ", format(round(var$X0[as.numeric(str_sub(pc_second, 3, -1))] * 100, 1), nsmall = 1), " %")
+      x = paste0(pc_first," (", format(round(var$X0[as.numeric(str_sub(pc_first, 3, -1))] * 100, 1), nsmall = 1), " %)"),
+      y = paste0(pc_second," (", format(round(var$X0[as.numeric(str_sub(pc_second, 3, -1))] * 100, 1), nsmall = 1), " %)")
     ) +
     guides(color = guide_legend(nrow = legend_rows))
 
@@ -1016,8 +1016,8 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       data = melt_R_plot %>%
         filter(!is.na(value), !is.na(p), p >= 0.05),
       aes(x = group1, y = group2, fill = value),
-      color = "transparent",
-      stroke = 2
+      color = "black",
+      linewidth = 1
     ) +
 
     # Significant comparisons: circles
