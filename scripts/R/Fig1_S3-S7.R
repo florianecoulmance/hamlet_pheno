@@ -302,7 +302,7 @@ figure1 <- ggarrange(
   leg,
   nrow = 4,
   ncol = 1,
-  heights = c(2, 0.1, 1, 0.4),
+  heights = c(2, 0.1, 2, 0.35),
   labels = c("(a)", "", "", ""),
   font.label = list(size = 24, face = "bold"),
   align = "v"
@@ -342,13 +342,13 @@ figureS4 <- ggarrange(
   NULL,
   # results[["all"]][["heatmap"]],
   nrow = 4,
-  heights = c(8, 0.3, 0.6, 0.05)
+  heights = c(8, 0.3, 1, 0.05)
 )
 
 ggsave(
   filename = file.path(figure_path, "FigS4_pPCA_all.png"),
   plot = figureS4,
-  width = 12,    # A4 width in inches
+  width = 18,    # A4 width in inches
   height = 16,  # A4 height in inches
   units = "in",
   dpi = 150,
@@ -379,13 +379,13 @@ figureS5 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(8, 0.3, 0.4, 0.05)
+  heights = c(8, 0.3, 0.8, 0.05)
 )
 
 ggsave(
   filename = file.path(figure_path, "FigS5_pPCA_loc.png"),
   plot = figureS5,
-  width = 12, 
+  width = 14, 
   height = 20, 
   units = "in",
   dpi = 150,
@@ -409,14 +409,14 @@ figureS6 <- ggarrange(
   leg,
   NULL,
   nrow = 4,
-  heights = c(9, 0.3, 0.6, 0.05)
+  heights = c(9, 0.3, 1, 0.05)
   )
 
 # Save Figure S5 as A4 PNG, optimized for small file size
 ggsave(filename = file.path(figure_path, "FigS6_pPCA_sup.png"),
   plot = figureS6,
-  width = 12,    # A4 width in inches
-  height = 17,  # A4 height in inches
+  width = 14,    # A4 width in inches
+  height = 19,  # A4 height in inches
   units = "in",
   dpi = 150,       # good quality but light (~1 MB)
   type = "cairo-png" # smoother text rendering, smaller file
