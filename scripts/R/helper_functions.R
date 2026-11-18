@@ -1021,13 +1021,13 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     ) +
 
     # Significant comparisons: circles
-    geom_point(
-      data = melt_R_plot %>%
-        filter(!is.na(value), !is.na(p), p < 0.05),
-      aes(x = group1, y = group2, fill = value),
-      shape = 21,
-      size = 10
-    ) +
+    # geom_point(
+    #   data = melt_R_plot %>%
+    #     filter(!is.na(value), !is.na(p), p < 0.05),
+    #   aes(x = group1, y = group2, colour = value, fill = value),
+    #   shape = 21,
+    #   size = 10
+    # ) +
 
     geom_text(
       data = melt_R_plot %>%
@@ -1084,13 +1084,13 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     ) +
 
     # Significant comparisons: circles
-    geom_point(
-      data = melt_F_plot %>%
-        filter(!is.na(value), !is.na(p), p < 0.05),
-      aes(x = group1, y = group2, colour = value, fill = value),
-      shape = 21,
-      size = 10
-    ) +
+    # geom_point(
+    #   data = melt_F_plot %>%
+    #     filter(!is.na(value), !is.na(p), p < 0.05),
+    #   aes(x = group1, y = group2, colour = value, fill = value),
+    #   shape = 21,
+    #   size = 10
+    # ) +
 
     geom_text(
       data = melt_F_plot %>%
@@ -1176,7 +1176,7 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
       axis.ticks = element_blank(),
       aspect.ratio = 1
     ) +
-    guides(color = guide_legend(ncol = 1))
+    guides(colour = "none")
 
   # ==========================================================
   # ---- TITLE ----
