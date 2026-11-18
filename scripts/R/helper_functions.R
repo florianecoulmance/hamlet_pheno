@@ -3359,7 +3359,7 @@ plot_pairwise_metric <- function(
         size = 30
       ),
       plot.margin = margin(
-        5, 5, 20, 5
+        5, 5, 5, 5
       )
     ) +
     guides(
@@ -3396,20 +3396,29 @@ plot_pairwise_metric <- function(
       ) +
       scale_x_discrete(
         limits = pair_location_order,
-        expand = expansion(add = 0)
+        expand = expansion(add = 0.6)
       ) +
       scale_y_continuous(
         limits = c(0.5, 1.5),
         expand = c(0, 0)
       ) +
-      labs(y = NULL) +
+      labs(y = expression(F[ST])) +
       theme_minimal() +
       theme(
-        axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
+        axis.title.y = element_text(
+          size = 30,
+          colour = "transparent"
+        ),
+        axis.text.y = element_text(
+          size = 20,
+          colour = "transparent"
+        ),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
         panel.grid = element_blank(),
-        plot.margin = margin(0, 5, 0, 5)
+        plot.margin = margin(5, 5, 5, 5)
       )
   }
 
