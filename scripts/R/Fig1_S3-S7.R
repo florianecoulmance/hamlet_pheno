@@ -314,10 +314,11 @@ figure1 <- ggarrange(
   NULL,
   regional_grid,
   leg,
-  nrow = 4,
+  NULL,
+  nrow = 5,
   ncol = 1,
-  heights = c(2, 0.1, 2, 0.35),
-  labels = c("(a)", "", "", ""),
+  heights = c(2, 0.1, 2, 0.35, 0.05),
+  labels = c("(a)", "", "", "", ""),
   font.label = list(size = 24, face = "bold"),
   align = "v"
 )
