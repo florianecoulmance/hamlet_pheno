@@ -3420,22 +3420,18 @@ plot_pairwise_metric <- function(
   # Combine
   # ------------------------------------------------------------
 
-  species_strips <- cowplot::plot_grid(
+  aligned_plots <- cowplot::align_plots(
     species_strip_top,
     species_strip_bottom,
-    ncol = 1,
+    final_plot,
     align = "v",
-    axis = "lr",
-    rel_heights = c(1, 1)
+    axis = "lr"
   )
 
   final_combined <- cowplot::plot_grid(
-    species_strips,
-    final_plot,
+    plotlist = aligned_plots,
     ncol = 1,
-    align = "v",
-    axis = "lr",
-    rel_heights = c(0.18, 1)
+    rel_heights = c(0.10, 0.10, 1)
   )
 
   return(final_combined)

@@ -283,7 +283,7 @@ figure2 <- ggarrange(
   labels = c("(a)", "", "", "", "(b)", ""),
   font.label = list(size = 24, face = "bold"),
   nrow = 6,
-  heights = c(6, 0.3, 1, 0.3, 3, 0.3)
+  heights = c(6, 0.3, 1.5, 0.3, 4, 0.3)
 )
 
 ggsave(
