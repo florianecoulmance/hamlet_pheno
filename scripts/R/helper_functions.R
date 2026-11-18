@@ -1159,9 +1159,10 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
           order = 1,
           override.aes = list(
             alpha = 1,
+            fontface = "bold",
             colour = "black",
             fill = c("white", "black"),
-            size = 10
+            size = 15
           )
         )
       )
