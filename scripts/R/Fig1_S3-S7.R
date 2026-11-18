@@ -260,33 +260,33 @@ p_perm_greater <- results[["all"]][["permanova"]]
 #   )
 
 # Add Greater Caribbean PERMANOVA as an inset
-# p_greater_combined <- ggdraw() +
-#   # PCA occupies 90% of the total width
-#   draw_plot(
-#     p_greater,
-#     x = 0,
-#     y = 0,
-#     width = 0.90,
-#     height = 1
-#   ) +
-#   # PERMANOVA inset can extend beyond the PCA
-#   draw_plot(
-#     p_perm_greater,
-#     x = 0.57,
-#     y = 0.53,
-#     width = 0.50,
-#     height = 0.50
-#   )
+p_greater_combined <- ggdraw() +
+  # PCA occupies 90% of the total width
+  draw_plot(
+    p_greater,
+    x = 0,
+    y = 0,
+    width = 0.80,
+    height = 1
+  ) +
+  # PERMANOVA inset can extend beyond the PCA
+  draw_plot(
+    p_perm_greater,
+    x = 0.54,
+    y = 0.5,
+    width = 0.70,
+    height = 0.70
+  )
 
-p_greater_combined <- plot_grid(
-  p_greater,
-  p_perm_greater,
-  ncol = 2,
-  align = "none",
-  rel_widths = c(1.5, 1),
-  axis = "tblr",
-  scale = 1
-)
+# p_greater_combined <- plot_grid(
+#   p_greater,
+#   p_perm_greater,
+#   ncol = 2,
+#   align = "none",
+#   rel_widths = c(1.5, 1),
+#   axis = "tblr",
+#   scale = 1
+# )
 
 # Row 1: Regional PCAs (larger)
 pca_row <- plot_grid(

@@ -1054,11 +1054,9 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
         direction = "horizontal",
         position = "top",
         theme = theme(
-          legend.text.position = "top",
-          # legend.text.hjust = 0.5,
           legend.justification = c(0.9, 0.5),
           legend.title.position = "right",
-          legend.title = element_text(vjust=-0.5),
+          legend.title = element_text(vjust=-1.5),
           legend.key.width = unit(5, "cm"),
           legend.key.height = unit(0.6, "cm")
         )
@@ -1127,46 +1125,47 @@ perm_f <- function(pc_table, species_col, geo_map, color_by = "species") {
     )
 
     # ---- Significance legend ----
-
-  legend_data <- data.frame(
-    group1 = factor(
-      rep(group_levels[1], 2),
-      levels = levels(melt_F_plot$group1)
-    ),
-    group2 = factor(
-      rep(group_levels[1], 2),
-      levels = levels(melt_F_plot$group2)
-    ),
-    significance = factor(
-      c("ns", "*"),
-      levels = c("ns", "*")
-    )
-  )
-
-  p <- p +
-    geom_point(
-      data = legend_data,
-      aes(x = group1, y = group2, shape = significance),
-      inherit.aes = FALSE,
-      colour = "black",
-      fill = "white",
-      size = 5,
-      alpha = 0,
-      show.legend = TRUE
-    ) +
-    scale_shape_manual(
-      name = "",
-      values = c("ns" = 22, "*" = 21),
-      guide = guide_legend(
-        order = 1,
-        override.aes = list(
-          alpha = 1,
-          colour = "black",
-          fill = c("white", "black"),
-          size = 5
-        )
+  if (length(group_levels) > 10) {
+    legend_data <- data.frame(
+      group1 = factor(
+        rep(group_levels[1], 2),
+        levels = levels(melt_F_plot$group1)
+      ),
+      group2 = factor(
+        rep(group_levels[1], 2),
+        levels = levels(melt_F_plot$group2)
+      ),
+      significance = factor(
+        c("ns", "*"),
+        levels = c("ns", "*")
       )
     )
+
+    p <- p +
+      geom_point(
+        data = legend_data,
+        aes(x = group1, y = group2, shape = significance),
+        inherit.aes = FALSE,
+        colour = "black",
+        fill = "white",
+        size = 5,
+        alpha = 0,
+        show.legend = TRUE
+      ) +
+      scale_shape_manual(
+        name = "",
+        values = c("ns" = 22, "*" = 21),
+        guide = guide_legend(
+          order = 1,
+          override.aes = list(
+            alpha = 1,
+            colour = "black",
+            fill = c("white", "black"),
+            size = 5
+          )
+        )
+      )
+  }
 
   # ---- Axes ----
   if (color_by == "species") {
