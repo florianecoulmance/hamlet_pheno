@@ -273,9 +273,9 @@ p_greater_combined <- ggdraw() +
   draw_plot(
     p_perm_greater,
     x = 0.50,
-    y = 0.45,
-    width = 0.55,
-    height = 0.55
+    y = 0.55,
+    width = 0.50,
+    height = 0.50
   )
 
 # Row 2: Three regional PCAs side by side
@@ -303,12 +303,13 @@ permanova_row <- plot_grid(
 # Add legend
 figure1 <- ggarrange(
   p_greater_combined,
+  NULL,
   pca_row,
   permanova_row,
   leg,
-  nrow = 4,
+  nrow = 5,
   ncol = 1,
-  heights = c(2.5, 1, 1, 0.35),
+  heights = c(2.5, 0.1, 1, 1, 0.37),
   labels = c("(a)", "", "", ""),
   align = "v"
 )
