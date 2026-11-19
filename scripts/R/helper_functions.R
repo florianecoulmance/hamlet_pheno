@@ -3416,7 +3416,11 @@ plot_pairwise_metric <- function(
         colour = "black",
         fill = "white",
         linewidth = 0.3
-      )
+      ),
+      legend.margin = margin(
+        t = 5, r = 20, b = 5, l = 20
+      ),
+      legend.spacing.x = unit(0.15, "cm")
     )
 
   # ------------------------------------------------------------
@@ -3476,40 +3480,14 @@ plot_pairwise_metric <- function(
       ) +
       guides(
         fill = guide_legend(
-          nrow = 3,
+          nrow = 2,
           byrow = TRUE
         )
       )
   }
 
-  species_strip_top <- make_species_strip("Species 1")
-  species_strip_bottom <- make_species_strip("Species 2")
-
-  species_legend_plot <- ggplot(
-    strip_df,
-    aes(x = pair_location, y = 1, fill = species)
-  ) +
-    geom_tile() +
-    scale_fill_manual(
-      values = species_colors,
-      labels = species_labels,
-      name = NULL,
-      breaks = species_meta$spec
-    ) +
-    guides(
-      fill = guide_legend(
-        nrow = 3,
-        byrow = TRUE
-      )
-    ) +
-    theme_void() +
-    theme(
-      legend.position = "bottom",
-      legend.text = ggtext::element_markdown(size = 18),
-      legend.key.size = unit(0.5, "cm"),
-      legend.background = element_blank(),
-      legend.margin = margin(0, 0, 0, 0)
-    )
+  species_strip_top <- make_species_strip("Species 1") + theme(legend.position = "none")
+  species_strip_bottom <- make_species_strip("Species 2") 
 
   # ------------------------------------------------------------
   # Combine
@@ -3519,7 +3497,6 @@ plot_pairwise_metric <- function(
     final_plot,
     species_strip_top,
     species_strip_bottom,
-    species_legend_plot,
     location_legend_plot,
     align = "v",
     axis = "lr"
