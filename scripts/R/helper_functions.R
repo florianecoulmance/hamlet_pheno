@@ -3390,7 +3390,11 @@ plot_pairwise_metric <- function(
     df,
     aes(x = pair_location, y = .data[[metric]], fill = location)
   ) +
-    geom_point(shape =22, alpha =0) +
+    geom_boxplot(
+      outlier.shape = NA,
+      alpha = 0,
+      colour = NA,
+    ) +
     scale_fill_manual(
       values = location_colors,
       breaks = location_levels,
@@ -3405,7 +3409,7 @@ plot_pairwise_metric <- function(
         nrow = 2,
         byrow = TRUE,
         keywidth = unit(1, "null"),
-        override.aes = list(alpha = 1)
+        override.aes = list(alpha = 1, colour = "black")
       )
     ) +
     theme_void() +
@@ -3477,12 +3481,18 @@ plot_pairwise_metric <- function(
         plot.margin = margin(0, 5, 5, 5),
         legend.position = "bottom",
         legend.text = element_markdown(size = 18),
-        legend.key.size = unit(0.5, "cm")
+        legend.key.size = unit(1.2, "cm"),
+        legend.key.height = unit(0.5, "cm"),
+        legend.spacing.x = unit(0.2, "cm"),
+        legend.box = "horizontal",
+        legend.justification = "center",
+        legend.box.just = "center"
       ) +
       guides(
         fill = guide_legend(
           nrow = 2,
-          byrow = TRUE
+          byrow = TRUE,
+          keywidth = unit(1, "null")
         )
       )
   }
@@ -3506,7 +3516,7 @@ plot_pairwise_metric <- function(
   final_combined <- cowplot::plot_grid(
     plotlist = aligned_plots,
     ncol = 1,
-    rel_heights = c(1, 0.10, 0.5, 0.3)
+    rel_heights = c(1, 0.10, 0.8, 0.3)
   )
 
   return(final_combined)
