@@ -3513,15 +3513,14 @@ plot_pairwise_metric <- function(
     name = NULL
   ) +
   guides(
-    fill = guide_legend(
+    colour = guide_legend(
       nrow = 2,
       byrow = TRUE,
       keywidth = unit(1, "null"),
       override.aes = list(
         alpha = 1,
         shape = 16,
-        size = 14,
-        colour = NA
+        size = 14
       )
     )
   ) +
