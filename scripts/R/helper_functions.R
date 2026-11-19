@@ -3336,7 +3336,7 @@ plot_pairwise_metric <- function(
       expand = expansion(add = 0.6)
     ) +
     scale_y_continuous(
-      limits = c(-0.2, 0.5),
+      limits = c(-0.22, 0.5),
       breaks = seq(-0.2, 0.4, by = 0.2),
       expand = c(0, 0)
     ) +
@@ -3478,11 +3478,11 @@ plot_pairwise_metric <- function(
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank(),
         panel.grid = element_blank(),
-        plot.margin = margin(0, 5, 5, 5),
+        plot.margin = margin(0, 5, 0, 5),
         legend.position = "bottom",
         legend.text = element_markdown(size = 18),
-        legend.key.size = unit(1.2, "cm"),
-        legend.key.height = unit(0.5, "cm"),
+        legend.key.size = unit(1, "cm"),
+        legend.key.height = unit(0.2, "cm"),
         legend.spacing.x = unit(0.2, "cm"),
         legend.box = "horizontal",
         legend.justification = "center",
@@ -3497,8 +3497,8 @@ plot_pairwise_metric <- function(
       )
   }
 
-  species_strip_top <- make_species_strip("Species 1") + theme(legend.position = "none")
-  species_strip_bottom <- make_species_strip("Species 2") 
+  species_strip_top <- make_species_strip("Species 1") + theme(legend.position = "none", plot.margin = margin(0, 5, 0, 5))
+  species_strip_bottom <- make_species_strip("Species 2") + theme(plot.margin = margin(0, 5, 5, 5))
 
   # ------------------------------------------------------------
   # Combine
@@ -3516,7 +3516,7 @@ plot_pairwise_metric <- function(
   final_combined <- cowplot::plot_grid(
     plotlist = aligned_plots,
     ncol = 1,
-    rel_heights = c(1, 0.10, 0.8, 0.3)
+    rel_heights = c(1, 0.10, 0.5, 0.3)
   )
 
   return(final_combined)
