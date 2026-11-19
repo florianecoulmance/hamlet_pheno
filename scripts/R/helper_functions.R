@@ -2630,13 +2630,20 @@ plot_location <- function(df, species_meta) {
     ) +
     facet_grid(run_label ~ .) +
     # theme_minimal() +
+    labs(
+      x = NULL,
+      y = NULL,
+      title = loc_title
+    ) +
     theme(
       legend.position = "left",
       strip.text.y = ggtext::element_markdown(angle = 0, size = 7),
-      legend.text = element_markdown(size = 7),
-      axis.text.x = ggtext::element_markdown(angle = 90, size = 7),
+      legend.text = element_markdown(size = 40),
+      legend.title = element_text(size = 27),
+      axis.text.x = ggtext::element_markdown(angle = 90, size = 22),
       axis.title.x = element_blank(),
-      axis.title.y = element_text(vjust = 4),
+      axis.title.y = element_text(vjust = 4, size = 27),
+      plot.title = element_text(size = 40),
       line = element_blank(),
       rect = element_blank(),
       plot.background  = element_rect(fill = "white", colour = NA),
@@ -2649,8 +2656,7 @@ plot_location <- function(df, species_meta) {
       legend.background = element_blank(),
       legend.key = element_blank(),
       strip.background = element_blank()
-    ) +
-    labs(title = loc_title)
+    )
 }
 
 # ---------------------------------------------------------
