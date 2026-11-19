@@ -90,7 +90,7 @@ purrr::iwalk(seq_along(plots), function(i, ...) {
       paste0("FigS", 15 + i, "_newHybrids_", loc, ".png")
     ),
     plot = plots[[i]],
-    height = 20,
+    height = 25,
     width = 20,
     dpi = 600
   )

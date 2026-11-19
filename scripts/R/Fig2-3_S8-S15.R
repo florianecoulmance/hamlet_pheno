@@ -266,7 +266,8 @@ pC <- plot_pairwise_metric(
   metric = "avg_wc_fst",
   xlab = expression(F[ST]),
   location_colors = location_colors,
-  species_colors = species_colors
+  species_colors = species_colors,
+  species_meta = species_info
 )
 print("AFTER pC")
 

@@ -3193,7 +3193,8 @@ plot_pairwise_metric <- function(
     "gun", "flk", "qui", "bar"
   ),
   location_colors,
-  species_colors) {
+  species_colors,
+  species_meta) {
 
   print("ENTERED plot_pairwise_metric")
   print("Rows:")
