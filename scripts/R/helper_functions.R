@@ -2637,7 +2637,7 @@ plot_location <- function(df, species_meta) {
     ) +
     theme(
       legend.position = "left",
-      strip.text.y = ggtext::element_markdown(angle = 0, size = 40),
+      strip.text.y = ggtext::element_markdown(angle = 0, size = 22),
       legend.text = element_markdown(size = 22),
       legend.title = element_text(size = 27),
       axis.text.x = ggtext::element_markdown(angle = 90, size = 18),
@@ -3070,7 +3070,8 @@ plot_genome_fst <- function(
 
     theme(
       axis.title.x.top = element_text(size = 27),
-      axis.text = element_text(size = 22),
+      axis.title.y = element_text(size = 27),
+      axis.text = element_text(size = 18),
       axis.title.x.bottom = element_blank()
     ) +    
 
