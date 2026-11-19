@@ -3202,7 +3202,7 @@ plot_pairwise_metric <- function(
 
   species_labels <- setNames(
     paste0("<img src='", species_meta$link, "' width='90' /><br>*H. ", species_meta$Species, "*"),
-    info_table$spec
+    species_meta$spec
   )
 
   df <- df %>%
