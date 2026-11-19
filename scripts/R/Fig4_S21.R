@@ -838,7 +838,7 @@ grid.text(
             fontsize = 22)
 )
 scatter_all <- grid.grab(
-  wrap = TRUEå
+  wrap = TRUE
 )
 png(
   file.path(figure_path, "scatter_all.png"),
@@ -922,7 +922,7 @@ figure4 <- ggarrange(
 )
 
 ggsave(
-  filename = file.path(figure_path, "Fig4_cube.png"),
+  filename = file.path(figure_path, "Fig4_cube_raw.png"),
   plot = figure4,
   width = 16,
   height = 23,

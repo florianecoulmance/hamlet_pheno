@@ -3201,8 +3201,8 @@ plot_pairwise_metric <- function(
   print(nrow(df))
 
   species_labels <- setNames(
-    species_meta$link,
-    species_meta$spec
+    paste0("<img src='", species_meta$link, "' width='90' /><br>*H. ", species_meta$Species, "*"),
+    info_table$spec
   )
 
   df <- df %>%
@@ -3347,10 +3347,10 @@ plot_pairwise_metric <- function(
     ) +
     theme_minimal() +
     theme(
-      legend.position = "bottom",
+      legend.position = "none",
       legend.justification = "center",
       legend.box = "horizontal",
-      legend.box.margin = margin(t = -5, b = 0),
+      legend.box.margin = margin(t = 5, b = 0),
       legend.key = element_blank(),
       legend.key.height = unit(1.2, "cm"),
       legend.text = element_text(size = 30),
@@ -3375,7 +3375,7 @@ plot_pairwise_metric <- function(
         size = 40
       ),
       plot.margin = margin(
-        5, 5, -20, 5
+        5, 5, 5, 5
       )
     ) +
     guides(
@@ -3383,6 +3383,39 @@ plot_pairwise_metric <- function(
         nrow = 2,
         byrow = TRUE,
         keywidth = unit(1, "null")
+      )
+    )
+
+  location_legend_plot <- ggplot(
+    df,
+    aes(x = pair_location, y = .data[[metric]], fill = location)
+  ) +
+    geom_boxplot() +
+    scale_fill_manual(
+      values = location_colors,
+      breaks = location_levels,
+      labels = geo_table$Locations[
+        match(location_levels, geo_table$geo)
+      ],
+      drop = FALSE,
+      name = NULL
+    ) +
+    guides(
+      fill = guide_legend(
+        nrow = 2,
+        byrow = TRUE,
+        keywidth = unit(1, "null")
+      )
+    ) +
+    theme_void() +
+    theme(
+      legend.position = "bottom",
+      legend.text = element_text(size = 30),
+      legend.key.height = unit(1.2, "cm"),
+      legend.background = element_rect(
+        colour = "black",
+        fill = "white",
+        linewidth = 0.3
       )
     )
 
@@ -3452,6 +3485,32 @@ plot_pairwise_metric <- function(
   species_strip_top <- make_species_strip("Species 1")
   species_strip_bottom <- make_species_strip("Species 2")
 
+  species_legend_plot <- ggplot(
+    strip_df,
+    aes(x = pair_location, y = 1, fill = species)
+  ) +
+    geom_tile() +
+    scale_fill_manual(
+      values = species_colors,
+      labels = species_labels,
+      name = NULL,
+      breaks = species_meta$spec
+    ) +
+    guides(
+      fill = guide_legend(
+        nrow = 3,
+        byrow = TRUE
+      )
+    ) +
+    theme_void() +
+    theme(
+      legend.position = "bottom",
+      legend.text = ggtext::element_markdown(size = 18),
+      legend.key.size = unit(0.5, "cm"),
+      legend.background = element_blank(),
+      legend.margin = margin(0, 0, 0, 0)
+    )
+
   # ------------------------------------------------------------
   # Combine
   # ------------------------------------------------------------
@@ -3460,6 +3519,8 @@ plot_pairwise_metric <- function(
     final_plot,
     species_strip_top,
     species_strip_bottom,
+    species_legend_plot,
+    location_legend_plot,
     align = "v",
     axis = "lr"
   )
@@ -3467,7 +3528,7 @@ plot_pairwise_metric <- function(
   final_combined <- cowplot::plot_grid(
     plotlist = aligned_plots,
     ncol = 1,
-    rel_heights = c(1, 0.10, 0.10)
+    rel_heights = c(1, 0.10, 0.10, 0.5, 0.3)
   )
 
   return(final_combined)
@@ -7860,15 +7921,15 @@ plot_speciation_paper <- function(
         x = .data[[x]],
         y = .data[[y]]
       )
-    ) #+
+    ) +
 
-    # geom_abline(
-    #   intercept = fixef(model)["(Intercept)"],
-    #   slope = fixef(model)[x],
-    #   colour = "black",
-    #   linetype = "dashed",
-    #   alpha = 0.7
-    # )
+    geom_abline(
+      intercept = fixef(model)["(Intercept)"],
+      slope = fixef(model)[x],
+      colour = "black",
+      linetype = "dashed",
+      alpha = 0.7
+    )
 
     # ----------------------------------------------------------
     # Pointers
@@ -7968,23 +8029,23 @@ plot_speciation_paper <- function(
     }
 
     p_all <- p_all +
-      # annotate(
-      #   "text",
-      #   x = if (legend_bottom_right) {
-      #     max(data_all[[x]], na.rm = TRUE)
-      #   } else {
-      #     min(range(data_all[[x]], na.rm = TRUE))
-      #   },
-      #   y = if (legend_bottom_right) {
-      #     min(data_all[[y]], na.rm = TRUE)
-      #   } else {
-      #     mean(range(data_all[[y]], na.rm = TRUE)) - 0.06
-      #   },
-      #   label = model_label,
-      #   hjust = if (legend_bottom_right) 1 else 0.5,
-      #   vjust = if (legend_bottom_right) 0 else -2,
-      #   size = 7
-      # ) +
+      annotate(
+        "text",
+        x = if (legend_bottom_right) {
+          max(data_all[[x]], na.rm = TRUE)
+        } else {
+          min(range(data_all[[x]], na.rm = TRUE))
+        },
+        y = if (legend_bottom_right) {
+          min(data_all[[y]], na.rm = TRUE)
+        } else {
+          mean(range(data_all[[y]], na.rm = TRUE)) - 0.06
+        },
+        label = model_label,
+        hjust = if (legend_bottom_right) 1 else 0.5,
+        vjust = if (legend_bottom_right) 0 else -2,
+        size = 7
+      ) +
 
       labs(
         x = x_label,
@@ -8045,15 +8106,15 @@ plot_speciation_paper <- function(
         x = .data[[x]],
         y = .data[[y]]
       )
-    ) #+
+    ) +
     
-    # geom_abline( 
-    #   intercept = fixef(model)["(Intercept)"],
-    #   slope = fixef(model)[x],
-    #   colour = "black",
-    #   linetype = "dashed",
-    #   alpha = 0.7
-    # )
+    geom_abline( 
+      intercept = fixef(model)["(Intercept)"],
+      slope = fixef(model)[x],
+      colour = "black",
+      linetype = "dashed",
+      alpha = 0.7
+    )
 
     # ----------------------------------------------------------
     # Pointers
@@ -8150,23 +8211,23 @@ plot_speciation_paper <- function(
     }
 
     p_location <- p_location +
-      # annotate(
-      #   "text",
-      #   x = if (legend_bottom_right) {
-      #     max(data_location[[x]], na.rm = TRUE)
-      #   } else {
-      #     min(range(data_location[[x]], na.rm = TRUE)) + 0.05
-      #   },
-      #   y = if (legend_bottom_right) {
-      #     mean(range(data_location[[y]], na.rm = TRUE)) 
-      #   } else {
-      #     mean(range(data_location[[y]], na.rm = TRUE)) - 0.04
-      #   },
-      #   label = model_label,
-      #   hjust = if (legend_bottom_right) 1 else 0.5,
-      #   vjust = if (legend_bottom_right) 0 else -0.8,
-      #   size = 6
-      # ) +
+      annotate(
+        "text",
+        x = if (legend_bottom_right) {
+          max(data_location[[x]], na.rm = TRUE)
+        } else {
+          min(range(data_location[[x]], na.rm = TRUE)) + 0.05
+        },
+        y = if (legend_bottom_right) {
+          mean(range(data_location[[y]], na.rm = TRUE)) 
+        } else {
+          mean(range(data_location[[y]], na.rm = TRUE)) - 0.04
+        },
+        label = model_label,
+        hjust = if (legend_bottom_right) 1 else 0.5,
+        vjust = if (legend_bottom_right) 0 else -0.8,
+        size = 6
+      ) +
 
       labs(
         x = x_label,
