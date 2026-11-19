@@ -416,15 +416,15 @@ figureS11 <- ggarrange(
   nrow = 2,
   labels = c("(a)", "(b)"),
   font.label = list(size = 24, face = "bold"),
-  heights = c(2, 5)
+  heights = c(1, 4)
 )
 
 # Save as PNG (A4 size)
 ggsave(
   filename = file.path(figure_path, "FigS11_gAllLD.png"),
   plot = figureS11,
-  width = 7.5,    # A4 width in inches
-  height = 7.5,  # A4 height in inches
+  width = 10,    # A4 width in inches
+  height = 11,  # A4 height in inches
   units = "in",
   dpi = 150,
   type = "cairo-png"
