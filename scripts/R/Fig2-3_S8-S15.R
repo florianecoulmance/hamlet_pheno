@@ -416,6 +416,7 @@ figureS11 <- ggarrange(
   figureS11b,
   nrow = 2,
   labels = c("(a)", "(b)"),
+  font.label = list(size = 24, face = "bold"),
   heights = c(2, 5)
 )
 

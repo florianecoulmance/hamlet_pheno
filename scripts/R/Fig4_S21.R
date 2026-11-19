@@ -1,6 +1,6 @@
 # by: Floriane Coulmance: 16/08/2024
 # usage:
-# Rscript Fig3_S21.R 
+# Rscript Fig4_S21.R 
 #___________________________________________________________________
 
 
@@ -38,6 +38,9 @@ library(nlme)
 library(lme4)
 library(lmerTest)
 library(openxlsx)
+library(gridGraphics)
+library(magick)
+library(gtable)
 
 # ############################
 # CONFIG
@@ -664,12 +667,14 @@ scatter_location <- scatterplot3d(
   zlim = c(0, 1),
   xlab = "Phenotypic divergence",
   ylab = "",
-  zlab = "RI",
+  zlab = "Prezygotic Reproductive Isolation (RI)",
   lab = c(3, 3, 3),
   x.ticklabs = c(0, 0.5, 1),
   y.ticklabs = c(0, 0.5, 1),
   z.ticklabs = c(0, 0.5, 1),
-  font.lab = 2
+  font.lab = 2,
+  cex.lab = 1.8,
+  cex.axis = 1.2
 )
 # title(main = "Between sympatric species", font.main = 2, cex.main = 1.3)
 grid.echo()
@@ -699,95 +704,29 @@ grid.set("graphics-plot-1-lines-1", g)
 
 g_p <- grid.get("graphics-plot-1-points-1")
 g_p$gp$fontsize <- 18
-g_p$gp$alpha[1] <- 0.75
+g_p$gp$alpha[1] <- 1
 grid.set("graphics-plot-1-points-1", g_p)
 
 grid.text(
   "Genetic differentiation",
-  x = unit(0.76, "npc"),
+  x = unit(0.78, "npc"),
   y = unit(0.23, "npc"),
-  rot = 33,
-  gp = gpar(fontface = "bold")
+  rot = 35,
+  gp = gpar(fontface = "bold",
+            fontsize = 22)
 )
-scatter_location <- grid.grab()
+scatter_location <- grid.grab(
+  wrap = TRUE
+)
 png(
   file.path(figure_path, "scatter_location.png"),
-  width = 2200,
-  height = 2000,
+  width = 3200,
+  height = 3000,
   res = 300
 )
 grid.draw(scatter_location)
 dev.off()
 dev.off()
-
-scatter_all <- scatterplot3d(
-  data_all[, c(5, 6, 7)],
-  pch = 15,
-  color = "#D09F64",
-  angle = 40,
-  cex.symbols = 2,
-  type = "h",
-  aspect = c(1, 1, 1),
-  xlim = c(0, 1),
-  ylim = c(0, 1),
-  zlim = c(0, 1),
-  xlab = "Phenotypic divergence",
-  ylab = "",
-  zlab = "RI",
-  lab = c(3, 3, 3),
-  x.ticklabs = c(0, 0.5, 1),
-  y.ticklabs = c(0, 0.5, 1),
-  z.ticklabs = c(0, 0.5, 1),
-  font.lab = 2
-)
-# title(main = "Between species", font.main = 2, cex.main = 1.3)
-grid.echo()
-
-grid.gedit("graphics-plot-1-lines-4",
-           gp = gpar(lwd = 0))
-
-grid.gedit("graphics-plot-1-lines-6",
-           gp = gpar(lwd = 0))
-
-grid.gedit("graphics-plot-1-lines-10",
-           gp = gpar(lwd = 0.2, lty = 2))
-grid.gedit("graphics-plot-1-lines-11",
-           gp = gpar(lwd = 0.2, lty = 2))
-grid.gedit("graphics-plot-1-lines-12",
-           gp = gpar(lwd = 0.2, lty = 2))
-grid.gedit(
-  "graphics-plot-1-lines-8",
-  gp = gpar(lwd = 0.2, lty = 2)
-)
-
-grid.gedit("graphics-plot-1-lines-2", gp = gpar(lwd = 3))
-grid.gedit("graphics-plot-1-lines-3", gp = gpar(lwd = 3))
-g <- grid.get("graphics-plot-1-lines-1")
-g$gp$lwd[1] <- 3
-grid.set("graphics-plot-1-lines-1", g)
-
-g_p <- grid.get("graphics-plot-1-points-1")
-g_p$gp$fontsize <- 18
-g_p$gp$alpha[1] <- 0.75
-grid.set("graphics-plot-1-points-1", g_p)
-grid.text(
-  "Genetic differentiation",
-  x = unit(0.76, "npc"),
-  y = unit(0.23, "npc"),
-  rot = 33,
-  gp = gpar(fontface = "bold")
-)
-scatter_all <- grid.grab()
-png(
-  file.path(figure_path, "scatter_all.png"),
-  width = 2200,
-  height = 2000,
-  res = 300
-)
-grid.draw(scatter_all)
-dev.off()
-dev.off()
-
 
 p_pheno_geno_location <- plot_speciation_paper(
   data = speciation_hypercube_data,
@@ -838,6 +777,78 @@ p_pheno_geno_location
 # p_geno_asso_location
 
 
+scatter_all <- scatterplot3d(
+  data_all[, c(5, 6, 7)],
+  pch = 15,
+  color = "#D09F64",
+  angle = 40,
+  cex.symbols = 2,
+  type = "h",
+  aspect = c(1, 1, 1),
+  xlim = c(0, 1),
+  ylim = c(0, 1),
+  zlim = c(0, 1),
+  xlab = "Phenotypic divergence",
+  ylab = "",
+  zlab = "Prezygotic Reproductive Isolation (RI)",
+  lab = c(3, 3, 3),
+  x.ticklabs = c(0, 0.5, 1),
+  y.ticklabs = c(0, 0.5, 1),
+  z.ticklabs = c(0, 0.5, 1),
+  font.lab = 2,
+  cex.lab = 1.8,
+  cex.axis = 1.2
+)
+# title(main = "Between species", font.main = 2, cex.main = 1.3)
+grid.echo()
+
+grid.gedit("graphics-plot-1-lines-4",
+           gp = gpar(lwd = 0))
+
+grid.gedit("graphics-plot-1-lines-6",
+           gp = gpar(lwd = 0))
+
+grid.gedit("graphics-plot-1-lines-10",
+           gp = gpar(lwd = 0.2, lty = 2))
+grid.gedit("graphics-plot-1-lines-11",
+           gp = gpar(lwd = 0.2, lty = 2))
+grid.gedit("graphics-plot-1-lines-12",
+           gp = gpar(lwd = 0.2, lty = 2))
+grid.gedit(
+  "graphics-plot-1-lines-8",
+  gp = gpar(lwd = 0.2, lty = 2)
+)
+
+grid.gedit("graphics-plot-1-lines-2", gp = gpar(lwd = 3))
+grid.gedit("graphics-plot-1-lines-3", gp = gpar(lwd = 3))
+g <- grid.get("graphics-plot-1-lines-1")
+g$gp$lwd[1] <- 3
+grid.set("graphics-plot-1-lines-1", g)
+
+g_p <- grid.get("graphics-plot-1-points-1")
+g_p$gp$fontsize <- 18
+g_p$gp$alpha[1] <- 1
+grid.set("graphics-plot-1-points-1", g_p)
+grid.text(
+  "Genetic differentiation",
+  x = unit(0.78, "npc"),
+  y = unit(0.23, "npc"),
+  rot = 35,
+  gp = gpar(fontface = "bold",
+            fontsize = 22)
+)
+scatter_all <- grid.grab(
+  wrap = TRUEå
+)
+png(
+  file.path(figure_path, "scatter_all.png"),
+  width = 3200,
+  height = 3000,
+  res = 300
+)
+grid.draw(scatter_all)
+dev.off()
+dev.off()
 
 p_pheno_geno_all <- plot_speciation_paper(
   speciation_hypercube_data,
@@ -900,58 +911,25 @@ p_pheno_geno_all
 #   scale = 0.95
 # )
 
-figure3 <- ggarrange(
+figure4 <- ggarrange(
   p_pheno_geno_location,
   NULL,
   p_pheno_geno_all,
   nrow = 3,
   heights = c(10, 0.2, 10),
-  labels = c("(a)", "", "(b)")
+  labels = c("(a)", "", "(b)"),
+  font.label = list(size = 24, face = "bold")
 )
 
 ggsave(
-  filename = file.path(figure_path, "Fig3_cube.png"),
-  plot = figure3,
+  filename = file.path(figure_path, "Fig4_cube.png"),
+  plot = figure4,
   width = 16,
   height = 23,
   units = "in",
   dpi = 300,
   type = "cairo-png"
 )
-
-# htmlwidgets::saveWidget(
-#   hypercube,
-#   file.path(figure_path, "Fig3_speciation3D.html"),
-#   selfcontained = FALSE
-# )
-
-# ########## FIGURE S21 ###################
-# figureS21_bottom <- plot_grid(
-#   p_pheno_asso_all,
-#   p_geno_asso_all,
-#   ncol = 2,
-#   labels = c("(b)", "(c)"),
-#   scale = 0.95
-# )
-# 
-# figureS21 <- ggarrange(
-#   p_pheno_geno_all,
-#   NULL,
-#   figureS21_bottom,
-#   nrow = 3,
-#   heights = c(10, 0.2, 5),
-#   labels = c("(a)", "", "")
-# )
-# 
-# ggsave(
-#   filename = file.path(figure_path, "FigS21_speciationALL.png"),
-#   plot = figureS21,
-#   width = 17,
-#   height = 18,
-#   units = "in",
-#   dpi = 300,
-#   type = "cairo-png"
-# )
 
 
 ########## FIGURE S21 ###################
@@ -978,7 +956,7 @@ p_pheno_asso_all_2 <- plot_speciation_paper(
   y = "distance_asso",
   colour = NULL,
   x_label = "Phenotypic divergence",
-  y_label = expression(RI),
+  y_label = "Prezygotic RI",
   colour_label = NULL,
   label_species_pair = FALSE,
   label_location = FALSE,
@@ -994,7 +972,7 @@ p_geno_asso_all_2 <- plot_speciation_paper(
   y = "distance_asso",
   colour = NULL,
   x_label = expression(Genetic~differentiation~(F[ST])),
-  y_label = expression(RI),
+  y_label = "Prezygotic RI",
   colour_label = NULL,
   label_species_pair = FALSE,
   label_location = FALSE,
@@ -1008,7 +986,8 @@ all <- plot_grid(
   p_pheno_asso_all_2,
   p_geno_asso_all_2,
   nrow = 3,
-  labels = c("(a)", "(b)", "(c)")
+  labels = c("(a)", "(b)", "(c)"),
+  label_size = 24
 )
 all
 
@@ -1035,7 +1014,7 @@ p_pheno_asso_loc_2 <- plot_speciation_paper(
   y = "distance_asso",
   colour = NULL,
   x_label = "Phenotypic divergence",
-  y_label = expression(RI),
+  y_label = "Prezygotic RI",
   colour_label = NULL,
   label_species_pair = FALSE,
   label_location = FALSE,
@@ -1051,7 +1030,7 @@ p_geno_asso_loc_2 <- plot_speciation_paper(
   y = "distance_asso",
   colour = NULL,
   x_label = expression(Genetic~differentiation~(F[ST])),
-  y_label = expression(RI),
+  y_label = "Prezygotic RI",
   colour_label = NULL,
   label_species_pair = FALSE,
   label_location = FALSE,

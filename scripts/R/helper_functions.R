@@ -3062,12 +3062,13 @@ plot_genome_fst <- function(
     theme_classic() +
 
     theme(
-      axis.title.x.top = element_text(),
+      axis.title.x.top = element_text(size = 27),
+      axis.text = element_text(size = 22),
       axis.title.x.bottom = element_blank()
     ) +    
 
     labs(
-      x = "Linkage group",
+      x = "Linkage Groups",
       y = expression(F[ST])
     )
 }
@@ -3337,7 +3338,7 @@ plot_pairwise_metric <- function(
       legend.box = "horizontal",
       legend.key = element_blank(),
       legend.key.height = unit(1.2, "cm"),
-      legend.text = element_text(size = 20),
+      legend.text = element_text(size = 30),
       legend.spacing.x = unit(0.3, "cm"),
       legend.background = element_rect(
         colour = "black",
@@ -3356,7 +3357,7 @@ plot_pairwise_metric <- function(
         size = 20
       ),
       axis.title.y = element_text(
-        size = 30
+        size = 40
       ),
       plot.margin = margin(
         5, 5, 5, 5
@@ -7780,10 +7781,10 @@ plot_speciation_paper <- function(
     base_size = 15
   ) +
   theme(
-    axis.title = element_text(size = 20),
-    axis.text = element_text(size = 15),
+    axis.title = element_text(size = 27),
+    axis.text = element_text(size = 22),
     plot.title = element_text(
-      size = 20,
+      size = 30,
       face = "bold"
     ),
     plot.margin = margin(
@@ -7813,13 +7814,14 @@ plot_speciation_paper <- function(
     ),
 
     legend.key.width = unit(
-      1, "cm"
+      1.5, "cm"
     ),
 
     legend.margin = margin(
       4, 4, 4, 4
     ),
-    legend.title = element_text(size = 18)
+    legend.title = element_text(size = 27),
+    legend.text = element_text(size = 22)
   )
 
   # ============================================================
@@ -7960,7 +7962,8 @@ plot_speciation_paper <- function(
 
       labs(
         x = x_label,
-        y = y_label
+        y = y_label,
+        title = "Greater Caribbean"
       ) +
 
       coord_cartesian(
@@ -7983,6 +7986,12 @@ plot_speciation_paper <- function(
         scale_colour_gradientn(
           colours = unname(colours), 
           name = colour_label,
+          breaks = c(
+            min(p_all$data[[colour]], na.rm = TRUE),
+            (min(p_all$data[[colour]], na.rm = TRUE) + max(p_all$data[[colour]], na.rm = TRUE)) / 2,
+            max(p_all$data[[colour]], na.rm = TRUE)
+          ),
+          labels = scales::label_number(accuracy = 0.01),
           guide = guide_colourbar(
             direction = "horizontal",
             title.position = "top",
@@ -7991,8 +8000,8 @@ plot_speciation_paper <- function(
         ) +
         theme(
           legend.position = "bottom",
-          legend.justification = "left",
-          legend.box.just = "left"
+          legend.justification = "right",
+          legend.box.just = "right"
         )
     } else {
       p_all <- p_all +
@@ -8135,7 +8144,8 @@ plot_speciation_paper <- function(
 
       labs(
         x = x_label,
-        y = y_label
+        y = y_label,
+        title = "Within Locations"
       ) +
 
       coord_cartesian(
@@ -8158,6 +8168,12 @@ plot_speciation_paper <- function(
         scale_colour_gradientn(
           colours = unname(colours),
           name = colour_label,
+          breaks = c(
+            min(p_location$data[[colour]], na.rm = TRUE),
+            (min(p_location$data[[colour]], na.rm = TRUE) + max(p_location$data[[colour]], na.rm = TRUE)) / 2,
+            max(p_location$data[[colour]], na.rm = TRUE)
+          ),
+          labels = scales::label_number(accuracy = 0.01),
           guide = guide_colourbar(
             direction = "horizontal",
             title.position = "top",
@@ -8166,8 +8182,8 @@ plot_speciation_paper <- function(
         ) +
         theme(
           legend.position = "bottom",
-          legend.justification = "left",
-          legend.box.just = "left"
+          legend.justification = "right",
+          legend.box.just = "right"
         )
     } else {
       p_location <- p_location +
