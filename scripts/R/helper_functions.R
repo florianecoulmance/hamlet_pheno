@@ -3200,6 +3200,11 @@ plot_pairwise_metric <- function(
   print("Rows:")
   print(nrow(df))
 
+  species_labels <- setNames(
+    species_meta$link,
+    species_meta$spec
+  )
+
   df <- df %>%
     mutate(
       location1 = substr(pop1, 4, 6),
@@ -3345,6 +3350,7 @@ plot_pairwise_metric <- function(
       legend.position = "bottom",
       legend.justification = "center",
       legend.box = "horizontal",
+      legend.box.margin = margin(t = -5, b = 0),
       legend.key = element_blank(),
       legend.key.height = unit(1.2, "cm"),
       legend.text = element_text(size = 30),
@@ -3369,12 +3375,12 @@ plot_pairwise_metric <- function(
         size = 40
       ),
       plot.margin = margin(
-        5, 5, 5, 5
+        5, 5, -20, 5
       )
     ) +
     guides(
       fill = guide_legend(
-        nrow = 1,
+        nrow = 2,
         byrow = TRUE,
         keywidth = unit(1, "null")
       )
@@ -3402,7 +3408,9 @@ plot_pairwise_metric <- function(
       ) +
       scale_fill_manual(
         values = species_colors,
-        guide = "none"
+        labels = species_labels,
+        name = NULL,
+        breaks = species_meta$spec
       ) +
       scale_x_discrete(
         limits = pair_location_order,
@@ -3428,7 +3436,16 @@ plot_pairwise_metric <- function(
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank(),
         panel.grid = element_blank(),
-        plot.margin = margin(5, 5, 5, 5)
+        plot.margin = margin(0, 5, 5, 5),
+        legend.position = "bottom",
+        legend.text = element_markdown(size = 18),
+        legend.key.size = unit(0.5, "cm")
+      ) +
+      guides(
+        fill = guide_legend(
+          nrow = 3,
+          byrow = TRUE
+        )
       )
   }
 
@@ -3440,9 +3457,9 @@ plot_pairwise_metric <- function(
   # ------------------------------------------------------------
 
   aligned_plots <- cowplot::align_plots(
+    final_plot,
     species_strip_top,
     species_strip_bottom,
-    final_plot,
     align = "v",
     axis = "lr"
   )
@@ -3450,7 +3467,7 @@ plot_pairwise_metric <- function(
   final_combined <- cowplot::plot_grid(
     plotlist = aligned_plots,
     ncol = 1,
-    rel_heights = c(0.10, 0.10, 1)
+    rel_heights = c(1, 0.10, 0.10)
   )
 
   return(final_combined)
