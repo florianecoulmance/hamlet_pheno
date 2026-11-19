@@ -2637,7 +2637,7 @@ plot_location <- function(df, species_meta) {
     ) +
     theme(
       legend.position = "left",
-      strip.text.y = ggtext::element_markdown(angle = 0, size = 22),
+      strip.text.y = ggtext::element_markdown(angle = 0, size = 16),
       legend.text = element_markdown(size = 22),
       legend.title = element_text(size = 27),
       axis.text.x = ggtext::element_markdown(angle = 90, size = 18),
