@@ -3497,8 +3497,46 @@ plot_pairwise_metric <- function(
       )
   }
 
+  species_legend_plot <- ggplot(
+    strip_df,
+    aes(x = pair_location, y = 1, fill = species)
+  ) +
+  geom_point(
+    shape = 16,
+    alpha = 0
+  ) +
+  scale_fill_manual(
+    values = species_colors,
+    labels = species_labels,
+    breaks = species_meta$spec,
+    name = NULL
+  ) +
+  guides(
+    fill = guide_legend(
+      nrow = 2,
+      byrow = TRUE,
+      keywidth = unit(1, "null"),
+      override.aes = list(
+        alpha = 1,
+        shape = 16,
+        size = 14,
+        colour = NA
+      )
+    )
+  ) +
+  theme_void() +
+  theme(
+    legend.position = "bottom",
+    legend.text = element_markdown(size = 18),
+    legend.key.height = unit(0.2, "cm"),
+    legend.key.width = unit(1, "cm"),
+    legend.spacing.x = unit(0.2, "cm"),
+    legend.justification = "center",
+    legend.box.just = "center"
+  )
+
   species_strip_top <- make_species_strip("Species 1") + theme(legend.position = "none", plot.margin = margin(0, 5, 0, 5))
-  species_strip_bottom <- make_species_strip("Species 2") + theme(plot.margin = margin(0, 5, 5, 5))
+  species_strip_bottom <- make_species_strip("Species 2") + theme(legend.position = "none", plot.margin = margin(0, 5, 5, 5))
 
   # ------------------------------------------------------------
   # Combine
@@ -3508,6 +3546,7 @@ plot_pairwise_metric <- function(
     final_plot,
     species_strip_top,
     species_strip_bottom,
+    species_legend_plot,
     location_legend_plot,
     align = "v",
     axis = "lr"
@@ -3516,7 +3555,7 @@ plot_pairwise_metric <- function(
   final_combined <- cowplot::plot_grid(
     plotlist = aligned_plots,
     ncol = 1,
-    rel_heights = c(1, 0.10, 0.5, 0.3)
+    rel_heights = c(1, 0.10, 0.10, 0.5, 0.3)
   )
 
   return(final_combined)
