@@ -3417,6 +3417,7 @@ plot_pairwise_metric <- function(
       legend.position = "bottom",
       legend.text = element_text(size = 30),
       legend.key.height = unit(1.2, "cm"),
+      legend.key.width = unit(1, "cm"),
       legend.background = element_rect(
         colour = "black",
         fill = "white",
@@ -3499,13 +3500,13 @@ plot_pairwise_metric <- function(
 
   species_legend_plot <- ggplot(
     strip_df,
-    aes(x = pair_location, y = 1, fill = species)
+    aes(x = pair_location, y = 1, colour = species)
   ) +
   geom_point(
     shape = 16,
     alpha = 0
   ) +
-  scale_fill_manual(
+  scale_colour_manual(
     values = species_colors,
     labels = species_labels,
     breaks = species_meta$spec,
