@@ -287,7 +287,7 @@ ggsave(
   filename = file.path(figure_path, "Fig2_pairFST.png"),
   plot = figure2,
   width = 20,
-  height = 28,
+  height = 27,
   units = "in",
   dpi = 150,
   type = "cairo-png"

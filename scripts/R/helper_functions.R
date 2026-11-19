@@ -3527,7 +3527,7 @@ plot_pairwise_metric <- function(
   theme_void() +
   theme(
     legend.position = "bottom",
-    legend.text = element_markdown(size = 18),
+    legend.text = element_markdown(size = 17),
     legend.key.height = unit(0.2, "cm"),
     legend.key.width = unit(1, "cm"),
     legend.spacing.x = unit(0.2, "cm"),
